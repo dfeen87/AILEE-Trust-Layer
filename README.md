@@ -356,15 +356,18 @@ ailee-trust-layer/
 ├── ailee_trust_pipeline_v1.py    # Core pipeline (required)
 ├── __init__.py                    # Package initialization
 ├── optional/
+│   ├── __init__.py                # Optional modules package
 │   ├── ailee_config_presets.py   # 17 domain-ready configs
 │   ├── ailee_peer_adapters.py    # Multi-model consensus helpers
 │   ├── ailee_monitors.py         # Observability & alerting
 │   ├── ailee_serialization.py    # Audit trails & logging
-│   └── ailee_replay.py           # Regression testing
+│   ├── ailee_replay.py           # Regression testing
+│   └── ailee_datacenter_helpers.py  # Data center controllers
 ├── docs/
 │   ├── GRACE_LAYER.md            # Grace mediation logic
 │   ├── AUDIT_SCHEMA.md           # Decision traceability
 │   ├── VERSIONING.md             # Version history & changelog
+│   ├── DATA_CENTERS.md           # Data center implementation guide
 │   └── whitepaper/               # Full architectural theory
 ├── tests/                         # Test suite (coming soon)
 ├── LICENSE                        # MIT License
@@ -555,9 +558,3 @@ Email security details privately to the maintainer via GitHub.
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
-
----
-
-## Star History
-
-[![Star History Chart](https://api.star-history.com/svg?repos=dfeen87/ailee-trust-layer&type=Date)](https://star-history.com/#dfeen87/ailee-trust-layer&Date)
