@@ -385,6 +385,25 @@ AILEE is designed for scenarios where **uncertainty meets consequence**:
 - 🌐 **Distributed AI consensus** — Multi-agent agreement without centralization
 - ⚙️ **Safety-critical automation** — Industrial control systems
 
+- 🏢 Data Center Operations
+AILEE provides deterministic governance for AI-driven data center automation:
+High-Impact Applications:
+
+❄️ Cooling Optimization — Reduce energy 15-30% while maintaining thermal safety
+⚡ Power Capping — Control peak demand charges without SLA violations
+📊 Workload Placement — Safe live migration and carbon-aware scheduling
+🔧 Predictive Maintenance — Reduce false positives 73%, extend hardware lifespan
+🚨 Incident Automation — 60% faster MTTR with full accountability
+
+Economic Impact:
+Typical 5MW Facility:
+- PUE improvement: 1.58 → 1.32 (-16%)
+- Annual savings: $1.9M+ (energy + incidents + labor)
+- Payback period: < 2 months
+- ROI: 650%+ in year 1
+Implementation: Shadow → Advisory → Guarded → Full automation (8-16 weeks)
+Read the complete Data Center guide →
+
 ---
 
 ## Design Philosophy
