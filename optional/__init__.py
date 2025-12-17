@@ -10,6 +10,10 @@ from .ailee_peer_adapters import (
     RollingPeerAdapter,
 )
 
+from .ailee_monitors import TrustMonitor
+from .ailee_serialization import decision_to_dict, decision_to_json
+from .ailee_replay import ReplayBuffer
+
 __all__ = [
     "LLM_SCORING",
     "SENSOR_FUSION",
@@ -17,4 +21,8 @@ __all__ = [
     "PeerAdapter",
     "StaticPeerAdapter",
     "RollingPeerAdapter",
+    "TrustMonitor",
+    "decision_to_dict",
+    "decision_to_json",
+    "ReplayBuffer",
 ]
