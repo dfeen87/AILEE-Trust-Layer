@@ -1,7 +1,10 @@
 # Navigating the Nonlinear: AILEE's Framework for Adaptive and Resilient AI Systems
 
 **Don Michael Feeney Jr**  
-American Physical Society & International Society of Physics & Quantum Physics Member | System Architect & Published Author | Faith is what drives me, I am a Christian.
+
+> This document provides the conceptual and theoretical foundations of the
+> AILEE Trust Layer. It is not required to use or implement the software.
+> Readers interested in practical usage should refer to the README.
 
 June 11, 2025
 
