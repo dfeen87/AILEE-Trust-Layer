@@ -44,21 +44,54 @@ No guesswork. No hidden overrides.
 ## Core Architecture
 
 ```
-Model Output
-    ↓
-Safety Layer (Confidence Scoring)
-    ↓
-┌───────────────┐
-│  BORDERLINE   │
-└───────────────┘
-    ↓
-GRACE Layer (Contextual Mediation)
-    ↓
-Consensus Layer (Peer Agreement)
-    ↓
-Fallback Mechanism (Stability Guarantee)
-    ↓
-Final Trusted Output
+1.
+                    ┌─────────────────┐
+                    │  AILEE Model    │ ········> Raw Data Generation
+                    └────────┬────────┘
+                             │
+                             ↓
+        2.          ┌────────────────────────┐
+                    │   AILEE SAFETY LAYER   │ ········> —CONFIDENCE SCORING
+                    │                        │ ········> —THRESHOLD VALIDATION
+                    └─┬──────────┬──────────┬┘ ········> —GRACE LOGIC
+                      │          │          │
+                 ACCEPTED   BORDERLINE   OUTRIGHT
+                      │          │       REJECTED
+                      │          │          │
+                      │     2A.  ↓          │
+                      │     ┌────────┐      │
+                      │     │ GRACE  │      │
+                      │     │ LAYER  │      │
+                      │     └─┬────┬─┘      │
+                      │       │    │        │
+                      │     PASS  FAIL      │
+                      │       │    │        │
+                      │       │    └────────┼────────┐
+                      │       │             │        │
+        3.            ↓       ↓             ↓     4. ↓
+                 ┌────────────────────┐  ┌──────────────────┐
+                 │ AILEE CONSENSUS    │  │    FALLBACK      │ ········> —ROLLING HISTORICAL
+                 │      LAYER         │  │   MECHANISM      │ ········>  MEAN OR MEDIUM
+                 └──────┬──────┬──────┘  └────────┬─────────┘ ········> —STABILITY GUARANTEES
+                        │      │                  │
+          —AGREEMENT    │      │                  │
+           CHECK ······>│      │                  │
+          —PEER INPUT   │      │                  │
+           SYNC ········>│      │                  │
+                        │      │                  │
+                 CONSENSUS   CONSENSUS             │
+                   PASS       FAIL                 │
+                        │      │                   │
+                        │      └───────────────────┘
+                        │                          │
+                        │                          │ FALLBACK
+                        │                          │  VALUE
+                        ↓                          │
+        5.          ┌────────────────────────┐    │
+                    │ FINAL DECISION OUTPUT  │<───┘
+                    │                        │
+                    │   —FOR VARIABLE X      │
+                    └────────────────────────┘
 ```
 
 Each layer is **bounded**, **deterministic**, and **auditable**.
