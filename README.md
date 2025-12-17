@@ -1,7 +1,7 @@
 # AILEE Trust Layer
 ### Adaptive Integrity Layer for AI Decision Systems
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-1.1.1-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
@@ -177,7 +177,7 @@ print(result.reasons)          # Human-readable decision trace
 
 ---
 
-## New in v1.1.0 🚀
+## New in v1.1.1 🚀
 
 ### 17 Domain-Optimized Presets
 
@@ -409,9 +409,9 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v1.1.0 (Production/Stable)
+### Current: v1.1.1 (Production/Stable)
 
-AILEE Trust Layer **v1.1.0** is production-ready with enterprise features:
+AILEE Trust Layer **v1.1.1** is production-ready with enterprise features:
 
 ✅ 17 domain-optimized presets  
 ✅ Advanced peer adapters for multi-model systems  
@@ -532,7 +532,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v1.1.0**  
+**AILEE Trust Layer v1.1.1**  
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
