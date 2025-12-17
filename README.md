@@ -63,6 +63,8 @@ Final Trusted Output
 
 Each layer is **bounded**, **deterministic**, and **auditable**.
 
+For architectural theory and system-level rationale, see `docs/whitepaper/`.
+
 ---
 
 ## The Mathematics of Trust
@@ -139,7 +141,7 @@ print(result.reasons)          # Human-readable decision trace
 
 ---
 
-## The GRACE Layer (Box 2A)
+## The GRACE Layer
 
 The GRACE Layer activates **only when confidence is borderline**.
 
@@ -230,7 +232,6 @@ ailee/
     ├── example_llm_scoring.py
     └── example_sensor_stream.py
 ```
-
 ---
 
 ## Use Cases
