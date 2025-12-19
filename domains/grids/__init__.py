@@ -33,21 +33,21 @@ from .grid_governor import (
     default_grid_config,
 
     # Safety & domain models
-    GridSafetySignals,
+    GridSafetyMonitors,
     GridOperationalDomain,
     GridOperatorState,
     GridSystemHealth,
 
-    # Degradation & confidence
-    GridDegradationStrategy,
-    GridConfidenceTracker,
+    # Confidence & events
+    ConfidenceTracker,
+    GovernanceEvent,
 
-    # Scenario & events
-    GridScenarioPolicy,
-    GridGovernanceEvent,
+    # Scenario policy
+    ScenarioPolicy,
 
-    # Test utilities
-    create_test_grid_signals,
+    # Utilities
+    create_default_governor,
+    create_example_signals,
 )
 
 __all__ = [
@@ -59,21 +59,21 @@ __all__ = [
     "GridGovernor",
     "GridGovernancePolicy",
     "default_grid_config",
+    "create_default_governor",
 
     # Safety & domain context
-    "GridSafetySignals",
+    "GridSafetyMonitors",
     "GridOperationalDomain",
     "GridOperatorState",
     "GridSystemHealth",
 
-    # Degradation & confidence
-    "GridDegradationStrategy",
-    "GridConfidenceTracker",
+    # Confidence & logging
+    "ConfidenceTracker",
+    "GovernanceEvent",
 
-    # Scenario & logging
-    "GridScenarioPolicy",
-    "GridGovernanceEvent",
+    # Scenario policy
+    "ScenarioPolicy",
 
     # Utilities
-    "create_test_grid_signals",
+    "create_example_signals",
 ]
