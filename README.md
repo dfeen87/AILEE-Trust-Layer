@@ -379,8 +379,8 @@ ailee-trust-layer/
 │   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
 │   ├── ailee_monitors.py             # Observability & alerting
 │   ├── ailee_serialization.py        # Audit trails & logging
-│   ├── ailee_replay.py               # Regression testing
-│   └── ailee_datacenter_helpers.py   # Data center controllers
+│   └──ailee_replay.py               # Regression testing
+│      
 ├── docs/
 │   ├── GRACE_LAYER.md                # Grace mediation logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability
