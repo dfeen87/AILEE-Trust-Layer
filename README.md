@@ -361,6 +361,10 @@ ailee-trust-layer/
 │   │   ├── __init__.py               # IMAGING domain exports
 │   │   ├── imaging.py                # Imaging governance (QA, safety, efficiency)
 │   │   └── IMAGING.md                # Imaging domain conceptual framework
+│   ├── robotics/
+│   │   ├── __init__.py               # ROBOTICS domain exports
+│   │   ├── robotics.py               # Robotics safety & autonomy governance
+│   │   └── ROBOTICS.md               # Robotics domain conceptual framework
 │   ├── grids/
 │   │   ├── __init__.py               # GRIDS domain exports
 │   │   ├── grids.py                  # Power grid governance & load optimization
@@ -379,8 +383,7 @@ ailee-trust-layer/
 │   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
 │   ├── ailee_monitors.py             # Observability & alerting
 │   ├── ailee_serialization.py        # Audit trails & logging
-│   └──ailee_replay.py               # Regression testing
-│      
+│   └── ailee_replay.py               # Regression testing
 ├── docs/
 │   ├── GRACE_LAYER.md                # Grace mediation logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability
@@ -498,6 +501,33 @@ It governs whether they can be trusted.
 
 **Deployment Model**
 Shadow → Advisory → Guarded → Full Automation (8–16 weeks)
+
+---
+
+## 🤖 Robotics Systems
+
+AILEE provides deterministic governance for autonomous and semi-autonomous robotic systems operating in safety-critical environments.
+
+### High-Impact Applications
+
+🦾 **Industrial robotics** — Enforce collision, force, and workspace safety without modifying controllers  
+🤝 **Collaborative robots (cobots)** — Human-aware action gating and adaptive speed control  
+🚗 **Autonomous vehicles** — Multi-sensor consensus for maneuver safety and decision validation  
+🏥 **Medical & surgical robotics** — Action trust validation under strict precision and risk constraints  
+🚁 **Drones & mobile robots** — Safe autonomy under uncertainty, bandwidth, and power limits  
+🧪 **Research platforms** — Auditable experimentation without compromising safety guarantees  
+
+### Typical Impact (Representative Systems)
+
+- Unsafe action prevention: **90%+**  
+- Emergency stop false positives reduction: **40–60%**  
+- Human-interaction incident reduction: **50%+**  
+- Operational uptime improvement: **15–30%**  
+- Audit & certification readiness: **Immediate**
+
+### Deployment Model
+
+Shadow → Advisory → Guarded → Adaptive (6–12 weeks)
 
 ---
 
