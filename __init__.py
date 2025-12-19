@@ -102,6 +102,15 @@ except ImportError:
     _HAS_REPLAY = False
 
 # =============================================================================
+# Domains (optional, governance layers)
+# =============================================================================
+try:
+    from .domains.imaging import ImagingDomain
+    _HAS_IMAGING_DOMAIN = True
+except ImportError:
+    _HAS_IMAGING_DOMAIN = False
+
+# =============================================================================
 # Metadata
 # =============================================================================
 __version__ = "1.1.1"
@@ -186,6 +195,9 @@ if _HAS_REPLAY:
         "ReplayRecord",
     ])
 
+if _HAS_IMAGING_DOMAIN:
+    __all__.append("ImagingDomain")
+
 # =============================================================================
 # Convenience
 # =============================================================================
@@ -202,7 +214,7 @@ def create_pipeline(preset_name: str = "balanced", **overrides):
 
 __all__.append("create_pipeline")
 
-# Allow explicit access to optional and domains
+# Allow explicit access to optional modules and domains namespace
 from . import optional
 from . import domains
 
