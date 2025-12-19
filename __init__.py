@@ -1,5 +1,5 @@
 """
-AILEE Trust Layer v1.1.1
+AILEE Trust Layer v1.4.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -102,7 +102,7 @@ except ImportError:
     _HAS_REPLAY = False
 
 # =============================================================================
-# Domains (optional, governance layers)
+# Domains (optional governance layers)
 # =============================================================================
 try:
     from .domains.imaging import ImagingDomain
@@ -110,10 +110,16 @@ try:
 except ImportError:
     _HAS_IMAGING_DOMAIN = False
 
+try:
+    from .domains.robotics import RoboticsDomain
+    _HAS_ROBOTICS_DOMAIN = True
+except ImportError:
+    _HAS_ROBOTICS_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "1.1.1"
+__version__ = "1.4.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
@@ -197,6 +203,9 @@ if _HAS_REPLAY:
 
 if _HAS_IMAGING_DOMAIN:
     __all__.append("ImagingDomain")
+
+if _HAS_ROBOTICS_DOMAIN:
+    __all__.append("RoboticsDomain")
 
 # =============================================================================
 # Convenience
