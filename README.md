@@ -374,40 +374,82 @@ ailee-trust-layer/
 ├── README.md                      # This file
 └── setup.py                       # Package configuration
 ```
-
 ---
 
 ## Use Cases
 
-AILEE is designed for scenarios where **uncertainty meets consequence**:
+AILEE is designed for scenarios where **uncertainty meets consequence** — systems where decisions must be **correct, explainable, and safe** before they are acted upon.
 
-- 🤖 **LLM scoring and ranking** — Validate model outputs before user-facing deployment
-- 🚗 **Autonomous systems** — Safety-critical decision validation
-- 🏥 **Medical decision support** — Ensure diagnostic reliability
-- 💰 **Financial signal validation** — Prevent erroneous trades
-- 🌐 **Distributed AI consensus** — Multi-agent agreement without centralization
-- ⚙️ **Safety-critical automation** — Industrial control systems
+### Core Applications
 
-- 🏢 Data Center Operations
-AILEE provides deterministic governance for AI-driven data center automation:
-High-Impact Applications:
-
-❄️ Cooling Optimization — Reduce energy 15-30% while maintaining thermal safety
-⚡ Power Capping — Control peak demand charges without SLA violations
-📊 Workload Placement — Safe live migration and carbon-aware scheduling
-🔧 Predictive Maintenance — Reduce false positives 73%, extend hardware lifespan
-🚨 Incident Automation — 60% faster MTTR with full accountability
-
-Economic Impact:
-Typical 5MW Facility:
-- PUE improvement: 1.58 → 1.32 (-16%)
-- Annual savings: $1.9M+ (energy + incidents + labor)
-- Payback period: < 2 months
-- ROI: 650%+ in year 1
-Implementation: Shadow → Advisory → Guarded → Full automation (8-16 weeks)
-Read the complete Data Center guide →
+- 🤖 **LLM scoring and ranking** — Validate model outputs before user-facing deployment  
+- 🏥 **Medical decision support** — Ensure diagnostic reliability under uncertainty  
+- 💰 **Financial signal validation** — Prevent erroneous or unstable trading decisions  
+- 🌐 **Distributed AI consensus** — Multi-agent agreement without centralization  
+- ⚙️ **Safety-critical automation** — Deterministic governance for high-risk systems  
 
 ---
+
+### 🚗 Autonomous & Automotive Systems
+
+AILEE provides a **governance layer** for AI-assisted and autonomous vehicles, ensuring that
+automation authority is granted only when safety, confidence, and system health allow.
+
+**Governed Decisions**
+- Autonomy level authorization (manual → assisted → constrained → full)
+- Model confidence validation before control escalation
+- Multi-sensor and multi-model consensus
+- Safe degradation and human handoff planning
+
+**Typical Use Cases**
+- Autonomous driving integrity validation
+- Advanced driver-assistance systems (ADAS)
+- Fleet-level AI oversight and compliance logging
+- Simulation, SIL/HIL, and staged deployment validation
+
+> AILEE **does not drive the vehicle** — it determines *how much autonomy is allowed* at runtime.
+
+---
+
+### ⚡ Power Grid & Energy Systems
+
+AILEE enables **deterministic, auditable governance** for AI-assisted power grid and energy operations.
+
+**Governed Decisions**
+- Grid authority level authorization (manual → assisted → constrained → autonomous)
+- Safety validation using frequency, voltage, reserves, and protection status
+- Operator readiness and handoff capability checks
+- Scenario-aware policy enforcement (peak load, contingencies, disturbances)
+
+**High-Impact Applications**
+- Grid stabilization and disturbance recovery
+- AI-assisted dispatch and forecasting oversight
+- Microgrid and islanded operation governance
+- Regulatory-compliant decision logging (NERC, IEC, ISO)
+
+> AILEE **never dispatches power** — it defines the maximum AI authority permitted at any moment.
+
+---
+
+### 🏢 Data Center Operations
+
+AILEE provides deterministic governance for AI-driven data center automation.
+
+**High-Impact Applications**
+- ❄️ **Cooling optimization** — Reduce energy use while maintaining thermal safety  
+- ⚡ **Power capping** — Control peak demand without SLA violations  
+- 📊 **Workload placement** — Safe live migration and carbon-aware scheduling  
+- 🔧 **Predictive maintenance** — Reduce false positives and extend hardware lifespan  
+- 🚨 **Incident automation** — Faster MTTR with full accountability  
+
+**Typical Economic Impact (5MW Facility)**
+- PUE improvement: **1.58 → 1.32** (≈16%)
+- Annual savings: **$1.9M+**
+- Payback period: **< 2 months**
+- Year-1 ROI: **650%+**
+
+**Deployment Model**
+Shadow → Advisory → Guarded → Full Automation (8–16 weeks)
 
 ## Design Philosophy
 
