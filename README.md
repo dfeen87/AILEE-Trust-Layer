@@ -353,26 +353,44 @@ If the system acts, you can explain **why**.
 
 ```
 ailee-trust-layer/
-├── ailee_trust_pipeline_v1.py    # Core pipeline (required)
-├── __init__.py                    # Package initialization
+├── ailee_trust_pipeline_v1.py        # Core pipeline (required)
+├── __init__.py                       # Package initialization
+├── domains/                          # Domain-specific governance layers
+│   ├── __init__.py                   # Domains namespace
+│   ├── imaging/
+│   │   ├── __init__.py               # IMAGING domain exports
+│   │   ├── imaging.py                # Imaging governance (QA, safety, efficiency)
+│   │   └── IMAGING.md                # Imaging domain conceptual framework
+│   ├── grids/
+│   │   ├── __init__.py               # GRIDS domain exports
+│   │   ├── grids.py                  # Power grid governance & load optimization
+│   │   └── GRIDS.md                  # Power grid domain framework
+│   ├── datacenters/
+│   │   ├── __init__.py               # DATACENTERS domain exports
+│   │   ├── datacenters.py            # Data center governance & automation
+│   │   └── DATACENTERS.md             # Data center domain framework
+│   └── automobiles/
+│       ├── __init__.py               # AUTOMOBILES domain exports
+│       ├── automobiles.py            # Automotive AI governance & safety controls
+│       └── AUTOMOBILES.md             # Automotive domain framework
 ├── optional/
-│   ├── __init__.py                # Optional modules package
-│   ├── ailee_config_presets.py   # 17 domain-ready configs
-│   ├── ailee_peer_adapters.py    # Multi-model consensus helpers
-│   ├── ailee_monitors.py         # Observability & alerting
-│   ├── ailee_serialization.py    # Audit trails & logging
-│   ├── ailee_replay.py           # Regression testing
-│   └── ailee_datacenter_helpers.py  # Data center controllers
+│   ├── __init__.py                   # Optional modules package
+│   ├── ailee_config_presets.py       # 17 domain-ready configs
+│   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
+│   ├── ailee_monitors.py             # Observability & alerting
+│   ├── ailee_serialization.py        # Audit trails & logging
+│   ├── ailee_replay.py               # Regression testing
+│   └── ailee_datacenter_helpers.py   # Data center controllers
 ├── docs/
-│   ├── GRACE_LAYER.md            # Grace mediation logic
-│   ├── AUDIT_SCHEMA.md           # Decision traceability
-│   ├── VERSIONING.md             # Version history & changelog
-│   ├── DATA_CENTERS.md           # Data center implementation guide
-│   └── whitepaper/               # Full architectural theory
-├── tests/                         # Test suite (coming soon)
-├── LICENSE                        # MIT License
-├── README.md                      # This file
-└── setup.py                       # Package configuration
+│   ├── GRACE_LAYER.md                # Grace mediation logic
+│   ├── AUDIT_SCHEMA.md               # Decision traceability
+│   ├── VERSIONING.md                 # Version history & changelog
+│   └── whitepaper/                   # Full architectural theory
+├── tests/                            # Test suite (coming soon)
+├── LICENSE                           # MIT License
+├── README.md                         # Project overview
+└── setup.py                          # Package configuration
+
 ```
 ---
 
@@ -448,8 +466,40 @@ AILEE provides deterministic governance for AI-driven data center automation.
 - Payback period: **< 2 months**
 - Year-1 ROI: **650%+**
 
+---
+
+🖼️ Imaging Systems
+AILEE provides deterministic governance for AI-assisted and computational imaging.
+
+High-Impact Applications
+
+🧠 Medical imaging QA — Validate AI reconstructions under dose and safety constraints  
+🔬 Scientific imaging — Maximize information yield in photon-limited regimes  
+🏭 Industrial inspection — Reduce false positives with multi-method consensus  
+🛰️ Remote sensing — Optimize power, bandwidth, and revisit strategies  
+🤖 AI reconstruction validation — Detect hallucinations and enforce physics consistency  
+
+Typical Impact (Representative Systems)
+
+Dose / energy reduction: 15–40%  
+Acquisition time reduction: 20–50%  
+False acceptance reduction: 60%+  
+Re-acquisition avoidance: 30%+  
+
+Deployment Model  
+Shadow → Advisory → Adaptive → Guarded (6–12 weeks)
+
+Design Philosophy  
+Trust is not a probability.  
+Trust is a structure.
+
+AILEE does not create images.  
+It governs whether they can be trusted.
+
 **Deployment Model**
 Shadow → Advisory → Guarded → Full Automation (8–16 weeks)
+
+---
 
 ## Design Philosophy
 
