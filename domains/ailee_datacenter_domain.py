@@ -1,16 +1,18 @@
 """
-AILEE Trust Layer - Data Center Helpers
+AILEE Trust Layer — Data Center Domain
 Version: 1.1.1
 
-Specialized utilities and pre-configured pipelines for data center operations:
-- Cooling/HVAC control
-- Power management
-- Workload placement
-- Predictive maintenance
-- Incident automation
+First-class AILEE domain implementation for data center decision integrity.
 
-This module provides production-ready helpers that integrate AILEE Trust Layer
-with common data center systems (BMS, DCIM, SCADA, orchestrators).
+This domain applies the AILEE Trust Pipeline to:
+- Cooling / HVAC governance
+- Power capping and throttling
+- Workload placement and migration decisions
+- Predictive maintenance gating
+- Incident automation governance
+
+The module defines domain-specific configurations, telemetry processing,
+and governed controllers for production data center environments.
 """
 
 from typing import Dict, List, Optional, Tuple, Any
