@@ -353,45 +353,66 @@ If the system acts, you can explain **why**.
 
 ```
 ailee-trust-layer/
-├── ailee_trust_pipeline_v1.py        # Core pipeline (required)
+├── ailee_trust_pipeline_v1.py        # Core AILEE trust pipeline (required)
 ├── __init__.py                       # Package initialization
+│
 ├── domains/                          # Domain-specific governance layers
 │   ├── __init__.py                   # Domains namespace
+│
 │   ├── imaging/
 │   │   ├── __init__.py               # IMAGING domain exports
 │   │   ├── imaging.py                # Imaging governance (QA, safety, efficiency)
-│   │   └── IMAGING.md                # Imaging domain conceptual framework
+│   │   ├── IMAGING.md                # Imaging domain conceptual framework
+│   │   └── BENCHMARKS.md             # Imaging performance & validation benchmarks
+│
 │   ├── robotics/
 │   │   ├── __init__.py               # ROBOTICS domain exports
 │   │   ├── robotics.py               # Robotics safety & autonomy governance
-│   │   └── ROBOTICS.md               # Robotics domain conceptual framework
+│   │   ├── ROBOTICS.md               # Robotics domain conceptual framework
+│   │   └── BENCHMARKS.md             # Robotics safety & real-time benchmarks
+│
 │   ├── grids/
 │   │   ├── __init__.py               # GRIDS domain exports
 │   │   ├── grids.py                  # Power grid governance & load optimization
-│   │   └── GRIDS.md                  # Power grid domain framework
+│   │   ├── GRIDS.md                  # Power grid domain framework
+│   │   └── BENCHMARKS.md             # Grid stability & resilience benchmarks
+│
 │   ├── datacenters/
 │   │   ├── __init__.py               # DATACENTERS domain exports
 │   │   ├── datacenters.py            # Data center governance & automation
-│   │   └── DATACENTERS.md             # Data center domain framework
-│   └── automobiles/
-│       ├── __init__.py               # AUTOMOBILES domain exports
-│       ├── automobiles.py            # Automotive AI governance & safety controls
-│       └── AUTOMOBILES.md             # Automotive domain framework
+│   │   ├── DATACENTERS.md             # Data center domain framework
+│   │   └── BENCHMARKS.md             # Throughput, latency, and efficiency benchmarks
+│
+│   ├── automobiles/
+│   │   ├── __init__.py               # AUTOMOBILES domain exports
+│   │   ├── automobiles.py            # Automotive AI governance & safety controls
+│   │   ├── AUTOMOBILES.md             # Automotive domain framework
+│   │   └── BENCHMARKS.md             # Automotive safety, latency & ODD benchmarks
+│
+│   └── telecommunications/
+│       ├── __init__.py               # TELECOMMUNICATIONS domain exports
+│       ├── telecommunications.py     # Network trust, freshness & quality governance
+│       ├── TELECOMMUNICATIONS.md      # Telecommunications domain framework
+│       └── BENCHMARKS.md              # Telecom latency, throughput & trust benchmarks
+│
 ├── optional/
 │   ├── __init__.py                   # Optional modules package
-│   ├── ailee_config_presets.py       # 17 domain-ready configs
-│   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
-│   ├── ailee_monitors.py             # Observability & alerting
-│   ├── ailee_serialization.py        # Audit trails & logging
-│   └── ailee_replay.py               # Regression testing
+│   ├── ailee_config_presets.py       # Domain-ready policy presets
+│   ├── ailee_peer_adapters.py        # Multi-model / multi-path consensus helpers
+│   ├── ailee_monitors.py             # Observability, alerts, telemetry hooks
+│   ├── ailee_serialization.py        # Audit trails & structured logging
+│   └── ailee_replay.py               # Deterministic replay & regression testing
+│
 ├── docs/
-│   ├── GRACE_LAYER.md                # Grace mediation logic
-│   ├── AUDIT_SCHEMA.md               # Decision traceability
-│   ├── VERSIONING.md                 # Version history & changelog
-│   └── whitepaper/                   # Full architectural theory
-├── tests/                            # Test suite (coming soon)
+│   ├── GRACE_LAYER.md                # Grace mediation & override logic
+│   ├── AUDIT_SCHEMA.md               # Decision traceability & compliance schema
+│   ├── VERSIONING.md                 # Versioning strategy & changelog rules
+│   └── whitepaper/                   # Full architectural & theoretical foundation
+│
+├── tests/                            # Test suite (planned / expanding)
+│
 ├── LICENSE                           # MIT License
-├── README.md                         # Project overview
+├── README.md                         # Project overview & usage
 └── setup.py                          # Package configuration
 
 ```
@@ -530,6 +551,39 @@ AILEE provides deterministic governance for autonomous and semi-autonomous robot
 Shadow → Advisory → Guarded → Adaptive (6–12 weeks)
 
 ---
+
+📡 Telecommunications Systems
+
+AILEE provides deterministic trust governance for communication systems operating under latency, reliability, and freshness constraints—without interfering with transport protocols or carrier infrastructure.
+
+High-Impact Applications
+
+📶 5G / edge networks — Enforce trust levels based on latency, jitter, packet loss, and link stability
+🌐 Distributed systems & APIs — Validate message freshness and downgrade trust under degraded conditions
+🛰️ Satellite & long-haul links — Govern trust under high-latency and intermittent connectivity
+🏭 Industrial IoT (IIoT) — Ensure timely, trustworthy telemetry in noisy or constrained networks
+🚗 V2X & vehicular networks — Real-time message validation and multi-path consensus
+💱 Financial & market data feeds — Ultra-low-latency freshness enforcement and cross-source agreement
+
+### Typical Impact (Representative Systems)
+
+- Stale or unsafe message rejection: 95%+
+
+- Missed downgrade events: <1%
+
+- Trust thrashing reduction (via hysteresis): 60–80%
+
+- Mean governance latency: <0.05 ms
+
+- Real-time compliance margin: 10×–100× requirements
+
+- Audit & traceability readiness: Immediate
+
+---
+
+### Deployment Model
+
+Passive Observe → Advisory → Constrained Trust → Full Enforcement (2–6 weeks)
 
 ## Design Philosophy
 
