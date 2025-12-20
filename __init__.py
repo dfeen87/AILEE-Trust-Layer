@@ -102,7 +102,7 @@ except ImportError:
     _HAS_REPLAY = False
 
 # =============================================================================
-# Domains (optional governance layers)
+# Domains (optional, production-grade governance layers)
 # =============================================================================
 try:
     from .domains.imaging import ImagingDomain
@@ -115,6 +115,12 @@ try:
     _HAS_ROBOTICS_DOMAIN = True
 except ImportError:
     _HAS_ROBOTICS_DOMAIN = False
+
+try:
+    from .domains.telecommunications import TelecomGovernor
+    _HAS_TELECOMMUNICATIONS_DOMAIN = True
+except ImportError:
+    _HAS_TELECOMMUNICATIONS_DOMAIN = False
 
 # =============================================================================
 # Metadata
@@ -206,6 +212,9 @@ if _HAS_IMAGING_DOMAIN:
 
 if _HAS_ROBOTICS_DOMAIN:
     __all__.append("RoboticsDomain")
+
+if _HAS_TELECOMMUNICATIONS_DOMAIN:
+    __all__.append("TelecomGovernor")
 
 # =============================================================================
 # Convenience
