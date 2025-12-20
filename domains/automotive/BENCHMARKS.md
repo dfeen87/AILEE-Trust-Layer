@@ -6,7 +6,7 @@ Performance and safety compliance metrics for the automotive autonomy governance
 - Execution: Browser-based JavaScript (V8 engine)
 - Iterations: 10,000 per performance test
 - Hardware: Standard consumer hardware (representative of automotive compute platforms)
-- Date: December 2024
+- Date: December 2025
 
 ---
 
