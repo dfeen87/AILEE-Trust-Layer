@@ -878,12 +878,7 @@ shadow_logger.record({
 - Grid AI Safety Best Practices
 - NERC Reliability Guidelines
 - PMU Monitoring Standards (C37.118)
-
-### Contact and Support
-- GitHub: [Your repository]
-- Documentation: [Your docs site]
-- Issues: [Your issue tracker]
-
+  
 ---
 
 **Version**: 2.0.0  
