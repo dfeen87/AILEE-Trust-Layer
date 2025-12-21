@@ -614,10 +614,6 @@ This domain governs **whether translated signals are safe, consented, and meanin
 
 ---
 
-### Deployment Model
-
-Passive Observe → Advisory → Constrained Trust → Full Enforcement (2–6 weeks)
-
 ## Design Philosophy
 
 > Trust is not a probability.  
