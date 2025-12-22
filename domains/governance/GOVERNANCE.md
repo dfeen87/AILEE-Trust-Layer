@@ -417,6 +417,7 @@ if not data_result.used_fallback and gov_result.actionable:
 
 **AILEE Trust Pipeline & Governance Domain**  
 Version: 1.0.0  
+License: MIT
 Single-file reference implementation for AI developers.
 
 Deterministic, auditable, authority-focused governance for civic and institutional AI systems.
