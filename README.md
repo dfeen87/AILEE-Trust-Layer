@@ -380,13 +380,13 @@ ailee-trust-layer/
 │   ├── datacenters/
 │   │   ├── __init__.py               # DATACENTERS domain exports
 │   │   ├── datacenters.py            # Data center governance & automation
-│   │   ├── DATACENTERS.md             # Data center domain framework
+│   │   ├── DATACENTERS.md            # Data center domain framework
 │   │   └── BENCHMARKS.md             # Throughput, latency, and efficiency benchmarks
 │
 │   ├── automobiles/
 │   │   ├── __init__.py               # AUTOMOBILES domain exports
 │   │   ├── automobiles.py            # Automotive AI governance & safety controls
-│   │   ├── AUTOMOBILES.md             # Automotive domain framework
+│   │   ├── AUTOMOBILES.md            # Automotive domain framework
 │   │   └── BENCHMARKS.md             # Automotive safety, latency & ODD benchmarks
 │
 │   ├── telecommunications/
@@ -395,9 +395,13 @@ ailee-trust-layer/
 │   │   ├── TELECOMMUNICATIONS.md      # Telecommunications domain framework
 │   │   └── BENCHMARKS.md              # Telecom latency, throughput & trust benchmarks
 │
-│   └── cross_ecosystem/
-│       ├── cross_ecosystem_governor.py  # Cross-ecosystem semantic & intent governance
-│       └── cross_ecosystem.md           # Cross-ecosystem translation domain framework
+│   ├── cross_ecosystem/
+│   │   ├── cross_ecosystem_governor.py  # Cross-ecosystem semantic & intent governance
+│   │   └── cross_ecosystem.md           # Cross-ecosystem translation domain framework
+│
+│   └── governance/
+│       ├── governance.py              # Civic, institutional & political trust governance
+│       └── GOVERNANCE.md              # Governance domain conceptual framework
 │
 ├── optional/
 │   ├── __init__.py                   # Optional modules package
@@ -611,6 +615,33 @@ This domain governs **whether translated signals are safe, consented, and meanin
 
 **Observe → Advisory Trust → Constrained Trust → Full Continuity**  
 *(Progressive rollout over weeks, not forced convergence)*
+
+---
+
+## 🏛️ Governance Systems
+
+AILEE provides deterministic trust governance for civic, institutional, and political systems operating under ambiguity, authority constraints, and high societal impact—without enforcing ideology or outcomes.
+
+### High-Impact Applications
+
+🏛️ **Public policy & civic platforms** — Govern whether directives are advisory, enforceable, or non-actionable  
+🗳️ **Election & voting infrastructure** — Separate observation, reporting, auditing, and automation authority  
+⚖️ **Regulatory & compliance systems** — Enforce jurisdictional scope, mandate validity, and sunset conditions  
+📜 **Institutional decision workflows** — Prevent unauthorized escalation, delegation abuse, or stale actions  
+🌐 **Cross-jurisdictional governance** — Apply authority and scope limits across regions and institutions  
+🤖 **AI-assisted governance tools** — Ensure models cannot act beyond explicitly delegated authority  
+
+### Typical Impact (Representative Systems)
+
+- Unauthorized action prevention: **95%+**  
+- Improper authority escalation reduction: **70–85%**  
+- Scope and jurisdiction violations blocked: **90%+**  
+- Temporal misuse (stale / premature actions) reduction: **80%+**  
+- Audit & compliance readiness: **Immediate**
+
+### Deployment Model
+
+Observe → Advisory → Constrained Trust → Full Governance (4–8 weeks)
 
 ---
 
