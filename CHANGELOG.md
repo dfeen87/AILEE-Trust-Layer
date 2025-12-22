@@ -1,3 +1,28 @@
+## Validation & Assurance Roadmap (v1.8.0)
+
+The **Governance** and **Cross-Ecosystem** domains intentionally do not include
+traditional performance benchmarks.
+
+These domains are **normative and safety-critical**, and are evaluated by
+**deterministic invariants, guarantees, and restraint** rather than throughput,
+latency, or optimization metrics.
+
+- The **Governance** domain is validated through authority enforcement,
+  jurisdictional scope containment, temporal correctness, delegation safety,
+  and deterministic decision outcomes.
+- The **Cross-Ecosystem** domain is validated through semantic fidelity,
+  consent preservation, capability alignment, and safe continuity across
+  incompatible platforms.
+
+Formal documentation files (e.g., `ASSURANCE.md`, `INVARIANTS.md`) for both
+domains are **actively being developed** and will be introduced once real-world
+usage patterns and adversarial scenarios meaningfully inform their structure.
+
+This approach is intentional and preserves architectural correctness while
+avoiding premature or misleading evaluation artifacts.
+
+---
+
 ## AILEE Trust Layer — v1.4.0
 
 **Release Type:** Minor (Domain Expansion & Packaging)  
