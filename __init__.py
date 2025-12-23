@@ -1,5 +1,5 @@
 """
-AILEE Trust Layer v1.9.0
+AILEE Trust Layer v2.0.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -146,10 +146,52 @@ try:
 except ImportError:
     _HAS_AUTOMOBILES_DOMAIN = False
 
+try:
+    from .domains.governance import (
+        GovernanceGovernor,
+        GovernanceConfig,
+        GovernanceSignal,
+        GovernanceDecision,
+        GovernanceTrustLevel,
+        AuthorityStatus,
+        ScopeStatus,
+        TemporalStatus,
+        create_default_governor as create_governance_governor,
+        create_strict_governor as create_strict_governance_governor,
+        create_permissive_governor as create_permissive_governance_governor,
+    )
+    _HAS_GOVERNANCE_DOMAIN = True
+except ImportError:
+    _HAS_GOVERNANCE_DOMAIN = False
+
+try:
+    from .domains.cross_ecosystem import (
+        CrossEcosystemGovernor,
+        CrossEcosystemPolicy,
+        CrossEcosystemSignals,
+        TranslationTrustLevel,
+        ConsentStatus,
+        PrivacyBoundaries,
+        ContextPreservation,
+        EcosystemCapabilities,
+        TranslationPath,
+        GovernanceEvent,
+        KNOWN_ECOSYSTEMS,
+        create_default_governor as create_cross_ecosystem_governor,
+        create_strict_governor as create_strict_cross_ecosystem_governor,
+        create_permissive_governor as create_permissive_cross_ecosystem_governor,
+        create_health_data_signals,
+        create_wearable_continuity_signals,
+        check_ecosystem_compatibility,
+    )
+    _HAS_CROSS_ECOSYSTEM_DOMAIN = True
+except ImportError:
+    _HAS_CROSS_ECOSYSTEM_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "1.4.0"
+__version__ = "1.9.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
@@ -246,11 +288,59 @@ if _HAS_DATACENTERS_DOMAIN:
     __all__.append("DatacenterGovernor")
 if _HAS_AUTOMOBILES_DOMAIN:
     __all__.append("AutomobilesGovernor")
+if _HAS_GOVERNANCE_DOMAIN:
+    __all__.extend([
+        "GovernanceGovernor",
+        "GovernanceConfig",
+        "GovernanceSignal",
+        "GovernanceDecision",
+        "GovernanceTrustLevel",
+        "AuthorityStatus",
+        "ScopeStatus",
+        "TemporalStatus",
+        "create_governance_governor",
+        "create_strict_governance_governor",
+        "create_permissive_governance_governor",
+    ])
+if _HAS_CROSS_ECOSYSTEM_DOMAIN:
+    __all__.extend([
+        "CrossEcosystemGovernor",
+        "CrossEcosystemPolicy",
+        "CrossEcosystemSignals",
+        "TranslationTrustLevel",
+        "ConsentStatus",
+        "PrivacyBoundaries",
+        "ContextPreservation",
+        "EcosystemCapabilities",
+        "TranslationPath",
+        "GovernanceEvent",
+        "KNOWN_ECOSYSTEMS",
+        "create_cross_ecosystem_governor",
+        "create_strict_cross_ecosystem_governor",
+        "create_permissive_cross_ecosystem_governor",
+        "create_health_data_signals",
+        "create_wearable_continuity_signals",
+        "check_ecosystem_compatibility",
+    ])
 
 # =============================================================================
 # Convenience
 # =============================================================================
 def create_pipeline(preset_name: str = "balanced", **overrides):
+    """
+    Create an AILEE Trust Pipeline with a configuration preset.
+    
+    Args:
+        preset_name: Name of the configuration preset (e.g., "balanced", "conservative")
+        **overrides: Optional configuration parameters to override
+        
+    Returns:
+        AileeTrustPipeline: Configured pipeline instance
+        
+    Example:
+        >>> pipeline = create_pipeline("conservative", accept_threshold=0.9)
+        >>> result = pipeline.process(raw_value=0.85, raw_confidence=0.92)
+    """
     if not _HAS_CONFIG_PRESETS:
         raise ImportError("Configuration presets not available")
     config = get_preset(preset_name)
@@ -260,7 +350,89 @@ def create_pipeline(preset_name: str = "balanced", **overrides):
         config = AileeConfig(**cfg)
     return AileeTrustPipeline(config)
 
-__all__.append("create_pipeline")
+
+def get_available_domains():
+    """
+    Get list of available domain modules.
+    
+    Returns:
+        dict: Dictionary mapping domain names to availability status
+        
+    Example:
+        >>> domains = get_available_domains()
+        >>> if domains['governance']:
+        ...     from ailee import GovernanceGovernor
+    """
+    return {
+        "imaging": _HAS_IMAGING_DOMAIN,
+        "robotics": _HAS_ROBOTICS_DOMAIN,
+        "telecommunications": _HAS_TELECOMMUNICATIONS_DOMAIN,
+        "ocean": _HAS_OCEAN_DOMAIN,
+        "grids": _HAS_GRIDS_DOMAIN,
+        "datacenters": _HAS_DATACENTERS_DOMAIN,
+        "automobiles": _HAS_AUTOMOBILES_DOMAIN,
+        "governance": _HAS_GOVERNANCE_DOMAIN,
+        "cross_ecosystem": _HAS_CROSS_ECOSYSTEM_DOMAIN,
+    }
+
+
+def get_available_helpers():
+    """
+    Get list of available helper modules.
+    
+    Returns:
+        dict: Dictionary mapping helper module names to availability status
+        
+    Example:
+        >>> helpers = get_available_helpers()
+        >>> if helpers['monitors']:
+        ...     from ailee import TrustMonitor
+    """
+    return {
+        "config_presets": _HAS_CONFIG_PRESETS,
+        "peer_adapters": _HAS_PEER_ADAPTERS,
+        "monitors": _HAS_MONITORS,
+        "serialization": _HAS_SERIALIZATION,
+        "replay": _HAS_REPLAY,
+    }
+
+
+def print_available_modules():
+    """
+    Print a summary of available AILEE modules.
+    
+    Example:
+        >>> print_available_modules()
+        AILEE Trust Layer v1.9.0
+        
+        Core Modules:
+          ✓ Trust Pipeline
+          ✓ Configuration
+        ...
+    """
+    print(f"AILEE Trust Layer v{__version__}")
+    print()
+    print("Core Modules:")
+    print("  ✓ Trust Pipeline")
+    print("  ✓ Configuration")
+    print()
+    
+    helpers = get_available_helpers()
+    print("Helper Modules:")
+    for name, available in helpers.items():
+        status = "✓" if available else "✗"
+        print(f"  {status} {name}")
+    print()
+    
+    domains = get_available_domains()
+    print("Domain Modules:")
+    for name, available in domains.items():
+        status = "✓" if available else "✗"
+        print(f"  {status} {name}")
+    print()
+
+
+__all__.extend(["create_pipeline", "get_available_domains", "get_available_helpers", "print_available_modules"])
 
 # Allow explicit access to optional modules and domains namespace
 from . import optional
