@@ -1,4 +1,4 @@
-v1.9.0 — Clarified trust-boundary documentation and fixed a minor metadata typo. No behavioral changes.
+## v1.9.0 — Clarified trust-boundary documentation and fixed a minor metadata typo. No behavioral changes.
 
 ---
 
