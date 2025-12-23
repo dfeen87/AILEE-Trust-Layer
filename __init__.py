@@ -1,5 +1,5 @@
 """
-AILEE Trust Layer v1.4.0
+AILEE Trust Layer v1.9.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -122,6 +122,30 @@ try:
 except ImportError:
     _HAS_TELECOMMUNICATIONS_DOMAIN = False
 
+try:
+    from .domains.ocean import OceanGovernor
+    _HAS_OCEAN_DOMAIN = True
+except ImportError:
+    _HAS_OCEAN_DOMAIN = False
+
+try:
+    from .domains.grids import GridsGovernor
+    _HAS_GRIDS_DOMAIN = True
+except ImportError:
+    _HAS_GRIDS_DOMAIN = False
+
+try:
+    from .domains.datacenters import DatacenterGovernor
+    _HAS_DATACENTERS_DOMAIN = True
+except ImportError:
+    _HAS_DATACENTERS_DOMAIN = False
+
+try:
+    from .domains.automobiles import AutomobilesGovernor
+    _HAS_AUTOMOBILES_DOMAIN = True
+except ImportError:
+    _HAS_AUTOMOBILES_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
@@ -207,19 +231,25 @@ if _HAS_REPLAY:
         "ReplayRecord",
     ])
 
+# ---- Domains ----
 if _HAS_IMAGING_DOMAIN:
     __all__.append("ImagingDomain")
-
 if _HAS_ROBOTICS_DOMAIN:
     __all__.append("RoboticsDomain")
-
 if _HAS_TELECOMMUNICATIONS_DOMAIN:
     __all__.append("TelecomGovernor")
+if _HAS_OCEAN_DOMAIN:
+    __all__.append("OceanGovernor")
+if _HAS_GRIDS_DOMAIN:
+    __all__.append("GridsGovernor")
+if _HAS_DATACENTERS_DOMAIN:
+    __all__.append("DatacenterGovernor")
+if _HAS_AUTOMOBILES_DOMAIN:
+    __all__.append("AutomobilesGovernor")
 
 # =============================================================================
 # Convenience
 # =============================================================================
-
 def create_pipeline(preset_name: str = "balanced", **overrides):
     if not _HAS_CONFIG_PRESETS:
         raise ImportError("Configuration presets not available")
