@@ -1,3 +1,7 @@
+v1.9.0 — Clarified trust-boundary documentation and fixed a minor metadata typo. No behavioral changes.
+
+---
+
 ## Validation & Assurance Roadmap (v1.8.0)
 
 The **Governance** and **Cross-Ecosystem** domains intentionally do not include
