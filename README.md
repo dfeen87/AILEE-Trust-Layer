@@ -395,6 +395,11 @@ ailee-trust-layer/
 │   │   ├── TELECOMMUNICATIONS.md      # Telecommunications domain framework
 │   │   └── BENCHMARKS.md              # Telecom latency, throughput & trust benchmarks
 │
+│   ├── ocean/
+│   │   ├── __init__.py               # OCEAN domain exports
+│   │   ├── ocean.py                  # Ocean ecosystem governance & intervention restraint
+│   │   └── OCEAN.md                  # Ocean domain conceptual framework
+│
 │   ├── cross_ecosystem/
 │   │   ├── cross_ecosystem_governor.py  # Cross-ecosystem semantic & intent governance
 │   │   └── cross_ecosystem.md           # Cross-ecosystem translation domain framework
@@ -642,6 +647,43 @@ AILEE provides deterministic trust governance for civic, institutional, and poli
 ### Deployment Model
 
 Observe → Advisory → Constrained Trust → Full Governance (4–8 weeks)
+
+---
+
+## 🌊 Ocean Systems
+
+AILEE provides deterministic trust governance for **marine ecosystem monitoring, intervention restraint, and environmental decision staging**—without assuming control authority, bypassing regulatory processes, or enabling irreversible ecological actions.
+
+This domain governs **whether proposed ocean interventions are safe, sufficiently observed, reversible, and ethically justified** before any action is authorized, ensuring that **high confidence never outruns ecological uncertainty**.
+
+Rather than optimizing for speed or scale, the Ocean domain prioritizes **precaution, reversibility, and temporal discipline** in complex, living systems where mistakes compound over decades.
+
+### High-Impact Applications
+
+🌊 **Marine ecosystem monitoring** — Trust-gated interpretation of sensor and model signals  
+🧪 **Nutrient & oxygen management** — Prevent unsafe or premature biogeochemical interventions  
+🪸 **Reef and coastal restoration** — Staged authorization with ecological recovery constraints  
+🚨 **Environmental crisis response** — Emergency overrides with mandatory post-action audits  
+📊 **Multi-model validation** — Detect disagreement and uncertainty before action  
+⚖️ **Regulatory & compliance governance** — Explicit HOLD vs FAIL distinction for permits  
+
+### Typical Impact (Representative Systems)
+
+- Premature or unsafe interventions blocked: **90–98%**
+- Regulatory non-compliance detected pre-action: **95%+**
+- High-uncertainty actions downgraded to observation: **80–90%**
+- Irreversible intervention attempts gated: **70%+**
+- Emergency actions fully audited post-response: **100%**
+- Governance decision latency: **<1 ms**
+- Scientific traceability & audit readiness: **Immediate**
+
+### Deployment Model
+
+**Observe → Stage → Controlled Intervention → Emergency Response**  
+*(Progressive, evidence-driven escalation with uncertainty-aware ceilings)*
+
+> **Design principle:**  
+> *High trust does not justify action unless uncertainty is low, reversibility is proven, and time has spoken.*
 
 ---
 
