@@ -4,6 +4,11 @@ Single-file reference implementation for AI developers.
 
 Implements a layered trust/validation pipeline:
 
+NOTE:
+This pipeline begins at the trust boundary. The upstream model stage
+(raw data generation) is intentionally external and supplies
+`raw_value` and optional `raw_confidence` into this pipeline.
+
 1) Safety Layer      (confidence scoring + hard thresholds)
 2) Grace Layer (2A)  (borderline mediation using context + trend + forecast checks)
 3) Consensus Layer   (peer agreement + quorum)
@@ -581,7 +586,7 @@ class AileeTrustPipeline:
             "raw_value": raw_value,
             "raw_confidence": raw_confidence,
             "peer_count": len(peers),
-            "peer_values_sample"] = list(peers[:10]),
+            "peer_values_sample": list(peers[:10]),
         }
         meta["state"] = {
             "history_len": len(self.history),
