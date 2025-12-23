@@ -1,7 +1,7 @@
 # AILEE Trust Layer
 ### Adaptive Integrity Layer for AI Decision Systems
 
-[![Version](https://img.shields.io/badge/version-1.9.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
@@ -381,7 +381,7 @@ ailee-trust-layer/
 │   │   ├── __init__.py               # DATACENTERS domain exports
 │   │   ├── datacenters.py            # Data center governance & automation
 │   │   ├── DATACENTERS.md            # Data center domain framework
-│   │   └── BENCHMARKS.md             # Throughput, latency, and efficiency benchmarks
+│   │   └── BENCHMARKS.md             # Throughput, latency & efficiency benchmarks
 │
 │   ├── automobiles/
 │   │   ├── __init__.py               # AUTOMOBILES domain exports
@@ -398,15 +398,20 @@ ailee-trust-layer/
 │   ├── ocean/
 │   │   ├── __init__.py               # OCEAN domain exports
 │   │   ├── ocean.py                  # Ocean ecosystem governance & intervention restraint
-│   │   └── OCEAN.md                  # Ocean domain conceptual framework
+│   │   ├── OCEAN.md                  # Ocean domain conceptual framework
+│   │   └── BENCHMARKS.md              # Ocean safety, precaution & intervention benchmarks
 │
 │   ├── cross_ecosystem/
-│   │   ├── cross_ecosystem_governor.py  # Cross-ecosystem semantic & intent governance
-│   │   └── cross_ecosystem.md           # Cross-ecosystem translation domain framework
+│   │   ├── __init__.py               # CROSS_ECOSYSTEM domain exports
+│   │   ├── cross_ecosystem_governor.py # Cross-ecosystem semantic & intent governance
+│   │   ├── CROSS_ECOSYSTEM.md         # Cross-ecosystem translation domain framework
+│   │   └── BENCHMARKS.md              # Cross-ecosystem invariance & translation benchmarks
 │
 │   └── governance/
+│       ├── __init__.py               # GOVERNANCE domain exports
 │       ├── governance.py              # Civic, institutional & political trust governance
-│       └── GOVERNANCE.md              # Governance domain conceptual framework
+│       ├── GOVERNANCE.md              # Governance domain conceptual framework
+│       └── BENCHMARKS.md              # Authority, consent & compliance benchmarks
 │
 ├── optional/
 │   ├── __init__.py                   # Optional modules package
