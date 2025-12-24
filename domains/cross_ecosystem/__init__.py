@@ -42,7 +42,7 @@ Quick Start:
 ⚠️  Important: This module does NOT bypass platform security or modify hardware.
     It determines whether semantic translation is trustworthy enough to act upon.
 
-For detailed documentation, see: https://github.com/your-org/ailee-cross-ecosystem
+For detailed documentation, see: https://github.com/dfeen87/ailee-trust-layer
 """
 
 from .cross_ecosystem_governor import (
@@ -84,7 +84,7 @@ from .cross_ecosystem_governor import (
 )
 
 # Version info
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "AILEE Project"
 __license__ = "MIT"
 
@@ -616,9 +616,9 @@ FITNESS_DATA_CATEGORIES = [
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-__doc_url__ = "https://github.com/your-org/ailee-cross-ecosystem/docs"
-__source_url__ = "https://github.com/your-org/ailee-cross-ecosystem"
-__bug_tracker_url__ = "https://github.com/your-org/ailee-cross-ecosystem/issues"
+__doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"
 
 __description__ = (
     "AILEE Cross-Ecosystem Translation Domain: Governance for semantic state "

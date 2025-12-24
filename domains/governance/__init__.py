@@ -28,7 +28,7 @@ Quick Start:
     >>> if result.authorized_level >= GovernanceTrustLevel.CONSTRAINED_TRUST:
     ...     print("Authorized for constrained action")
 
-For detailed documentation, see: https://github.com/your-org/ailee-governance
+For detailed documentation, see: https://github.com/dfeen87/ailee-trust-layer
 """
 
 from .governance import (
@@ -46,7 +46,7 @@ from .governance import (
 )
 
 # Version info
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "AILEE Project"
 __license__ = "MIT"
 
@@ -253,6 +253,6 @@ def get_trust_level_description(level: GovernanceTrustLevel) -> str:
 
 
 # Package metadata
-__doc_url__ = "https://github.com/your-org/ailee-governance/docs"
-__source_url__ = "https://github.com/your-org/ailee-governance"
-__bug_tracker_url__ = "https://github.com/your-org/ailee-governance/issues"
+__doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"

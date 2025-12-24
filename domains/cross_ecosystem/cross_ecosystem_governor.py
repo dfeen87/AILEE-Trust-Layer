@@ -1032,7 +1032,7 @@ def get_translation_path_info(source: str, target: str) -> Dict[str, Any]:
     }
 
 
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __all__ = [
     "TranslationTrustLevel",
     "CrossEcosystemSignals",
