@@ -44,3 +44,8 @@ __all__ = [
     "AdaptiveStrategy",
     "default_imaging_config",
 ]
+
+__version__ = "2.0.0"
+__doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"
