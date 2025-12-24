@@ -46,8 +46,8 @@ setup(
         "AILEE",
     ],
     project_urls={
-        "Source": "https://github.com/your-username/ailee-trust-layer",
-        "Documentation": "https://github.com/your-username/ailee-trust-layer",
-        "Issues": "https://github.com/your-username/ailee-trust-layer/issues",
+        "Source": "https://github.com/dfeen87/ailee-trust-layer",
+        "Documentation": "https://github.com/dfeen87/ailee-trust-layer",
+        "Issues": "https://github.com/dfeen87/ailee-trust-layer/issues",
     },
 )
