@@ -177,7 +177,7 @@ print(result.reasons)          # Human-readable decision trace
 
 ---
 
-## New in v1.1.1 🚀
+## New in v2.0.0 🚀
 
 ### 17 Domain-Optimized Presets
 
@@ -837,7 +837,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v1.1.1**  
+**AILEE Trust Layer v2.0.0**  
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
