@@ -107,6 +107,7 @@ class AileeConfig:
     grace_forecast_epsilon: float = 0.15  # relative deviation allowed vs forecast
     grace_min_peer_agreement_ratio: float = 0.60  # fraction of peers within delta
     grace_peer_delta: float = 0.10    # absolute delta for peer agreement (domain-specific)
+    agreement_delta: Optional[float] = None  # override for confidence agreement (defaults to grace_peer_delta)
 
     # Consensus checks
     consensus_quorum: int = 2         # minimum peers required to attempt consensus
@@ -244,6 +245,15 @@ class AileeTrustPipeline:
                                                 raw_value=raw_value, raw_confidence=raw_confidence, peers=peers)
                     self._commit_result(ts, result, accepted=True)
                     return result
+                if consensus_status == ConsensusStatus.SKIPPED:
+                    reasons.append("Consensus SKIPPED after ACCEPTED -> accept raw_value.")
+                    value = raw_value
+                    result = self._final_result(value, safety_status, grace_status, consensus_status,
+                                                used_fallback=False, confidence_score=confidence_score,
+                                                reasons=reasons, meta=meta,
+                                                raw_value=raw_value, raw_confidence=raw_confidence, peers=peers)
+                    self._commit_result(ts, result, accepted=True)
+                    return result
                 # consensus fail -> fallback
                 reasons.append("Consensus FAIL after ACCEPTED -> fallback.")
                 value = self._fallback_value()
@@ -274,6 +284,15 @@ class AileeTrustPipeline:
                 if self.cfg.enable_consensus:
                     consensus_status = self._consensus_check(raw_value, peers, reasons, meta)
                     if consensus_status == ConsensusStatus.PASS:
+                        value = raw_value
+                        result = self._final_result(value, safety_status, grace_status, consensus_status,
+                                                    used_fallback=False, confidence_score=confidence_score,
+                                                    reasons=reasons, meta=meta,
+                                                    raw_value=raw_value, raw_confidence=raw_confidence, peers=peers)
+                        self._commit_result(ts, result, accepted=True)
+                        return result
+                    if consensus_status == ConsensusStatus.SKIPPED:
+                        reasons.append("Consensus SKIPPED after GRACE PASS -> accept raw_value.")
                         value = raw_value
                         result = self._final_result(value, safety_status, grace_status, consensus_status,
                                                     used_fallback=False, confidence_score=confidence_score,
@@ -337,13 +356,18 @@ class AileeTrustPipeline:
         return True
 
     def _safety_decision(self, confidence_score: float, reasons: List[str]) -> SafetyStatus:
-        if confidence_score >= self.cfg.accept_threshold:
-            reasons.append(f"Safety: ACCEPTED (confidence_score={confidence_score:.3f} >= {self.cfg.accept_threshold:.2f}).")
+        accept_threshold = self.cfg.accept_threshold
+        borderline_high = min(self.cfg.borderline_high, accept_threshold)
+        borderline_low = min(self.cfg.borderline_low, borderline_high)
+        if borderline_high != self.cfg.borderline_high or borderline_low != self.cfg.borderline_low:
+            reasons.append("Safety: thresholds normalized to maintain ordering.")
+        if confidence_score >= accept_threshold:
+            reasons.append(f"Safety: ACCEPTED (confidence_score={confidence_score:.3f} >= {accept_threshold:.2f}).")
             return SafetyStatus.ACCEPTED
-        if self.cfg.borderline_low <= confidence_score < self.cfg.borderline_high:
-            reasons.append(f"Safety: BORDERLINE ({self.cfg.borderline_low:.2f} <= {confidence_score:.3f} < {self.cfg.borderline_high:.2f}).")
+        if borderline_low <= confidence_score < borderline_high:
+            reasons.append(f"Safety: BORDERLINE ({borderline_low:.2f} <= {confidence_score:.3f} < {borderline_high:.2f}).")
             return SafetyStatus.BORDERLINE
-        reasons.append(f"Safety: OUTRIGHT_REJECTED (confidence_score={confidence_score:.3f} < {self.cfg.borderline_low:.2f}).")
+        reasons.append(f"Safety: OUTRIGHT_REJECTED (confidence_score={confidence_score:.3f} < {borderline_low:.2f}).")
         return SafetyStatus.OUTRIGHT_REJECTED
 
     def _confidence_score(
@@ -367,7 +391,8 @@ class AileeTrustPipeline:
         variance = _safe_variance(hist_vals)
         stability = 1.0 / (1.0 + variance)  # 0..1-ish
 
-        agreement = self._agreement_score(raw_value, peers, delta=self.cfg.grace_peer_delta)
+        agreement_delta = self.cfg.agreement_delta if self.cfg.agreement_delta is not None else self.cfg.grace_peer_delta
+        agreement = self._agreement_score(raw_value, peers, delta=agreement_delta)
         likelihood = self._likelihood_score(raw_value, hist_vals, max_abs_z=self.cfg.grace_max_abs_z)
 
         score = (
@@ -427,6 +452,12 @@ class AileeTrustPipeline:
         """
         hist = _rolling(self.history, self.cfg.forecast_window)
         hist_vals = [v for _, v in hist]
+
+        if len(hist_vals) < 3 and not peers:
+            reasons.append("Grace: FAIL (insufficient history and peers).")
+            if self.cfg.enable_audit_metadata:
+                meta["grace"] = {"passed_checks": [], "forecast": None}
+            return GraceStatus.FAIL
 
         passed_checks: List[str] = []
 
@@ -538,7 +569,13 @@ class AileeTrustPipeline:
             return float(self.last_good_value)
 
         if not hist_vals:
-            # No history: safest is 0.0 (caller can set clamps/hard bounds for domain)
+            if self.cfg.hard_min is not None and self.cfg.hard_max is not None:
+                return float((self.cfg.hard_min + self.cfg.hard_max) / 2.0)
+            if self.cfg.hard_min is not None:
+                return float(self.cfg.hard_min)
+            if self.cfg.hard_max is not None:
+                return float(self.cfg.hard_max)
+            # No history and no bounds: safest is 0.0 (caller can set clamps/hard bounds for domain)
             return 0.0
 
         if self.cfg.fallback_mode == "mean":
