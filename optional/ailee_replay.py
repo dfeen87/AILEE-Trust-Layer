@@ -7,10 +7,11 @@ execution for debugging, testing, regression analysis, and audit verification.
 """
 
 from typing import Any, Dict, List, Optional, Tuple
-from dataclasses import dataclass, field, asdict
+from dataclasses import dataclass, field, asdict, is_dataclass
 import json
 import time
 from pathlib import Path
+from enum import Enum
 
 
 @dataclass
@@ -61,12 +62,7 @@ class ReplayBuffer:
             >>> result = pipeline.process(**inputs)
             >>> buffer.record(inputs, result)
         """
-        # Convert result to dict if it's a dataclass
-        if hasattr(result, '__dataclass_fields__'):
-            from dataclasses import asdict
-            result_dict = asdict(result)
-        else:
-            result_dict = result
+        result_dict = self._normalize_result(result)
         
         record = ReplayRecord(
             inputs=dict(inputs),
@@ -138,13 +134,7 @@ class ReplayBuffer:
         
         for i, (record, replayed_result) in enumerate(zip(self.records, replayed)):
             original = record.result
-            
-            # Convert replayed result to dict if needed
-            if hasattr(replayed_result, '__dataclass_fields__'):
-                from dataclasses import asdict
-                replayed_dict = asdict(replayed_result)
-            else:
-                replayed_dict = replayed_result
+            replayed_dict = self._normalize_result(replayed_result)
             
             # Compare key fields
             value_match = abs(original['value'] - replayed_dict['value']) <= tolerance
@@ -236,6 +226,19 @@ class ReplayBuffer:
         buffer._record_count = len(buffer.records)
         
         return buffer
+
+    def _normalize_result(self, result: Any) -> Dict[str, Any]:
+        if is_dataclass(result):
+            data = asdict(result)
+        elif isinstance(result, dict):
+            data = dict(result)
+        else:
+            raise TypeError("ReplayBuffer requires DecisionResult or dict-like results.")
+
+        for key in ("safety_status", "grace_status", "consensus_status"):
+            if key in data and isinstance(data[key], Enum):
+                data[key] = data[key].value
+        return data
     
     def filter_by_status(
         self, 

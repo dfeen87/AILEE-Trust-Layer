@@ -19,7 +19,7 @@ Designed for:
 - ISO 26262 / UL 4600 aligned workflows
 """
 
-from .autonomy_governor import (
+from .ailee_automotive_domain import (
     # Core enums / signals
     AutonomyLevel,
     AutonomySignals,

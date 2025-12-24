@@ -38,7 +38,7 @@ Quick Start:
 Primary entry point: OceanGovernor
 Quick start with: create_ocean_governor()
 
-For detailed documentation, see: https://github.com/your-org/ailee/docs/ocean
+For detailed documentation, see: https://github.com/dfeen87/ailee-trust-layer
 """
 
 from .ocean import (
@@ -86,7 +86,7 @@ from .ocean import (
     FLAG_SEVERITY,
 )
 
-__version__ = "1.0.1"
+__version__ = "2.0.0"
 __author__ = "AILEE Project"
 __license__ = "MIT"
 
@@ -563,9 +563,9 @@ INTERVENTION_RISK_CATEGORIES = {
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-__doc_url__ = "https://github.com/your-org/ailee/docs/domains/ocean"
-__source_url__ = "https://github.com/your-org/ailee"
-__bug_tracker_url__ = "https://github.com/your-org/ailee/issues"
+__doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"
 
 __description__ = (
     "AILEE Ocean Domain: Governance and restraint framework for marine ecosystem "

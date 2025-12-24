@@ -262,7 +262,9 @@ class WeightedPeerAdapter:
         
         # Normalize weights
         total = sum(weights)
-        self.weights = [w / total for w in weights] if total > 0 else weights
+        if total <= 0:
+            raise ValueError("Weights must sum to a positive value")
+        self.weights = [w / total for w in weights]
         self.mode = mode
     
     def get_peer_values(self) -> List[float]:
