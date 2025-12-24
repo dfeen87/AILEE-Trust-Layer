@@ -19,6 +19,12 @@ def _enum_serializer(obj: Any) -> Any:
     raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
 
 
+def _serialize_status(value: Any) -> Any:
+    if isinstance(value, Enum):
+        return value.value
+    return value
+
+
 def decision_to_dict(result) -> Dict[str, Any]:
     """
     Convert a DecisionResult to a dictionary.
@@ -39,13 +45,13 @@ def decision_to_dict(result) -> Dict[str, Any]:
     
     data = asdict(result)
     
-    # Ensure enums are converted to strings
+    # Ensure enums are converted to their string values
     if 'safety_status' in data:
-        data['safety_status'] = str(data['safety_status'])
+        data['safety_status'] = _serialize_status(data['safety_status'])
     if 'grace_status' in data:
-        data['grace_status'] = str(data['grace_status'])
+        data['grace_status'] = _serialize_status(data['grace_status'])
     if 'consensus_status' in data:
-        data['consensus_status'] = str(data['consensus_status'])
+        data['consensus_status'] = _serialize_status(data['consensus_status'])
     
     return data
 
