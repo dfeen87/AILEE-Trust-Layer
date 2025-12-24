@@ -177,7 +177,7 @@ print(result.reasons)          # Human-readable decision trace
 
 ---
 
-## New in v1.1.1 🚀
+## New in v2.0.0 🚀
 
 ### 17 Domain-Optimized Presets
 
@@ -714,9 +714,9 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v1.1.1 (Production/Stable)
+### Current: v2.0.0 (Production/Stable)
 
-AILEE Trust Layer **v1.1.1** is production-ready with enterprise features:
+AILEE Trust Layer **v2.0.0** is production-ready with enterprise features:
 
 ✅ 17 domain-optimized presets  
 ✅ Advanced peer adapters for multi-model systems  
@@ -801,7 +801,7 @@ If you use AILEE in research or production, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {1.1.0},
+  version = {2.0.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -837,7 +837,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v1.1.1**  
+**AILEE Trust Layer v2.0.0**  
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
