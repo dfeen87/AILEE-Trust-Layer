@@ -42,10 +42,10 @@ Quick Start:
 ⚠️  Important: This module does NOT bypass platform security or modify hardware.
     It determines whether semantic translation is trustworthy enough to act upon.
 
-For detailed documentation, see: https://github.com/your-org/ailee-cross-ecosystem
+For detailed documentation, see: https://github.com/dfeen87/ailee-trust-layer
 """
 
-from .cross_ecosystem_translation import (
+from .cross_ecosystem_governor import (
     # Core Classes
     CrossEcosystemGovernor,
     CrossEcosystemPolicy,
@@ -84,7 +84,7 @@ from .cross_ecosystem_translation import (
 )
 
 # Version info
-__version__ = "1.0.0"
+__version__ = "2.0.0"
 __author__ = "AILEE Project"
 __license__ = "MIT"
 
@@ -124,7 +124,6 @@ __all__ = [
     # Signal Builders
     "create_health_data_signals",
     "create_wearable_continuity_signals",
-    "create_fitness_tracker_signals",
     "create_consent_violation_signals",
     "create_low_fidelity_signals",
     
@@ -132,9 +131,6 @@ __all__ = [
     "validate_signals",
     "export_events_to_dict",
     "get_translation_path_info",
-    "is_translation_authorized",
-    "get_supported_ecosystems",
-    "check_ecosystem_compatibility",
     
     # Version
     "__version__",
@@ -169,7 +165,7 @@ def create_strict_governor(**policy_overrides) -> CrossEcosystemGovernor:
         >>> signals = create_health_data_signals()
         >>> level, decision = governor.evaluate(signals)
     """
-    from .cross_ecosystem_translation import CrossEcosystemPolicy
+    from .cross_ecosystem_governor import CrossEcosystemPolicy
     
     strict_policy = {
         "min_semantic_fidelity_for_advisory": 0.80,
@@ -221,7 +217,7 @@ def create_permissive_governor(**policy_overrides) -> CrossEcosystemGovernor:
         >>> signals = create_health_data_signals(fidelity=0.65)
         >>> level, decision = governor.evaluate(signals)
     """
-    from .cross_ecosystem_translation import CrossEcosystemPolicy
+    from .cross_ecosystem_governor import CrossEcosystemPolicy
     
     permissive_policy = {
         "min_semantic_fidelity_for_advisory": 0.50,
@@ -620,9 +616,9 @@ FITNESS_DATA_CATEGORIES = [
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 
-__doc_url__ = "https://github.com/your-org/ailee-cross-ecosystem/docs"
-__source_url__ = "https://github.com/your-org/ailee-cross-ecosystem"
-__bug_tracker_url__ = "https://github.com/your-org/ailee-cross-ecosystem/issues"
+__doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
+__bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"
 
 __description__ = (
     "AILEE Cross-Ecosystem Translation Domain: Governance for semantic state "
