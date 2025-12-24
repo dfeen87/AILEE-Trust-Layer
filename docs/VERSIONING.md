@@ -14,7 +14,7 @@ Versions follow semantic versioning:
 MAJOR.MINOR.PATCH
 ```
 
-Example: `1.1.0`
+Example: `2.0.0`
 
 ---
 
@@ -35,7 +35,7 @@ This includes:
 
 ---
 
-## Minor Versions (1.X.0)
+## Minor Versions (2.X.0)
 
 Minor versions introduce **additive, backward-compatible improvements**.
 
@@ -49,11 +49,11 @@ This may include:
 
 Minor releases will **never alter existing behavior**.
 
-**All v1.0.0 code runs identically on v1.1.0+**
+**All v2.0.0 code runs identically on v2.1.0+**
 
 ---
 
-## Patch Versions (1.0.X)
+## Patch Versions (2.0.X)
 
 Patch versions are reserved for:
 - Bug fixes that restore intended behavior
@@ -66,9 +66,9 @@ Patch releases will **not change outputs for identical inputs**.
 
 ---
 
-## Stability Guarantees (v1.x)
+## Stability Guarantees (v2.x)
 
-Within the v1 series, AILEE Trust Layer guarantees:
+Within the v2 series, AILEE Trust Layer guarantees:
 
 ✅ **Stable public APIs** — No function signature changes  
 ✅ **Stable trust semantics** — Identical inputs = identical trust decisions  
@@ -76,7 +76,7 @@ Within the v1 series, AILEE Trust Layer guarantees:
 ✅ **No silent changes** — All changes documented in changelog  
 ✅ **No forced migrations** — Upgrades are opt-in and safe  
 
-Users can upgrade within v1.x with confidence.
+Users can upgrade within v2.x with confidence.
 
 ---
 
@@ -117,9 +117,9 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 ## Version History & Changelog
 
-### v1.1.0 (January 17, 2025) — Production Arsenal Release
+### v2.0.0 (December 17, 2025) — Major Release
 
-**Type:** Minor (Additive, Backward Compatible)
+**Type:** Major (Breaking Changes)
 
 **New Features:**
 - ✅ 17 domain-optimized configuration presets
@@ -139,7 +139,7 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 **Migration Required:** No
 
-**Backward Compatibility:** 100% — All v1.0.0 code runs unchanged
+**Backward Compatibility:** Not guaranteed — see migration guidance
 
 ---
 
@@ -169,7 +169,7 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 ## Upcoming Releases
 
-### v1.2.0 (Planned)
+### v2.1.0 (Planned)
 
 **Tentative Features:**
 - Streaming support for real-time pipelines
@@ -182,19 +182,6 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 **Timeline:** TBD based on production feedback
 
 **The core architecture will remain stable.**
-
----
-
-### v2.0.0 (Future)
-
-A v2.0.0 release would only be considered if:
-- Fundamental trust semantics require revision
-- Core pipeline architecture needs restructuring
-- Industry standards demand incompatible changes
-
-**Current Status:** Not planned
-
-**Commitment:** v1.x will be maintained for minimum 2 years from v2.0.0 release.
 
 ---
 
@@ -220,7 +207,8 @@ Security patches will be:
 - Documented with CVE numbers when applicable
 
 **Current security support:**
-- v1.x: Full support
+- v2.x: Full support
+- v1.x: Security support only
 - v0.x: No longer supported (if any existed)
 
 ---
@@ -229,8 +217,9 @@ Security patches will be:
 
 | Version | Status | Support End Date |
 |---------|--------|------------------|
-| v1.1.x | **Current** | Until v2.0.0 + 2 years |
-| v1.0.x | Supported | Until v1.2.0 + 6 months |
+| v2.0.x | **Current** | TBD |
+| v1.1.x | Supported | Until v2.0.0 + 2 years |
+| v1.0.x | Supported | Until v2.0.0 + 6 months |
 | v0.x | Not applicable | N/A |
 
 ---
@@ -242,7 +231,7 @@ Community contributions follow the same versioning rules:
 - Bug fixes → Patch release
 - Breaking changes → Require maintainer approval and major version planning
 
-All contributions must maintain backward compatibility within v1.x.
+All contributions must maintain backward compatibility within v2.x.
 
 ---
 
@@ -252,7 +241,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "1.1.0"
+print(ailee.__version__)  # "2.0.0"
 print(ailee.get_info())   # Full package info
 ```
 
@@ -266,8 +255,8 @@ pip show ailee-trust-layer
 
 ## Summary
 
-- **v1.x is stable** and safe for production
-- **Breaking changes require v2.0.0** (not planned)
+- **v2.x is stable** and safe for production
+- **Breaking changes require v3.0.0**
 - **Additive improvements** remain backward-compatible
 - **Documentation and clarity** are first-class concerns
 - **Security patches** are prioritized and immediate

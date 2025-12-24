@@ -1,5 +1,5 @@
 """
-AILEE Trust Pipeline — v1.0.0
+AILEE Trust Pipeline — v2.0.0
 Single-file reference implementation for AI developers.
 
 Implements a layered trust/validation pipeline:
@@ -209,6 +209,7 @@ class AileeTrustPipeline:
         if not self._within_hard_bounds(raw_value):
             reasons.append("Hard envelope violation: raw_value outside [hard_min, hard_max].")
             value = self._fallback_value()
+            value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
             value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
             result = DecisionResult(
                 value=value,
@@ -246,6 +247,7 @@ class AileeTrustPipeline:
                 # consensus fail -> fallback
                 reasons.append("Consensus FAIL after ACCEPTED -> fallback.")
                 value = self._fallback_value()
+                value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
                 value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
                 result = self._final_result(value, safety_status, grace_status, consensus_status,
                                             used_fallback=True, confidence_score=confidence_score,
@@ -281,6 +283,7 @@ class AileeTrustPipeline:
                         return result
                     reasons.append("Consensus FAIL after GRACE PASS -> fallback.")
                     value = self._fallback_value()
+                    value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
                     value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
                     result = self._final_result(value, safety_status, grace_status, consensus_status,
                                                 used_fallback=True, confidence_score=confidence_score,
@@ -301,6 +304,7 @@ class AileeTrustPipeline:
             # Grace FAIL -> fallback
             reasons.append("Grace FAIL -> fallback.")
             value = self._fallback_value()
+            value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
             value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
             result = self._final_result(value, safety_status, grace_status, consensus_status,
                                         used_fallback=True, confidence_score=confidence_score,
@@ -312,6 +316,7 @@ class AileeTrustPipeline:
         # OUTRIGHT REJECTED or borderline with grace disabled -> fallback
         reasons.append(f"Safety status {safety_status.value} -> fallback.")
         value = self._fallback_value()
+        value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
         value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
         result = self._final_result(value, safety_status, grace_status, consensus_status,
                                     used_fallback=True, confidence_score=confidence_score,
