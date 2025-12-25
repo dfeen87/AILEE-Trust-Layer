@@ -353,7 +353,7 @@ If the system acts, you can explain **why**.
 
 ```
 ailee-trust-layer/
-├── ailee_trust_pipeline_v1.py        # Core AILEE trust pipeline (required)
+├── ailee_trust_pipeline_v1.py        # Core AILEE trust evaluation pipeline
 ├── __init__.py                       # Package initialization
 │
 ├── domains/                          # Domain-specific governance layers
@@ -361,7 +361,7 @@ ailee-trust-layer/
 │
 │   ├── imaging/
 │   │   ├── __init__.py               # IMAGING domain exports
-│   │   ├── imaging.py                # Imaging governance (QA, safety, efficiency)
+│   │   ├── imaging.py                # Imaging QA, safety & efficiency governance
 │   │   ├── IMAGING.md                # Imaging domain conceptual framework
 │   │   └── BENCHMARKS.md             # Imaging performance & validation benchmarks
 │
@@ -373,7 +373,7 @@ ailee-trust-layer/
 │
 │   ├── grids/
 │   │   ├── __init__.py               # GRIDS domain exports
-│   │   ├── grids.py                  # Power grid governance & load optimization
+│   │   ├── grids.py                  # Power grid trust & load governance
 │   │   ├── GRIDS.md                  # Power grid domain framework
 │   │   └── BENCHMARKS.md             # Grid stability & resilience benchmarks
 │
@@ -385,39 +385,45 @@ ailee-trust-layer/
 │
 │   ├── automobiles/
 │   │   ├── __init__.py               # AUTOMOBILES domain exports
-│   │   ├── automobiles.py            # Automotive AI governance & safety controls
-│   │   ├── AUTOMOBILES.md            # Automotive domain framework
-│   │   └── BENCHMARKS.md             # Automotive safety, latency & ODD benchmarks
+│   │   ├── automobiles.py            # Automotive AI safety & ODD governance
+│   │   ├── AUTOMOBILES.md            # Automotive domain conceptual framework
+│   │   └── BENCHMARKS.md             # Automotive safety & latency benchmarks
 │
 │   ├── telecommunications/
 │   │   ├── __init__.py               # TELECOMMUNICATIONS domain exports
-│   │   ├── telecommunications.py     # Network trust, freshness & quality governance
+│   │   ├── telecommunications.py     # Network trust, freshness & QoS governance
 │   │   ├── TELECOMMUNICATIONS.md      # Telecommunications domain framework
 │   │   └── BENCHMARKS.md              # Telecom latency, throughput & trust benchmarks
 │
 │   ├── ocean/
 │   │   ├── __init__.py               # OCEAN domain exports
-│   │   ├── ocean.py                  # Ocean ecosystem governance & intervention restraint
+│   │   ├── ocean.py                  # Ocean ecosystem governance & restraint
 │   │   ├── OCEAN.md                  # Ocean domain conceptual framework
-│   │   └── BENCHMARKS.md              # Ocean safety, precaution & intervention benchmarks
+│   │   └── BENCHMARKS.md              # Ocean safety & intervention benchmarks
 │
 │   ├── cross_ecosystem/
 │   │   ├── __init__.py               # CROSS_ECOSYSTEM domain exports
-│   │   ├── cross_ecosystem_governor.py # Cross-ecosystem semantic & intent governance
-│   │   ├── CROSS_ECOSYSTEM.md         # Cross-ecosystem translation domain framework
-│   │   └── BENCHMARKS.md              # Cross-ecosystem invariance & translation benchmarks
+│   │   ├── cross_ecosystem_governor.py # Cross-domain semantic & intent governance
+│   │   ├── CROSS_ECOSYSTEM.md         # Cross-ecosystem translation framework
+│   │   └── BENCHMARKS.md              # Invariance & translation benchmarks
 │
-│   └── governance/
-│       ├── __init__.py               # GOVERNANCE domain exports
-│       ├── governance.py              # Civic, institutional & political trust governance
-│       ├── GOVERNANCE.md              # Governance domain conceptual framework
-│       └── BENCHMARKS.md              # Authority, consent & compliance benchmarks
+│   ├── governance/
+│   │   ├── __init__.py               # GOVERNANCE domain exports
+│   │   ├── governance.py              # Civic, institutional & political governance
+│   │   ├── GOVERNANCE.md              # Governance domain conceptual framework
+│   │   └── BENCHMARKS.md              # Authority, consent & compliance benchmarks
+│
+│   └── neuro_assistive/
+│       ├── __init__.py               # NEURO-ASSISTIVE domain exports
+│       ├── neuro_assistive.py         # Cognitive assistance & autonomy governance
+│       ├── NEURO_ASSISTIVE.md         # Neuro-assistive domain framework
+│       └── BENCHMARKS.md              # Consent, cognition & safety benchmarks
 │
 ├── optional/
-│   ├── __init__.py                   # Optional modules package
+│   ├── __init__.py                   # Optional modules namespace
 │   ├── ailee_config_presets.py       # Domain-ready policy presets
-│   ├── ailee_peer_adapters.py        # Multi-model / multi-path consensus helpers
-│   ├── ailee_monitors.py             # Observability, alerts, telemetry hooks
+│   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
+│   ├── ailee_monitors.py             # Observability & telemetry hooks
 │   ├── ailee_serialization.py        # Audit trails & structured logging
 │   └── ailee_replay.py               # Deterministic replay & regression testing
 │
@@ -425,7 +431,7 @@ ailee-trust-layer/
 │   ├── GRACE_LAYER.md                # Grace mediation & override logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability & compliance schema
 │   ├── VERSIONING.md                 # Versioning strategy & changelog rules
-│   └── whitepaper/                   # Full architectural & theoretical foundation
+│   └── whitepaper/                   # Full theoretical & architectural foundation
 │
 ├── LICENSE                           # MIT License
 ├── README.md                         # Project overview & usage
@@ -689,6 +695,35 @@ Rather than optimizing for speed or scale, the Ocean domain prioritizes **precau
 
 > **Design principle:**  
 > *High trust does not justify action unless uncertainty is low, reversibility is proven, and time has spoken.*
+
+---
+
+### 🧠 Neuro-Assistive & Cognitive Support Systems
+
+AILEE provides a **governance layer** for AI systems that assist human cognition, communication,
+and perception — ensuring that assistance is delivered **only when it preserves autonomy,
+consent, identity, and human dignity**.
+
+This domain is explicitly designed for *assistive companionship*, not cognitive control.
+
+**Governed Decisions**
+- Authorization of cognitive assistance based on trust, clarity, and cognitive state
+- Dynamic assistance level gating (observe → prompt → guide → simplify)
+- Consent validation, expiration handling, and periodic reaffirmation
+- Cognitive load–aware escalation and graceful degradation
+- Emergency simplification during overload or acute distress
+- Over-assistance detection and autonomy preservation
+
+**Typical Use Cases**
+- Cognitive assistance for neurological conditions (aphasia, TBI, neurodegeneration)
+- AI companions for communication, memory, and task support
+- Accessibility systems for speech, language, and executive function
+- Mental health and well-being support tools (non-clinical, assistive)
+- Assistive interfaces for education, rehabilitation, and daily living
+- Audit-safe assistive AI for healthcare-adjacent environments
+
+> AILEE **does not think for the user** — it determines *when, how, and how much assistance is appropriate*,  
+> acting as a **stabilizing companion, not a cognitive authority**.
 
 ---
 
