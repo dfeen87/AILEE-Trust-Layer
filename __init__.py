@@ -188,6 +188,33 @@ try:
 except ImportError:
     _HAS_CROSS_ECOSYSTEM_DOMAIN = False
 
+try:
+    from .domains.neuro_assistive import (
+        NeuroGovernor,
+        NeuroAssistivePolicy,
+        NeuroSignals,
+        NeuroDecisionResult,
+        NeuroEvent,
+        CognitiveState,
+        AssistanceLevel,
+        AssistanceOutcome,
+        ImpairmentCategory,
+        ConsentStatus as NeuroConsentStatus,
+        ConsentRecord,
+        InterpretationResult,
+        CognitiveLoadMetrics,
+        SessionMetrics,
+        TemporalSafeguards,
+        AssistanceConstraints,
+        PolicyEvaluator,
+        CognitiveStateTracker,
+        create_neuro_governor,
+        validate_neuro_signals,
+    )
+    _HAS_NEURO_ASSISTIVE_DOMAIN = True
+except ImportError:
+    _HAS_NEURO_ASSISTIVE_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
@@ -322,6 +349,29 @@ if _HAS_CROSS_ECOSYSTEM_DOMAIN:
         "create_wearable_continuity_signals",
         "check_ecosystem_compatibility",
     ])
+if _HAS_NEURO_ASSISTIVE_DOMAIN:
+    __all__.extend([
+        "NeuroGovernor",
+        "NeuroAssistivePolicy",
+        "NeuroSignals",
+        "NeuroDecisionResult",
+        "NeuroEvent",
+        "CognitiveState",
+        "AssistanceLevel",
+        "AssistanceOutcome",
+        "ImpairmentCategory",
+        "NeuroConsentStatus",
+        "ConsentRecord",
+        "InterpretationResult",
+        "CognitiveLoadMetrics",
+        "SessionMetrics",
+        "TemporalSafeguards",
+        "AssistanceConstraints",
+        "PolicyEvaluator",
+        "CognitiveStateTracker",
+        "create_neuro_governor",
+        "validate_neuro_signals",
+    ])
 
 # =============================================================================
 # Convenience
@@ -373,6 +423,7 @@ def get_available_domains():
         "automobiles": _HAS_AUTOMOBILES_DOMAIN,
         "governance": _HAS_GOVERNANCE_DOMAIN,
         "cross_ecosystem": _HAS_CROSS_ECOSYSTEM_DOMAIN,
+        "neuro_assistive": _HAS_NEURO_ASSISTIVE_DOMAIN,
     }
 
 
@@ -403,7 +454,7 @@ def print_available_modules():
     
     Example:
         >>> print_available_modules()
-        AILEE Trust Layer v1.9.0
+        AILEE Trust Layer v2.0.0
         
         Core Modules:
           ✓ Trust Pipeline
