@@ -215,6 +215,36 @@ try:
 except ImportError:
     _HAS_NEURO_ASSISTIVE_DOMAIN = False
 
+try:
+    from .domains.auditory import (
+        AuditoryGovernor,
+        AuditoryGovernancePolicy,
+        AuditorySignals,
+        AuditoryDecision,
+        AuditoryEvent,
+        OutputAuthorizationLevel,
+        ListeningMode,
+        UserSafetyProfile,
+        DecisionOutcome,
+        RegulatoryGateResult,
+        HearingProfile,
+        EnvironmentMetrics,
+        EnhancementMetrics,
+        ComfortMetrics,
+        DeviceHealth,
+        AuditoryUncertainty,
+        AuditoryDecisionDelta,
+        AuditoryPolicyEvaluator,
+        AuditoryUncertaintyCalculator,
+        default_auditory_config,
+        create_auditory_governor,
+        validate_auditory_signals,
+        AUDITORY_FLAG_SEVERITY,
+    )
+    _HAS_AUDITORY_DOMAIN = True
+except ImportError:
+    _HAS_AUDITORY_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
@@ -372,6 +402,32 @@ if _HAS_NEURO_ASSISTIVE_DOMAIN:
         "create_neuro_governor",
         "validate_neuro_signals",
     ])
+if _HAS_AUDITORY_DOMAIN:
+    __all__.extend([
+        "AuditoryGovernor",
+        "AuditoryGovernancePolicy",
+        "AuditorySignals",
+        "AuditoryDecision",
+        "AuditoryEvent",
+        "OutputAuthorizationLevel",
+        "ListeningMode",
+        "UserSafetyProfile",
+        "DecisionOutcome",
+        "RegulatoryGateResult",
+        "HearingProfile",
+        "EnvironmentMetrics",
+        "EnhancementMetrics",
+        "ComfortMetrics",
+        "DeviceHealth",
+        "AuditoryUncertainty",
+        "AuditoryDecisionDelta",
+        "AuditoryPolicyEvaluator",
+        "AuditoryUncertaintyCalculator",
+        "default_auditory_config",
+        "create_auditory_governor",
+        "validate_auditory_signals",
+        "AUDITORY_FLAG_SEVERITY",
+    ])
 
 # =============================================================================
 # Convenience
@@ -424,6 +480,7 @@ def get_available_domains():
         "governance": _HAS_GOVERNANCE_DOMAIN,
         "cross_ecosystem": _HAS_CROSS_ECOSYSTEM_DOMAIN,
         "neuro_assistive": _HAS_NEURO_ASSISTIVE_DOMAIN,
+        "auditory": _HAS_AUDITORY_DOMAIN,
     }
 
 
