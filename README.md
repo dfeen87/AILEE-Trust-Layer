@@ -403,7 +403,7 @@ ailee-trust-layer/
 │
 │   ├── cross_ecosystem/
 │   │   ├── __init__.py               # CROSS_ECOSYSTEM domain exports
-│   │   ├── cross_ecosystem_governor.py # Cross-domain semantic & intent governance
+│   │   ├── cross_ecosystem.py         # Cross-domain semantic & intent governance
 │   │   ├── CROSS_ECOSYSTEM.md         # Cross-ecosystem translation framework
 │   │   └── BENCHMARKS.md              # Invariance & translation benchmarks
 │
@@ -413,11 +413,15 @@ ailee-trust-layer/
 │   │   ├── GOVERNANCE.md              # Governance domain conceptual framework
 │   │   └── BENCHMARKS.md              # Authority, consent & compliance benchmarks
 │
-│   └── neuro_assistive/
-│       ├── __init__.py               # NEURO-ASSISTIVE domain exports
-│       ├── neuro_assistive.py         # Cognitive assistance & autonomy governance
-│       ├── NEURO_ASSISTIVE.md         # Neuro-assistive domain framework
-│       └── BENCHMARKS.md              # Consent, cognition & safety benchmarks
+│   ├── neuro_assistive/
+│   │   ├── __init__.py               # NEURO-ASSISTIVE domain exports
+│   │   ├── neuro_assistive.py         # Cognitive assistance & autonomy governance
+│   │   ├── NEURO_ASSISTIVE.md         # Neuro-assistive domain framework
+│   │   └── BENCHMARKS.md              # Consent, cognition & safety benchmarks
+│
+│   └── auditory/
+│       ├── __init__.py               # AUDITORY domain exports
+│       └── auditory.py                # Auditory safety, comfort & enhancement governance
 │
 ├── optional/
 │   ├── __init__.py                   # Optional modules namespace
@@ -724,6 +728,37 @@ This domain is explicitly designed for *assistive companionship*, not cognitive 
 
 > AILEE **does not think for the user** — it determines *when, how, and how much assistance is appropriate*,  
 > acting as a **stabilizing companion, not a cognitive authority**.
+
+---
+
+### 👂 Auditory & Assistive Listening Systems
+
+AILEE provides a **governance layer** for AI-enhanced auditory systems — ensuring that sound enhancement,
+speech amplification, and environmental audio processing are delivered **only when they are safe,
+beneficial, and respectful of human hearing limits**.
+
+This domain is explicitly designed for *hearing support and protection*, not aggressive amplification
+or autonomous audio control.
+
+**Governed Decisions**
+- Authorization of auditory enhancement based on trust, clarity, and environmental conditions
+- Dynamic output level gating (pass-through → safety-limited → comfort-optimized → full enhancement)
+- Loudness caps and safety margins aligned to hearing profiles and policy limits
+- Speech intelligibility and noise-reduction quality validation
+- Latency and artifact monitoring to preserve natural listening
+- Feedback, clipping, and device-health-aware degradation
+- Fatigue and discomfort-aware output moderation over time
+
+**Typical Use Cases**
+- Hearing aids, cochlear processors, and assistive listening devices
+- Speech enhancement for accessibility and communication
+- Tinnitus-sensitive and hearing-preservation-focused systems
+- Augmented audio for classrooms, public venues, and telepresence
+- Environmental alerting and safety-critical audio cues
+- Audit-safe auditory AI for healthcare-adjacent environments
+
+> AILEE **does not amplify indiscriminately** — it determines *when, how, and how much enhancement is appropriate*,  
+> acting as a **hearing safety governor, not an audio authority**.
 
 ---
 
