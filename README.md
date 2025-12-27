@@ -358,71 +358,71 @@ ailee-trust-layer/
 │
 ├── domains/                          # Domain-specific governance layers
 │   ├── __init__.py                   # Domains namespace
-│
+│   │
 │   ├── imaging/
 │   │   ├── __init__.py               # IMAGING domain exports
 │   │   ├── imaging.py                # Imaging QA, safety & efficiency governance
 │   │   ├── IMAGING.md                # Imaging domain conceptual framework
 │   │   └── BENCHMARKS.md             # Imaging performance & validation benchmarks
-│
+│   │
 │   ├── robotics/
 │   │   ├── __init__.py               # ROBOTICS domain exports
 │   │   ├── robotics.py               # Robotics safety & autonomy governance
 │   │   ├── ROBOTICS.md               # Robotics domain conceptual framework
 │   │   └── BENCHMARKS.md             # Robotics safety & real-time benchmarks
-│
+│   │
 │   ├── grids/
 │   │   ├── __init__.py               # GRIDS domain exports
 │   │   ├── grids.py                  # Power grid trust & load governance
 │   │   ├── GRIDS.md                  # Power grid domain framework
 │   │   └── BENCHMARKS.md             # Grid stability & resilience benchmarks
-│
+│   │
 │   ├── datacenters/
 │   │   ├── __init__.py               # DATACENTERS domain exports
 │   │   ├── datacenters.py            # Data center governance & automation
 │   │   ├── DATACENTERS.md            # Data center domain framework
 │   │   └── BENCHMARKS.md             # Throughput, latency & efficiency benchmarks
-│
+│   │
 │   ├── automobiles/
 │   │   ├── __init__.py               # AUTOMOBILES domain exports
 │   │   ├── automobiles.py            # Automotive AI safety & ODD governance
 │   │   ├── AUTOMOBILES.md            # Automotive domain conceptual framework
 │   │   └── BENCHMARKS.md             # Automotive safety & latency benchmarks
-│
+│   │
 │   ├── telecommunications/
 │   │   ├── __init__.py               # TELECOMMUNICATIONS domain exports
 │   │   ├── telecommunications.py     # Network trust, freshness & QoS governance
 │   │   ├── TELECOMMUNICATIONS.md      # Telecommunications domain framework
 │   │   └── BENCHMARKS.md              # Telecom latency, throughput & trust benchmarks
-│
+│   │
 │   ├── ocean/
 │   │   ├── __init__.py               # OCEAN domain exports
 │   │   ├── ocean.py                  # Ocean ecosystem governance & restraint
 │   │   ├── OCEAN.md                  # Ocean domain conceptual framework
 │   │   └── BENCHMARKS.md              # Ocean safety & intervention benchmarks
-│
+│   │
 │   ├── cross_ecosystem/
 │   │   ├── __init__.py               # CROSS_ECOSYSTEM domain exports
 │   │   ├── cross_ecosystem.py         # Cross-domain semantic & intent governance
 │   │   ├── CROSS_ECOSYSTEM.md         # Cross-ecosystem translation framework
 │   │   └── BENCHMARKS.md              # Invariance & translation benchmarks
-│
+│   │
 │   ├── governance/
 │   │   ├── __init__.py               # GOVERNANCE domain exports
 │   │   ├── governance.py              # Civic, institutional & political governance
 │   │   ├── GOVERNANCE.md              # Governance domain conceptual framework
 │   │   └── BENCHMARKS.md              # Authority, consent & compliance benchmarks
-│
+│   │
 │   ├── neuro_assistive/
 │   │   ├── __init__.py               # NEURO-ASSISTIVE domain exports
 │   │   ├── neuro_assistive.py         # Cognitive assistance & autonomy governance
 │   │   ├── NEURO_ASSISTIVE.md         # Neuro-assistive domain framework
 │   │   └── BENCHMARKS.md              # Consent, cognition & safety benchmarks
-│
+│   │
 │   └── auditory/
 │       ├── __init__.py               # AUDITORY domain exports
-│       └── auditory.py                # Auditory safety, comfort & enhancement governance
-│
+│       ├── auditory.py                # Auditory safety, comfort & enhancement governance
+│       └── AUDITORY.md                # Auditory domain framework
 ├── optional/
 │   ├── __init__.py                   # Optional modules namespace
 │   ├── ailee_config_presets.py       # Domain-ready policy presets
