@@ -1,8 +1,18 @@
-## v1.9.0 — Clarified trust-boundary documentation and fixed a minor metadata typo. No behavioral changes.
+### v2.2.0 Fixes & Stability
+
+- **Auditory domain:** Repaired structural duplication and method scoping issues that could
+  lead to incorrect governance behavior under edge conditions.
+- Hardened safety gating, uncertainty aggregation, and precautionary penalty handling.
+- Finalized production-grade auditory governance logic with consistent event logging
+  and decision explainability.
 
 ---
 
-## Validation & Assurance Roadmap (v1.8.0)
+### v1.9.0 — Clarified trust-boundary documentation and fixed a minor metadata typo. No behavioral changes.
+
+---
+
+### v1.8.0 Validation & Assurance Roadmap
 
 The **Governance** and **Cross-Ecosystem** domains intentionally do not include
 traditional performance benchmarks.
@@ -27,7 +37,7 @@ avoiding premature or misleading evaluation artifacts.
 
 ---
 
-## AILEE Trust Layer — v1.4.0
+### AILEE Trust Layer — v1.4.0
 
 **Release Type:** Minor (Domain Expansion & Packaging)  
 **Status:** Production / Stable
@@ -49,7 +59,9 @@ avoiding premature or misleading evaluation artifacts.
 - No breaking API changes
 - Existing deployments remain fully compatible
 
-## Documentation Note (v1.3.0)
+---
+
+### Documentation Note (v1.3.0)
 
 Documentation clarification:
 Automotive and Power Grid governance domains were conceptually part of the AILEE architecture in v1.3.0 but were not yet accompanied by standalone domain documentation at release time.
