@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — AUDITORY Domain
-Version: 1.0.2 - Production Grade
+Version: 1.0.1 - Production Grade (CORRECTED)
 
 All critical syntax errors fixed:
 - All class methods properly indented
@@ -18,6 +18,8 @@ from enum import Enum, IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 import statistics
 import time
+import math
+
 
 # ---- Core imports ----
 try:
@@ -1406,6 +1408,141 @@ class AuditoryGovernor:
 
 
 # -----------------------------
+# Convenience Functions
+# -----------------------------
+
+def create_auditory_governor(
+    user_safety_profile: UserSafetyProfile = UserSafetyProfile.STANDARD,
+    max_output_db_spl: float = 100.0,
+    max_allowed_level: OutputAuthorizationLevel = OutputAuthorizationLevel.COMFORT_OPTIMIZED,
+    **policy_overrides
+) -> AuditoryGovernor:
+    """
+    Convenience factory for creating auditory governor with common configurations.
+    
+    Args:
+        user_safety_profile: User safety category
+        max_output_db_spl: Absolute maximum output in dB SPL
+        max_allowed_level: Maximum authorization level allowed by policy
+        **policy_overrides: Additional policy parameters
+    
+    Returns:
+        Configured AuditoryGovernor instance
+    
+    Example:
+        governor = create_auditory_governor(
+            user_safety_profile=UserSafetyProfile.PEDIATRIC,
+            max_output_db_spl=85.0,
+            max_allowed_level=OutputAuthorizationLevel.COMFORT_OPTIMIZED,
+            enable_automatic_volume_limiting=True,
+        )
+    """
+    policy_kwargs = {
+        "user_safety_profile": user_safety_profile,
+        "max_output_db_spl": max_output_db_spl,
+        "max_allowed_level": max_allowed_level,
+    }
+    
+    # Profile-specific defaults
+    if user_safety_profile == UserSafetyProfile.PEDIATRIC:
+        policy_kwargs.update({
+            "max_output_db_spl": min(max_output_db_spl, 85.0),
+            "max_continuous_output_db": 75.0,
+            "max_allowed_level": min(max_allowed_level, OutputAuthorizationLevel.COMFORT_OPTIMIZED),
+            "enable_automatic_volume_limiting": True,
+        })
+    elif user_safety_profile == UserSafetyProfile.TINNITUS_RISK:
+        policy_kwargs.update({
+            "max_output_db_spl": min(max_output_db_spl, 90.0),
+            "max_discomfort_score": 0.25,
+            "enable_predictive_warnings": True,
+        })
+    elif user_safety_profile == UserSafetyProfile.PROFESSIONAL:
+        policy_kwargs.update({
+            "min_speech_intelligibility": 0.75,
+            "min_noise_reduction": 0.65,
+            "max_latency_ms": 15.0,
+        })
+    
+    policy_kwargs.update(policy_overrides)
+    policy = AuditoryGovernancePolicy(**policy_kwargs)
+    
+    cfg = default_auditory_config()
+    
+    return AuditoryGovernor(cfg=cfg, policy=policy)
+
+
+def validate_auditory_signals(signals: AuditorySignals) -> Tuple[bool, List[str]]:
+    """
+    Pre-flight validation of auditory signals structure.
+    
+    Args:
+        signals: AuditorySignals to validate
+    
+    Returns:
+        (is_valid, list_of_issues)
+    """
+    issues: List[str] = []
+    
+    # Check score range
+    if not (0.0 <= signals.proposed_action_trust_score <= 1.0):
+        issues.append(f"proposed_action_trust_score={signals.proposed_action_trust_score} outside [0.0, 1.0]")
+    
+    # Check peer enhancement scores
+    for i, score in enumerate(signals.peer_enhancement_scores):
+        if not (0.0 <= score <= 1.0):
+            issues.append(f"peer_enhancement_scores[{i}]={score} outside [0.0, 1.0]")
+    
+    # Validate enhancement metrics if present
+    if signals.enhancement:
+        enhancement = signals.enhancement
+        if enhancement.speech_intelligibility_score is not None:
+            if not (0.0 <= enhancement.speech_intelligibility_score <= 1.0):
+                issues.append(f"speech_intelligibility_score outside [0.0, 1.0]")
+        
+        if enhancement.noise_reduction_score is not None:
+            if not (0.0 <= enhancement.noise_reduction_score <= 1.0):
+                issues.append(f"noise_reduction_score outside [0.0, 1.0]")
+        
+        if enhancement.enhancement_latency_ms is not None:
+            if enhancement.enhancement_latency_ms < 0:
+                issues.append(f"enhancement_latency_ms cannot be negative")
+    
+    # Validate comfort metrics if present
+    if signals.comfort:
+        comfort = signals.comfort
+        if comfort.discomfort_score is not None:
+            if not (0.0 <= comfort.discomfort_score <= 1.0):
+                issues.append(f"discomfort_score outside [0.0, 1.0]")
+        
+        if comfort.fatigue_risk_score is not None:
+            if not (0.0 <= comfort.fatigue_risk_score <= 1.0):
+                issues.append(f"fatigue_risk_score outside [0.0, 1.0]")
+    
+    # Validate device health if present
+    if signals.device_health:
+        device = signals.device_health
+        if device.mic_health_score is not None:
+            if not (0.0 <= device.mic_health_score <= 1.0):
+                issues.append(f"mic_health_score outside [0.0, 1.0]")
+        
+        if device.battery_level is not None:
+            if not (0.0 <= device.battery_level <= 1.0):
+                issues.append(f"battery_level outside [0.0, 1.0]")
+    
+    # Validate hearing profile if present
+    if signals.hearing_profile:
+        profile = signals.hearing_profile
+        if profile.max_safe_output_db < profile.preferred_output_db:
+            issues.append("max_safe_output_db must be >= preferred_output_db")
+        
+        if profile.max_safe_output_db > 120.0:
+            issues.append("max_safe_output_db exceeds safe limits (>120 dB)")
+    
+    return len(issues) == 0, issues
+
+
+# -----------------------------
 # Module Exports
 # -----------------------------
 
@@ -1430,5 +1567,7 @@ __all__ = [
     "AuditoryUncertaintyCalculator",
     "AuditoryGovernor",
     "default_auditory_config",
+    "create_auditory_governor",
+    "validate_auditory_signals",
     "AUDITORY_FLAG_SEVERITY",
 ]
