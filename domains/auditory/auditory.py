@@ -1,3 +1,222 @@
+"""
+AILEE Trust Layer — AUDITORY Domain
+Version: 1.0.1 - Production Grade
+
+Auditory governance domain for AI-enhanced hearing and assistive audio systems.
+
+This domain does NOT implement DSP, beamforming, or hearing-aid firmware.
+It governs whether enhanced audio is safe and beneficial enough to deploy based on:
+- Environmental noise and signal quality
+- Speech intelligibility and enhancement confidence
+- Output loudness safety and user comfort
+- Device health and feedback risk
+- Latency constraints for natural listening
+
+Primary governed signals:
+- Enhancement quality scores (speech intelligibility, noise reduction)
+- Output loudness caps (dB SPL) aligned to user profiles
+- Device health and feedback detection
+- Listening mode constraints (quiet, noisy, speech focus, music)
+
+Trust level semantics:
+    0 = NO_OUTPUT         Suppress enhancement; fall back to passive/diagnostic
+    1 = DIAGNOSTIC_ONLY   Minimal processing for diagnostics
+    2 = SAFETY_LIMITED    Safe, conservative enhancement
+    3 = COMFORT_OPTIMIZED Comfort-optimized enhancement within safety caps
+    4 = FULL_ENHANCEMENT  Full enhancement authorized
+
+DECISION PHILOSOPHY:
+===================
+Auditory systems must balance:
+1. Safety (hearing damage prevention, comfortable loudness)
+2. Quality (speech intelligibility, natural sound)
+3. Comfort (fatigue prevention, user adaptation)
+4. Latency (real-time processing for natural listening)
+
+Therefore, AILEE Auditory Governance implements:
+- **Hearing safety first**: Output caps based on audiological guidelines
+- **Quality-driven authorization**: Require proven enhancement benefit
+- **Comfort monitoring**: Track fatigue and discomfort over time
+- **Device health awareness**: Degrade gracefully on hardware issues
+- **Latency constraints**: Prioritize real-time over maximum enhancement
+
+CRITICAL: This is a SAFETY system for medical/assistive devices.
+Default bias: Conservative output levels until quality proven.
+
+INTEGRATION EXAMPLE:
+
+    # Setup (once)
+    policy = AuditoryGovernancePolicy(
+        max_allowed_level=OutputAuthorizationLevel.COMFORT_OPTIMIZED,
+        max_output_db_spl=100.0,
+        user_safety_profile=UserSafetyProfile.STANDARD,
+    )
+    governor = AuditoryGovernor(policy=policy)
+    
+    # Per-decision evaluation
+    while device_active:
+        signals = AuditorySignals(
+            proposed_action_trust_score=0.82,  # Enhancement quality aggregate
+            desired_level=OutputAuthorizationLevel.FULL_ENHANCEMENT,
+            listening_mode=ListeningMode.SPEECH_FOCUS,
+            environment=EnvironmentMetrics(
+                ambient_noise_db=68.0,
+                snr_db=12.0,
+                reverberation_time_s=0.45,
+                transient_noise_score=0.25,
+            ),
+            enhancement=EnhancementMetrics(
+                speech_intelligibility_score=0.82,
+                noise_reduction_score=0.74,
+                enhancement_latency_ms=8.0,
+                ai_confidence=0.88,
+            ),
+            comfort=ComfortMetrics(
+                perceived_loudness_db=78.0,
+                discomfort_score=0.15,
+                fatigue_risk_score=0.12,
+            ),
+            device_health=DeviceHealth(
+                mic_health_score=0.98,
+                battery_level=0.62,
+                feedback_detected=False,
+            ),
+            hearing_profile=HearingProfile(
+                max_safe_output_db=95.0,
+                preferred_output_db=75.0,
+            ),
+        )
+        
+        decision = governor.evaluate(signals)
+        
+        if decision.authorized_level >= OutputAuthorizationLevel.SAFETY_LIMITED:
+            hearing_aid.apply_enhancement(
+                level=decision.authorized_level,
+                output_cap=decision.output_db_cap,
+                constraints=decision.enhancement_constraints
+            )
+        else:
+            hearing_aid.fallback_pass_through()
+        
+        # Log for audiologist review
+        if decision.warning:
+            alert_user(decision.warning)
+        
+        # Compliance logging
+        medical_device_logger.record_decision(governor.get_last_event())
+
+This module is designed for:
+- Hearing aids and assistive listening devices
+- Cochlear implant sound processors
+- Hearables and augmented audio devices
+- Tinnitus management systems
+- Professional audio monitoring systems
+- Voice enhancement for communication devices
+
+ARCHITECTURAL NOTE:
+This module is deterministic, side-effect-free (except logging),
+and suitable for real-time decision support systems operating at
+10Hz - 100Hz (every 10ms to 100ms for audio processing decisions).
+
+REGULATORY COMPLIANCE:
+Designed to support FDA Class I/II medical device requirements,
+IEC 60601-1 safety standards, and ISO 13485 quality management.
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from enum import Enum, IntEnum
+from typing import Any, Dict, List, Optional, Tuple
+import statistics
+import time
+import math
+
+
+# ---- Core imports ----
+try:
+    from ailee_trust_pipeline_v1 import (
+        AileeTrustPipeline,
+        AileeConfig,
+        DecisionResult,
+        SafetyStatus
+    )
+except Exception:
+    AileeTrustPipeline = None
+    AileeConfig = None
+    DecisionResult = None
+    SafetyStatus = None
+
+
+# ===== SEVERITY WEIGHTING FOR FLAGS =====
+
+AUDITORY_FLAG_SEVERITY: Dict[str, float] = {
+    "hearing_damage_risk": 0.15,
+    "feedback_detected": 0.12,
+    "hardware_fault_critical": 0.10,
+    "excessive_discomfort": 0.08,
+    "clipping_detected": 0.07,
+    "latency_excessive": 0.06,
+    "speech_unintelligible": 0.05,
+    "battery_critical": 0.04,
+    "microphone_degraded": 0.03,
+    "noise_reduction_poor": 0.03,
+}
+
+
+# -----------------------------
+# Output Authorization Levels
+# -----------------------------
+
+class OutputAuthorizationLevel(IntEnum):
+    """
+    Discrete output authorization levels for auditory enhancement.
+    
+    Staged escalation from passive to full AI enhancement.
+    """
+    NO_OUTPUT = 0           # Suppress all enhancement
+    DIAGNOSTIC_ONLY = 1     # Minimal processing for diagnostics
+    SAFETY_LIMITED = 2      # Safe, conservative enhancement
+    COMFORT_OPTIMIZED = 3   # Comfort-optimized within safety
+    FULL_ENHANCEMENT = 4    # Full AI enhancement authorized
+
+
+class ListeningMode(str, Enum):
+    """Listening modes for hearing systems"""
+    QUIET = "QUIET"
+    SPEECH_FOCUS = "SPEECH_FOCUS"
+    NOISY = "NOISY"
+    MUSIC = "MUSIC"
+    OUTDOOR_WINDY = "OUTDOOR_WINDY"
+    EMERGENCY_ALERTS = "EMERGENCY_ALERTS"
+    TELECOIL = "TELECOIL"
+    UNKNOWN = "UNKNOWN"
+
+
+class UserSafetyProfile(str, Enum):
+    """User safety profiles for output constraints"""
+    PEDIATRIC = "PEDIATRIC"          # Most conservative
+    STANDARD = "STANDARD"            # Normal adult
+    TINNITUS_RISK = "TINNITUS_RISK"  # Extra caution
+    PROFESSIONAL = "PROFESSIONAL"    # Musicians, audio professionals
+    UNKNOWN = "UNKNOWN"
+
+
+class DecisionOutcome(str, Enum):
+    """Auditory governance decision outcomes"""
+    AUTHORIZED = "AUTHORIZED"
+    LIMITED = "LIMITED"
+    DIAGNOSTIC_FALLBACK = "DIAGNOSTIC_FALLBACK"
+    SUPPRESSED = "SUPPRESSED"
+    HARDWARE_FAULT = "HARDWARE_FAULT"
+
+
+class RegulatoryGateResult(str, Enum):
+    """Regulatory compliance results"""
+    PASS = "PASS"
+    WARNING = "WARNING"
+    FAIL = "FAIL"
+
 if decision.warning:
             lines.append("⚠️  WARNING:")
             lines.append("-" * 70)
