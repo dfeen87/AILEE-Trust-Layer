@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — AUDITORY Domain
-Version: 1.0.1 - Production Grade (CORRECTED)
+Version: 1.0.2 - Production Grade
 
 All critical syntax errors fixed:
 - All class methods properly indented
@@ -18,8 +18,6 @@ from enum import Enum, IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 import statistics
 import time
-import math
-
 
 # ---- Core imports ----
 try:
