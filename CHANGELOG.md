@@ -5,6 +5,7 @@
 - Hardened safety gating, uncertainty aggregation, and precautionary penalty handling.
 - Finalized production-grade auditory governance logic with consistent event logging
   and decision explainability.
+- **Auditory BENCHMARKS.md**
 
 ---
 
