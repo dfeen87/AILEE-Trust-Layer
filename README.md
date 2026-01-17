@@ -422,7 +422,8 @@ ailee-trust-layer/
 │   └── auditory/
 │       ├── __init__.py               # AUDITORY domain exports
 │       ├── auditory.py                # Auditory safety, comfort & enhancement governance
-│       └── AUDITORY.md                # Auditory domain framework
+│       ├── AUDITORY.md                # Auditory domain framework
+│       └── BENCHMARKS.md              # Auditory benchmarks
 ├── optional/
 │   ├── __init__.py                   # Optional modules namespace
 │   ├── ailee_config_presets.py       # Domain-ready policy presets
