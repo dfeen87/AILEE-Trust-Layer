@@ -388,7 +388,10 @@ class AileeTrustPipeline:
         """
         hist_vals = [v for _, v in _rolling(self.history, self.cfg.history_window)]
         variance = _safe_variance(hist_vals)
-        stability = 1.0 / (1.0 + variance)  # 0..1-ish
+        if len(hist_vals) < 2:
+            stability = 0.5  # neutral when insufficient history exists
+        else:
+            stability = 1.0 / (1.0 + variance)  # 0..1-ish
 
         agreement_delta = self.cfg.agreement_delta if self.cfg.agreement_delta is not None else self.cfg.grace_peer_delta
         agreement = self._agreement_score(raw_value, peers, delta=agreement_delta)
@@ -428,7 +431,7 @@ class AileeTrustPipeline:
 
     def _likelihood_score(self, raw_value: float, hist_vals: Sequence[float], max_abs_z: float) -> float:
         if len(hist_vals) < 4:
-            return 0.6  # mild prior when little history exists
+            return 0.5  # neutral prior when little history exists
         mu = statistics.fmean(hist_vals)
         sigma = _safe_stdev(hist_vals)
         if sigma <= 1e-12:
@@ -452,28 +455,39 @@ class AileeTrustPipeline:
         hist = _rolling(self.history, self.cfg.forecast_window)
         hist_vals = [v for _, v in hist]
 
-        if len(hist_vals) < 3 and not peers:
-            reasons.append("Grace: FAIL (insufficient history and peers).")
-            if self.cfg.enable_audit_metadata:
-                meta["grace"] = {"passed_checks": [], "forecast": None}
-            return GraceStatus.FAIL
-
         passed_checks: List[str] = []
+        available_checks: List[str] = []
 
         # (1) Trend plausibility
-        trend_ok = self._trend_check(raw_value, hist_vals)
-        if trend_ok:
-            passed_checks.append("trend_ok")
+        trend_ok: Optional[bool] = None
+        if len(hist_vals) >= 4:
+            trend_ok = self._trend_check(raw_value, hist_vals)
+            available_checks.append("trend_ok")
+            if trend_ok:
+                passed_checks.append("trend_ok")
 
         # (2) Forecast proximity
-        forecast_ok, forecast_val = self._forecast_check(raw_value, hist_vals)
-        if forecast_ok:
-            passed_checks.append("forecast_ok")
+        forecast_ok: Optional[bool] = None
+        forecast_val: Optional[float] = None
+        if len(hist_vals) >= 3:
+            forecast_ok, forecast_val = self._forecast_check(raw_value, hist_vals)
+            available_checks.append("forecast_ok")
+            if forecast_ok:
+                passed_checks.append("forecast_ok")
 
         # (3) Peer agreement ratio
-        peer_ok = self._peer_context_check(raw_value, peers)
-        if peer_ok:
-            passed_checks.append("peer_ok")
+        peer_ok: Optional[bool] = None
+        if peers:
+            peer_ok = self._peer_context_check(raw_value, peers)
+            available_checks.append("peer_ok")
+            if peer_ok:
+                passed_checks.append("peer_ok")
+
+        if len(available_checks) < 2:
+            reasons.append("Grace: FAIL (insufficient evidence for evaluation).")
+            if self.cfg.enable_audit_metadata:
+                meta["grace"] = {"passed_checks": passed_checks, "forecast": forecast_val}
+            return GraceStatus.FAIL
 
         # Grace decision rule:
         # - PASS if at least 2 of 3 checks pass
