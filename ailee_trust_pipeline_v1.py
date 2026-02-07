@@ -201,6 +201,7 @@ class AileeTrustPipeline:
         ts = float(timestamp if timestamp is not None else time.time())
         peers = list(peer_values) if peer_values is not None else []
         ctx = dict(context or {})
+        history_cache: Dict[int, List[float]] = {}
 
         reasons: List[str] = []
         meta: Dict[str, Any] = {"timestamp": ts, "context": ctx} if self.cfg.enable_audit_metadata else {}
@@ -208,7 +209,7 @@ class AileeTrustPipeline:
         # 0) Hard envelope check (domain safety)
         if not self._within_hard_bounds(raw_value):
             reasons.append("Hard envelope violation: raw_value outside [hard_min, hard_max].")
-            value = self._fallback_value()
+            value = self._fallback_value(history_cache)
             value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
             value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
             result = DecisionResult(
@@ -225,7 +226,7 @@ class AileeTrustPipeline:
             return result
 
         # 1) SAFETY LAYER: compute confidence score (preferred: internal score; fallback: raw_confidence)
-        confidence_score = self._confidence_score(raw_value, peers, raw_confidence, meta)
+        confidence_score = self._confidence_score(raw_value, peers, raw_confidence, meta, history_cache)
 
         safety_status = self._safety_decision(confidence_score, reasons)
         grace_status = GraceStatus.SKIPPED
@@ -255,7 +256,7 @@ class AileeTrustPipeline:
                     return result
                 # consensus fail -> fallback
                 reasons.append("Consensus FAIL after ACCEPTED -> fallback.")
-                value = self._fallback_value()
+                value = self._fallback_value(history_cache)
                 value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
                 value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
                 result = self._final_result(value, safety_status, grace_status, consensus_status,
@@ -276,7 +277,7 @@ class AileeTrustPipeline:
 
         if safety_status == SafetyStatus.BORDERLINE and self.cfg.enable_grace:
             # 2A) GRACE LAYER
-            grace_status = self._grace_check(raw_value, peers, reasons, meta)
+            grace_status = self._grace_check(raw_value, peers, reasons, meta, history_cache)
 
             if grace_status == GraceStatus.PASS:
                 # Proceed to consensus (optional)
@@ -300,7 +301,7 @@ class AileeTrustPipeline:
                         self._commit_result(ts, result, accepted=True)
                         return result
                     reasons.append("Consensus FAIL after GRACE PASS -> fallback.")
-                    value = self._fallback_value()
+                    value = self._fallback_value(history_cache)
                     value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
                     value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
                     result = self._final_result(value, safety_status, grace_status, consensus_status,
@@ -321,7 +322,7 @@ class AileeTrustPipeline:
 
             # Grace FAIL -> fallback
             reasons.append("Grace FAIL -> fallback.")
-            value = self._fallback_value()
+            value = self._fallback_value(history_cache)
             value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
             value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
             result = self._final_result(value, safety_status, grace_status, consensus_status,
@@ -333,7 +334,7 @@ class AileeTrustPipeline:
 
         # OUTRIGHT REJECTED or borderline with grace disabled -> fallback
         reasons.append(f"Safety status {safety_status.value} -> fallback.")
-        value = self._fallback_value()
+        value = self._fallback_value(history_cache)
         value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
         value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
         result = self._final_result(value, safety_status, grace_status, consensus_status,
@@ -375,6 +376,7 @@ class AileeTrustPipeline:
         peers: Sequence[float],
         raw_confidence: Optional[float],
         meta: Dict[str, Any],
+        history_cache: Optional[Dict[int, List[float]]] = None,
     ) -> float:
         """
         Confidence Score = w_stability * Stability + w_agreement * Agreement + w_likelihood * Likelihood
@@ -386,7 +388,7 @@ class AileeTrustPipeline:
         If raw_confidence is provided, we blend it as an extra signal (lightly),
         but the pipeline remains functional without it.
         """
-        hist_vals = [v for _, v in _rolling(self.history, self.cfg.history_window)]
+        hist_vals = self._history_values(self.cfg.history_window, history_cache)
         variance = _safe_variance(hist_vals)
         if len(hist_vals) < 2:
             stability = 0.5  # neutral when insufficient history exists
@@ -444,7 +446,14 @@ class AileeTrustPipeline:
             return 0.0
         return max(0.0, 1.0 - (az / max_abs_z))
 
-    def _grace_check(self, raw_value: float, peers: Sequence[float], reasons: List[str], meta: Dict[str, Any]) -> GraceStatus:
+    def _grace_check(
+        self,
+        raw_value: float,
+        peers: Sequence[float],
+        reasons: List[str],
+        meta: Dict[str, Any],
+        history_cache: Optional[Dict[int, List[float]]] = None,
+    ) -> GraceStatus:
         """
         Grace Layer: contextual salvage of borderline data.
         Uses three deterministic checks:
@@ -452,8 +461,7 @@ class AileeTrustPipeline:
         2) Forecast proximity (raw_value near local forecast)
         3) Early peer-context agreement
         """
-        hist = _rolling(self.history, self.cfg.forecast_window)
-        hist_vals = [v for _, v in hist]
+        hist_vals = self._history_values(self.cfg.forecast_window, history_cache)
 
         passed_checks: List[str] = []
         available_checks: List[str] = []
@@ -575,8 +583,8 @@ class AileeTrustPipeline:
     # Fallback
     # -------------------------
 
-    def _fallback_value(self) -> float:
-        hist_vals = [v for _, v in _rolling(self.history, self.cfg.history_window)]
+    def _fallback_value(self, history_cache: Optional[Dict[int, List[float]]] = None) -> float:
+        hist_vals = self._history_values(self.cfg.history_window, history_cache)
 
         if self.cfg.fallback_mode == "last_good" and self.last_good_value is not None:
             return float(self.last_good_value)
@@ -662,6 +670,17 @@ class AileeTrustPipeline:
     # -------------------------
     # Convenience: diagnostics
     # -------------------------
+
+    def _history_values(
+        self,
+        window: int,
+        history_cache: Optional[Dict[int, List[float]]] = None,
+    ) -> List[float]:
+        if history_cache is None:
+            return [v for _, v in _rolling(self.history, window)]
+        if window not in history_cache:
+            history_cache[window] = [v for _, v in _rolling(self.history, window)]
+        return history_cache[window]
 
     def get_last_result(self) -> Optional[DecisionResult]:
         return self.last_result
