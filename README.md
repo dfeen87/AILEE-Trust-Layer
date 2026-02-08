@@ -854,6 +854,20 @@ pytest tests/ --cov=ailee --cov-report=html
 
 ---
 
+## Continuous Integration
+
+The GitHub Actions CI workflow verifies that the trust-layer code builds cleanly and that any unit tests covering trust invariants (e.g., invalid inputs and rejection policies) pass on every commit. It is intentionally fast and deterministic, and it does **not** validate external compliance or runtime behavior in live environments.
+
+Run the same checks locally:
+
+```bash
+python -m pip install -e ".[dev]"
+python -m compileall -q .
+if [ -d tests ]; then python -m pytest tests/ -v; else echo "No tests/ directory found; skipping pytest."; fi
+```
+
+---
+
 ## License
 
 MIT — Use it. Fork it. Improve it.  
