@@ -359,7 +359,13 @@ ailee-trust-layer/
 │   ├── __init__.py                   # Backend namespace
 │   ├── base.py                       # Backend protocol & capability definitions
 │   ├── software_backend.py           # Reference software implementation
-│   └── feen_backend.py               # FEEN hardware-accelerated backend adapter
+│   ├── feen_backend.py               # FEEN hardware-accelerated backend adapter
+│   │
+│   └── feen/                         # FEEN hardware integration (optional acceleration)
+│       ├── __init__.py               # FEEN backend public API exports
+│       ├── confidence_scorer.py      # Thin bridge: AILEE consumes FEEN confidence signals
+│       ├── INTEGRATION.md            # Boundary documentation: what FEEN provides vs what AILEE expects
+│       └── benchmarks.py             # Engineering validation: latency, determinism, boundary overhead
 │
 ├── domains/                          # Domain-specific governance layers
 │   ├── __init__.py                   # Domains namespace
