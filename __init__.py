@@ -547,3 +547,7 @@ from . import optional
 from . import domains
 
 __all__.extend(["optional", "domains"])
+
+from .ailee_client import AileeClient
+__all__.append("AileeClient")
+
