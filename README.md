@@ -177,8 +177,6 @@ print(result.reasons)          # Human-readable decision trace
 
 ---
 
-## New in v2.0.0 🚀
-
 ### 17 Domain-Optimized Presets
 
 Pre-tuned configurations for production deployment:
@@ -353,8 +351,15 @@ If the system acts, you can explain **why**.
 
 ```
 ailee-trust-layer/
-├── ailee_trust_pipeline_v1.py        # Core AILEE trust evaluation pipeline
-├── __init__.py                       # Package initialization
+├── ailee_trust_pipeline_v1.py        # Core AILEE trust evaluation pipeline (canonical semantics)
+├── ailee_client.py                   # Unified trust interface (software / FEEN / future backends)
+├── __init__.py                       # Public API surface & module exports
+│
+├── backends/                         # Backend implementations (pluggable)
+│   ├── __init__.py                   # Backend namespace
+│   ├── base.py                       # Backend protocol & capability definitions
+│   ├── software_backend.py           # Reference software implementation
+│   └── feen_backend.py               # FEEN hardware-accelerated backend adapter
 │
 ├── domains/                          # Domain-specific governance layers
 │   ├── __init__.py                   # Domains namespace
@@ -424,7 +429,8 @@ ailee-trust-layer/
 │       ├── auditory.py                # Auditory safety, comfort & enhancement governance
 │       ├── AUDITORY.md                # Auditory domain framework
 │       └── BENCHMARKS.md              # Auditory benchmarks
-├── optional/
+│
+├── optional/                          # Optional helper modules (domain-agnostic)
 │   ├── __init__.py                   # Optional modules namespace
 │   ├── ailee_config_presets.py       # Domain-ready policy presets
 │   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
@@ -443,6 +449,59 @@ ailee-trust-layer/
 └── setup.py                          # Package configuration
 
 ```
+---
+
+## Unified Trust Interface (`AileeClient`)
+
+AILEE provides a single, stable entrypoint for trust validation through the **`AileeClient`** interface.
+
+`AileeClient` abstracts backend selection and orchestration, allowing applications to use the AILEE Trust Layer without coupling to a specific execution model. The client automatically selects the most appropriate backend at runtime while preserving AILEE’s canonical trust semantics.
+
+### Key properties
+
+- **Single ingress point** for all trust evaluations  
+- **Backend‑agnostic API** (software, FEEN hardware, future accelerators)  
+- **Deterministic behavior** with full audit metadata  
+- **Safe fallback** to the reference software pipeline when hardware is unavailable  
+- **No semantic drift** — AILEE remains the source of truth for trust decisions  
+
+### Example usage
+
+```python
+from ailee import AileeClient, AileeConfig
+
+client = AileeClient(
+    AileeConfig(hard_min=0.0, hard_max=100.0)
+)
+
+result = client.process(
+    raw_value=42.1,
+    raw_confidence=0.93,
+    peer_values=[41.9, 42.0, 42.2],
+    context={"feature": "latency_ms"},
+)
+```
+
+Backend selection can also be controlled via environment variable:
+
+```bash
+export AILEE_BACKEND=feen      # or "software"
+```
+
+---
+
+## FEEN Hardware Acceleration
+
+AILEE supports optional hardware acceleration via **FEEN (The Phononic Wave Engine)**.
+
+FEEN provides a wave‑native, physics‑informed computing substrate that can implement core AILEE trust primitives—such as confidence scoring, thresholding, and consensus—directly in hardware using nonlinear resonator dynamics. When available, FEEN acts as a transparent accelerator beneath `AileeClient`, delivering ultra‑low latency and power consumption while preserving AILEE’s trust semantics.
+
+- FEEN is **optional** and **non‑intrusive**
+- Software remains the canonical reference implementation
+- Hardware acceleration is enabled without changing application code
+
+🔗 **FEEN Repository:** https://github.com/dfeen87/feen
+
 ---
 
 ## Use Cases
