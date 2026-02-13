@@ -21,7 +21,6 @@ class FeenBackend:
         self.software_fallback = (
             AileeTrustPipeline(config) if fallback_to_software else None
         )
-        self._pyfeen = None
 
     def capabilities(self) -> BackendCapabilities:
         return BackendCapabilities(
