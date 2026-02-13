@@ -135,13 +135,13 @@ except ImportError:
     _HAS_GRIDS_DOMAIN = False
 
 try:
-    from .domains.datacenters import DatacenterGovernor
+    from .domains.datacenter import DataCenterMonitor as DatacenterGovernor
     _HAS_DATACENTERS_DOMAIN = True
 except ImportError:
     _HAS_DATACENTERS_DOMAIN = False
 
 try:
-    from .domains.automobiles import AutomobilesGovernor
+    from .domains.automotive import AutonomyGovernor as AutomobilesGovernor
     _HAS_AUTOMOBILES_DOMAIN = True
 except ImportError:
     _HAS_AUTOMOBILES_DOMAIN = False

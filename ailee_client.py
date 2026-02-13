@@ -97,7 +97,7 @@ class AileeClient:
                     self.config,
                     fallback_to_software=True,
                 )
-            except Exception:
+            except (ImportError, RuntimeError, ConnectionError):
                 return SoftwareBackend(self.config)
 
         raise ValueError(
