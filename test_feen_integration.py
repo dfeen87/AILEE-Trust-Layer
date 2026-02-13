@@ -20,6 +20,9 @@ from ailee_trust_pipeline_v1 import AileeConfig
 from backends import SoftwareBackend, FeenBackend
 from backends.feen import FEENConfidenceScorer
 
+# Constants
+EXAMPLE_TIMEOUT = 10  # seconds
+
 
 def test_backend_imports():
     """Test that backends can be imported."""
@@ -113,7 +116,7 @@ def test_example_file():
         cwd=os.path.dirname(__file__),
         capture_output=True,
         text=True,
-        timeout=10
+        timeout=EXAMPLE_TIMEOUT
     )
     
     assert result.returncode == 0, f"Example failed from root: {result.stderr}"
@@ -127,7 +130,7 @@ def test_example_file():
         cwd=os.path.join(os.path.dirname(__file__), 'examples'),
         capture_output=True,
         text=True,
-        timeout=10
+        timeout=EXAMPLE_TIMEOUT
     )
     
     assert result.returncode == 0, f"Example failed from examples dir: {result.stderr}"
