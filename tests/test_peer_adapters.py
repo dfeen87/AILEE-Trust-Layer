@@ -17,11 +17,8 @@ import os
 import time
 from typing import List
 
-# Add current directory to path
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-from ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig
-from optional.ailee_peer_adapters import (
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee.optional.ailee_peer_adapters import (
     StaticPeerAdapter,
     RollingPeerAdapter,
     CallbackPeerAdapter,
@@ -699,9 +696,12 @@ def test_demo_execution():
     
     import subprocess
     
+    # Get project root (parent of tests directory)
+    project_root = os.path.dirname(os.path.dirname(__file__))
+    
     result = subprocess.run(
-        [sys.executable, 'optional/ailee_peer_adapters.py'],
-        cwd=os.path.dirname(__file__),
+        [sys.executable, '-m', 'ailee.optional.ailee_peer_adapters'],
+        cwd=project_root,
         capture_output=True,
         text=True,
         timeout=10

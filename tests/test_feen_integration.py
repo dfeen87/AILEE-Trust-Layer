@@ -13,12 +13,9 @@ This test verifies that the FEEN integration works correctly:
 import sys
 import os
 
-# Add current directory to path
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-from ailee_trust_pipeline_v1 import AileeConfig
-from backends import SoftwareBackend, FeenBackend
-from backends.feen import FEENConfidenceScorer
+from ailee import AileeConfig
+from ailee.backends import SoftwareBackend, FeenBackend
+from ailee.backends.feen import FEENConfidenceScorer
 
 # Constants
 EXAMPLE_TIMEOUT = 10  # seconds
@@ -110,10 +107,13 @@ def test_example_file():
     """Test that the example file can be executed."""
     import subprocess
     
+    # Get project root (parent of tests directory)
+    project_root = os.path.dirname(os.path.dirname(__file__))
+    
     # Test from root directory
     result = subprocess.run(
         [sys.executable, 'examples/feen_vs_software.py'],
-        cwd=os.path.dirname(__file__),
+        cwd=project_root,
         capture_output=True,
         text=True,
         timeout=EXAMPLE_TIMEOUT
@@ -127,7 +127,7 @@ def test_example_file():
     # Test from examples directory
     result = subprocess.run(
         [sys.executable, 'feen_vs_software.py'],
-        cwd=os.path.join(os.path.dirname(__file__), 'examples'),
+        cwd=os.path.join(project_root, 'examples'),
         capture_output=True,
         text=True,
         timeout=EXAMPLE_TIMEOUT

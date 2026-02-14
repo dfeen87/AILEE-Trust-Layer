@@ -11,7 +11,7 @@ Usage:
     pipeline = AileeTrustPipeline(LLM_SCORING)
 """
 
-from ailee_trust_pipeline_v1 import AileeConfig
+from ..ailee_trust_pipeline_v1 import AileeConfig
 
 
 # ===========================

@@ -23,7 +23,7 @@ import math
 
 # ---- Core imports ----
 try:
-    from ailee_trust_pipeline_v1 import (
+    from ...ailee_trust_pipeline_v1 import (
         AileeTrustPipeline,
         AileeConfig,
         DecisionResult,

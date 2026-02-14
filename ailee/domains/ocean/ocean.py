@@ -27,7 +27,7 @@ import math
 
 # ---- Core imports ----
 try:
-    from ailee_trust_pipeline_v1 import (
+    from ...ailee_trust_pipeline_v1 import (
         AileeTrustPipeline,
         AileeConfig,
         DecisionResult,
@@ -351,11 +351,10 @@ class ModelPrediction:
 class OceanSignals:
     """Governance signals for ocean intervention assessment"""
     proposed_action_trust_score: float
+    measurement_reliability: float
     
     ecosystem_health_index: float
     ecosystem_health: Optional[EcosystemHealth] = None
-    
-    measurement_reliability: float
     
     sensor_readings: Tuple[OceanSensorReading, ...] = ()
     

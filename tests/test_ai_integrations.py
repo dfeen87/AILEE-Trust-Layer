@@ -14,11 +14,8 @@ This test verifies that the AI integration adapters work correctly:
 import sys
 import os
 
-# Add current directory to path
-sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
-
-from ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig
-from optional.ailee_ai_integrations import (
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee.optional.ailee_ai_integrations import (
     AIResponse,
     OpenAIAdapter,
     AnthropicAdapter,
@@ -389,10 +386,13 @@ def test_example_files():
         'examples/ai_integration_gemini.py',
     ]
     
+    # Get project root (parent of tests directory)
+    project_root = os.path.dirname(os.path.dirname(__file__))
+    
     for example in examples:
         result = subprocess.run(
             [sys.executable, example],
-            cwd=os.path.dirname(__file__),
+            cwd=project_root,
             capture_output=True,
             text=True,
             timeout=15

@@ -3,12 +3,12 @@ from __future__ import annotations
 import os
 from typing import Any, Dict, Optional, Sequence
 
-from ailee_trust_pipeline_v1 import (
+from .ailee_trust_pipeline_v1 import (
     AileeConfig,
     DecisionResult,
 )
 
-from backends import SoftwareBackend, FeenBackend
+from .backends import SoftwareBackend, FeenBackend
 
 
 class AileeClient:

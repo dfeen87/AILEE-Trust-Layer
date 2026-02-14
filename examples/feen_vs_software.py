@@ -2,10 +2,9 @@ import sys
 import os
 
 # Add parent directory to path to allow imports when running from examples directory
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from ailee_trust_pipeline_v1 import AileeConfig
-from backends import SoftwareBackend, FeenBackend
+from ailee import AileeConfig
+from ailee.backends import SoftwareBackend, FeenBackend
 
 cfg = AileeConfig(hard_min=0.0, hard_max=100.0, consensus_quorum=3)
 

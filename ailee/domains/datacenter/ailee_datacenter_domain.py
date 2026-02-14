@@ -21,14 +21,10 @@ import time
 
 
 # Import core AILEE components
-try:
-    from ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig, DecisionResult
-    from ailee_config_presets import SENSOR_FUSION, TEMPERATURE_MONITORING, AUTONOMOUS_VEHICLE
-    from ailee_monitors import TrustMonitor, AlertingMonitor
-    from ailee_peer_adapters import StaticPeerAdapter, FilteredPeerAdapter, MultiSourcePeerAdapter
-except ImportError:
-    # Allow import even if not all modules available
-    pass
+from ...ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig, DecisionResult
+from ...optional.ailee_config_presets import SENSOR_FUSION, TEMPERATURE_MONITORING, AUTONOMOUS_VEHICLE
+from ...optional.ailee_monitors import TrustMonitor, AlertingMonitor
+from ...optional.ailee_peer_adapters import StaticPeerAdapter, FilteredPeerAdapter, MultiSourcePeerAdapter
 
 
 # ===========================

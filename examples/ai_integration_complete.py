@@ -9,11 +9,10 @@ import sys
 import os
 
 # Add parent directory to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig
-from optional.ailee_config_presets import LLM_SCORING, CONSERVATIVE, TRADING_SIGNAL, BALANCED
-from optional.ailee_ai_integrations import (
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee.optional.ailee_config_presets import LLM_SCORING, CONSERVATIVE, TRADING_SIGNAL, BALANCED
+from ailee.optional.ailee_ai_integrations import (
     create_openai_adapter,
     create_anthropic_adapter,
     create_multi_model_ensemble,
@@ -23,7 +22,7 @@ from optional.ailee_ai_integrations import (
 
 def create_pipeline(preset_name):
     """Helper to create pipeline from preset name."""
-    from optional.ailee_config_presets import get_preset
+    from ailee.optional.ailee_config_presets import get_preset
     config = get_preset(preset_name)
     return AileeTrustPipeline(config)
 
