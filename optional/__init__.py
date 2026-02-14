@@ -123,6 +123,28 @@ except ImportError:
     _HAS_REPLAY = False
 
 # =============================================================================
+# AI Framework Integrations
+# =============================================================================
+try:
+    from .ailee_ai_integrations import (
+        AIResponse,
+        AIAdapter,
+        OpenAIAdapter,
+        AnthropicAdapter,
+        HuggingFaceAdapter,
+        LangChainAdapter,
+        MultiModelEnsemble,
+        create_openai_adapter,
+        create_anthropic_adapter,
+        create_huggingface_adapter,
+        create_langchain_adapter,
+        create_multi_model_ensemble,
+    )
+    _HAS_AI_INTEGRATIONS = True
+except ImportError:
+    _HAS_AI_INTEGRATIONS = False
+
+# =============================================================================
 # Version & Metadata
 # =============================================================================
 __version__ = "1.1.2"
@@ -195,6 +217,22 @@ if _HAS_REPLAY:
         "ReplayRecord",
     ])
 
+if _HAS_AI_INTEGRATIONS:
+    __all__.extend([
+        "AIResponse",
+        "AIAdapter",
+        "OpenAIAdapter",
+        "AnthropicAdapter",
+        "HuggingFaceAdapter",
+        "LangChainAdapter",
+        "MultiModelEnsemble",
+        "create_openai_adapter",
+        "create_anthropic_adapter",
+        "create_huggingface_adapter",
+        "create_langchain_adapter",
+        "create_multi_model_ensemble",
+    ])
+
 # =============================================================================
 # Utility Introspection
 # =============================================================================
@@ -207,6 +245,7 @@ def get_available_modules() -> dict:
         "monitors": _HAS_MONITORS,
         "serialization": _HAS_SERIALIZATION,
         "replay": _HAS_REPLAY,
+        "ai_integrations": _HAS_AI_INTEGRATIONS,
     }
 
 

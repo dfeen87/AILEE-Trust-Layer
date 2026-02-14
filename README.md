@@ -201,6 +201,69 @@ from ailee import (
 pipeline = create_pipeline("medical_diagnosis")
 ```
 
+### Easy AI Framework Integration
+
+AILEE integrates seamlessly with popular AI frameworks:
+
+```python
+from openai import OpenAI
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee import OpenAIAdapter
+
+# Setup
+client = OpenAI()
+pipeline = AileeTrustPipeline(AileeConfig())
+adapter = OpenAIAdapter(use_logprobs=True)
+
+# Get AI response
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": "Rate quality 0-100: ..."}],
+    logprobs=True
+)
+
+# Extract and validate through AILEE
+ai_response = adapter.extract_response(response)
+result = pipeline.process(
+    raw_value=ai_response.value,
+    raw_confidence=ai_response.confidence,
+    context={"model": "gpt-4"}
+)
+
+# Use validated output
+if not result.used_fallback:
+    safe_value = result.value  # Trusted AI output
+```
+
+**Supported Frameworks:**
+- ✅ **OpenAI** (GPT-4, GPT-3.5, etc.) - with logprob confidence extraction
+- ✅ **Anthropic** (Claude) - with stop_reason analysis
+- ✅ **HuggingFace** (Transformers) - classification, generation, QA
+- ✅ **LangChain** - seamless chain integration
+
+**Multi-Model Consensus:**
+
+```python
+from ailee import create_multi_model_ensemble, OpenAIAdapter, AnthropicAdapter
+
+# Create ensemble
+ensemble = create_multi_model_ensemble()
+
+# Add responses from different AI models
+ensemble.add_response("gpt4", gpt4_response, OpenAIAdapter())
+ensemble.add_response("claude", claude_response, AnthropicAdapter())
+
+# Get consensus-validated decision
+primary_value, peer_values, confidences = ensemble.get_consensus_inputs()
+result = pipeline.process(
+    raw_value=primary_value,
+    raw_confidence=max(confidences.values()),
+    peer_values=peer_values
+)
+```
+
+📖 **[Full AI Integration Guide →](docs/AI_INTEGRATION_GUIDE.md)** - Step-by-step guides for OpenAI, Anthropic, HuggingFace, and LangChain
+
 ### Advanced Peer Adapters
 
 Multi-model consensus made simple:
