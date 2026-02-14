@@ -101,6 +101,27 @@ try:
 except ImportError:
     _HAS_REPLAY = False
 
+try:
+    from .optional.ailee_ai_integrations import (
+        AIResponse,
+        AIAdapter,
+        OpenAIAdapter,
+        AnthropicAdapter,
+        GeminiAdapter,
+        HuggingFaceAdapter,
+        LangChainAdapter,
+        MultiModelEnsemble,
+        create_openai_adapter,
+        create_anthropic_adapter,
+        create_gemini_adapter,
+        create_huggingface_adapter,
+        create_langchain_adapter,
+        create_multi_model_ensemble,
+    )
+    _HAS_AI_INTEGRATIONS = True
+except ImportError:
+    _HAS_AI_INTEGRATIONS = False
+
 # =============================================================================
 # Domains (optional, production-grade governance layers)
 # =============================================================================
@@ -330,6 +351,24 @@ if _HAS_REPLAY:
         "ReplayRecord",
     ])
 
+if _HAS_AI_INTEGRATIONS:
+    __all__.extend([
+        "AIResponse",
+        "AIAdapter",
+        "OpenAIAdapter",
+        "AnthropicAdapter",
+        "GeminiAdapter",
+        "HuggingFaceAdapter",
+        "LangChainAdapter",
+        "MultiModelEnsemble",
+        "create_openai_adapter",
+        "create_anthropic_adapter",
+        "create_gemini_adapter",
+        "create_huggingface_adapter",
+        "create_langchain_adapter",
+        "create_multi_model_ensemble",
+    ])
+
 # ---- Domains ----
 if _HAS_IMAGING_DOMAIN:
     __all__.append("ImagingDomain")
@@ -502,6 +541,7 @@ def get_available_helpers():
         "monitors": _HAS_MONITORS,
         "serialization": _HAS_SERIALIZATION,
         "replay": _HAS_REPLAY,
+        "ai_integrations": _HAS_AI_INTEGRATIONS,
     }
 
 

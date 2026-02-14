@@ -201,6 +201,70 @@ from ailee import (
 pipeline = create_pipeline("medical_diagnosis")
 ```
 
+### Easy AI Framework Integration
+
+AILEE integrates seamlessly with popular AI frameworks:
+
+```python
+from openai import OpenAI
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee import OpenAIAdapter
+
+# Setup
+client = OpenAI()
+pipeline = AileeTrustPipeline(AileeConfig())
+adapter = OpenAIAdapter(use_logprobs=True)
+
+# Get AI response
+response = client.chat.completions.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": "Rate quality 0-100: ..."}],
+    logprobs=True
+)
+
+# Extract and validate through AILEE
+ai_response = adapter.extract_response(response)
+result = pipeline.process(
+    raw_value=ai_response.value,
+    raw_confidence=ai_response.confidence,
+    context={"model": "gpt-4"}
+)
+
+# Use validated output
+if not result.used_fallback:
+    safe_value = result.value  # Trusted AI output
+```
+
+**Supported Frameworks:**
+- ✅ **OpenAI** (GPT-4, GPT-3.5, etc.) - with logprob confidence extraction
+- ✅ **Anthropic** (Claude) - with stop_reason analysis
+- ✅ **Google Gemini** (Gemini Pro, Gemini Pro Vision) - with safety ratings integration
+- ✅ **HuggingFace** (Transformers) - classification, generation, QA
+- ✅ **LangChain** - seamless chain integration
+
+**Multi-Model Consensus:**
+
+```python
+from ailee import create_multi_model_ensemble, OpenAIAdapter, AnthropicAdapter
+
+# Create ensemble
+ensemble = create_multi_model_ensemble()
+
+# Add responses from different AI models
+ensemble.add_response("gpt4", gpt4_response, OpenAIAdapter())
+ensemble.add_response("claude", claude_response, AnthropicAdapter())
+
+# Get consensus-validated decision
+primary_value, peer_values, confidences = ensemble.get_consensus_inputs()
+result = pipeline.process(
+    raw_value=primary_value,
+    raw_confidence=max(confidences.values()),
+    peer_values=peer_values
+)
+```
+
+📖 **[Full AI Integration Guide →](docs/AI_INTEGRATION_GUIDE.md)** - Step-by-step guides for OpenAI, Anthropic, HuggingFace, and LangChain
+
 ### Advanced Peer Adapters
 
 Multi-model consensus made simple:
@@ -440,16 +504,27 @@ ailee-trust-layer/
 │   ├── __init__.py                   # Optional modules namespace
 │   ├── ailee_config_presets.py       # Domain-ready policy presets
 │   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
+│   ├── ailee_ai_integrations.py      # AI framework adapters (OpenAI, Anthropic, Gemini, HuggingFace, LangChain)
 │   ├── ailee_monitors.py             # Observability & telemetry hooks
 │   ├── ailee_serialization.py        # Audit trails & structured logging
 │   └── ailee_replay.py               # Deterministic replay & regression testing
 │
+├── examples/                          # Integration examples & usage patterns
+│   ├── feen_vs_software.py           # Backend comparison example
+│   ├── ai_integration_openai.py      # OpenAI/GPT integration guide
+│   ├── ai_integration_gemini.py      # Google Gemini integration guide
+│   ├── ai_integration_multi_model.py # Multi-model ensemble patterns
+│   └── ai_integration_complete.py    # End-to-end AI integration workflows
+│
 ├── docs/
+│   ├── AI_INTEGRATION_GUIDE.md       # Complete AI framework integration guide
 │   ├── GRACE_LAYER.md                # Grace mediation & override logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability & compliance schema
 │   ├── VERSIONING.md                 # Versioning strategy & changelog rules
 │   └── whitepaper/                   # Full theoretical & architectural foundation
 │
+├── test_ai_integrations.py           # AI adapter integration tests
+├── test_feen_integration.py          # FEEN backend integration tests
 ├── LICENSE                           # MIT License
 ├── README.md                         # Project overview & usage
 └── setup.py                          # Package configuration
