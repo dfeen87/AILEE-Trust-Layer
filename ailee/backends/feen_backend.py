@@ -1,7 +1,7 @@
 from typing import Any, Dict, Optional, Sequence, Tuple
 import statistics
 
-from ailee_trust_pipeline_v1 import (
+from ..ailee_trust_pipeline_v1 import (
     AileeConfig,
     AileeTrustPipeline,
     DecisionResult,

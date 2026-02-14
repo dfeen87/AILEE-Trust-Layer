@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, Optional, Protocol, Sequence
 
-from ailee_trust_pipeline_v1 import DecisionResult
+from ..ailee_trust_pipeline_v1 import DecisionResult
 
 
 @dataclass(frozen=True)

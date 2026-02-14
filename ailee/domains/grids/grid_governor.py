@@ -80,7 +80,7 @@ from typing import Any, Dict, List, Optional, Tuple
 # ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 try:
-    from ailee_trust_pipeline_v1 import (
+    from ...ailee_trust_pipeline_v1 import (
         AileeConfig,
         AileeTrustPipeline,
         DecisionResult,

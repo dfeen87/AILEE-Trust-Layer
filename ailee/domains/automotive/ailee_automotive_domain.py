@@ -80,7 +80,7 @@ import statistics
 
 # ---- Core imports (kept conservative to avoid import churn) ----
 try:
-    from ailee_trust_pipeline_v1 import (
+    from ...ailee_trust_pipeline_v1 import (
         AileeTrustPipeline, 
         AileeConfig, 
         DecisionResult, 

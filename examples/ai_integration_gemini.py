@@ -9,10 +9,9 @@ import sys
 import os
 
 # Add parent directory to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig
-from optional.ailee_ai_integrations import GeminiAdapter, create_gemini_adapter
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee.optional.ailee_ai_integrations import GeminiAdapter, create_gemini_adapter
 
 # Note: This example shows the integration pattern.
 # To run it, you'll need: pip install google-generativeai
@@ -252,7 +251,7 @@ def example_gemini_vs_others():
     print("Example 4: Gemini in Multi-Model Ensemble")
     print("=" * 60)
     
-    from optional.ailee_ai_integrations import (
+    from ailee.optional.ailee_ai_integrations import (
         create_multi_model_ensemble,
         OpenAIAdapter,
         AnthropicAdapter,

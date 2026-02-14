@@ -9,10 +9,9 @@ import sys
 import os
 
 # Add parent directory to path
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig
-from optional.ailee_ai_integrations import (
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee.optional.ailee_ai_integrations import (
     OpenAIAdapter,
     AnthropicAdapter,
     HuggingFaceAdapter,

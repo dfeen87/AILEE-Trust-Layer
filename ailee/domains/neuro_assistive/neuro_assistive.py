@@ -19,7 +19,7 @@ import statistics
 
 # ---- Core imports ----
 try:
-    from ailee_trust_pipeline_v1 import (
+    from ...ailee_trust_pipeline_v1 import (
         AileeTrustPipeline,
         AileeConfig,
         DecisionResult,
@@ -223,6 +223,7 @@ class NeuroSignals:
     
     # Cognitive state
     current_cognitive_state: CognitiveState
+    feature_requested: str
     cognitive_load_metrics: Optional[CognitiveLoadMetrics] = None
     
     # Session context
@@ -232,7 +233,6 @@ class NeuroSignals:
     interpretation_result: Optional[InterpretationResult] = None
     
     # Consent
-    feature_requested: str
     consent_records: Dict[str, ConsentRecord] = field(default_factory=dict)
     
     # User profile
