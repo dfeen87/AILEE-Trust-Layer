@@ -523,6 +523,12 @@ ailee-trust-layer/
 │   ├── VERSIONING.md                 # Versioning strategy & changelog rules
 │   └── whitepaper/                   # Full theoretical & architectural foundation
 │
+├──tests/
+│   ├── PEER_ADAPTERS_EFFECTIVENESS_REPORT.md  # Full effectiveness report for peer adapters; includes analysis, metrics, and validation results
+│   ├── test_ai_integrations.py       # Tests for all AI framework adapters (OpenAI, Claude, Gemini, HF, LangChain)
+│   ├── test_feen_integration.py      # Tests verifying FEEN integration and cross-system trust evaluation
+│   └── test_peer_adapters.py         # Comprehensive peer adapter test suite (16 tests: static, rolling, weighted, multisource, metadata)
+│
 ├── test_ai_integrations.py           # AI adapter integration tests
 ├── test_feen_integration.py          # FEEN backend integration tests
 ├── LICENSE                           # MIT License
