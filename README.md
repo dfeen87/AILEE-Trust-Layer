@@ -449,20 +449,20 @@ ailee-trust-layer/
 │   │   │
 │   │   ├── grids/
 │   │   │   ├── __init__.py           # GRIDS domain exports
-│   │   │   ├── grids.py              # Power grid trust & load governance
+│   │   │   ├── grid_governor.py      # Power grid trust & load governance
 │   │   │   ├── GRIDS.md              # Power grid domain framework
 │   │   │   └── BENCHMARKS.md         # Grid stability & resilience benchmarks
 │   │   │
 │   │   ├── datacenter/
 │   │   │   ├── __init__.py           # DATACENTER domain exports
 │   │   │   ├── ailee_datacenter_domain.py  # Data center governance & automation
-│   │   │   ├── DATACENTERS.md        # Data center domain framework
+│   │   │   ├── DATA_CENTERS.md       # Data center domain framework
 │   │   │   └── BENCHMARKS.md         # Throughput, latency & efficiency benchmarks
 │   │   │
 │   │   ├── automotive/
 │   │   │   ├── __init__.py           # AUTOMOTIVE domain exports
 │   │   │   ├── ailee_automotive_domain.py  # Automotive AI safety & ODD governance
-│   │   │   ├── AUTOMOBILES.md        # Automotive domain conceptual framework
+│   │   │   ├── AUTOMOTIVE.md         # Automotive domain conceptual framework
 │   │   │   └── BENCHMARKS.md         # Automotive safety & latency benchmarks
 │   │   │
 │   │   ├── telecommunications/
