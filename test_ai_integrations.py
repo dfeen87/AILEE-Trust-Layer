@@ -22,11 +22,13 @@ from optional.ailee_ai_integrations import (
     AIResponse,
     OpenAIAdapter,
     AnthropicAdapter,
+    GeminiAdapter,
     HuggingFaceAdapter,
     LangChainAdapter,
     MultiModelEnsemble,
     create_openai_adapter,
     create_anthropic_adapter,
+    create_gemini_adapter,
     create_huggingface_adapter,
     create_langchain_adapter,
     create_multi_model_ensemble,
@@ -108,6 +110,65 @@ def test_anthropic_adapter():
     
     print(f"    Value: {ai_response.value}, Confidence: {ai_response.confidence:.2f}")
     print("  ✓ Anthropic adapter works correctly")
+    return True
+
+
+def test_gemini_adapter():
+    """Test Gemini adapter with mock responses."""
+    print("  Testing Gemini adapter...")
+    
+    # Create mock Gemini response
+    class MockPart:
+        def __init__(self):
+            self.text = "Quality score: 91.0"
+    
+    class MockContent:
+        def __init__(self):
+            self.parts = [MockPart()]
+    
+    class MockRating:
+        def __init__(self, cat, prob):
+            self.category = cat
+            self.probability = prob
+    
+    class MockCandidate:
+        def __init__(self):
+            self.content = MockContent()
+            self.finish_reason = 'STOP'
+            self.safety_ratings = [
+                MockRating('HARM_CATEGORY_HARASSMENT', 'NEGLIGIBLE'),
+                MockRating('HARM_CATEGORY_HATE_SPEECH', 'LOW'),
+            ]
+    
+    class MockUsageMetadata:
+        def __init__(self):
+            self.prompt_token_count = 50
+            self.candidates_token_count = 15
+            self.total_token_count = 65
+    
+    class MockResponse:
+        def __init__(self):
+            self.text = "Quality score: 91.0"
+            self.candidates = [MockCandidate()]
+            self.usage_metadata = MockUsageMetadata()
+    
+    # Test adapter
+    adapter = create_gemini_adapter()
+    mock_response = MockResponse()
+    
+    ai_response = adapter.extract_response(mock_response)
+    
+    assert isinstance(ai_response, AIResponse), "Response not an AIResponse"
+    assert ai_response.value == 91.0, f"Unexpected value: {ai_response.value}"
+    assert 0.0 <= ai_response.confidence <= 1.0, f"Confidence out of range: {ai_response.confidence}"
+    assert ai_response.metadata['framework'] == 'gemini', "Wrong framework"
+    assert ai_response.metadata['finish_reason'] == 'STOP', "Wrong finish_reason"
+    assert 'safety_ratings' in ai_response.metadata, "Missing safety_ratings"
+    assert 'tokens' in ai_response.metadata, "Missing tokens"
+    
+    print(f"    Value: {ai_response.value}, Confidence: {ai_response.confidence:.2f}")
+    print(f"    Safety ratings: {len(ai_response.metadata['safety_ratings'])} checks")
+    print("  ✓ Gemini adapter works correctly")
     return True
 
 
@@ -325,6 +386,7 @@ def test_example_files():
     examples = [
         'examples/ai_integration_openai.py',
         'examples/ai_integration_multi_model.py',
+        'examples/ai_integration_gemini.py',
     ]
     
     for example in examples:
@@ -353,6 +415,7 @@ def main():
         ("Adapter Imports", test_adapter_imports),
         ("OpenAI Adapter", test_openai_adapter),
         ("Anthropic Adapter", test_anthropic_adapter),
+        ("Gemini Adapter", test_gemini_adapter),
         ("HuggingFace Adapter", test_huggingface_adapter),
         ("LangChain Adapter", test_langchain_adapter),
         ("Custom Extractors", test_custom_extractors),

@@ -238,6 +238,7 @@ if not result.used_fallback:
 **Supported Frameworks:**
 - ✅ **OpenAI** (GPT-4, GPT-3.5, etc.) - with logprob confidence extraction
 - ✅ **Anthropic** (Claude) - with stop_reason analysis
+- ✅ **Google Gemini** (Gemini Pro, Gemini Pro Vision) - with safety ratings integration
 - ✅ **HuggingFace** (Transformers) - classification, generation, QA
 - ✅ **LangChain** - seamless chain integration
 
@@ -503,16 +504,27 @@ ailee-trust-layer/
 │   ├── __init__.py                   # Optional modules namespace
 │   ├── ailee_config_presets.py       # Domain-ready policy presets
 │   ├── ailee_peer_adapters.py        # Multi-model consensus helpers
+│   ├── ailee_ai_integrations.py      # AI framework adapters (OpenAI, Anthropic, Gemini, HuggingFace, LangChain)
 │   ├── ailee_monitors.py             # Observability & telemetry hooks
 │   ├── ailee_serialization.py        # Audit trails & structured logging
 │   └── ailee_replay.py               # Deterministic replay & regression testing
 │
+├── examples/                          # Integration examples & usage patterns
+│   ├── feen_vs_software.py           # Backend comparison example
+│   ├── ai_integration_openai.py      # OpenAI/GPT integration guide
+│   ├── ai_integration_gemini.py      # Google Gemini integration guide
+│   ├── ai_integration_multi_model.py # Multi-model ensemble patterns
+│   └── ai_integration_complete.py    # End-to-end AI integration workflows
+│
 ├── docs/
+│   ├── AI_INTEGRATION_GUIDE.md       # Complete AI framework integration guide
 │   ├── GRACE_LAYER.md                # Grace mediation & override logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability & compliance schema
 │   ├── VERSIONING.md                 # Versioning strategy & changelog rules
 │   └── whitepaper/                   # Full theoretical & architectural foundation
 │
+├── test_ai_integrations.py           # AI adapter integration tests
+├── test_feen_integration.py          # FEEN backend integration tests
 ├── LICENSE                           # MIT License
 ├── README.md                         # Project overview & usage
 └── setup.py                          # Package configuration

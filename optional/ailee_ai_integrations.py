@@ -294,6 +294,149 @@ class AnthropicAdapter(AIAdapter):
 
 
 # ===========================
+# Google Gemini Integration
+# ===========================
+
+class GeminiAdapter(AIAdapter):
+    """
+    Adapter for Google Gemini API responses.
+    
+    Supports Gemini Pro, Gemini Pro Vision, and other Gemini models.
+    Extracts confidence from safety ratings and finish reasons.
+    
+    Example:
+        >>> import google.generativeai as genai
+        >>> genai.configure(api_key="YOUR_API_KEY")
+        >>> model = genai.GenerativeModel('gemini-pro')
+        >>> adapter = GeminiAdapter()
+        >>> 
+        >>> response = model.generate_content("Rate quality 0-100: ...")
+        >>> ai_response = adapter.extract_response(response)
+    """
+    
+    def extract_response(self, response: Any, context: Optional[Dict[str, Any]] = None) -> AIResponse:
+        """
+        Extract value and confidence from Gemini response.
+        
+        Args:
+            response: Gemini API response object
+            context: Optional context for extraction
+            
+        Returns:
+            AIResponse: Standardized response
+        """
+        context = context or {}
+        
+        # Extract text content
+        if hasattr(response, 'text'):
+            content = response.text
+        elif hasattr(response, 'parts') and response.parts:
+            # Handle multi-part responses
+            content = ' '.join(part.text for part in response.parts if hasattr(part, 'text'))
+        elif hasattr(response, 'candidates') and response.candidates:
+            # Handle candidate responses
+            candidate = response.candidates[0]
+            if hasattr(candidate, 'content') and hasattr(candidate.content, 'parts'):
+                content = ' '.join(part.text for part in candidate.content.parts if hasattr(part, 'text'))
+            else:
+                content = str(candidate)
+        else:
+            content = str(response)
+        
+        # Extract value
+        if self.value_extractor:
+            value = self.value_extractor(response, content, context)
+        else:
+            value = self._default_value_extraction(content, context)
+        
+        # Extract confidence
+        if self.confidence_extractor:
+            confidence = self.confidence_extractor(response, content, context)
+        else:
+            confidence = self._estimate_confidence(response)
+        
+        metadata = {
+            "content": content,
+            "framework": "gemini",
+        }
+        
+        # Add model info if available
+        if hasattr(response, '_result'):
+            if hasattr(response._result, 'model_version'):
+                metadata["model"] = response._result.model_version
+        
+        # Add finish reason if available
+        if hasattr(response, 'candidates') and response.candidates:
+            candidate = response.candidates[0]
+            if hasattr(candidate, 'finish_reason'):
+                metadata["finish_reason"] = str(candidate.finish_reason)
+            
+            # Add safety ratings
+            if hasattr(candidate, 'safety_ratings'):
+                metadata["safety_ratings"] = {
+                    str(rating.category): str(rating.probability)
+                    for rating in candidate.safety_ratings
+                }
+        
+        # Add usage metadata if available
+        if hasattr(response, 'usage_metadata'):
+            metadata["tokens"] = {
+                "prompt": getattr(response.usage_metadata, 'prompt_token_count', 0),
+                "candidates": getattr(response.usage_metadata, 'candidates_token_count', 0),
+                "total": getattr(response.usage_metadata, 'total_token_count', 0),
+            }
+        
+        return AIResponse(
+            value=value,
+            confidence=confidence,
+            raw_response=response,
+            metadata=metadata
+        )
+    
+    def _default_value_extraction(self, content: str, context: Dict[str, Any]) -> float:
+        """Extract first numeric value from content."""
+        import re
+        pattern = context.get('extract_pattern', r'-?\d+\.?\d*')
+        match = re.search(pattern, content)
+        if match:
+            return float(match.group(0))
+        raise ValueError(f"Could not extract numeric value from: {content[:100]}")
+    
+    def _estimate_confidence(self, response: Any) -> float:
+        """
+        Estimate confidence based on finish_reason and safety ratings.
+        """
+        base_confidence = 0.80
+        
+        # Check finish reason
+        if hasattr(response, 'candidates') and response.candidates:
+            candidate = response.candidates[0]
+            
+            if hasattr(candidate, 'finish_reason'):
+                finish_reason = str(candidate.finish_reason)
+                if 'STOP' in finish_reason:
+                    base_confidence = 0.85  # Completed naturally
+                elif 'MAX_TOKENS' in finish_reason:
+                    base_confidence = 0.70  # Truncated
+                elif 'SAFETY' in finish_reason:
+                    base_confidence = 0.60  # Blocked by safety
+                elif 'RECITATION' in finish_reason:
+                    base_confidence = 0.65  # Blocked by recitation
+            
+            # Adjust based on safety ratings
+            if hasattr(candidate, 'safety_ratings'):
+                # If any safety rating is MEDIUM or HIGH, reduce confidence
+                for rating in candidate.safety_ratings:
+                    prob = str(rating.probability)
+                    if 'MEDIUM' in prob:
+                        base_confidence *= 0.95
+                    elif 'HIGH' in prob:
+                        base_confidence *= 0.85
+        
+        return min(1.0, max(0.0, base_confidence))
+
+
+# ===========================
 # HuggingFace Integration
 # ===========================
 
@@ -595,6 +738,11 @@ def create_langchain_adapter(**kwargs) -> LangChainAdapter:
     return LangChainAdapter(**kwargs)
 
 
+def create_gemini_adapter(**kwargs) -> GeminiAdapter:
+    """Create Google Gemini adapter with optional configuration."""
+    return GeminiAdapter(**kwargs)
+
+
 def create_multi_model_ensemble() -> MultiModelEnsemble:
     """Create a new multi-model ensemble."""
     return MultiModelEnsemble()
@@ -605,11 +753,13 @@ __all__ = [
     'AIAdapter',
     'OpenAIAdapter',
     'AnthropicAdapter',
+    'GeminiAdapter',
     'HuggingFaceAdapter',
     'LangChainAdapter',
     'MultiModelEnsemble',
     'create_openai_adapter',
     'create_anthropic_adapter',
+    'create_gemini_adapter',
     'create_huggingface_adapter',
     'create_langchain_adapter',
     'create_multi_model_ensemble',

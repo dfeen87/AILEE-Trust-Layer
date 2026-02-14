@@ -11,6 +11,7 @@ AILEE Trust Layer makes it easy to add trust validation to any AI system. This g
 3. [Framework-Specific Guides](#framework-specific-guides)
    - [OpenAI / GPT](#openai--gpt)
    - [Anthropic / Claude](#anthropic--claude)
+   - [Google Gemini](#google-gemini)
    - [HuggingFace](#huggingface)
    - [LangChain](#langchain)
 4. [Multi-Model Ensembles](#multi-model-ensembles)
@@ -198,6 +199,80 @@ print(f"Validated rating: {result.value}")
 1. **Use thinking tags** to get Claude's reasoning
 2. **Request explicit confidence** in your prompts
 3. **Monitor stop_reason** (included in metadata)
+
+---
+
+### Google Gemini
+
+#### Installation
+```bash
+pip install ailee-trust-layer google-generativeai
+```
+
+#### Basic Usage
+
+```python
+import google.generativeai as genai
+import os
+from ailee import AileeTrustPipeline, AileeConfig
+from ailee.optional.ailee_ai_integrations import create_gemini_adapter
+
+# Initialize
+genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
+model = genai.GenerativeModel('gemini-pro')
+pipeline = AileeTrustPipeline(AileeConfig())
+adapter = create_gemini_adapter()
+
+# Call Gemini API
+response = model.generate_content(
+    "Analyze this data and provide a quality score from 0-100: ..."
+)
+
+# Extract and validate
+ai_response = adapter.extract_response(response)
+result = pipeline.process(
+    raw_value=ai_response.value,
+    raw_confidence=ai_response.confidence,
+    context={"model": "gemini-pro"}
+)
+
+print(f"Validated score: {result.value}")
+print(f"Safety ratings: {ai_response.metadata.get('safety_ratings')}")
+```
+
+#### Gemini-Specific Features
+
+1. **Automatic safety rating integration** - Confidence adjusts based on content safety checks
+2. **Finish reason analysis** - STOP, SAFETY, MAX_TOKENS, RECITATION
+3. **Multimodal support** - Works with Gemini Pro Vision for image/video analysis
+4. **Token usage tracking** - Included in metadata
+
+Example with Gemini Pro Vision:
+
+```python
+import PIL.Image
+
+# Initialize vision model
+vision_model = genai.GenerativeModel('gemini-pro-vision')
+adapter = create_gemini_adapter()
+
+# Analyze image
+image = PIL.Image.open('photo.jpg')
+response = vision_model.generate_content([
+    "Rate the quality of this image from 0-100",
+    image
+])
+
+ai_response = adapter.extract_response(response)
+# ai_response.metadata includes safety_ratings and finish_reason
+```
+
+#### Best Practices for Gemini
+
+1. **Monitor safety ratings** - Gemini provides built-in content safety checks
+2. **Handle finish reasons** - Different finish reasons affect confidence
+3. **Use appropriate models** - gemini-pro for text, gemini-pro-vision for multimodal
+4. **Request explicit scores** - Ask for numeric outputs in prompts
 
 ---
 
