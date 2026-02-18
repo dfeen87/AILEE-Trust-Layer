@@ -1,0 +1,21 @@
+[package]
+name = "ailee_trust_core"
+version = "0.1.0"
+edition = "2021"
+authors = ["Don Michael Feeney Jr."]
+license = "MIT"
+description = "AILEE Trust Layer - Deterministic, trust-scored generative AI platform"
+repository = "https://github.com/dfeen87/AILEE-Trust-Layer"
+keywords = ["ai", "trust", "consensus", "generative", "deterministic"]
+categories = ["algorithms", "science"]
+
+[dependencies]
+tokio = { version = "1.40", features = ["full"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+sha2 = "0.10"
+thiserror = "2.0"
+async-trait = "0.1"
+
+[dev-dependencies]
+tokio-test = "0.4"

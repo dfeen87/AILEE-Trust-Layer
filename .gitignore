@@ -66,3 +66,14 @@ Thumbs.db
 *.tmp
 *.bak
 .tmp/
+
+# Rust
+target/
+Cargo.lock
+**/*.rs.bk
+*.pdb
+
+
+# Added by cargo
+
+/target
