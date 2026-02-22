@@ -156,7 +156,31 @@ except ImportError:
     _HAS_GRIDS_DOMAIN = False
 
 try:
-    from .domains.datacenter import DataCenterMonitor as DatacenterGovernor
+    from .domains.datacenter import (
+        DatacenterGovernor,
+        DatacenterPolicy,
+        DatacenterSignals,
+        DatacenterDecision,
+        DatacenterEvent,
+        DatacenterTrustLevel,
+        FacilityHealthStatus,
+        ControlDomain,
+        ControlAction,
+        DataCenterMonitor,
+        CoolingController,
+        PowerCapController,
+        WorkloadPlacementGovernor,
+        SensorReading,
+        TelemetryProcessor,
+        COOLING_CONTROL,
+        POWER_CAPPING,
+        WORKLOAD_PLACEMENT,
+        create_datacenter_governor,
+        create_default_governor as create_default_datacenter_governor,
+        create_strict_governor as create_strict_datacenter_governor,
+        create_permissive_governor as create_permissive_datacenter_governor,
+        validate_datacenter_signals,
+    )
     _HAS_DATACENTERS_DOMAIN = True
 except ImportError:
     _HAS_DATACENTERS_DOMAIN = False
@@ -381,7 +405,31 @@ if _HAS_OCEAN_DOMAIN:
 if _HAS_GRIDS_DOMAIN:
     __all__.append("GridsGovernor")
 if _HAS_DATACENTERS_DOMAIN:
-    __all__.append("DatacenterGovernor")
+    __all__.extend([
+        "DatacenterGovernor",
+        "DatacenterPolicy",
+        "DatacenterSignals",
+        "DatacenterDecision",
+        "DatacenterEvent",
+        "DatacenterTrustLevel",
+        "FacilityHealthStatus",
+        "ControlDomain",
+        "ControlAction",
+        "DataCenterMonitor",
+        "CoolingController",
+        "PowerCapController",
+        "WorkloadPlacementGovernor",
+        "SensorReading",
+        "TelemetryProcessor",
+        "COOLING_CONTROL",
+        "POWER_CAPPING",
+        "WORKLOAD_PLACEMENT",
+        "create_datacenter_governor",
+        "create_default_datacenter_governor",
+        "create_strict_datacenter_governor",
+        "create_permissive_datacenter_governor",
+        "validate_datacenter_signals",
+    ])
 if _HAS_AUTOMOBILES_DOMAIN:
     __all__.append("AutomobilesGovernor")
 if _HAS_GOVERNANCE_DOMAIN:
