@@ -290,6 +290,32 @@ try:
 except ImportError:
     _HAS_AUDITORY_DOMAIN = False
 
+try:
+    from .domains.crypto_mining import (
+        MiningGovernor,
+        MiningPolicy,
+        MiningSignals,
+        MiningDecision,
+        MiningEvent,
+        CryptoMiningTrustLevel,
+        MiningOperationStatus,
+        MiningDomain,
+        MiningAction,
+        HardwareReading,
+        HASH_RATE_OPTIMIZATION,
+        THERMAL_PROTECTION,
+        POOL_SWITCHING,
+        POWER_MANAGEMENT,
+        create_mining_governor,
+        create_default_governor as create_default_mining_governor,
+        create_strict_governor as create_strict_mining_governor,
+        create_permissive_governor as create_permissive_mining_governor,
+        validate_mining_signals,
+    )
+    _HAS_CRYPTO_MINING_DOMAIN = True
+except ImportError:
+    _HAS_CRYPTO_MINING_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
@@ -515,6 +541,28 @@ if _HAS_AUDITORY_DOMAIN:
         "validate_auditory_signals",
         "AUDITORY_FLAG_SEVERITY",
     ])
+if _HAS_CRYPTO_MINING_DOMAIN:
+    __all__.extend([
+        "MiningGovernor",
+        "MiningPolicy",
+        "MiningSignals",
+        "MiningDecision",
+        "MiningEvent",
+        "CryptoMiningTrustLevel",
+        "MiningOperationStatus",
+        "MiningDomain",
+        "MiningAction",
+        "HardwareReading",
+        "HASH_RATE_OPTIMIZATION",
+        "THERMAL_PROTECTION",
+        "POOL_SWITCHING",
+        "POWER_MANAGEMENT",
+        "create_mining_governor",
+        "create_default_mining_governor",
+        "create_strict_mining_governor",
+        "create_permissive_mining_governor",
+        "validate_mining_signals",
+    ])
 
 # =============================================================================
 # Convenience
@@ -568,6 +616,7 @@ def get_available_domains():
         "cross_ecosystem": _HAS_CROSS_ECOSYSTEM_DOMAIN,
         "neuro_assistive": _HAS_NEURO_ASSISTIVE_DOMAIN,
         "auditory": _HAS_AUDITORY_DOMAIN,
+        "crypto_mining": _HAS_CRYPTO_MINING_DOMAIN,
     }
 
 
