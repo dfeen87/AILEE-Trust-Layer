@@ -645,11 +645,15 @@ ailee-trust-layer/
 │   │   │   ├── NEURO_ASSISTIVE.md    # Neuro-assistive domain framework
 │   │   │   └── BENCHMARKS.md         # Consent, cognition & safety benchmarks
 │   │   │
-│   │   └── auditory/
-│   │       ├── __init__.py           # AUDITORY domain exports
-│   │       ├── auditory.py           # Auditory safety, comfort & enhancement governance
-│   │       ├── AUDITORY.md           # Auditory domain framework
-│   │       └── BENCHMARKS.md         # Auditory benchmarks
+│   │   ├── auditory/
+│   │   │   ├── __init__.py           # AUDITORY domain exports
+│   │   │   ├── auditory.py           # Auditory safety, comfort & enhancement governance
+│   │   │   ├── AUDITORY.md           # Auditory domain framework
+│   │   │   └── BENCHMARKS.md         # Auditory benchmarks
+│   │   │
+│   │   └── crypto_mining/
+│   │       ├── __init__.py                     # CRYPTO_MINING domain exports
+│   │       └── ailee_crypto_mining_domain.py   # Hash rate, thermal, power & pool governance
 │   │
 │   └── optional/                     # Optional helper modules (domain-agnostic)
 │       ├── __init__.py               # Optional modules namespace
@@ -676,10 +680,13 @@ ailee-trust-layer/
 │
 ├── tests/
 │   ├── PEER_ADAPTERS_EFFECTIVENESS_REPORT.md  # Full effectiveness report for peer adapters
+│   ├── test_crypto_mining_domain.py  # Crypto mining domain test suite (26 tests)
 │   ├── test_ai_integrations.py       # Tests for all AI framework adapters (OpenAI, Claude, Gemini, HF, LangChain)
 │   ├── test_feen_integration.py      # Tests verifying FEEN integration and cross-system trust evaluation
 │   └── test_peer_adapters.py         # Comprehensive peer adapter test suite (16 tests: static, rolling, weighted, multisource, metadata)
 │
+├── CRYPTO_MINING.md                  # Crypto mining domain rationale, architecture & usage guide
+├── BENCHMARKS.md                     # Simulated performance & governance benchmarks (crypto mining)
 ├── LICENSE                           # MIT License
 ├── README.md                         # Project overview & usage
 └── setup.py                          # Package configuration
@@ -998,6 +1005,47 @@ Rather than optimizing for speed or scale, the Ocean domain prioritizes **precau
 
 ---
 
+## ⛏️ Crypto Mining
+
+AILEE provides a **governance layer** for AI-driven crypto mining operations — ensuring that
+hash-rate tuning, thermal management, power capping, and pool switching are acted upon
+**only when confidence is sufficient, hardware sensors agree, and safety constraints are met**.
+
+This domain is designed for *operational optimization with hard safety ceilings*, not unrestricted
+AI control of high-value, heat-generating hardware.
+
+**Governed Decisions**
+- Hash rate tuning authorization (observe → advisory → supervised → autonomous)
+- Thermal throttle gating with unconditional hardware-temperature override
+- Per-rig power limit adjustments under consensus
+- Mining pool selection and rate-limited switching
+- Hardware restart and maintenance gating
+
+**Typical Use Cases**
+- GPU and ASIC mining fleet management
+- AI-assisted overclock and efficiency tuning
+- Multi-rig thermal and power safety enforcement
+- Pool profitability optimization with audit trails
+- Compliance and accountability logging for large mining operations
+
+**Typical Impact (Representative Systems)**
+
+- Unsafe thermal actions blocked: **100%** (unconditional override at configurable threshold)
+- Pool-thrashing events prevented per hour: up to **policy cap** (default: 5/hr)
+- Governance decision latency: **< 0.2 ms** (< 20 µs on hard-path safety overrides)
+- Throughput: **> 8 000 decisions/sec** (single core, Python 3.10)
+- Audit & traceability: **Immediate** (every decision carries a unique ID and full rationale)
+
+**Deployment Model**
+
+**Observe → Advisory → Supervised → Autonomous**  
+*(History-aware warm-up; autonomous action requires demonstrated stability, consensus, and earned confidence)*
+
+> See [CRYPTO_MINING.md](CRYPTO_MINING.md) for full domain rationale and architecture,  
+> and [BENCHMARKS.md](BENCHMARKS.md) for simulated performance and governance findings.
+
+---
+
 ### 🧠 Neuro-Assistive & Cognitive Support Systems
 
 AILEE provides a **governance layer** for AI systems that assist human cognition, communication,
@@ -1072,6 +1120,8 @@ It makes them **responsible**.
 
 - **[GRACE Layer Specification](docs/GRACE_LAYER.md)** — Adaptive mediation for borderline decisions
 - **[Audit Schema](docs/AUDIT_SCHEMA.md)** — Full traceability and explainability
+- **[Crypto Mining Domain Guide](CRYPTO_MINING.md)** — Domain rationale, architecture, and usage for mining operations
+- **[Benchmarks](BENCHMARKS.md)** — Simulated performance and governance findings for the crypto mining domain
 - **[Full White Paper](https://www.linkedin.com/pulse/navigating-nonlinear-ailees-framework-adaptive-resilient-feeney-bbkfe)** — Complete framework documentation
 - **[Substack Article](https://substack.com/home/post/p-165731733)** — Additional insights
 - **[API Reference](docs/API.md)** — Complete API documentation
