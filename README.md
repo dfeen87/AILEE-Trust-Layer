@@ -654,6 +654,8 @@ ailee-trust-layer/
 │   │   └── crypto_mining/
 │   │       ├── __init__.py                     # CRYPTO_MINING domain exports
 │   │       └── ailee_crypto_mining_domain.py   # Hash rate, thermal, power & pool governance
+│   │       ├── CRYPTO_MINING.md                # Crypto mining domain rationale, architecture & usage guide
+│   │       └── BENCHMARKS.md                   # Simulated performance & governance benchmarks (crypto mining)
 │   │
 │   └── optional/                     # Optional helper modules (domain-agnostic)
 │       ├── __init__.py               # Optional modules namespace
@@ -685,8 +687,6 @@ ailee-trust-layer/
 │   ├── test_feen_integration.py      # Tests verifying FEEN integration and cross-system trust evaluation
 │   └── test_peer_adapters.py         # Comprehensive peer adapter test suite (16 tests: static, rolling, weighted, multisource, metadata)
 │
-├── CRYPTO_MINING.md                  # Crypto mining domain rationale, architecture & usage guide
-├── BENCHMARKS.md                     # Simulated performance & governance benchmarks (crypto mining)
 ├── LICENSE                           # MIT License
 ├── README.md                         # Project overview & usage
 └── setup.py                          # Package configuration
