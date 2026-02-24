@@ -9,3 +9,9 @@ services:
         value: 3.11
       - key: AILEE_BACKEND
         value: software
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: GOOGLE_API_KEY
+        sync: false
