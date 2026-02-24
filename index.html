@@ -195,7 +195,7 @@
 
         <div id="result-container">
             <div id="status-indicator"></div>
-            <div class="result-card" id="result"></div>
+            <pre class="result-card" id="result"></pre>
         </div>
     </div>
 
@@ -220,11 +220,8 @@
             resultContainer.style.display = 'none';
 
             try {
-                const response = await fetch('/trust', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query: query })
-                });
+                // Use the GET endpoint with query parameter as defined in app.py
+                const response = await fetch(`/trust?query=${encodeURIComponent(query)}&format=json`);
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -233,7 +230,8 @@
                 const data = await response.json();
 
                 // Determine status badge
-                const status = data.trusted_output.safety_status;
+                // data is flat: { query, trusted_answer, trust_score, safety_status, ... }
+                const status = data.safety_status;
                 let badgeClass = 'status-borderline';
                 if (status === 'ACCEPTED') badgeClass = 'status-accepted';
                 if (status === 'OUTRIGHT_REJECTED') badgeClass = 'status-rejected';
