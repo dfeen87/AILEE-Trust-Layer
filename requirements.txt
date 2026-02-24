@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+python-multipart
+duckduckgo-search
+openai
+anthropic
+google-generativeai
+.
