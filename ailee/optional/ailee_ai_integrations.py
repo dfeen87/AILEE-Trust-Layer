@@ -301,16 +301,18 @@ class GeminiAdapter(AIAdapter):
     """
     Adapter for Google Gemini API responses.
     
-    Supports Gemini Pro, Gemini Pro Vision, and other Gemini models.
+    Supports Gemini 1.5 Flash, Gemini 1.5 Pro, and other Gemini models.
     Extracts confidence from safety ratings and finish reasons.
     
     Example:
-        >>> import google.generativeai as genai
-        >>> genai.configure(api_key="YOUR_API_KEY")
-        >>> model = genai.GenerativeModel('gemini-pro')
+        >>> import google.genai as genai
+        >>> client = genai.Client(api_key="YOUR_API_KEY")
         >>> adapter = GeminiAdapter()
         >>> 
-        >>> response = model.generate_content("Rate quality 0-100: ...")
+        >>> response = client.models.generate_content(
+        ...     model="gemini-1.5-flash",
+        ...     contents="Rate quality 0-100: ..."
+        ... )
         >>> ai_response = adapter.extract_response(response)
     """
     

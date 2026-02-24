@@ -31,7 +31,7 @@ except ImportError:
     ANTHROPIC_AVAILABLE = False
 
 try:
-    import google.generativeai as genai
+    import google.genai as genai
     GEMINI_AVAILABLE = True
 except ImportError:
     GEMINI_AVAILABLE = False
@@ -58,7 +58,10 @@ def search_duckduckgo(query: str, max_results: int = 3) -> str:
     logger.info(f"Searching DuckDuckGo for: {query}")
     try:
         results = []
-        with DDGS() as ddgs:
+        # Use DUCKDUCKGO_APP_NAME as the User-Agent header if set
+        app_name = os.getenv("DUCKDUCKGO_APP_NAME")
+        headers = {"User-Agent": app_name} if app_name else None
+        with DDGS(headers=headers) as ddgs:
             # text() returns an iterator of dicts: {'title':..., 'href':..., 'body':...}
             for r in ddgs.text(query, max_results=max_results):
                 results.append(f"- {r.get('title', 'No Title')}: {r.get('body', '')}")
@@ -162,10 +165,12 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
     # 3. Gemini
     if GEMINI_AVAILABLE and os.getenv("GOOGLE_API_KEY"):
         try:
-            genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-            model = genai.GenerativeModel('gemini-pro')
+            client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
             logger.info("Calling Gemini...")
-            response = model.generate_content(prompt)
+            response = client.models.generate_content(
+                model="gemini-1.5-flash",
+                contents=prompt
+            )
             adapter = create_gemini_adapter(
                 value_extractor=extract_confidence_from_text
             )
