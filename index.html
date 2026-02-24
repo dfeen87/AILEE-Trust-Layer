@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AILEE Trust Layer</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
+        h1 { color: #333; }
+        .description { margin-bottom: 2rem; color: #666; }
+        .form-group { margin-bottom: 1rem; }
+        input[type="text"] { width: 100%; padding: 0.5rem; font-size: 1rem; box-sizing: border-box; }
+        button { padding: 0.5rem 1rem; font-size: 1rem; background: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        #result { margin-top: 2rem; background: #f4f4f4; padding: 1rem; border-radius: 4px; white-space: pre-wrap; display: none; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>AILEE Trust Layer</h1>
+    <div class="description">
+        <p><strong>Adaptive Integrity Layer for AI Decision Systems</strong></p>
+        <p>This demo performs an internet search, generates multi-model responses based on the results, and validates them through the AILEE Trust Layer to provide a safe, trusted output.</p>
+    </div>
+
+    <div class="form-group">
+        <label for="query"><strong>Enter a query or prompt:</strong></label>
+        <input type="text" id="query" placeholder="e.g., What is the capital of France?" required>
+    </div>
+    <button onclick="submitQuery()">Validate with AILEE</button>
+
+    <div id="result"></div>
+
+    <script>
+        async function submitQuery() {
+            const query = document.getElementById('query').value;
+            const resultDiv = document.getElementById('result');
+
+            if (!query) {
+                alert('Please enter a query');
+                return;
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.textContent = 'Processing... (Searching -> Multi-Model Generation -> Trust Validation)';
+            resultDiv.classList.remove('error');
+
+            try {
+                const response = await fetch('/trust', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: query })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                resultDiv.textContent = 'Error: ' + error.message;
+                resultDiv.classList.add('error');
+            }
+        }
+    </script>
+</body>
+</html>
