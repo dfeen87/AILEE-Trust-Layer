@@ -6,6 +6,8 @@
     <title>AILEE Trust Layer | Adaptive Integrity</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        /* styles.css - Sleek Wood Finish Chat Interface */
+
         :root {
             --primary: #c25e00;
             --primary-hover: #e07b00;
@@ -15,6 +17,12 @@
             --text-muted: #718096;
             --radius: 12px;
             --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+            /* Chat specific */
+            --msg-user-bg: #e0f2fe; /* Light blue */
+            --msg-ai-bg: #f7fafc; /* Very light gray */
+            --border-color: #edf2f7;
+            --sidebar-bg: rgba(255, 255, 255, 0.9);
         }
 
         body {
@@ -23,8 +31,8 @@
             padding: 0;
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             /* High-quality wood texture background via CSS pattern/gradient */
             background-color: #5d4037;
             background-image:
@@ -39,222 +47,610 @@
                 radial-gradient(circle at center, rgba(0,0,0,0.1), rgba(0,0,0,0.6)),
                 url("https://www.transparenttextures.com/patterns/wood-pattern.png"),
                 linear-gradient(to bottom right, #5D4037, #3E2723);
+            overflow: hidden; /* Prevent body scroll if chat content overflows container */
         }
 
-        .container {
-            width: 100%;
-            max-width: 700px;
-            padding: 2rem;
-            margin: 1rem;
+        /* Main Container: Chat + Sidebar */
+        .main-container {
+            width: 95%;
+            max-width: 1200px;
+            height: 90vh;
+            display: flex;
             background: var(--surface);
             backdrop-filter: var(--surface-blur);
             -webkit-backdrop-filter: var(--surface-blur);
             border-radius: var(--radius);
             box-shadow: var(--shadow);
             border: 1px solid rgba(255, 255, 255, 0.4);
+            overflow: hidden;
         }
 
-        header {
-            text-align: center;
-            margin-bottom: 2.5rem;
-        }
-
-        h1 {
-            color: var(--text-main);
-            margin: 0 0 0.5rem 0;
-            font-weight: 700;
-            letter-spacing: -0.02em;
-        }
-
-        .subtitle {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-            line-height: 1.5;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 600;
-            color: var(--text-main);
-            font-size: 0.9rem;
-        }
-
-        .input-group {
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
             display: flex;
-            gap: 0.75rem;
+            flex-direction: column;
+            transition: width 0.3s ease;
         }
 
-        input[type="text"] {
-            flex: 1;
-            padding: 0.875rem 1rem;
-            font-size: 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: var(--radius);
-            transition: all 0.2s ease;
-            outline: none;
-            background: #fff;
+        .sidebar.collapsed {
+            width: 60px;
         }
 
-        input[type="text"]:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(194, 94, 0, 0.1);
+        .sidebar-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        button {
-            padding: 0.875rem 1.5rem;
-            font-size: 1rem;
-            font-weight: 600;
+        .sidebar-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            color: var(--text-main);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar.collapsed .sidebar-header h2 {
+            display: none;
+        }
+
+        .new-session-btn {
+            width: 100%;
+            margin-top: 1rem;
+            padding: 0.75rem;
             background: var(--primary);
             color: white;
             border: none;
             border-radius: var(--radius);
             cursor: pointer;
-            transition: background 0.2s ease, transform 0.1s ease;
+            font-weight: 600;
+            transition: background 0.2s ease;
             white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        button:hover {
+        .sidebar.collapsed .new-session-btn span {
+            display: none;
+        }
+        .sidebar.collapsed .new-session-btn::before {
+            content: "+";
+            font-size: 1.2rem;
+        }
+
+        .new-session-btn:hover {
             background: var(--primary-hover);
         }
 
-        button:active {
-            transform: translateY(1px);
+        .session-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
         }
 
-        #result-container {
-            margin-top: 2rem;
-            display: none;
-            animation: fadeIn 0.3s ease-out;
+        .session-item {
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border: 1px solid transparent;
         }
 
-        .result-card {
-            background: #f7fafc;
-            border: 1px solid #edf2f7;
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            font-family: 'Monaco', 'Consolas', monospace;
-            font-size: 0.85rem;
+        .session-item:hover {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .session-item.active {
+            background: rgba(194, 94, 0, 0.1);
+            border-color: rgba(194, 94, 0, 0.2);
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        .sidebar.collapsed .session-item {
+            text-align: center;
+            padding: 0.75rem 0.25rem;
+        }
+
+        .sidebar-toggle {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        /* Chat Area */
+        .chat-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: rgba(255,255,255,0.6);
+        }
+
+        .chat-header {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.8);
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.25rem;
             color: var(--text-main);
-            overflow-x: auto;
-            max-height: 400px;
+        }
+        .chat-header .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            max-width: 80%;
+            padding: 1rem;
+            border-radius: 12px;
+            position: relative;
             line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--msg-user-bg);
+            color: var(--text-main);
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: var(--msg-ai-bg);
+            border: 1px solid var(--border-color);
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
         .status-badge {
             display: inline-block;
-            padding: 0.25rem 0.75rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 999px;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             text-transform: uppercase;
-            margin-bottom: 1rem;
         }
 
         .status-accepted { background: #c6f6d5; color: #22543d; }
         .status-rejected { background: #fed7d7; color: #822727; }
         .status-borderline { background: #feebc8; color: #744210; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
+        .input-area {
+            padding: 1.5rem;
+            border-top: 1px solid var(--border-color);
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            gap: 1rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 94, 0, 0.1);
+        }
+
+        .send-btn {
+            padding: 0.875rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover {
+            background: var(--primary-hover);
+        }
+        .send-btn:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+        }
+
+        /* Json Details Toggle */
+        .details-toggle {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            margin-top: 0.5rem;
+            padding: 0;
+        }
+        .json-details {
+            display: none;
+            margin-top: 0.5rem;
+            padding: 0.5rem;
+            background: #f1f5f9;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
         }
 
         /* Mobile Responsive */
-        @media (max-width: 600px) {
-            .input-group {
+        @media (max-width: 768px) {
+            .main-container {
                 flex-direction: column;
-            }
-            button {
+                height: 100vh;
                 width: 100%;
+                border-radius: 0;
+            }
+            .sidebar {
+                width: 100%;
+                height: auto;
+                max-height: 200px; /* Collapsed state on mobile maybe? Or full screen toggle */
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .sidebar.collapsed {
+                height: 60px;
+                overflow: hidden;
+                width: 100%;
+            }
+            .chat-area {
+                height: 100%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>AILEE Trust Layer</h1>
-            <div class="subtitle">
-                Adaptive Integrity Layer for AI Decision Systems.<br>
-                Validates uncertain AI outputs against a structured trust pipeline.
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>Sessions</h2>
+                <button class="sidebar-toggle" id="toggle-sidebar" aria-label="Toggle Sidebar">
+                    &#9776; <!-- Menu Icon -->
+                </button>
             </div>
-        </header>
-
-        <div class="form-group">
-            <label for="query">Input Query / Prompt</label>
-            <div class="input-group">
-                <input type="text" id="query" placeholder="e.g., What is the capital of France?" required autocomplete="off">
-                <button onclick="submitQuery()" id="submitBtn">Validate Trust</button>
+            <div style="padding: 0 1rem;">
+                <button class="new-session-btn" id="new-session-btn">
+                    <span>+ New Session</span>
+                </button>
+            </div>
+            <div class="session-list" id="session-list">
+                <!-- Sessions populated by JS -->
             </div>
         </div>
 
-        <div id="result-container">
-            <div id="status-indicator"></div>
-            <pre class="result-card" id="result"></pre>
+        <!-- Chat Area -->
+        <div class="chat-area">
+            <div class="chat-header">
+                <h1>AILEE Trust Layer</h1>
+                <div class="subtitle">
+                    Adaptive Integrity Layer for AI Decision Systems.
+                    Validates uncertain AI outputs against a structured trust pipeline.
+                </div>
+            </div>
+
+            <div class="messages-container" id="messages-container">
+                <!-- Messages populated by JS -->
+            </div>
+
+            <div class="input-area">
+                <input type="text" class="chat-input" id="chat-input" placeholder="Enter query (e.g. What is the capital of France?)..." autocomplete="off">
+                <button class="send-btn" id="send-btn">Send</button>
+            </div>
         </div>
     </div>
 
+    <!-- Script at the end of body -->
     <script>
-        async function submitQuery() {
-            const queryInput = document.getElementById('query');
-            const resultContainer = document.getElementById('result-container');
-            const resultDiv = document.getElementById('result');
-            const statusIndicator = document.getElementById('status-indicator');
-            const btn = document.getElementById('submitBtn');
+        /* script.js - Handles Chat Logic */
 
-            const query = queryInput.value.trim();
-
-            if (!query) {
-                queryInput.focus();
-                return;
-            }
-
-            // UI State: Loading
-            btn.disabled = true;
-            btn.textContent = 'Processing...';
-            resultContainer.style.display = 'none';
-
-            try {
-                // Use the GET endpoint with query parameter as defined in app.py
-                const response = await fetch(`/trust?query=${encodeURIComponent(query)}&format=json`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        class SessionManager {
+            constructor() {
+                this.sessions = [];
+                this.currentSessionId = null;
+                // Load sessions immediately
+                try {
+                    const saved = localStorage.getItem('ailee_sessions');
+                    if (saved) {
+                        this.sessions = JSON.parse(saved);
+                    }
+                } catch (e) {
+                    console.error("Failed to load sessions:", e);
+                    this.sessions = [];
                 }
 
-                const data = await response.json();
+                if (this.sessions.length === 0) {
+                    this.createNewSession();
+                } else {
+                    const lastActive = localStorage.getItem('ailee_last_session_id');
+                    const session = this.sessions.find(s => s.id === lastActive);
+                    this.currentSessionId = session ? session.id : this.sessions[0].id;
+                }
+            }
 
-                // Determine status badge
-                // data is flat: { query, trusted_answer, trust_score, safety_status, ... }
-                const status = data.safety_status;
+            saveSessions() {
+                localStorage.setItem('ailee_sessions', JSON.stringify(this.sessions));
+                if (this.currentSessionId) {
+                    localStorage.setItem('ailee_last_session_id', this.currentSessionId);
+                }
+            }
+
+            createNewSession() {
+                const id = 'sess_' + Date.now();
+                const newSession = {
+                    id: id,
+                    title: 'New Session',
+                    messages: [],
+                    timestamp: Date.now()
+                };
+                this.sessions.unshift(newSession);
+                this.currentSessionId = id;
+                this.saveSessions();
+                return newSession;
+            }
+
+            getCurrentSession() {
+                return this.sessions.find(s => s.id === this.currentSessionId);
+            }
+
+            updateSessionTitle(sessionId, newTitle) {
+                const session = this.sessions.find(s => s.id === sessionId);
+                if (session) {
+                    session.title = newTitle.substring(0, 30) + (newTitle.length > 30 ? '...' : '');
+                    this.saveSessions();
+                }
+            }
+
+            addMessage(role, content, metadata = null) {
+                const session = this.getCurrentSession();
+                if (!session) return;
+
+                const message = {
+                    role: role,
+                    content: content,
+                    metadata: metadata,
+                    timestamp: Date.now()
+                };
+                session.messages.push(message);
+
+                // Update title on EVERY user message (shows the last user message as title)
+                if (role === 'user') {
+                    this.updateSessionTitle(session.id, content);
+                }
+
+                this.saveSessions();
+                return message;
+            }
+
+            switchSession(id) {
+                if (this.sessions.some(s => s.id === id)) {
+                    this.currentSessionId = id;
+                    this.saveSessions();
+                    return true;
+                }
+                return false;
+            }
+        }
+
+        // Global instances
+        const sessionManager = new SessionManager();
+
+        // DOM Elements (will be populated on load)
+        let sidebar, sessionList, messagesContainer, chatInput, sendBtn, toggleSidebarBtn, newSessionBtn;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            sidebar = document.querySelector('.sidebar');
+            sessionList = document.querySelector('.session-list');
+            messagesContainer = document.querySelector('.messages-container');
+            chatInput = document.querySelector('.chat-input');
+            sendBtn = document.querySelector('.send-btn');
+            toggleSidebarBtn = document.querySelector('.sidebar-toggle');
+            newSessionBtn = document.querySelector('.new-session-btn');
+
+            // Initial Render
+            renderSidebar();
+            renderChat();
+
+            // Event Listeners
+            sendBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') sendMessage();
+            });
+
+            newSessionBtn.addEventListener('click', () => {
+                sessionManager.createNewSession();
+                renderSidebar();
+                renderChat();
+                if (window.innerWidth < 768 && sidebar && !sidebar.classList.contains('collapsed')) {
+                    sidebar.classList.add('collapsed');
+                }
+            });
+
+            toggleSidebarBtn.addEventListener('click', () => {
+                if (sidebar) sidebar.classList.toggle('collapsed');
+            });
+        });
+
+        function renderSidebar() {
+            if (!sessionList) return;
+            sessionList.innerHTML = '';
+            const currentId = sessionManager.currentSessionId;
+
+            sessionManager.sessions.forEach(session => {
+                const item = document.createElement('div');
+                item.className = `session-item ${session.id === currentId ? 'active' : ''}`;
+                item.textContent = session.title || 'New Session';
+                item.onclick = () => {
+                    sessionManager.switchSession(session.id);
+                    renderSidebar();
+                    renderChat();
+                };
+                sessionList.appendChild(item);
+            });
+        }
+
+        function renderChat() {
+            if (!messagesContainer) return;
+            messagesContainer.innerHTML = '';
+            const session = sessionManager.getCurrentSession();
+            if (!session) return;
+
+            session.messages.forEach(msg => {
+                appendMessageToUI(msg);
+            });
+            scrollToBottom();
+        }
+
+        function appendMessageToUI(msg) {
+            if (!messagesContainer) return;
+
+            const div = document.createElement('div');
+            div.className = `message ${msg.role}`;
+
+            let contentHtml = '';
+
+            if (msg.role === 'user') {
+                contentHtml = `<div class="message-content">${escapeHtml(msg.content)}</div>`;
+            } else {
+                const meta = msg.metadata || {};
+                const status = meta.safety_status || 'UNKNOWN';
                 let badgeClass = 'status-borderline';
                 if (status === 'ACCEPTED') badgeClass = 'status-accepted';
                 if (status === 'OUTRIGHT_REJECTED') badgeClass = 'status-rejected';
 
-                statusIndicator.innerHTML = `<span class="status-badge ${badgeClass}">${status}</span>`;
-                resultDiv.textContent = JSON.stringify(data, null, 2);
-                resultContainer.style.display = 'block';
+                // Escape content THEN replace newlines
+                const safeText = escapeHtml(msg.content || '');
+                const text = safeText.replace(/\n/g, '<br>');
+
+                contentHtml = `
+                    <div class="message-content">${text}</div>
+                    <div class="message-meta">
+                        <span class="status-badge ${badgeClass}">${escapeHtml(status)}</span>
+                        <span>Score: ${meta.trust_score !== undefined ? Number(meta.trust_score).toFixed(1) : 'N/A'}</span>
+                    </div>
+                    <button class="details-toggle" onclick="var d = this.nextElementSibling; d.style.display = d.style.display === 'block' ? 'none' : 'block'">Show Details</button>
+                    <div class="json-details" style="display:none;">${escapeHtml(JSON.stringify(meta, null, 2))}</div>
+                `;
+            }
+
+            div.innerHTML = contentHtml;
+            messagesContainer.appendChild(div);
+        }
+
+        async function sendMessage() {
+            if (!chatInput) return;
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            chatInput.value = '';
+            chatInput.disabled = true;
+            sendBtn.disabled = true;
+
+            // Add User Message
+            const userMsg = sessionManager.addMessage('user', text);
+            appendMessageToUI(userMsg);
+            scrollToBottom();
+            renderSidebar();
+
+            // Add Loading Indicator
+            const loadingId = 'loading-' + Date.now();
+            const loadingDiv = document.createElement('div');
+            loadingDiv.id = loadingId;
+            loadingDiv.className = 'message ai';
+            loadingDiv.innerHTML = '<em>Thinking... (Searching & Validating)</em>';
+            messagesContainer.appendChild(loadingDiv);
+            scrollToBottom();
+
+            try {
+                const response = await fetch(`/trust?query=${encodeURIComponent(text)}&format=json`);
+
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // data: { query, trusted_answer, safety_status, trust_score, ... }
+
+                // Use trusted_answer for display content
+                const content = data.trusted_answer || "No answer generated.";
+                const aiMsg = sessionManager.addMessage('ai', content, data);
+                appendMessageToUI(aiMsg);
+                scrollToBottom();
+
             } catch (error) {
-                statusIndicator.innerHTML = `<span class="status-badge status-rejected">ERROR</span>`;
-                resultDiv.textContent = 'Error: ' + error.message;
-                resultContainer.style.display = 'block';
+                const loadingEl = document.getElementById(loadingId);
+                if (loadingEl) loadingEl.remove();
+
+                // Save error message to session so it persists
+                const errorMsg = sessionManager.addMessage('ai', "Error: " + error.message, { safety_status: 'ERROR' });
+                appendMessageToUI(errorMsg);
             } finally {
-                btn.disabled = false;
-                btn.textContent = 'Validate Trust';
+                chatInput.disabled = false;
+                sendBtn.disabled = false;
+                chatInput.focus();
             }
         }
 
-        // Allow Enter key to submit
-        document.getElementById('query').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                submitQuery();
+        function scrollToBottom() {
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }
-        });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
     </script>
 </body>
 </html>
