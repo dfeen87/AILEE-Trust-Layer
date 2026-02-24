@@ -3,47 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AILEE Trust Layer</title>
+    <title>AILEE Trust Layer | Adaptive Integrity</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 2rem auto; padding: 0 1rem; line-height: 1.6; }
-        h1 { color: #333; }
-        .description { margin-bottom: 2rem; color: #666; }
-        .form-group { margin-bottom: 1rem; }
-        input[type="text"] { width: 100%; padding: 0.5rem; font-size: 1rem; box-sizing: border-box; }
-        button { padding: 0.5rem 1rem; font-size: 1rem; background: #007bff; color: white; border: none; cursor: pointer; }
-        button:hover { background: #0056b3; }
-        #result { margin-top: 2rem; background: #f4f4f4; padding: 1rem; border-radius: 4px; white-space: pre-wrap; display: none; }
-        .error { color: red; }
+        :root {
+            --primary: #c25e00;
+            --primary-hover: #e07b00;
+            --surface: rgba(255, 255, 255, 0.95);
+            --surface-blur: blur(12px);
+            --text-main: #2d3748;
+            --text-muted: #718096;
+            --radius: 12px;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* High-quality wood texture background via CSS pattern/gradient */
+            background-color: #5d4037;
+            background-image:
+                linear-gradient(335deg, rgba(0,0,0,0.3) 23px, transparent 23px),
+                linear-gradient(155deg, rgba(0,0,0,0.3) 23px, transparent 23px),
+                linear-gradient(335deg, rgba(0,0,0,0.3) 23px, transparent 23px),
+                linear-gradient(155deg, rgba(0,0,0,0.3) 23px, transparent 23px);
+            background-size: 58px 58px;
+            background-position: 0px 2px, 4px 35px, 29px 31px, 34px 6px;
+            /* Simple radial gradient overlay to give depth/lighting */
+            background:
+                radial-gradient(circle at center, rgba(0,0,0,0.1), rgba(0,0,0,0.6)),
+                url("https://www.transparenttextures.com/patterns/wood-pattern.png"),
+                linear-gradient(to bottom right, #5D4037, #3E2723);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 700px;
+            padding: 2rem;
+            margin: 1rem;
+            background: var(--surface);
+            backdrop-filter: var(--surface-blur);
+            -webkit-backdrop-filter: var(--surface-blur);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            color: var(--text-main);
+            margin: 0 0 0.5rem 0;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            font-size: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+            outline: none;
+            background: #fff;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(194, 94, 0, 0.1);
+        }
+
+        button {
+            padding: 0.875rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.1s ease;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background: var(--primary-hover);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        #result-container {
+            margin-top: 2rem;
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .result-card {
+            background: #f7fafc;
+            border: 1px solid #edf2f7;
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.85rem;
+            color: var(--text-main);
+            overflow-x: auto;
+            max-height: 400px;
+            line-height: 1.5;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+
+        .status-accepted { background: #c6f6d5; color: #22543d; }
+        .status-rejected { background: #fed7d7; color: #822727; }
+        .status-borderline { background: #feebc8; color: #744210; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 600px) {
+            .input-group {
+                flex-direction: column;
+            }
+            button {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
-    <h1>AILEE Trust Layer</h1>
-    <div class="description">
-        <p><strong>Adaptive Integrity Layer for AI Decision Systems</strong></p>
-        <p>This demo performs an internet search, generates multi-model responses based on the results, and validates them through the AILEE Trust Layer to provide a safe, trusted output.</p>
-    </div>
+    <div class="container">
+        <header>
+            <h1>AILEE Trust Layer</h1>
+            <div class="subtitle">
+                Adaptive Integrity Layer for AI Decision Systems.<br>
+                Validates uncertain AI outputs against a structured trust pipeline.
+            </div>
+        </header>
 
-    <div class="form-group">
-        <label for="query"><strong>Enter a query or prompt:</strong></label>
-        <input type="text" id="query" placeholder="e.g., What is the capital of France?" required>
-    </div>
-    <button onclick="submitQuery()">Validate with AILEE</button>
+        <div class="form-group">
+            <label for="query">Input Query / Prompt</label>
+            <div class="input-group">
+                <input type="text" id="query" placeholder="e.g., What is the capital of France?" required autocomplete="off">
+                <button onclick="submitQuery()" id="submitBtn">Validate Trust</button>
+            </div>
+        </div>
 
-    <div id="result"></div>
+        <div id="result-container">
+            <div id="status-indicator"></div>
+            <div class="result-card" id="result"></div>
+        </div>
+    </div>
 
     <script>
         async function submitQuery() {
-            const query = document.getElementById('query').value;
+            const queryInput = document.getElementById('query');
+            const resultContainer = document.getElementById('result-container');
             const resultDiv = document.getElementById('result');
+            const statusIndicator = document.getElementById('status-indicator');
+            const btn = document.getElementById('submitBtn');
+
+            const query = queryInput.value.trim();
 
             if (!query) {
-                alert('Please enter a query');
+                queryInput.focus();
                 return;
             }
 
-            resultDiv.style.display = 'block';
-            resultDiv.textContent = 'Processing... (Searching -> Multi-Model Generation -> Trust Validation)';
-            resultDiv.classList.remove('error');
+            // UI State: Loading
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+            resultContainer.style.display = 'none';
 
             try {
                 const response = await fetch('/trust', {
@@ -57,12 +231,32 @@
                 }
 
                 const data = await response.json();
+
+                // Determine status badge
+                const status = data.trusted_output.safety_status;
+                let badgeClass = 'status-borderline';
+                if (status === 'ACCEPTED') badgeClass = 'status-accepted';
+                if (status === 'OUTRIGHT_REJECTED') badgeClass = 'status-rejected';
+
+                statusIndicator.innerHTML = `<span class="status-badge ${badgeClass}">${status}</span>`;
                 resultDiv.textContent = JSON.stringify(data, null, 2);
+                resultContainer.style.display = 'block';
             } catch (error) {
+                statusIndicator.innerHTML = `<span class="status-badge status-rejected">ERROR</span>`;
                 resultDiv.textContent = 'Error: ' + error.message;
-                resultDiv.classList.add('error');
+                resultContainer.style.display = 'block';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Validate Trust';
             }
         }
+
+        // Allow Enter key to submit
+        document.getElementById('query').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                submitQuery();
+            }
+        });
     </script>
 </body>
 </html>
