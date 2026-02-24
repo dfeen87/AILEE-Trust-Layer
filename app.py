@@ -47,6 +47,15 @@ pipeline_config = AileeConfig(
 trust_pipeline = AileeTrustPipeline(pipeline_config)
 
 
+@app.on_event("startup")
+async def startup_event():
+    """Log startup configuration."""
+    logger.info("AILEE Trust Layer starting...")
+    logger.info(f"Backend: {os.getenv('AILEE_BACKEND', 'unknown')}")
+    logger.info(f"Python: {os.getenv('PYTHON_VERSION', 'unknown')}")
+    logger.info(f"Models Available: OpenAI={models.OPENAI_AVAILABLE}, Anthropic={models.ANTHROPIC_AVAILABLE}, Gemini={models.GEMINI_AVAILABLE}")
+
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     """Serve the landing page."""

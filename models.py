@@ -131,11 +131,12 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
     )
 
     # 1. OpenAI
-    openai_key = os.getenv("OPENAI_API_KEY", "").strip()
+    # Strip whitespace AND surrounding quotes to handle common copy-paste errors
+    openai_key = os.getenv("OPENAI_API_KEY", "").strip().strip('"').strip("'")
     if OPENAI_AVAILABLE and openai_key:
         try:
+            logger.info(f"Calling OpenAI with key: {openai_key[:4]}...{openai_key[-4:] if len(openai_key) > 8 else ''}")
             client = OpenAI(api_key=openai_key)
-            logger.info("Calling OpenAI...")
             response = client.chat.completions.create(
                 model="gpt-4o",
                 messages=[{"role": "user", "content": prompt}],
@@ -150,15 +151,18 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             responses.append(("openai", response, adapter))
         except Exception as e:
             logger.error(f"OpenAI generation failed: {e}")
-    elif not openai_key:
-        logger.warning("OpenAI API Key missing or empty.")
+    else:
+        if not OPENAI_AVAILABLE:
+            logger.warning("Skipping OpenAI: Library not available.")
+        if not openai_key:
+            logger.warning("Skipping OpenAI: API Key missing or empty.")
 
     # 2. Anthropic
-    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip().strip('"').strip("'")
     if ANTHROPIC_AVAILABLE and anthropic_key:
         try:
+            logger.info(f"Calling Anthropic with key: {anthropic_key[:4]}...{anthropic_key[-4:] if len(anthropic_key) > 8 else ''}")
             client = Anthropic(api_key=anthropic_key)
-            logger.info("Calling Anthropic...")
             response = client.messages.create(
                 model="claude-3-5-sonnet-20241022",
                 max_tokens=1024,
@@ -170,15 +174,18 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             responses.append(("anthropic", response, adapter))
         except Exception as e:
             logger.error(f"Anthropic generation failed: {e}")
-    elif not anthropic_key:
-        logger.warning("Anthropic API Key missing or empty.")
+    else:
+        if not ANTHROPIC_AVAILABLE:
+            logger.warning("Skipping Anthropic: Library not available.")
+        if not anthropic_key:
+            logger.warning("Skipping Anthropic: API Key missing or empty.")
 
     # 3. Gemini
-    google_key = os.getenv("GOOGLE_API_KEY", "").strip()
+    google_key = os.getenv("GOOGLE_API_KEY", "").strip().strip('"').strip("'")
     if GEMINI_AVAILABLE and google_key:
         try:
+            logger.info(f"Calling Gemini with key: {google_key[:4]}...{google_key[-4:] if len(google_key) > 8 else ''}")
             client = genai.Client(api_key=google_key)
-            logger.info("Calling Gemini...")
             response = client.models.generate_content(
                 model="gemini-1.5-flash",
                 contents=prompt
@@ -189,8 +196,11 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             responses.append(("gemini", response, adapter))
         except Exception as e:
             logger.error(f"Gemini generation failed: {e}")
-    elif not google_key:
-        logger.warning("Google API Key missing or empty.")
+    else:
+        if not GEMINI_AVAILABLE:
+            logger.warning("Skipping Gemini: Library not available.")
+        if not google_key:
+            logger.warning("Skipping Gemini: API Key missing or empty.")
 
     # Fallback to Mock if no responses
     if not responses:
