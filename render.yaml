@@ -1,0 +1,49 @@
+# render.yaml — Render.com deployment configuration for AILEE Trust Layer
+#
+# Deploys a single Web Service that runs the FastAPI app (app.py).
+# All secret keys are set as environment variables in the Render dashboard;
+# they are listed here as sync: false so Render never exposes them in logs.
+#
+# Docs: https://render.com/docs/render-yaml-spec
+
+services:
+  - type: web
+    name: ailee-trust-layer
+    runtime: python
+    plan: free                # NOTE: free plan sleeps after ~15 min of inactivity
+                              # and has limited RAM / CPU.  Change to "starter" or
+                              # higher for production / always-on deployments.
+
+    buildCommand: pip install -r requirements.txt && pip install -e .
+    startCommand: uvicorn app:app --host 0.0.0.0 --port $PORT
+
+    envVars:
+      # ── AI provider ────────────────────────────────────────────────────────
+      # Set to "openai" (default) or "gemini"
+      - key: AI_PROVIDER
+        value: openai
+
+      # OpenAI — set your real key in the Render dashboard (Environment tab)
+      - key: OPENAI_API_KEY
+        sync: false           # secret — never committed to source control
+
+      # Optional: override the OpenAI model (default: gpt-4o)
+      - key: OPENAI_MODEL
+        value: gpt-4o
+
+      # Google Gemini — only required when AI_PROVIDER=gemini
+      - key: GEMINI_API_KEY
+        sync: false           # secret — never committed to source control
+
+      # Optional: override the Gemini model (default: gemini-1.5-flash)
+      - key: GEMINI_MODEL
+        value: gemini-1.5-flash
+
+      # ── AILEE pipeline preset ──────────────────────────────────────────────
+      # Supported values: balanced | conservative | permissive
+      - key: AILEE_PRESET
+        value: balanced
+
+      # ── Runtime ───────────────────────────────────────────────────────────
+      - key: PYTHON_VERSION
+        value: "3.11"
