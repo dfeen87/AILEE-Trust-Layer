@@ -17,9 +17,13 @@ import hashlib
 import time
 import math
 import os
-import requests
 from typing import List, Dict, Any, Optional, Tuple
 from datetime import datetime
+
+try:
+    import requests
+except ImportError:
+    requests = None
 
 # External Libraries
 try:

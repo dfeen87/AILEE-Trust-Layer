@@ -20,7 +20,16 @@ setup(
         "serialization": [],
         "replay": [],
         "domains": [],
-        "dev": ["pytest", "black", "mypy"],
+        "dev": [
+            "pytest",
+            "black",
+            "mypy",
+            "requests",
+            "openai",
+            "anthropic",
+            "google-generativeai",
+            "duckduckgo-search",
+        ],
     },
     classifiers=[
         "Development Status :: 5 - Production/Stable",
