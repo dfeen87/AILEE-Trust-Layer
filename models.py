@@ -14,6 +14,10 @@ import re
 import logging
 from typing import List, Tuple, Any, Dict, Optional
 
+# Configure logging immediately
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("ailee_models")
+
 # Search
 from duckduckgo_search import DDGS
 
@@ -21,20 +25,26 @@ from duckduckgo_search import DDGS
 try:
     from openai import OpenAI
     OPENAI_AVAILABLE = True
-except ImportError:
+except ImportError as e:
+    logger.warning(f"OpenAI library not found: {e}")
     OPENAI_AVAILABLE = False
 
 try:
     from anthropic import Anthropic
     ANTHROPIC_AVAILABLE = True
-except ImportError:
+except ImportError as e:
+    logger.warning(f"Anthropic library not found: {e}")
     ANTHROPIC_AVAILABLE = False
 
 try:
     import google.genai as genai
     GEMINI_AVAILABLE = True
-except ImportError:
+except ImportError as e:
+    logger.warning(f"Google GenAI library not found: {e}")
     GEMINI_AVAILABLE = False
+
+# Log availability status
+logger.info(f"AI Models Availability: OpenAI={OPENAI_AVAILABLE}, Anthropic={ANTHROPIC_AVAILABLE}, Gemini={GEMINI_AVAILABLE}")
 
 # AILEE Adapters
 from ailee.optional.ailee_ai_integrations import (
@@ -44,11 +54,6 @@ from ailee.optional.ailee_ai_integrations import (
     create_gemini_adapter,
     create_huggingface_adapter,  # Used for mock/fallback
 )
-
-# Configure logging
-logger = logging.getLogger("ailee_models")
-logging.basicConfig(level=logging.INFO)
-
 
 def search_duckduckgo(query: str, max_results: int = 3) -> str:
     """
@@ -126,9 +131,10 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
     )
 
     # 1. OpenAI
-    if OPENAI_AVAILABLE and os.getenv("OPENAI_API_KEY"):
+    openai_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if OPENAI_AVAILABLE and openai_key:
         try:
-            client = OpenAI()
+            client = OpenAI(api_key=openai_key)
             logger.info("Calling OpenAI...")
             response = client.chat.completions.create(
                 model="gpt-4o",
@@ -144,11 +150,14 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             responses.append(("openai", response, adapter))
         except Exception as e:
             logger.error(f"OpenAI generation failed: {e}")
+    elif not openai_key:
+        logger.warning("OpenAI API Key missing or empty.")
 
     # 2. Anthropic
-    if ANTHROPIC_AVAILABLE and os.getenv("ANTHROPIC_API_KEY"):
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip()
+    if ANTHROPIC_AVAILABLE and anthropic_key:
         try:
-            client = Anthropic()
+            client = Anthropic(api_key=anthropic_key)
             logger.info("Calling Anthropic...")
             response = client.messages.create(
                 model="claude-3-5-sonnet-20241022",
@@ -161,11 +170,14 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             responses.append(("anthropic", response, adapter))
         except Exception as e:
             logger.error(f"Anthropic generation failed: {e}")
+    elif not anthropic_key:
+        logger.warning("Anthropic API Key missing or empty.")
 
     # 3. Gemini
-    if GEMINI_AVAILABLE and os.getenv("GOOGLE_API_KEY"):
+    google_key = os.getenv("GOOGLE_API_KEY", "").strip()
+    if GEMINI_AVAILABLE and google_key:
         try:
-            client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+            client = genai.Client(api_key=google_key)
             logger.info("Calling Gemini...")
             response = client.models.generate_content(
                 model="gemini-1.5-flash",
@@ -177,6 +189,8 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             responses.append(("gemini", response, adapter))
         except Exception as e:
             logger.error(f"Gemini generation failed: {e}")
+    elif not google_key:
+        logger.warning("Google API Key missing or empty.")
 
     # Fallback to Mock if no responses
     if not responses:
