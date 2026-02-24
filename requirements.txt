@@ -4,5 +4,5 @@ python-multipart
 duckduckgo-search
 openai
 anthropic
-google-generativeai
+google-genai
 .

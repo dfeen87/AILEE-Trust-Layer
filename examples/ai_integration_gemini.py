@@ -14,7 +14,7 @@ from ailee import AileeTrustPipeline, AileeConfig
 from ailee.optional.ailee_ai_integrations import GeminiAdapter, create_gemini_adapter
 
 # Note: This example shows the integration pattern.
-# To run it, you'll need: pip install google-generativeai
+# To run it, you'll need: pip install google-genai
 # and set GOOGLE_API_KEY environment variable
 
 
@@ -338,15 +338,15 @@ if __name__ == "__main__":
     print("Gemini Integration Examples Complete!")
     print("=" * 60)
     print("\nTo use with real Gemini API:")
-    print("1. pip install google-generativeai")
+    print("1. pip install google-genai")
     print("2. Set GOOGLE_API_KEY environment variable")
     print("3. Replace mock responses with actual API calls:")
-    print("   import google.generativeai as genai")
-    print("   genai.configure(api_key=os.environ['GOOGLE_API_KEY'])")
-    print("   model = genai.GenerativeModel('gemini-pro')")
-    print("   response = model.generate_content(...)")
+    print("   import google.genai as genai")
+    print("   client = genai.Client(api_key=os.environ['GOOGLE_API_KEY'])")
+    print("   response = client.models.generate_content(")
+    print("       model='gemini-1.5-flash', contents=...)")
     print("\nGemini Features:")
     print("  ✓ Automatic confidence from safety ratings")
     print("  ✓ Finish reason analysis (STOP, SAFETY, MAX_TOKENS)")
-    print("  ✓ Support for Gemini Pro and Gemini Pro Vision")
+    print("  ✓ Support for Gemini 1.5 Flash and Gemini 1.5 Pro")
     print("  ✓ Safety rating integration")
