@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 from typing import Dict, Any, Optional
 
 from fastapi import FastAPI, Query, HTTPException
@@ -23,7 +24,7 @@ logger = logging.getLogger("ailee_app")
 app = FastAPI(
     title="AILEE Trust Layer - Deploy",
     description="Public deployment of the AILEE Trust Layer with real search and multi-model generation.",
-    version="1.0.0"
+    version="1.1.0"
 )
 
 # Enable CORS for public access
@@ -60,7 +61,8 @@ async def startup_event():
 async def check_config():
     """Check API key status and library availability."""
     def check_key(name):
-        key = os.getenv(name, "").strip().strip('"').strip("'").strip("“").strip("”").strip("‘").strip("’")
+        # Regex clean to match models.py logic
+        key = re.sub(r'[\s"\'“”‘’]', '', os.getenv(name, ""))
         if not key:
             return "MISSING"
         if key.startswith("sk-") or len(key) > 10:
