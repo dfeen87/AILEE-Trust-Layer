@@ -272,6 +272,28 @@
             border-color: rgba(194, 94, 0, 0.1);
         }
 
+        .delete-session-btn {
+            opacity: 0;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .session-item:hover .delete-session-btn {
+            opacity: 1;
+        }
+
+        .delete-session-btn:hover {
+            color: #ef4444;
+            background: rgba(239, 68, 68, 0.1);
+        }
+
         .session-title {
             white-space: nowrap;
             overflow: hidden;
@@ -645,9 +667,42 @@
                 padding: 1rem;
             }
         }
+
+        /* Login Modal */
+        .login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8); z-index: 1000;
+            display: none; /* Hidden by default */
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .login-box {
+            background: var(--surface); padding: 2rem; border-radius: var(--radius);
+            box-shadow: var(--shadow); width: 100%; max-width: 400px;
+            text-align: center; border: 1px solid var(--border-color);
+        }
+        .login-input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid var(--border-color); border-radius: 6px; box-sizing: border-box; background: var(--surface-secondary); color: var(--text-main); }
+        .login-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        .login-btn:hover { background: var(--primary-hover); }
+        .login-error { color: #e53e3e; font-size: 0.9rem; margin-top: 1rem; min-height: 1.2em; }
     </style>
 </head>
 <body>
+    <!-- Login Modal -->
+    <div id="login-modal" class="login-overlay">
+        <div class="login-box">
+            <h2 style="color:var(--text-main); margin-top:0;">Welcome to AILEE</h2>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">Please sign in to access your workspace.</p>
+            <input type="text" id="login-username" class="login-input" placeholder="Username" autocomplete="username">
+            <input type="password" id="login-password" class="login-input" placeholder="Password" autocomplete="current-password">
+            <div style="display:flex; gap:10px; margin-top:1rem;">
+                <button class="login-btn" id="btn-login">Login</button>
+                <button class="login-btn" id="btn-create" style="background:transparent; color:var(--text-main); border:1px solid var(--border-color);">Create Profile</button>
+            </div>
+            <p id="login-error" class="login-error"></p>
+        </div>
+    </div>
+
     <!-- Mobile Overlay -->
     <div class="sidebar-overlay"></div>
 
@@ -659,6 +714,13 @@
             <div class="sidebar-header">
                 <h2>Sessions</h2>
                 <div class="sidebar-actions">
+                    <button class="icon-btn" onclick="authManager.logout()" title="Log Out">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                    </button>
                     <button class="icon-btn" id="theme-toggle" title="Toggle Theme">
                         <!-- Sun/Moon Icon -->
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
@@ -750,20 +812,88 @@
 
     <!-- Script at the end of body -->
     <script>
-        /* script.js - Handles Chat Logic */
+        /* script.js - Handles Chat Logic & Auth */
+
+        class AuthManager {
+            constructor() {
+                this.currentUser = null;
+                this.users = JSON.parse(localStorage.getItem('ailee_users') || '{}');
+            }
+
+            async hashPassword(password) {
+                const msgBuffer = new TextEncoder().encode(password);
+                const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                const hashArray = Array.from(new Uint8Array(hashBuffer));
+                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            }
+
+            async login(username, password) {
+                if (!username || !password) throw new Error("Username and password required");
+
+                const user = this.users[username];
+                if (!user) throw new Error("User not found. Please create a profile.");
+
+                const hash = await this.hashPassword(password);
+                if (user.hash !== hash) throw new Error("Incorrect password.");
+
+                this.currentUser = username;
+                localStorage.setItem('ailee_current_user', username);
+                return true;
+            }
+
+            async register(username, password) {
+                if (!username || !password) throw new Error("Username and password required");
+                if (this.users[username]) throw new Error("User already exists.");
+
+                const hash = await this.hashPassword(password);
+                this.users[username] = { hash: hash, created: Date.now() };
+                localStorage.setItem('ailee_users', JSON.stringify(this.users));
+
+                // Auto login
+                this.currentUser = username;
+                localStorage.setItem('ailee_current_user', username);
+                return true;
+            }
+
+            logout() {
+                this.currentUser = null;
+                localStorage.removeItem('ailee_current_user');
+                window.location.reload();
+            }
+
+            checkSession() {
+                const savedUser = localStorage.getItem('ailee_current_user');
+                if (savedUser && this.users[savedUser]) {
+                    this.currentUser = savedUser;
+                    return true;
+                }
+                return false;
+            }
+        }
 
         class SessionManager {
-            constructor() {
+            constructor(authManager) {
+                this.auth = authManager;
                 this.sessions = [];
                 this.currentSessionId = null;
-                this.loadSessions();
+                // Don't load automatically; wait for auth
+            }
+
+            getStorageKey() {
+                if (!this.auth.currentUser) return 'ailee_sessions_guest';
+                return `ailee_sessions_${this.auth.currentUser}`;
             }
 
             loadSessions() {
+                if (!this.auth.currentUser) return; // Wait for login
+
                 try {
-                    const saved = localStorage.getItem('ailee_sessions');
+                    const key = this.getStorageKey();
+                    const saved = localStorage.getItem(key);
                     if (saved) {
                         this.sessions = JSON.parse(saved);
+                    } else {
+                        this.sessions = [];
                     }
                 } catch (e) {
                     console.error("Failed to load sessions:", e);
@@ -773,16 +903,18 @@
                 if (this.sessions.length === 0) {
                     this.createNewSession();
                 } else {
-                    const lastActive = localStorage.getItem('ailee_last_session_id');
+                    const lastActive = localStorage.getItem(`ailee_last_session_${this.auth.currentUser}`);
                     const session = this.sessions.find(s => s.id === lastActive);
                     this.currentSessionId = session ? session.id : this.sessions[0].id;
                 }
             }
 
             saveSessions() {
-                localStorage.setItem('ailee_sessions', JSON.stringify(this.sessions));
+                if (!this.auth.currentUser) return;
+                const key = this.getStorageKey();
+                localStorage.setItem(key, JSON.stringify(this.sessions));
                 if (this.currentSessionId) {
-                    localStorage.setItem('ailee_last_session_id', this.currentSessionId);
+                    localStorage.setItem(`ailee_last_session_${this.auth.currentUser}`, this.currentSessionId);
                 }
             }
 
@@ -847,6 +979,24 @@
                 if (this.sessions.some(s => s.id === id)) {
                     this.currentSessionId = id;
                     this.saveSessions();
+                    return true;
+                }
+                return false;
+            }
+
+            deleteSession(sessionId) {
+                const index = this.sessions.findIndex(s => s.id === sessionId);
+                if (index > -1) {
+                    this.sessions.splice(index, 1);
+                    this.saveSessions();
+
+                    if (this.currentSessionId === sessionId) {
+                        if (this.sessions.length > 0) {
+                            this.currentSessionId = this.sessions[0].id;
+                        } else {
+                            this.createNewSession();
+                        }
+                    }
                     return true;
                 }
                 return false;
@@ -974,7 +1124,8 @@
         }
 
         // Global instances
-        const sessionManager = new SessionManager();
+        const authManager = new AuthManager();
+        const sessionManager = new SessionManager(authManager);
         let uiComponents = {};
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -990,10 +1141,42 @@
             const newSessionBtn = document.getElementById('new-session-btn');
             const exportBtn = document.getElementById('export-btn');
             const exportMenu = document.getElementById('export-menu');
+            const loginModal = document.getElementById('login-modal');
+            const btnLogin = document.getElementById('btn-login');
+            const btnCreate = document.getElementById('btn-create');
+            const loginError = document.getElementById('login-error');
 
-            // Initial Render
-            renderSidebar();
-            renderChat();
+            // Auth Logic
+            if (authManager.checkSession()) {
+                sessionManager.loadSessions();
+                renderSidebar();
+                renderChat();
+            } else {
+                loginModal.style.display = 'flex';
+            }
+
+            async function handleAuth(action) {
+                const username = document.getElementById('login-username').value.trim();
+                const password = document.getElementById('login-password').value.trim();
+
+                try {
+                    if (action === 'login') {
+                        await authManager.login(username, password);
+                    } else {
+                        await authManager.register(username, password);
+                    }
+
+                    loginModal.style.display = 'none';
+                    sessionManager.loadSessions();
+                    renderSidebar();
+                    renderChat();
+                } catch (e) {
+                    loginError.textContent = e.message;
+                }
+            }
+
+            btnLogin.addEventListener('click', () => handleAuth('login'));
+            btnCreate.addEventListener('click', () => handleAuth('register'));
 
             // Event Listeners
             sendBtn.addEventListener('click', sendMessage);
@@ -1066,9 +1249,33 @@
 
                 item.appendChild(titleSpan);
 
+                // Delete Button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-session-btn';
+                deleteBtn.title = 'Delete Chat';
+                deleteBtn.innerHTML = `
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                `;
+                deleteBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    if (confirm('Are you sure you want to delete this chat?')) {
+                        const deletedId = session.id;
+                        sessionManager.deleteSession(deletedId);
+                        renderSidebar();
+                        // Only re-render chat if we deleted the current one
+                        if (deletedId === currentId) {
+                            renderChat();
+                        }
+                    }
+                };
+                item.appendChild(deleteBtn);
+
                 item.onclick = (e) => {
-                    // Don't switch if clicking input
-                    if (e.target.tagName === 'INPUT') return;
+                    // Don't switch if clicking input or button
+                    if (e.target.tagName === 'INPUT' || e.target.closest('button')) return;
                     sessionManager.switchSession(session.id);
                     renderSidebar();
                     renderChat();

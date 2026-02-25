@@ -47,6 +47,42 @@ pipeline_config = AileeConfig(
 trust_pipeline = AileeTrustPipeline(pipeline_config)
 
 
+@app.on_event("startup")
+async def startup_event():
+    """Log startup configuration."""
+    logger.info("AILEE Trust Layer starting...")
+    logger.info(f"Backend: {os.getenv('AILEE_BACKEND', 'unknown')}")
+    logger.info(f"Python: {os.getenv('PYTHON_VERSION', 'unknown')}")
+    logger.info(f"Models Available: OpenAI={models.OPENAI_AVAILABLE}, Anthropic={models.ANTHROPIC_AVAILABLE}, Gemini={models.GEMINI_AVAILABLE}")
+
+
+@app.get("/config/check")
+async def check_config():
+    """Check API key status and library availability."""
+    def check_key(name):
+        key = os.getenv(name, "").strip().strip('"').strip("'")
+        if not key:
+            return "MISSING"
+        if key.startswith("sk-") or len(key) > 10:
+            return "LOADED (Masked: " + key[:4] + "..." + key[-4:] + ")"
+        return "INVALID_FORMAT"
+
+    return {
+        "libraries": {
+            "openai": models.OPENAI_AVAILABLE,
+            "anthropic": models.ANTHROPIC_AVAILABLE,
+            "gemini": models.GEMINI_AVAILABLE
+        },
+        "api_keys": {
+            "openai": check_key("OPENAI_API_KEY"),
+            "anthropic": check_key("ANTHROPIC_API_KEY"),
+            "google": check_key("GOOGLE_API_KEY")
+        },
+        "backend": os.getenv("AILEE_BACKEND", "unknown"),
+        "python": os.getenv("PYTHON_VERSION", "unknown")
+    }
+
+
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     """Serve the landing page."""
