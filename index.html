@@ -1164,6 +1164,7 @@
                         await authManager.login(username, password);
                     } else {
                         await authManager.register(username, password);
+                        alert("Profile created! You are now logged in.");
                     }
 
                     loginModal.style.display = 'none';

@@ -132,7 +132,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
 
     # 1. OpenAI
     # Strip whitespace AND surrounding quotes to handle common copy-paste errors
-    openai_key = os.getenv("OPENAI_API_KEY", "").strip().strip('"').strip("'")
+    openai_key = os.getenv("OPENAI_API_KEY", "").strip().strip('"').strip("'").strip("“").strip("”").strip("‘").strip("’")
     if OPENAI_AVAILABLE and openai_key:
         try:
             logger.info(f"Calling OpenAI with key: {openai_key[:4]}...{openai_key[-4:] if len(openai_key) > 8 else ''}")
@@ -158,7 +158,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             logger.warning("Skipping OpenAI: API Key missing or empty.")
 
     # 2. Anthropic
-    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip().strip('"').strip("'")
+    anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip().strip('"').strip("'").strip("“").strip("”").strip("‘").strip("’")
     if ANTHROPIC_AVAILABLE and anthropic_key:
         try:
             logger.info(f"Calling Anthropic with key: {anthropic_key[:4]}...{anthropic_key[-4:] if len(anthropic_key) > 8 else ''}")
@@ -181,7 +181,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             logger.warning("Skipping Anthropic: API Key missing or empty.")
 
     # 3. Gemini
-    google_key = os.getenv("GOOGLE_API_KEY", "").strip().strip('"').strip("'")
+    google_key = os.getenv("GOOGLE_API_KEY", "").strip().strip('"').strip("'").strip("“").strip("”").strip("‘").strip("’")
     if GEMINI_AVAILABLE and google_key:
         try:
             logger.info(f"Calling Gemini with key: {google_key[:4]}...{google_key[-4:] if len(google_key) > 8 else ''}")

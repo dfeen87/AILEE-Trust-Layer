@@ -60,7 +60,7 @@ async def startup_event():
 async def check_config():
     """Check API key status and library availability."""
     def check_key(name):
-        key = os.getenv(name, "").strip().strip('"').strip("'")
+        key = os.getenv(name, "").strip().strip('"').strip("'").strip("“").strip("”").strip("‘").strip("’")
         if not key:
             return "MISSING"
         if key.startswith("sk-") or len(key) > 10:
