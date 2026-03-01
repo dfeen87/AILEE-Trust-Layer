@@ -1246,6 +1246,9 @@ AILEE draws inspiration from:
 - Byzantine fault tolerance
 - Production ML operations at scale
 
+I would like to acknowledge **Microsoft Copilot**, **Google Jules**, **Anthropic Claude**, and **OpenAI ChatGPT** for their meaningful assistance in refining concepts, improving clarity, and strengthening the overall quality of this work.
+
+
 Special thanks to early adopters who validated these patterns in production.
 
 ---
