@@ -686,7 +686,7 @@ ailee-trust-layer/
 │   ├── test_feen_integration.py      # Tests verifying FEEN integration and cross-system trust evaluation
 │   └── test_peer_adapters.py         # Comprehensive peer adapter test suite (16 tests: static, rolling, weighted, multisource, metadata)
 │
-├── LICENSE                           # MIT License
+├── LICENSE                           
 ├── README.md                         # Project overview & usage
 └── setup.py                          # Package configuration
 
