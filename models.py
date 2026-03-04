@@ -11,6 +11,7 @@ It is designed to be imported by app.py to keep the main application logic clean
 
 import os
 import re
+import unicodedata
 import logging
 from typing import List, Tuple, Any, Dict, Optional
 
@@ -55,11 +56,22 @@ from ailee.optional.ailee_ai_integrations import (
     create_huggingface_adapter,  # Used for mock/fallback
 )
 
+
+def _sanitize_query(query: str, max_len: int = 2000) -> str:
+    """Strip control characters and truncate to max_len."""
+    cleaned = "".join(
+        ch for ch in query
+        if unicodedata.category(ch)[0] != "C" or ch in ("\n", "\t")
+    )
+    return cleaned[:max_len]
+
+
 def search_duckduckgo(query: str, max_results: int = 3) -> str:
     """
     Perform a real DuckDuckGo search.
     Returns a concatenated string of snippets.
     """
+    query = _sanitize_query(query)
     logger.info(f"Searching DuckDuckGo for: {query}")
     try:
         results = []
@@ -90,7 +102,7 @@ def extract_confidence_from_text(response: Any, content: str, context: Dict[str,
     match = re.search(r"Confidence:\s*(\d+(\.\d+)?)", content, re.IGNORECASE)
     if match:
         try:
-            val = float(match.group(1))
+            val = max(0.0, min(100.0, float(match.group(1))))
             return val
         except ValueError:
             pass
@@ -115,6 +127,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
 
     If no models are available or all fail, returns a mock fallback.
     """
+    query = _sanitize_query(query)
     responses = []
 
     # Construct the prompt

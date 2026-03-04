@@ -1,5 +1,5 @@
 """
-AILEE Trust Pipeline — v2.0.0
+AILEE Trust Pipeline — v4.1.0
 Single-file reference implementation for AI developers.
 
 Implements a layered trust/validation pipeline:
@@ -126,6 +126,23 @@ class AileeConfig:
     enable_grace: bool = True
     enable_consensus: bool = True
     enable_audit_metadata: bool = True
+
+    def __post_init__(self):
+        _VALID_FALLBACK_MODES = frozenset({"median", "mean", "last_good"})
+        if self.fallback_mode not in _VALID_FALLBACK_MODES:
+            raise ValueError(
+                f"Invalid fallback_mode '{self.fallback_mode}'. "
+                f"Must be one of: {sorted(_VALID_FALLBACK_MODES)}"
+            )
+        if self.accept_threshold < 0.0 or self.accept_threshold > 1.0:
+            raise ValueError("accept_threshold must be in [0.0, 1.0]")
+        if self.borderline_low > self.borderline_high:
+            raise ValueError("borderline_low must be <= borderline_high")
+        if not (0.0 <= self.w_stability <= 1.0 and 0.0 <= self.w_agreement <= 1.0 and 0.0 <= self.w_likelihood <= 1.0):
+            raise ValueError("Confidence weights must be in [0.0, 1.0]")
+        weight_sum = self.w_stability + self.w_agreement + self.w_likelihood
+        if abs(weight_sum - 1.0) > 0.01:
+            raise ValueError(f"Confidence weights must sum to ~1.0 (got {weight_sum:.3f})")
 
 
 # -----------------------------

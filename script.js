@@ -28,6 +28,10 @@ class SessionManager {
     }
 
     saveSessions() {
+        const MAX_SESSIONS = 50;
+        if (this.sessions.length > MAX_SESSIONS) {
+            this.sessions = this.sessions.slice(0, MAX_SESSIONS);
+        }
         localStorage.setItem('ailee_sessions', JSON.stringify(this.sessions));
         if (this.currentSessionId) {
             localStorage.setItem('ailee_last_session_id', this.currentSessionId);
@@ -422,7 +426,12 @@ async function sendMessage() {
     scrollToBottom();
 
     try {
-        const response = await fetch(`/trust?query=${encodeURIComponent(text)}&format=json`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        const response = await fetch(`/trust?query=${encodeURIComponent(text)}&format=json`, {
+            signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
 
         // Remove loading
         const loadingEl = document.getElementById(loadingId);

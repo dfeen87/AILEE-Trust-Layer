@@ -1,8 +1,8 @@
-fastapi
-uvicorn
-python-multipart
-duckduckgo-search
-openai
-anthropic
-google-genai
+fastapi>=0.100.0
+uvicorn>=0.23.0
+python-multipart>=0.0.6
+duckduckgo-search>=4.0.0
+openai>=1.0.0
+anthropic>=0.20.0
+google-genai>=0.4.0
 .

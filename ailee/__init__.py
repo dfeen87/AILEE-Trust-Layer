@@ -1,5 +1,5 @@
 """
-AILEE Trust Layer v2.0.0
+AILEE Trust Layer v4.1.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -319,7 +319,7 @@ except ImportError:
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "2.0.0"
+__version__ = "4.1.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
