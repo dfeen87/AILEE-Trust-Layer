@@ -1,5 +1,6 @@
 import logging
 import os
+from contextlib import asynccontextmanager
 from typing import Dict, Any, Optional
 
 from fastapi import FastAPI, Query, HTTPException
@@ -20,18 +21,35 @@ import formatters
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("ailee_app")
 
+# CORS configuration — read allowed origins from environment variable
+_raw_origins = os.getenv("AILEE_CORS_ORIGINS", "*")
+_allowed_origins = [o.strip() for o in _raw_origins.split(",") if o.strip()]
+_allow_credentials = _allowed_origins != ["*"]
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Lifespan context manager for startup/shutdown events."""
+    logger.info("AILEE Trust Layer starting...")
+    logger.info(f"Backend: {os.getenv('AILEE_BACKEND', 'unknown')}")
+    logger.info(f"Python: {os.getenv('PYTHON_VERSION', 'unknown')}")
+    logger.info(f"Models Available: OpenAI={models.OPENAI_AVAILABLE}, Anthropic={models.ANTHROPIC_AVAILABLE}, Gemini={models.GEMINI_AVAILABLE}")
+    yield
+
+
 app = FastAPI(
     title="AILEE Trust Layer - Deploy",
     description="Public deployment of the AILEE Trust Layer with real search and multi-model generation.",
-    version="1.0.0"
+    version="4.1.0",
+    lifespan=lifespan,
 )
 
-# Enable CORS for public access
+# Enable CORS — credentials only allowed for explicit non-wildcard origins
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
+    allow_origins=_allowed_origins,
+    allow_credentials=_allow_credentials,
+    allow_methods=["GET", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -47,15 +65,6 @@ pipeline_config = AileeConfig(
 trust_pipeline = AileeTrustPipeline(pipeline_config)
 
 
-@app.on_event("startup")
-async def startup_event():
-    """Log startup configuration."""
-    logger.info("AILEE Trust Layer starting...")
-    logger.info(f"Backend: {os.getenv('AILEE_BACKEND', 'unknown')}")
-    logger.info(f"Python: {os.getenv('PYTHON_VERSION', 'unknown')}")
-    logger.info(f"Models Available: OpenAI={models.OPENAI_AVAILABLE}, Anthropic={models.ANTHROPIC_AVAILABLE}, Gemini={models.GEMINI_AVAILABLE}")
-
-
 @app.get("/", response_class=HTMLResponse)
 async def read_root():
     """Serve the landing page."""
@@ -68,8 +77,8 @@ async def read_root():
 
 @app.get("/trust")
 def get_trust(
-    query: str = Query(..., min_length=1, description="The user query to validate"),
-    format: str = Query("json", regex="^(json|text|markdown|html)$", description="Output format: json, text, markdown, or html")
+    query: str = Query(..., min_length=1, max_length=2000, description="The user query to validate"),
+    format: str = Query("json", pattern="^(json|text|markdown|html)$", description="Output format: json, text, markdown, or html")
 ):
     """
     Main endpoint:

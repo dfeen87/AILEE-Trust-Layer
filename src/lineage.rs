@@ -53,7 +53,7 @@ impl Lineage {
     ) -> Self {
         let timestamp = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
-            .unwrap()
+            .unwrap_or_default()
             .as_secs();
 
         let contributing_models: Vec<String> = outputs.keys().cloned().collect();
@@ -90,7 +90,8 @@ impl Lineage {
         let mut hasher = Sha256::new();
 
         // Hash the request in canonical form
-        let request_json = serde_json::to_string(request).unwrap_or_default();
+        let request_json = serde_json::to_string(request)
+            .unwrap_or_else(|e| format!("__serialization_error:{e}"));
         hasher.update(request_json.as_bytes());
 
         // Hash outputs in sorted order for determinism

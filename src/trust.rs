@@ -4,7 +4,7 @@
 //! dependency-light similarity methods.
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 
 use crate::model::ModelOutput;
 
@@ -30,6 +30,10 @@ pub struct TrustScore {
 impl TrustScore {
     /// Create a new trust score with all dimensions
     pub fn new(confidence: f64, safety: f64, consistency: f64, determinism: f64) -> Self {
+        let confidence = confidence.clamp(0.0, 1.0);
+        let safety = safety.clamp(0.0, 1.0);
+        let consistency = consistency.clamp(0.0, 1.0);
+        let determinism = determinism.clamp(0.0, 1.0);
         let aggregate = Self::compute_aggregate(confidence, safety, consistency, determinism);
         Self {
             confidence_score: confidence,
@@ -59,7 +63,7 @@ impl TrustScore {
 /// Trust scorer for evaluating model outputs
 pub struct TrustScorer {
     /// Historical outputs for consistency comparison
-    history: Vec<String>,
+    history: VecDeque<String>,
 
     /// Maximum history size
     max_history: usize,
@@ -69,7 +73,7 @@ impl TrustScorer {
     /// Create a new trust scorer
     pub fn new() -> Self {
         Self {
-            history: Vec::new(),
+            history: VecDeque::new(),
             max_history: 100,
         }
     }
@@ -89,9 +93,9 @@ impl TrustScorer {
 
         // Add to history for future consistency checks
         if self.history.len() >= self.max_history {
-            self.history.remove(0);
+            self.history.pop_front();
         }
-        self.history.push(output.text.clone());
+        self.history.push_back(output.text.clone());
 
         TrustScore::new(confidence, safety, consistency, determinism)
     }

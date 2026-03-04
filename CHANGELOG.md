@@ -1,3 +1,41 @@
+### v4.1.0 — Security Hardening & Robustness (March 2026)
+
+**Type:** Minor (Additive, backward-compatible)
+
+#### Security
+- Hardened CORS configuration with environment-based origin control
+- Added query length limits to prevent resource exhaustion
+- Restricted HTTP methods to GET-only for API endpoints
+- Pinned dependency versions to prevent supply-chain drift
+- Added input sanitization for search and model generation queries
+- Clamped confidence extraction to valid [0, 100] range
+
+#### Robustness
+- Fixed frozen dataclass mutation pattern in FEEN backend fallback
+- Added `__post_init__` validation to `AileeConfig` for all critical fields
+- Added fallback_mode enum validation
+- Added confidence weight sum validation
+- Added request timeout (60s) to frontend fetch calls
+- Added localStorage session eviction (max 50 sessions)
+- Replaced `unwrap()` with `unwrap_or_default()` in Rust lineage timestamp
+- Added input clamping to Rust `TrustScore::new()`
+- Replaced O(n) `Vec::remove(0)` with `VecDeque::pop_front()` in Rust scorer
+
+#### Architecture
+- Created `ARCHITECTURE.md` documenting repository layout
+- Made `AileeBackend` protocol `runtime_checkable`
+- Exported `AileeBackend` and `BackendCapabilities` from backends package
+
+#### Testing
+- Added `tests/test_pipeline_smoke.py` with 5 smoke tests
+- CI now validates core pipeline behavior on every push
+
+#### Consistency
+- Unified version strings across Python, Rust, and deployment configs
+- Updated deprecated FastAPI patterns (`regex` → `pattern`, event handlers → lifespan)
+
+---
+
 ### v2.2.0 Fixes & Stability
 
 - **Auditory domain:** Repaired structural duplication and method scoping issues that could

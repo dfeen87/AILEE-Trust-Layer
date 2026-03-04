@@ -1,5 +1,6 @@
 from typing import Any, Dict, Optional, Sequence, Tuple
 import statistics
+from dataclasses import replace
 
 from ..ailee_trust_pipeline_v1 import (
     AileeConfig,
@@ -43,7 +44,7 @@ class FeenBackend:
         ctx = dict(context or {})
 
         try:
-            confidence, conf_meta = self._feen_confidence(raw_value, peers)
+            confidence, conf_meta = self._feen_confidence(raw_value, raw_confidence, peers)
             safety, safety_reasons = self._safety_decision(confidence)
 
             consensus = ConsensusStatus.SKIPPED
@@ -97,13 +98,12 @@ class FeenBackend:
 
     # ---------------- FEEN primitives ----------------
 
-    def _feen_confidence(self, raw_value: float, peers: Sequence[float]) -> Tuple[float, Dict[str, Any]]:
+    def _feen_confidence(self, raw_value: float, raw_confidence: Optional[float], peers: Sequence[float]) -> Tuple[float, Dict[str, Any]]:
         delta = self.cfg.grace_peer_delta
         if not peers:
-            agreement = 0.5
-        else:
-            agreement = sum(abs(p - raw_value) <= delta for p in peers) / len(peers)
-
+            score = raw_confidence if raw_confidence is not None else 0.5
+            return max(0.0, min(1.0, score)), {"agreement": None, "delta": delta, "note": "no peers; used raw_confidence or default"}
+        agreement = sum(abs(p - raw_value) <= delta for p in peers) / len(peers)
         score = max(0.0, min(1.0, agreement))
         return score, {"agreement": agreement, "delta": delta}
 
@@ -152,6 +152,5 @@ class FeenBackend:
         res = self.software_fallback.process(
             raw_value, raw_confidence, peers, timestamp, context
         )
-        res.metadata["backend"] = "feen"
-        res.metadata["fallback_reason"] = reason
-        return res
+        merged_meta = {**res.metadata, "backend": "feen", "fallback_reason": reason}
+        return replace(res, metadata=merged_meta)

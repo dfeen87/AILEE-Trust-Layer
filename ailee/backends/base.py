@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional, Protocol, Sequence
+from typing import Any, Dict, Optional, Protocol, Sequence, runtime_checkable
 
 from ..ailee_trust_pipeline_v1 import DecisionResult
 
@@ -15,6 +15,7 @@ class BackendCapabilities:
     emits_hardware_metadata: bool = False
 
 
+@runtime_checkable
 class AileeBackend(Protocol):
     name: str
 
