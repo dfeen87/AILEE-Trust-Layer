@@ -27,7 +27,7 @@ Commercial use includes, but is not limited to:
 - Using it in any paid, enterprise, or client-facing environment  
 
 To obtain a commercial license, contact:  
-**[Your email or website here]**
+dfeen87@gmail.com
 
 COMMERCIAL LICENSE OPTIONS  
 A separate paid commercial license is available for companies or individuals who wish to:
