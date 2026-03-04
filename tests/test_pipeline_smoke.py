@@ -33,5 +33,5 @@ def test_config_validation_rejects_invalid_fallback():
 
 
 def test_config_validation_rejects_invalid_weights():
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="weights must sum"):
         AileeConfig(w_stability=0.9, w_agreement=0.9, w_likelihood=0.9)
