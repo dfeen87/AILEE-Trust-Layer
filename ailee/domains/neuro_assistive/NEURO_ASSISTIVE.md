@@ -2068,7 +2068,7 @@ Potential v1.1.0 features:
 
 ## License & Citation
 
-**License**: MIT
+**License**: Non-Commercial
 
 **Citation**:
 ```

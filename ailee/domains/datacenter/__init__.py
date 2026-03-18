@@ -89,7 +89,7 @@ from .ailee_datacenter_domain import (
 
 __version__ = "2.0.0"
 __author__ = "AILEE Trust Layer Development Team"
-__license__ = "MIT"
+__license__ = "Non-Commercial"
 __doc_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer"
 __source_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer"
 __bug_tracker_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer/issues"

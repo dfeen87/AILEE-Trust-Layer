@@ -1,7 +1,7 @@
 # AILEE Trust Layer — Cross-Ecosystem Translation Domain
 **Version:** 1.0.0  
 **Status:** Production-Grade  
-**License:** MIT
+**License:** Non-Commercial
 
 ## Overview
 
@@ -227,7 +227,7 @@ This is fundamentally about **giving people and organizations the freedom to use
 
 ## Commercial Opportunities
 
-While the **core governance framework is MIT-licensed**, commercial opportunities include:
+While the **core governance framework is released under a Non-Commercial License**, commercial opportunities include:
 
 - **Hosted governance-as-a-service** (managed API, 99.9% SLA)
 - **Enterprise compliance packages** (GDPR/CCPA/HIPAA audit tooling)
@@ -281,7 +281,7 @@ See `examples/` for complete integration patterns.
 
 ## Contributing
 
-This domain is **MIT-licensed** to maximize adoption and enable derivative work.
+This domain is **released under a Non-Commercial License** to maximize adoption and enable derivative work.
 
 Contributions welcome:
 - New ecosystem connectors (platform capability profiles)
@@ -295,13 +295,12 @@ See `CONTRIBUTING.md` for guidelines.
 
 ## License
 
-**MIT License**
+**Non-Commercial License**
 
-This domain is released under MIT to ensure:
-- Maximum adoption across open-source and commercial projects
+This domain is released under a Non-Commercial License to ensure:
 - Full code auditability for trust verification
-- Freedom to build derivative works and commercial services
-- No vendor lock-in or restrictive licensing
+- Support for academic research, personal projects, and non-profit work
+- No vendor lock-in within non-commercial use cases
 
 Trust governance **must be transparent** to be effective.
 
@@ -317,7 +316,7 @@ If you use this domain in research or production systems:
   author = {AILEE Trust Layer Project},
   year = {2025},
   version = {1.0.0},
-  license = {MIT},
+  license = {Non-Commercial},
   url = {https://github.com/ailee-trust-layer/cross-ecosystem}
 }
 ```

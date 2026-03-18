@@ -214,7 +214,7 @@ AILEE is designed to integrate with execution substrates like Ambient AI VCP:
 
 ## License
 
-MIT License
+Non-Commercial License
 
 ## Contributing
 

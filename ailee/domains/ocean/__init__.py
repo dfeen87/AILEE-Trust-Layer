@@ -88,7 +88,7 @@ from .ocean import (
 
 __version__ = "2.0.0"
 __author__ = "AILEE Project"
-__license__ = "MIT"
+__license__ = "Non-Commercial"
 
 __all__ = [
     # Primary API
