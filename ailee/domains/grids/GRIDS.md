@@ -884,4 +884,4 @@ shadow_logger.record({
 **Version**: 2.0.0  
 **Last Updated**: 2025-01-20  
 **Status**: Production Grade  
-**License**: MIT
+**License**: Non-Commercial

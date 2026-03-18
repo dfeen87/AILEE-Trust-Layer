@@ -48,7 +48,7 @@ from .governance import (
 # Version info
 __version__ = "2.0.0"
 __author__ = "AILEE Project"
-__license__ = "MIT"
+__license__ = "Non-Commercial"
 
 # Public API
 __all__ = [

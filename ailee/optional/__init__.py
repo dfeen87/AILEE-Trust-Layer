@@ -151,7 +151,7 @@ except ImportError:
 # =============================================================================
 __version__ = "1.1.2"
 __author__ = "Don Michael Feeney Jr."
-__license__ = "MIT"
+__license__ = "Non-Commercial"
 
 # =============================================================================
 # Public API (Dynamic Export)

@@ -1284,7 +1284,7 @@ Potential v1.1.0 features:
 
 ---
 
-**License**: MIT
+**License**: Non-Commercial
 
 ---
 

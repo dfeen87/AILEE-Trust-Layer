@@ -321,7 +321,7 @@ except ImportError:
 # =============================================================================
 __version__ = "4.1.0"
 __author__ = "Don Michael Feeney Jr."
-__license__ = "MIT"
+__license__ = "Non-Commercial"
 __status__ = "Production/Stable"
 
 # =============================================================================

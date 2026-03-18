@@ -996,4 +996,4 @@ The Telecommunications domain exists to ensure that loss, delay, and noise do no
 *Last Updated: December 2025*  
 *Compatibility: AILEE Trust Pipeline v1.x*  
 *Status: Production Grade*  
-*License: MIT*
+*License: Non-Commercial*
