@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Data Center Domain
-Version: 2.0.0
+Version: 4.1.1
 
 Governance and trust-scoring framework for AI-driven data center control
 systems, including cooling, power, and workload management.
@@ -87,7 +87,7 @@ from .ailee_datacenter_domain import (
     DataCenterMonitor,
 )
 
-__version__ = "2.0.0"
+__version__ = "4.1.1"
 __author__ = "AILEE Trust Layer Development Team"
 __license__ = "Non-Commercial"
 __doc_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer"

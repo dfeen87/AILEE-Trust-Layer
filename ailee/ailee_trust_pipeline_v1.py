@@ -1,5 +1,5 @@
 """
-AILEE Trust Pipeline — v4.1.0
+AILEE Trust Pipeline — v4.1.1
 Single-file reference implementation for AI developers.
 
 Implements a layered trust/validation pipeline:

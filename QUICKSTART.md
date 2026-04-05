@@ -2,7 +2,7 @@
 
 ## Installation
 
-Add to your `Cargo.toml`:
+Add the following to your `Cargo.toml`:
 
 ```toml
 [dependencies]
@@ -201,8 +201,10 @@ Generate full API docs:
 cargo doc --open
 ```
 
-## Support
+## Support & Commercial Licensing
 
-- See `RUST_README.md` for full documentation
-- Check `examples/` for more patterns
-- Run `cargo test` to see test examples
+- **Documentation**: See `RUST_README.md` for full documentation.
+- **Examples**: Check `examples/` for more patterns.
+- **Tests**: Run `cargo test` to see test examples.
+
+For commercial licensing and enterprise support, please contact the author directly at [dfeen87@gmail.com](mailto:dfeen87@gmail.com). See `README.md` and the `LICENSE` file for details on non-commercial vs. commercial usage.

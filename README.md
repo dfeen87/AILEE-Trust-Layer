@@ -1,7 +1,7 @@
 # AILEE Trust Layer
 ### Adaptive Integrity Layer for AI Decision Systems
 
-[![Version](https://img.shields.io/badge/version-3.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-4.1.1-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 
@@ -1129,9 +1129,9 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v2.0.0 (Production/Stable)
+### Current: v4.1.1 (Production/Stable)
 
-AILEE Trust Layer **v2.0.0** is production-ready with enterprise features:
+AILEE Trust Layer **v4.1.1** is production-ready with enterprise features:
 
 ✅ 9 domain-optimized presets  
 ✅ Advanced peer adapters for multi-model systems  
@@ -1139,7 +1139,7 @@ AILEE Trust Layer **v2.0.0** is production-ready with enterprise features:
 ✅ Comprehensive audit trails  
 ✅ Deterministic replay for testing  
 
-### Future Considerations (v2.0.0+)
+### Future Considerations (v4.1.1+)
 
 Future versions may add:
 - Streaming support for real-time pipelines
@@ -1212,23 +1212,32 @@ if [ -d tests ]; then python -m pytest tests/ -v; else echo "No tests/ directory
 
 ---
 
-## License
+## License & Commercial Use
 
-This project is available for **non‑commercial use only** under the terms of the included LICENSE file.  
-Commercial use requires a separate paid license.
+This project is governed by a **hybrid license**.
+
+The core software is freely available for **non-commercial, academic, and personal use** under the terms of the included `LICENSE` file.
+
+**Commercial use is strictly prohibited without a separate commercial license.**
+Commercial use includes (but is not limited to):
+- Integration into paid products, enterprise services, or client-facing applications
+- Generating direct or indirect revenue
+- Usage in a for-profit enterprise environment
+
+To inquire about commercial licensing options, contact the author directly at [dfeen87@gmail.com](mailto:dfeen87@gmail.com).
 
 ---
 
 ## Citation
 
-If you use AILEE in research or production, please cite:
+If you use AILEE in research or evaluation, please cite:
 
 ```bibtex
 @software{feeney2025ailee,
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {2.0.0},
+  version = {4.1.1},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1267,7 +1276,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v2.0.0**  
+**AILEE Trust Layer v4.1.1**
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.

@@ -38,4 +38,4 @@ __all__ = [
     'create_feen_scorer',
 ]
 
-__version__ = '2.0.0'
+__version__ = '4.1.1'

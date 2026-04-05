@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Optional Modules
-Version: 1.1.2
+Version: 4.1.1
 
 Extended functionality for specialized and non-core use cases.
 
@@ -149,7 +149,7 @@ except ImportError:
 # =============================================================================
 # Version & Metadata
 # =============================================================================
-__version__ = "1.1.2"
+__version__ = "4.1.1"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "Non-Commercial"
 

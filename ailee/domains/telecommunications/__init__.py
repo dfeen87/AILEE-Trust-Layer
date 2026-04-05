@@ -69,5 +69,5 @@ __all__ = [
     "export_events_to_dict",
 ]
 
-__version__ = "2.0.0"
+__version__ = "4.1.1"
 __status__ = "Production/Stable"

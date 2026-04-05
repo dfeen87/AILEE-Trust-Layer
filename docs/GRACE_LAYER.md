@@ -1,7 +1,7 @@
 # The GRACE Layer (Box 2A)
 ## Adaptive Mediation for Borderline AI Decisions
 
-Version: 1.0.0  
+Version: 4.1.1
 Status: Stable (Reference Specification)
 
 ---
@@ -77,7 +77,7 @@ Grace is therefore **protective**, not permissive.
 
 ---
 
-## Deterministic Checks (v1.0.0)
+## Deterministic Checks (v4.1.1)
 
 The GRACE Layer evaluates borderline inputs using **three independent checks**.
 All checks are deterministic and reproducible.

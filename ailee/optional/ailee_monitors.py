@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer - Monitoring Utilities
-Version: 1.0.0
+Version: 4.1.1
 
 Non-intrusive observability helpers for tracking AILEE pipeline health,
 performance, and decision patterns over time.

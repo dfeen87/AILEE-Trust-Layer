@@ -1,8 +1,8 @@
 """
 AILEE Trust Layer — OCEAN Domain
-Version: 1.0.1 - Production Grade
+Version: 4.1.1 - Production Grade
 
-Enhancements in v1.0.1:
+Enhancements in v4.1.1:
 - Fixed: OceanEvent field name mismatch (intervention_safety_score → proposed_action_trust_score)
 - Added: Uncertainty-aware authority ceilings
 - Added: Severity-weighted precautionary flags

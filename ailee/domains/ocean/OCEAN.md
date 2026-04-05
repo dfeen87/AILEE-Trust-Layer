@@ -1,6 +1,6 @@
 # AILEE Ocean Governance Domain
 
-**Version 1.0.1 - Production Grade**
+**Version 4.1.1 - Production Grade**
 
 A specialized trust layer for governing marine ecosystem interventions with uncertainty-aware decision staging, regulatory compliance tracking, and precautionary risk management.
 
@@ -67,7 +67,7 @@ Every decision includes plain-language explanations of what mattered, what block
 
 ## Key Features
 
-### ✅ v1.0.1 Enhancements
+### ✅ v4.1.1 Enhancements
 
 - **Fixed:** Field name consistency (`intervention_safety_score` → `proposed_action_trust_score`)
 - **Added:** Uncertainty-aware authority ceilings that cap decision authority based on aggregate uncertainty
@@ -1229,7 +1229,7 @@ if decision.metadata.get("authority_ceiling"):
 
 ## Version History
 
-### v1.0.1 - Production Grade (Current)
+### v4.1.1 - Production Grade (Current)
 
 **Fixed:**
 - Field name consistency: `intervention_safety_score` → `proposed_action_trust_score`
@@ -1249,7 +1249,7 @@ if decision.metadata.get("authority_ceiling"):
 - RegimeTracker: Stability checks for non-emergency transitions
 - Documentation: Comprehensive README with all features
 
-### v1.0.0 - Initial Release
+### v4.1.1 - Initial Release
 
 - Core ocean governance pipeline
 - Multi-gate validation (health, risk, temporal, regulatory, measurement)
@@ -1275,7 +1275,7 @@ For production use, ensure:
 
 ### Future Enhancements
 
-Potential v1.1.0 features:
+Potential v4.1.1 features:
 - Adaptive thresholds based on intervention success rate
 - Multi-ecosystem interaction modeling
 - Predictive regime transition warnings
