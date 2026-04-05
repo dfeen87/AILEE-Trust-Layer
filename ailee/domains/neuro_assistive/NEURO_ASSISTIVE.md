@@ -1,6 +1,6 @@
 # AILEE Neuro-Assistive Domain
 
-**Version 1.0.0 - Production Grade**
+**Version 4.1.1 - Production Grade**
 
 A specialized trust layer for governing AI systems that assist human cognition, communication, and perception while preserving autonomy, consent, identity, and dignity.
 
@@ -72,7 +72,7 @@ Every decision includes plain-language explanations of what blocked assistance, 
 
 ## Key Features
 
-### ✅ v1.0.0 Release
+### ✅ v4.1.1 Release
 
 **Core Capabilities:**
 - **Cognitive State Tracking**: Seven distinct states with hysteresis to prevent oscillation
@@ -1159,7 +1159,7 @@ Deployers of this domain must:
 
 ## Version History
 
-### v1.0.0 - Initial Production Release (Current)
+### v4.1.1 - Initial Production Release (Current)
 
 **Core Features:**
 - Cognitive state tracking with hysteresis
@@ -1229,7 +1229,7 @@ Before deploying in production:
 
 ## Future Enhancements
 
-Potential v1.1.0 features:
+Potential v4.1.1 features:
 - **Adaptive thresholds** based on user history and success patterns
 - **Multi-modal cognitive load** assessment (heart rate, eye tracking, voice stress)
 - **Predictive crisis detection** before cognitive overload occurs
@@ -1246,7 +1246,7 @@ Potential v1.1.0 features:
 
 **Citation**:
 ```
-AILEE Neuro-Assistive Domain v1.0.0
+AILEE Neuro-Assistive Domain v4.1.1
 Trust Layer for Cognitive Assistance Systems
 [Your Organization], 2024
 ```
@@ -1985,7 +1985,7 @@ Deployers of this domain must:
 
 ## Version History
 
-### v1.0.0 - Initial Production Release (Current)
+### v4.1.1 - Initial Production Release (Current)
 
 **Core Features:**
 - Cognitive state tracking with hysteresis
@@ -2055,7 +2055,7 @@ Before deploying in production:
 
 ## Future Enhancements
 
-Potential v1.1.0 features:
+Potential v4.1.1 features:
 - **Adaptive thresholds** based on user history and success patterns
 - **Multi-modal cognitive load** assessment (heart rate, eye tracking, voice stress)
 - **Predictive crisis detection** before cognitive overload occurs
@@ -2072,7 +2072,7 @@ Potential v1.1.0 features:
 
 **Citation**:
 ```
-AILEE Neuro-Assistive Domain v1.0.0
+AILEE Neuro-Assistive Domain v4.1.1
 Trust Layer for Cognitive Assistance Systems, 2025
 ```
 

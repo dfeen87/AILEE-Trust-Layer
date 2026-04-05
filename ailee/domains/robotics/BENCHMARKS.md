@@ -1,6 +1,6 @@
 # AILEE Robotics Governance - Benchmark Results & Standards
 
-**Version:** 1.0.0  
+**Version:** 4.1.1
 **Last Updated:** December 2025  
 **Test Platform:** Python 3.9+, x86_64 architecture
 
@@ -1846,7 +1846,7 @@ python benchmark.py --quick
 **Pre-Release Validation:**
 ```bash
 # Full validation before release
-python benchmark.py --export-json release_v1.0.0.json
+python benchmark.py --export-json release_v4.1.1.json
 ```
 - Full 1000-iteration suite
 - Compare against baseline
@@ -2088,7 +2088,7 @@ The benchmark suite validates compliance with:
 
 ### Roadmap
 
-**v1.1.0 - Enhanced Multi-Robot Testing**
+**v4.1.1 - Enhanced Multi-Robot Testing**
 - Multi-robot coordination benchmarks
 - Fleet-level consensus validation
 - Shared workspace conflict resolution
@@ -2106,13 +2106,13 @@ The benchmark suite validates compliance with:
 - Malicious signal crafting
 - Security breach simulation
 
-**v2.0.0 - Formal Verification**
+**v4.1.1 - Formal Verification**
 - TLA+ specification integration
 - Model checking for safety properties
 - Proof of correctness for critical paths
 - Exhaustive state space exploration
 
-**v3.0.0 - Hardware-in-Loop**
+**v4.1.1 - Hardware-in-Loop**
 - Real robot arm integration
 - Physical sensor validation
 - Actuator response timing
@@ -2167,7 +2167,7 @@ def bench_safety_new_feature(self) -> BenchmarkResult:
 
 **Performance Regression:**
 ```
-Title: [PERF] Throughput degraded by 15% in v1.0.1
+Title: [PERF] Throughput degraded by 15% in v4.1.1
 Include:
 - Platform details (CPU, OS, Python version)
 - Full benchmark output
@@ -2250,5 +2250,5 @@ The system is **certified for deployment** in robotics governance applications r
 
 ---
 
-**Document Version:** 1.0.0  
+**Document Version:** 4.1.1
 **Last Review:** December 2025

@@ -1,6 +1,6 @@
 # AILEE Trust Layer — Automotive Autonomy Governance Domain
 
-**Version 2.0.0 - Production Grade**
+**Version 4.1.1 - Production Grade**
 
 This document describes the **AILEE Trust Layer governance model** for automotive and vehicle-adjacent systems. This domain is focused on **decision authorization**, not vehicle control.
 
@@ -687,6 +687,6 @@ For questions or contributions, refer to the main AILEE Trust Layer documentatio
 
 ---
 
-*Document Version: 2.0.0*  
+*Document Version: 4.1.1*
 *Last Updated: December 2025*  
 *Compatibility: AILEE Trust Pipeline v1.x*

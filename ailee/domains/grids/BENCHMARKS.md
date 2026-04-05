@@ -1,6 +1,6 @@
 # AILEE Grid Governance - Benchmark Results & Standards
 
-**Version:** 2.0.0  
+**Version:** 4.1.1
 **Last Updated:** December 2025  
 **Test Platform:** Python 3.9+, x86_64 architecture
 
@@ -587,7 +587,7 @@ python benchmark.py --quick
 
 **Pre-Release Validation:**
 ```bash
-python benchmark.py --export-json release_v2.0.0.json
+python benchmark.py --export-json release_v4.1.1.json
 ```
 - Full 1000-iteration suite
 - Compare against baseline
@@ -713,7 +713,7 @@ The benchmark suite validates compliance with:
 
 ### Roadmap
 
-**v2.1.0 - Distributed Testing**
+**v4.1.1 - Distributed Testing**
 - Multi-node consensus validation
 - Network latency simulation
 - Byzantine fault tolerance testing
@@ -728,7 +728,7 @@ The benchmark suite validates compliance with:
 - Distribution shift detection
 - Model degradation simulation
 
-**v3.0.0 - Formal Verification**
+**v4.1.1 - Formal Verification**
 - TLA+ specification integration
 - Model checking for safety properties
 - Proof of correctness for critical paths
@@ -755,7 +755,7 @@ The benchmark suite validates compliance with:
 
 **Performance Regression:**
 ```
-Title: [PERF] Throughput degraded by 15% in v2.0.1
+Title: [PERF] Throughput degraded by 15% in v4.1.1
 Include: Platform details, benchmark output, comparison baseline
 ```
 
@@ -784,6 +784,6 @@ The system is certified for deployment in power grid governance applications req
 
 ---
 
-**Document Version:** 1.0.0  
+**Document Version:** 4.1.1
 **Last Review:** December 2025  
 **Next Review:** June 2026

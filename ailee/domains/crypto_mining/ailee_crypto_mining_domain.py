@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Crypto Mining Domain
-Version: 2.0.0
+Version: 4.1.1
 
 First-class AILEE domain implementation for crypto mining decision integrity.
 

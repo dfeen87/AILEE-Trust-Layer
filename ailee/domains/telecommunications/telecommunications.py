@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Telecommunications Governance Domain
-Version: 2.0.0 - Production Grade
+Version: 4.1.1 - Production Grade
 
 Telecommunications-focused governance domain for communication systems operating
 under uncertainty, latency, bandwidth constraints, and energy limits.
@@ -1102,7 +1102,7 @@ def export_events_to_dict(events: List[GovernanceEvent]) -> List[Dict[str, Any]]
     ]
 
 
-__version__ = "2.0.0"
+__version__ = "4.1.1"
 __all__ = [
     "CommunicationTrustLevel",
     "TrustLevel",  # Alias for cross-domain consistency

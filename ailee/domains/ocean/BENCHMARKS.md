@@ -1,6 +1,6 @@
 # AILEE Ocean Governance - Benchmark Results & Standards
 
-**Version:** 1.0.1 - Production Grade  
+**Version:** 4.1.1 - Production Grade
 **Last Updated:** December 2025  
 **Test Platform:** Python 3.9+, x86_64 architecture
 
@@ -1371,7 +1371,7 @@ python benchmark.py --quick  # 100 iterations, <2 minutes
 
 **Pre-Release Validation:**
 ```bash
-python benchmark.py --export-json release_v1.0.1.json
+python benchmark.py --export-json release_v4.1.1.json
 ```
 
 **Performance Regression Thresholds:**

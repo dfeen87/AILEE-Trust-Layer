@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Cross-Ecosystem Translation Domain
-Version: 1.0.0 - Production Grade
+Version: 4.1.1 - Production Grade
 
 Governance for semantic state and intent translation between incompatible
 software-hardware ecosystems (e.g., iOS ↔ Android, proprietary wearables).
@@ -1032,7 +1032,7 @@ def get_translation_path_info(source: str, target: str) -> Dict[str, Any]:
     }
 
 
-__version__ = "2.0.0"
+__version__ = "4.1.1"
 __all__ = [
     "TranslationTrustLevel",
     "CrossEcosystemSignals",

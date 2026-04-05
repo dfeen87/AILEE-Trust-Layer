@@ -1,6 +1,6 @@
 """
 NEURO-ASSISTIVE Domain — AILEE Trust Layer
-Version: 1.0.0 - Production Grade
+Version: 4.1.1 - Production Grade
 
 Governance and restraint framework for AI systems that assist human cognition,
 communication, and perception while preserving autonomy, consent, identity, and dignity.
@@ -45,7 +45,7 @@ from .neuro_assistive import (
     CognitiveStateTracker,
 )
 
-__version__ = "1.0.0"
+__version__ = "4.1.1"
 
 __all__ = [
     # Primary API

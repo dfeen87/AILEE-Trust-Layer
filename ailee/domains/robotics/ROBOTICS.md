@@ -1,6 +1,6 @@
 # AILEE Trust Layer — ROBOTICS Domain
 
-**Version 1.0.0 - Production Grade**
+**Version 4.1.1 - Production Grade**
 
 This document describes the **AILEE Trust Layer governance framework** for robotic systems. This domain focuses on **safety validation and decision governance**, not control algorithms or motion planning.
 
@@ -790,7 +790,7 @@ For questions or contributions, refer to the main AILEE Trust Layer documentatio
 
 ---
 
-*Document Version: 1.0.0*  
+*Document Version: 4.1.1*
 *Last Updated: December 2025*  
 *Compatibility: AILEE Trust Pipeline v1.0*  
 *Status: Production Grade — Ready for Deployment*

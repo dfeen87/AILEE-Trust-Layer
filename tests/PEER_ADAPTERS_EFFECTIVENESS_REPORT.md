@@ -1,7 +1,7 @@
 # AILEE Peer Adapters Effectiveness Report
 
 **Date:** February 14, 2026  
-**Version:** AILEE Trust Layer v2.0.0  
+**Version:** AILEE Trust Layer v4.1.1
 **Component:** Peer Adapters (`optional/ailee_peer_adapters.py`)
 
 ---
@@ -348,4 +348,4 @@ Failed: 0
 ---
 
 **Report prepared by:** AILEE Testing Framework  
-**Validated on:** Python 3.x with AILEE Trust Layer v2.0.0
+**Validated on:** Python 3.x with AILEE Trust Layer v4.1.1

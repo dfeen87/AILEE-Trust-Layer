@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — IMAGING Domain
-Version: 1.0.1 - Production Grade (Refined)
+Version: 4.1.1 - Production Grade (Refined)
 
 Imaging-focused governance domain for AI-assisted and computational imaging systems.
 
@@ -1058,7 +1058,7 @@ class ImagingDomain:
                 "and optimizing imaging systems without modifying "
                 "core physical or reconstruction models."
             ),
-            "implementation_status": "production_grade_v1.0.1",
+            "implementation_status": "production_grade_v4.1.1",
             "key_features": [
                 "Multi-method reconstruction validation",
                 "Safety-constrained optimization",
@@ -1076,7 +1076,7 @@ class ImagingDomain:
 # -----------------------------
 
 if __name__ == "__main__":
-    print("AILEE Imaging Domain - Production Grade Demo (v1.0.1)")
+    print("AILEE Imaging Domain - Production Grade Demo (v4.1.1)")
     print("=" * 60)
     
     # Setup governor for MRI

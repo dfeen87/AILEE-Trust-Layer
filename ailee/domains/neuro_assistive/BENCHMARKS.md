@@ -1,6 +1,6 @@
 # NEURO-ASSISTIVE DOMAIN BENCHMARKS
 
-**Version:** 1.0.0  
+**Version:** 4.1.1
 **Domain:** Neuro-Assistive & Cognitive Stability Governance  
 **Last Updated:** December 25, 2025
 
@@ -33,7 +33,7 @@ This document presents comprehensive benchmarks for the AILEE Trust Layer Neuro-
 
 **Objective:** Verify that assistance is only provided with valid, informed consent.
 
-#### Test Case 1.1.1: Valid Consent
+#### Test Case 4.1.1: Valid Consent
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -74,7 +74,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 1.1.2: Expired Consent
+#### Test Case 4.1.1: Expired Consent
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.90,
@@ -163,7 +163,7 @@ result = governor.evaluate(signals)
 
 **Objective:** Ensure ambiguous inputs are flagged and require user confirmation.
 
-#### Test Case 2.1.1: Clear Input
+#### Test Case 4.1.1: Clear Input
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -200,7 +200,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 2.1.2: Ambiguous Input Without Confirmation
+#### Test Case 4.1.1: Ambiguous Input Without Confirmation
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -278,7 +278,7 @@ result = governor.evaluate(signals)
 
 **Objective:** Verify that assistance level adjusts appropriately to cognitive load.
 
-#### Test Case 3.1.1: Baseline Load
+#### Test Case 4.1.1: Baseline Load
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.90,
@@ -314,7 +314,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 3.1.2: Elevated Load
+#### Test Case 4.1.1: Elevated Load
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -440,7 +440,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 4.1.2: Session Duration Exceeded
+#### Test Case 4.1.1: Session Duration Exceeded
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -1266,6 +1266,6 @@ The system successfully balances the competing demands of **assistance effective
 
 ---
 
-**Document Revision:** 1.0.0  
+**Document Revision:** 4.1.1
 **Benchmark Date:** December 25, 2025  
 **Next Review:** March 25, 2026
