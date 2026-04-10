@@ -7,6 +7,58 @@
 
 ---
 
+## Table of Contents
+
+- [What This Is](#what-this-is)
+- [Why This Exists](#why-this-exists)
+- [Core Architecture](#core-architecture)
+- [Rust Core Implementation](#rust-core-implementation-new)
+- [The Mathematics of Trust](#the-mathematics-of-trust)
+- [Quick Start](#quick-start)
+  - [Installation](#installation)
+  - [Basic Usage](#basic-usage)
+  - [17 Domain-Optimized Presets](#17-domain-optimized-presets)
+  - [Easy AI Framework Integration](#easy-ai-framework-integration)
+  - [Advanced Peer Adapters](#advanced-peer-adapters)
+  - [Enterprise Monitoring](#enterprise-monitoring)
+  - [Comprehensive Serialization](#comprehensive-serialization)
+  - [Deterministic Replay](#deterministic-replay)
+- [The GRACE Layer](#the-grace-layer-box-2a)
+- [Consensus Without Centralization](#consensus-without-centralization)
+- [Fallback Is a Feature, Not a Failure](#fallback-is-a-feature-not-a-failure)
+- [What AILEE Is Not](#what-ailee-is-not)
+- [Guarantees](#guarantees)
+- [Project Structure](#project-structure)
+- [Unified Trust Interface](#unified-trust-interface-aileeclient)
+- [FEEN Hardware Acceleration](#feen-hardware-acceleration)
+- [Use Cases](#use-cases)
+  - [Core Applications](#core-applications)
+  - [Autonomous & Automotive Systems](#-autonomous--automotive-systems)
+  - [Power Grid & Energy Systems](#-power-grid--energy-systems)
+  - [Data Center Operations](#-data-center-operations)
+  - [Robotics Systems](#-robotics-systems)
+  - [Telecommunications Systems](#-telecommunications-systems)
+  - [Cross-Ecosystem Systems](#-cross-ecosystem-systems)
+  - [Governance Systems](#-governance-systems)
+  - [Ocean Systems](#-ocean-systems)
+  - [Crypto Mining](#%EF%B8%8F-crypto-mining)
+  - [Neuro-Assistive & Cognitive Support](#-neuro-assistive--cognitive-support-systems)
+  - [Auditory & Assistive Listening Systems](#-auditory--assistive-listening-systems)
+- [Design Philosophy](#design-philosophy)
+- [Documentation](#documentation)
+- [Status & Roadmap](#status--roadmap)
+- [Performance](#performance)
+- [Contributing](#contributing)
+- [Testing](#testing)
+- [Continuous Integration](#continuous-integration)
+- [License & Commercial Use](#license--commercial-use)
+- [Citation](#citation)
+- [Acknowledgments](#acknowledgments)
+- [Contact & Support](#contact--support)
+- [Security](#security)
+
+---
+
 ## What This Is
 
 **AILEE (AI Load & Integrity Enforcement Engine)** is a **trust middleware** for AI systems.
@@ -564,7 +616,7 @@ If the system acts, you can explain **why**.
 
 ```
 ailee-trust-layer/
-├── ailee/                            # Main package directory
+├── ailee/                            # Main Python package
 │   ├── __init__.py                   # Public API surface & module exports
 │   ├── ailee_trust_pipeline_v1.py    # Core AILEE trust evaluation pipeline (canonical semantics)
 │   ├── ailee_client.py               # Unified trust interface (software / FEEN / future backends)
@@ -581,68 +633,8 @@ ailee-trust-layer/
 │   │       ├── INTEGRATION.md        # Boundary documentation: what FEEN provides vs what AILEE expects
 │   │       └── benchmarks.py         # Engineering validation: latency, determinism, boundary overhead
 │   │
-│   ├── domains/                      # Domain-specific governance layers
+│   ├── domains/                      # Domain-specific governance layers (16 domains)
 │   │   ├── __init__.py               # Domains namespace
-│   │   │
-│   │   ├── imaging/
-│   │   │   ├── __init__.py           # IMAGING domain exports
-│   │   │   ├── imaging.py            # Imaging QA, safety & efficiency governance
-│   │   │   ├── IMAGING.md            # Imaging domain conceptual framework
-│   │   │   └── BENCHMARKS.md         # Imaging performance & validation benchmarks
-│   │   │
-│   │   ├── robotics/
-│   │   │   ├── __init__.py           # ROBOTICS domain exports
-│   │   │   ├── robotics.py           # Robotics safety & autonomy governance
-│   │   │   ├── ROBOTICS.md           # Robotics domain conceptual framework
-│   │   │   └── BENCHMARKS.md         # Robotics safety & real-time benchmarks
-│   │   │
-│   │   ├── grids/
-│   │   │   ├── __init__.py           # GRIDS domain exports
-│   │   │   ├── grid_governor.py      # Power grid trust & load governance
-│   │   │   ├── GRIDS.md              # Power grid domain framework
-│   │   │   └── BENCHMARKS.md         # Grid stability & resilience benchmarks
-│   │   │
-│   │   ├── datacenter/
-│   │   │   ├── __init__.py           # DATACENTER domain exports
-│   │   │   ├── ailee_datacenter_domain.py  # Data center governance & automation
-│   │   │   ├── DATA_CENTERS.md       # Data center domain framework
-│   │   │   └── BENCHMARKS.md         # Throughput, latency & efficiency benchmarks
-│   │   │
-│   │   ├── automotive/
-│   │   │   ├── __init__.py           # AUTOMOTIVE domain exports
-│   │   │   ├── ailee_automotive_domain.py  # Automotive AI safety & ODD governance
-│   │   │   ├── AUTOMOTIVE.md         # Automotive domain conceptual framework
-│   │   │   └── BENCHMARKS.md         # Automotive safety & latency benchmarks
-│   │   │
-│   │   ├── telecommunications/
-│   │   │   ├── __init__.py           # TELECOMMUNICATIONS domain exports
-│   │   │   ├── telecommunications.py # Network trust, freshness & QoS governance
-│   │   │   ├── TELECOMMUNICATIONS.md # Telecommunications domain framework
-│   │   │   └── BENCHMARKS.md         # Telecom latency, throughput & trust benchmarks
-│   │   │
-│   │   ├── ocean/
-│   │   │   ├── __init__.py           # OCEAN domain exports
-│   │   │   ├── ocean.py              # Ocean ecosystem governance & restraint
-│   │   │   ├── OCEAN.md              # Ocean domain conceptual framework
-│   │   │   └── BENCHMARKS.md         # Ocean safety & intervention benchmarks
-│   │   │
-│   │   ├── cross_ecosystem/
-│   │   │   ├── __init__.py           # CROSS_ECOSYSTEM domain exports
-│   │   │   ├── cross_ecosystem.py    # Cross-domain semantic & intent governance
-│   │   │   ├── CROSS_ECOSYSTEM.md    # Cross-ecosystem translation framework
-│   │   │   └── BENCHMARKS.md         # Invariance & translation benchmarks
-│   │   │
-│   │   ├── governance/
-│   │   │   ├── __init__.py           # GOVERNANCE domain exports
-│   │   │   ├── governance.py         # Civic, institutional & political governance
-│   │   │   ├── GOVERNANCE.md         # Governance domain conceptual framework
-│   │   │   └── BENCHMARKS.md         # Authority, consent & compliance benchmarks
-│   │   │
-│   │   ├── neuro_assistive/
-│   │   │   ├── __init__.py           # NEURO-ASSISTIVE domain exports
-│   │   │   ├── neuro_assistive.py    # Cognitive assistance & autonomy governance
-│   │   │   ├── NEURO_ASSISTIVE.md    # Neuro-assistive domain framework
-│   │   │   └── BENCHMARKS.md         # Consent, cognition & safety benchmarks
 │   │   │
 │   │   ├── auditory/
 │   │   │   ├── __init__.py           # AUDITORY domain exports
@@ -650,11 +642,79 @@ ailee-trust-layer/
 │   │   │   ├── AUDITORY.md           # Auditory domain framework
 │   │   │   └── BENCHMARKS.md         # Auditory benchmarks
 │   │   │
-│   │   └── crypto_mining/
-│   │       ├── __init__.py                     # CRYPTO_MINING domain exports
-│   │       └── ailee_crypto_mining_domain.py   # Hash rate, thermal, power & pool governance
-│   │       ├── CRYPTO_MINING.md                # Crypto mining domain rationale, architecture & usage guide
-│   │       └── BENCHMARKS.md                   # Simulated performance & governance benchmarks (crypto mining)
+│   │   ├── automotive/
+│   │   │   ├── __init__.py           # AUTOMOTIVE domain exports
+│   │   │   ├── ailee_automotive_domain.py  # Automotive AI safety & ODD governance
+│   │   │   ├── AUTOMOTIVE.md         # Automotive domain conceptual framework
+│   │   │   └── BENCHMARKS.md         # Automotive safety & latency benchmarks
+│   │   │
+│   │   ├── cross_ecosystem/
+│   │   │   ├── __init__.py           # CROSS_ECOSYSTEM domain exports
+│   │   │   ├── cross_ecosystem.py    # Cross-domain semantic & intent governance
+│   │   │   ├── CROSS_ECOSYSTEM.md    # Cross-ecosystem translation framework
+│   │   │   └── BENCHMARKS.md         # Invariance & translation benchmarks
+│   │   │
+│   │   ├── crypto_mining/
+│   │   │   ├── __init__.py           # CRYPTO_MINING domain exports
+│   │   │   ├── ailee_crypto_mining_domain.py  # Hash rate, thermal, power & pool governance
+│   │   │   ├── CRYPTO_MINING.md      # Crypto mining domain rationale, architecture & usage guide
+│   │   │   └── BENCHMARKS.md         # Simulated performance & governance benchmarks
+│   │   │
+│   │   ├── datacenter/
+│   │   │   ├── __init__.py           # DATACENTER domain exports
+│   │   │   ├── ailee_datacenter_domain.py  # Data center governance & automation
+│   │   │   ├── DATA_CENTERS.md       # Data center domain framework
+│   │   │   └── BENCHMARKS.md         # Throughput, latency & efficiency benchmarks
+│   │   │
+│   │   ├── governance/
+│   │   │   ├── __init__.py           # GOVERNANCE domain exports
+│   │   │   ├── governance.py         # Civic, institutional & political governance
+│   │   │   ├── GOVERNANCE.md         # Governance domain conceptual framework
+│   │   │   └── BENCHMARKS.md         # Authority, consent & compliance benchmarks
+│   │   │
+│   │   ├── grids/
+│   │   │   ├── __init__.py           # GRIDS domain exports
+│   │   │   ├── grid_governor.py      # Power grid trust & load governance
+│   │   │   ├── GRIDS.md              # Power grid domain framework
+│   │   │   └── BENCHMARKS.md         # Grid stability & resilience benchmarks
+│   │   │
+│   │   ├── imaging/
+│   │   │   ├── __init__.py           # IMAGING domain exports
+│   │   │   ├── imaging.py            # Imaging QA, safety & efficiency governance
+│   │   │   ├── IMAGING.md            # Imaging domain conceptual framework
+│   │   │   └── BENCHMARKS.md         # Imaging performance & validation benchmarks
+│   │   │
+│   │   ├── neuro_assistive/
+│   │   │   ├── __init__.py           # NEURO-ASSISTIVE domain exports
+│   │   │   ├── neuro_assistive.py    # Cognitive assistance & autonomy governance
+│   │   │   ├── NEURO_ASSISTIVE.md    # Neuro-assistive domain framework
+│   │   │   └── BENCHMARKS.md         # Consent, cognition & safety benchmarks
+│   │   │
+│   │   ├── ocean/
+│   │   │   ├── __init__.py           # OCEAN domain exports
+│   │   │   ├── ocean.py              # Ocean ecosystem governance & restraint
+│   │   │   ├── OCEAN.md              # Ocean domain conceptual framework
+│   │   │   └── BENCHMARKS.md         # Ocean safety & intervention benchmarks
+│   │   │
+│   │   ├── release_events/
+│   │   │   ├── __init__.py           # RELEASE_EVENTS domain exports
+│   │   │   └── ailee_release_events_domain.py  # Software release gate & rollout governance
+│   │   │
+│   │   ├── robotics/
+│   │   │   ├── __init__.py           # ROBOTICS domain exports
+│   │   │   ├── robotics.py           # Robotics safety & autonomy governance
+│   │   │   ├── ROBOTICS.md           # Robotics domain conceptual framework
+│   │   │   └── BENCHMARKS.md         # Robotics safety & real-time benchmarks
+│   │   │
+│   │   ├── telecommunications/
+│   │   │   ├── __init__.py           # TELECOMMUNICATIONS domain exports
+│   │   │   ├── telecommunications.py # Network trust, freshness & QoS governance
+│   │   │   ├── TELECOMMUNICATIONS.md # Telecommunications domain framework
+│   │   │   └── BENCHMARKS.md         # Telecom latency, throughput & trust benchmarks
+│   │   │
+│   │   └── topology/
+│   │       ├── __init__.py           # TOPOLOGY domain exports
+│   │       └── ailee_topology_domain.py  # Network topology & graph-state trust governance
 │   │
 │   └── optional/                     # Optional helper modules (domain-agnostic)
 │       ├── __init__.py               # Optional modules namespace
@@ -665,31 +725,69 @@ ailee-trust-layer/
 │       ├── ailee_serialization.py    # Audit trails & structured logging
 │       └── ailee_replay.py           # Deterministic replay & regression testing
 │
+├── src/                              # Rust core implementation
+│   ├── lib.rs                        # Crate root & public API
+│   ├── model.rs                      # ModelAdapter trait & output types
+│   ├── trust.rs                      # TrustScorer — multi-dimensional trust scoring
+│   ├── consensus.rs                  # ConsensusEngine & consensus strategies
+│   ├── generation.rs                 # GenerationRequest / GenerationResult types
+│   └── lineage.rs                    # Cryptographic lineage (SHA-256 verification)
+│
 ├── examples/                         # Integration examples & usage patterns
 │   ├── feen_vs_software.py           # Backend comparison example
 │   ├── ai_integration_openai.py      # OpenAI/GPT integration guide
 │   ├── ai_integration_gemini.py      # Google Gemini integration guide
 │   ├── ai_integration_multi_model.py # Multi-model ensemble patterns
-│   └── ai_integration_complete.py    # End-to-end AI integration workflows
+│   ├── ai_integration_complete.py    # End-to-end AI integration workflows
+│   └── complete_workflow.rs          # End-to-end Rust workflow example
 │
 ├── docs/
 │   ├── AI_INTEGRATION_GUIDE.md       # Complete AI framework integration guide
 │   ├── GRACE_LAYER.md                # Grace mediation & override logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability & compliance schema
+│   ├── RUST_IMPLEMENTATION_SUMMARY.md # Rust core implementation summary
+│   ├── RUST_README.md                # Rust crate documentation
 │   ├── VERSIONING.md                 # Versioning strategy & changelog rules
 │   └── whitepaper/                   # Full theoretical & architectural foundation
+│       └── Navigating the Nonlinear.md
 │
 ├── tests/
 │   ├── PEER_ADAPTERS_EFFECTIVENESS_REPORT.md  # Full effectiveness report for peer adapters
-│   ├── test_crypto_mining_domain.py  # Crypto mining domain test suite (26 tests)
-│   ├── test_ai_integrations.py       # Tests for all AI framework adapters (OpenAI, Claude, Gemini, HF, LangChain)
-│   ├── test_feen_integration.py      # Tests verifying FEEN integration and cross-system trust evaluation
-│   └── test_peer_adapters.py         # Comprehensive peer adapter test suite (16 tests: static, rolling, weighted, multisource, metadata)
+│   ├── integration_tests.rs          # Rust integration test suite
+│   ├── test_ai_integrations.py       # Tests for all AI framework adapters
+│   ├── test_auditory_domain.py       # Auditory domain test suite
+│   ├── test_automotive_domain.py     # Automotive domain test suite
+│   ├── test_cross_ecosystem_domain.py # Cross-ecosystem domain test suite
+│   ├── test_crypto_mining_domain.py  # Crypto mining domain test suite
+│   ├── test_datacenter_domain.py     # Data center domain test suite
+│   ├── test_feen_integration.py      # FEEN integration & cross-system trust tests
+│   ├── test_governance_domain.py     # Governance domain test suite
+│   ├── test_grids_domain.py          # Power grids domain test suite
+│   ├── test_imaging_domain.py        # Imaging domain test suite
+│   ├── test_neuro_assistive_domain.py # Neuro-assistive domain test suite
+│   ├── test_ocean_domain.py          # Ocean domain test suite
+│   ├── test_peer_adapters.py         # Peer adapter test suite
+│   ├── test_pipeline_smoke.py        # Pipeline smoke tests
+│   ├── test_release_events_domain.py # Release events domain test suite
+│   ├── test_robotics_domain.py       # Robotics domain test suite
+│   ├── test_telecommunications_domain.py # Telecommunications domain test suite
+│   └── test_topology_domain.py       # Topology domain test suite
 │
-├── LICENSE                           
-├── README.md                         # Project overview & usage
-└── setup.py                          # Package configuration
-
+├── ARCHITECTURE.md                   # System architecture overview
+├── CHANGELOG.md                      # Version history & release notes
+├── Cargo.toml                        # Rust crate manifest
+├── LICENSE                           # License terms
+├── QUICKSTART.md                     # Quick-start guide for Rust core
+├── README.md                         # Project overview & usage (this file)
+├── app.py                            # Web application entry point
+├── formatters.py                     # Output formatting utilities
+├── models.py                         # Shared data models
+├── requirements.txt                  # Python runtime dependencies
+├── render.yaml                       # Render deployment configuration
+├── setup.py                          # Python package configuration
+├── index.html                        # Web UI entry point
+├── script.js                         # Web UI scripts
+└── styles.css                        # Web UI styles
 ```
 ---
 
