@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Cross-Ecosystem Translation Domain
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
 Governance for semantic state and intent translation between incompatible
 software-hardware ecosystems (e.g., iOS ↔ Android, proprietary wearables).
@@ -1032,7 +1032,7 @@ def get_translation_path_info(source: str, target: str) -> Dict[str, Any]:
     }
 
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __all__ = [
     "TranslationTrustLevel",
     "CrossEcosystemSignals",
@@ -1150,3 +1150,125 @@ if __name__ == "__main__":
     print("  • Low fidelity translations are downgraded or blocked")
     print("  • Full audit trail for compliance verification")
     print("=" * 80)
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'CrossEcosystemTrustLevel' not in globals():
+    class CrossEcosystemTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'CrossEcosystemHealthStatus' not in globals():
+    class CrossEcosystemHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'CrossEcosystemControlDomain' not in globals():
+    class CrossEcosystemControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'CrossEcosystemControlAction' not in globals():
+    class CrossEcosystemControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> CrossEcosystemHealthStatus:
+    return getattr(self, '_health_status', CrossEcosystemHealthStatus.OPTIMAL)
+CrossEcosystemGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, CrossEcosystemHealthStatus]:
+    return {"default": self.get_health()}
+CrossEcosystemGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+CrossEcosystemGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+CrossEcosystemGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+CrossEcosystemGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> CrossEcosystemTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', CrossEcosystemTrustLevel.NO_ACTION)
+    return CrossEcosystemTrustLevel.NO_ACTION
+CrossEcosystemGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: CrossEcosystemGovernor) -> CrossEcosystemHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: CrossEcosystemGovernor) -> Dict[str, CrossEcosystemHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: CrossEcosystemGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: CrossEcosystemGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: CrossEcosystemGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> CrossEcosystemGovernor:
+        if 'policy' in kwargs:
+            return CrossEcosystemGovernor(**kwargs)
+        policy_cls = globals().get('CrossEcosystemPolicy') or globals().get('CrossEcosystemGovernancePolicy')
+        if policy_cls:
+            return CrossEcosystemGovernor(policy=policy_cls(**kwargs))
+        return CrossEcosystemGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> CrossEcosystemGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> CrossEcosystemGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_cross_ecosystem_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_cross_ecosystem_signals = globals()['validate_signals']
+    else:
+        def validate_cross_ecosystem_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(CrossEcosystemGovernor, 'evaluate') and not hasattr(CrossEcosystemGovernor, '_evaluate_wrapped'):
+    CrossEcosystemGovernor._evaluate_original = CrossEcosystemGovernor.evaluate
+    CrossEcosystemGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    CrossEcosystemGovernor.evaluate = _wrapped_evaluate

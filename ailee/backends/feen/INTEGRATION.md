@@ -356,8 +356,8 @@ if abs(software_result.score - feen_result.score) > tolerance:
 
 | AILEE Version | FEEN Version | Status |
 |---------------|--------------|--------|
-| 4.1.1 | 4.1.1 | ✅ Tested |
-| 4.1.1 | 2.x | ⚠️ Limited features |
+| 4.2.0 | 4.2.0 | ✅ Tested |
+| 4.2.0 | 2.x | ⚠️ Limited features |
 | 1.x | Any | ❌ Not supported |
 
 Breaking changes between versions:

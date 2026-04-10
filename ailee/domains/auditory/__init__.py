@@ -1,6 +1,22 @@
+
+from .auditory import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_auditory_signals,
+    AuditoryTrustLevel,
+    AuditoryHealthStatus,
+    AuditoryControlDomain,
+    AuditoryControlAction,
+)
 """
 AILEE Trust Layer — AUDITORY Domain
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
 Auditory governance domain for AI-enhanced hearing and assistive audio systems.
 
@@ -66,7 +82,7 @@ Priority ordering:
 For detailed documentation, see the module docstring in ailee_auditory.py
 """
 
-from .ailee_auditory import (
+from .auditory import (
     # Enums
     OutputAuthorizationLevel,
     ListeningMode,
@@ -105,7 +121,7 @@ from .ailee_auditory import (
     AUDITORY_FLAG_SEVERITY,
 )
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __author__ = "AILEE Trust Layer Development Team"
 __all__ = [
     # Enums
@@ -144,4 +160,16 @@ __all__ = [
     
     # Constants
     "AUDITORY_FLAG_SEVERITY",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "create_default_governor",
+    "AuditoryTrustLevel",
+    "AuditoryHealthStatus",
+    "AuditoryControlDomain",
+    "AuditoryControlAction",
 ]

@@ -1,4 +1,4 @@
-### v4.1.1 — Security Hardening & Robustness (March 2026)
+### v4.2.0 — Security Hardening & Robustness (March 2026)
 
 **Type:** Minor (Additive, backward-compatible)
 

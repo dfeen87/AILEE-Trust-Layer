@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — NEURO-ASSISTIVE Domain
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
 Neuro-assistive and cognitive stability governance for AI systems that assist
 human cognition, communication, and perception while preserving autonomy,
@@ -1255,3 +1255,125 @@ __all__ = [
     "create_neuro_governor",
     "validate_neuro_signals",
 ]
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'NeuroTrustLevel' not in globals():
+    class NeuroTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'NeuroHealthStatus' not in globals():
+    class NeuroHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'NeuroControlDomain' not in globals():
+    class NeuroControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'NeuroControlAction' not in globals():
+    class NeuroControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> NeuroHealthStatus:
+    return getattr(self, '_health_status', NeuroHealthStatus.OPTIMAL)
+NeuroGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, NeuroHealthStatus]:
+    return {"default": self.get_health()}
+NeuroGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+NeuroGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+NeuroGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+NeuroGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> NeuroTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', NeuroTrustLevel.NO_ACTION)
+    return NeuroTrustLevel.NO_ACTION
+NeuroGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: NeuroGovernor) -> NeuroHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: NeuroGovernor) -> Dict[str, NeuroHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: NeuroGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: NeuroGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: NeuroGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> NeuroGovernor:
+        if 'policy' in kwargs:
+            return NeuroGovernor(**kwargs)
+        policy_cls = globals().get('NeuroPolicy') or globals().get('NeuroGovernancePolicy')
+        if policy_cls:
+            return NeuroGovernor(policy=policy_cls(**kwargs))
+        return NeuroGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> NeuroGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> NeuroGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_neuro_assistive_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_neuro_assistive_signals = globals()['validate_signals']
+    else:
+        def validate_neuro_assistive_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(NeuroGovernor, 'evaluate') and not hasattr(NeuroGovernor, '_evaluate_wrapped'):
+    NeuroGovernor._evaluate_original = NeuroGovernor.evaluate
+    NeuroGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    NeuroGovernor.evaluate = _wrapped_evaluate

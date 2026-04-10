@@ -1,6 +1,6 @@
 """
 AILEE Trust Pipeline - Deterministic Replay Utilities
-Version: 4.1.1
+Version: 4.2.0
 
 Provides utilities for recording, replaying, and analyzing AILEE pipeline
 execution for debugging, testing, regression analysis, and audit verification.
@@ -191,7 +191,7 @@ class ReplayBuffer:
             >>> buffer.save('replay_log_20250101.json')
         """
         data = {
-            'version': '4.1.1',
+            'version': '4.2.0',
             'record_count': len(self.records),
             'records': [asdict(record) for record in self.records]
         }

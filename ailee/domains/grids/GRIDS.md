@@ -1,6 +1,6 @@
 # Power Grid Governance Domain
 
-**AILEE Trust Layer v4.1.1 - Production Grade**
+**AILEE Trust Layer v4.2.0 - Production Grade**
 
 This document defines the **AILEE Trust Layer governance model** for electric power grids and energy infrastructure. This domain provides **authorization governance only** — it determines the maximum allowed AI authority level but does not execute control actions.
 
@@ -881,7 +881,7 @@ shadow_logger.record({
   
 ---
 
-**Version**: 4.1.1
+**Version**: 4.2.0
 **Last Updated**: 2025-01-20  
 **Status**: Production Grade  
 **License**: Non-Commercial

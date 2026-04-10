@@ -1,6 +1,6 @@
 # AILEE Trust Layer — IMAGING Domain
 
-**Version 4.1.1 - Conceptual Framework**
+**Version 4.2.0 - Conceptual Framework**
 
 This document describes the **AILEE Trust Layer optimization framework** for imaging systems. This domain focuses on **energy-information efficiency**, not image acquisition hardware or reconstruction algorithms.
 
@@ -635,7 +635,7 @@ For questions or contributions, refer to the main AILEE Trust Layer documentatio
 
 ---
 
-*Document Version: 4.1.1*
+*Document Version: 4.2.0*
 *Last Updated: December 2025*  
 *Compatibility: AILEE Trust Pipeline v1.0*  
 *Status: Conceptual Framework — Implementation in Progress*

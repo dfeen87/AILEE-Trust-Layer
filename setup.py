@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ailee-trust-layer",
-    version="4.1.1",
+    version="4.2.0",
     description="A deterministic trust and governance layer for AI decision systems",
     long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",

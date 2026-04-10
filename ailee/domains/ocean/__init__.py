@@ -1,6 +1,6 @@
 """
 OCEAN Domain — AILEE Trust Layer
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
 Governance and restraint framework for marine ecosystem monitoring
 and environmental intervention decisions.
@@ -41,6 +41,22 @@ Quick start with: create_ocean_governor()
 For detailed documentation, see: https://github.com/dfeen87/ailee-trust-layer
 """
 
+
+from .ocean import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_ocean_signals,
+    OceanTrustLevel,
+    OceanHealthStatus,
+    OceanControlDomain,
+    OceanControlAction,
+)
 from .ocean import (
     # === Primary API ===
     OceanGovernor,
@@ -86,7 +102,7 @@ from .ocean import (
     FLAG_SEVERITY,
 )
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __author__ = "AILEE Project"
 __license__ = "Non-Commercial"
 
@@ -140,6 +156,18 @@ __all__ = [
     "is_intervention_safe",
     "get_authority_description",
     "export_compliance_report",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "create_default_governor",
+    "OceanTrustLevel",
+    "OceanHealthStatus",
+    "OceanControlDomain",
+    "OceanControlAction",
 ]
 
 

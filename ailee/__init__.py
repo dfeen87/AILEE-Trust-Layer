@@ -1,5 +1,5 @@
 """
-AILEE Trust Layer v4.1.1
+AILEE Trust Layer v4.2.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -319,7 +319,7 @@ except ImportError:
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "Non-Commercial"
 __status__ = "Production/Stable"
@@ -648,7 +648,7 @@ def print_available_modules():
     
     Example:
         >>> print_available_modules()
-        AILEE Trust Layer v4.1.1
+        AILEE Trust Layer v4.2.0
         
         Core Modules:
           ✓ Trust Pipeline

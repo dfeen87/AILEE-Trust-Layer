@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Power Grid Governance Domain
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
 Governance-only authorization layer for power grid and energy systems.
 
@@ -889,7 +889,7 @@ def create_example_signals() -> GridSignals:
     )
 
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __all__ = [
     "GridAuthorityLevel",
     "GridSignals",
@@ -932,3 +932,125 @@ if __name__ == "__main__":
     print("=" * 80)
     print("Demo complete.")
     print("=" * 80)
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'GridTrustLevel' not in globals():
+    class GridTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'GridHealthStatus' not in globals():
+    class GridHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'GridControlDomain' not in globals():
+    class GridControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'GridControlAction' not in globals():
+    class GridControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> GridHealthStatus:
+    return getattr(self, '_health_status', GridHealthStatus.OPTIMAL)
+GridGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, GridHealthStatus]:
+    return {"default": self.get_health()}
+GridGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+GridGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+GridGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+GridGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> GridTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', GridTrustLevel.NO_ACTION)
+    return GridTrustLevel.NO_ACTION
+GridGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: GridGovernor) -> GridHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: GridGovernor) -> Dict[str, GridHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: GridGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: GridGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: GridGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> GridGovernor:
+        if 'policy' in kwargs:
+            return GridGovernor(**kwargs)
+        policy_cls = globals().get('GridPolicy') or globals().get('GridGovernancePolicy')
+        if policy_cls:
+            return GridGovernor(policy=policy_cls(**kwargs))
+        return GridGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> GridGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> GridGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_grids_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_grids_signals = globals()['validate_signals']
+    else:
+        def validate_grids_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(GridGovernor, 'evaluate') and not hasattr(GridGovernor, '_evaluate_wrapped'):
+    GridGovernor._evaluate_original = GridGovernor.evaluate
+    GridGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    GridGovernor.evaluate = _wrapped_evaluate

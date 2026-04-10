@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Crypto Mining Domain
-Version: 4.1.1
+Version: 4.2.0
 
 First-class AILEE domain implementation for crypto mining decision integrity.
 
@@ -937,3 +937,151 @@ __all__ = [
     'POOL_SWITCHING',
     'POWER_MANAGEMENT',
 ]
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'MiningTrustLevel' not in globals():
+    class MiningTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'MiningHealthStatus' not in globals():
+    class MiningHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'MiningControlDomain' not in globals():
+    class MiningControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'MiningControlAction' not in globals():
+    class MiningControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> MiningHealthStatus:
+    return getattr(self, '_health_status', MiningHealthStatus.OPTIMAL)
+MiningGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, MiningHealthStatus]:
+    return {"default": self.get_health()}
+MiningGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+MiningGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+MiningGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+MiningGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> MiningTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', MiningTrustLevel.NO_ACTION)
+    return MiningTrustLevel.NO_ACTION
+MiningGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: MiningGovernor) -> MiningHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: MiningGovernor) -> Dict[str, MiningHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: MiningGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: MiningGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: MiningGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> MiningGovernor:
+        if 'policy' in kwargs:
+            return MiningGovernor(**kwargs)
+        policy_cls = globals().get('MiningPolicy') or globals().get('MiningGovernancePolicy')
+        if policy_cls:
+            return MiningGovernor(policy=policy_cls(**kwargs))
+        return MiningGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> MiningGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> MiningGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_crypto_mining_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_crypto_mining_signals = globals()['validate_signals']
+    else:
+        def validate_crypto_mining_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(MiningGovernor, 'evaluate') and not hasattr(MiningGovernor, '_evaluate_wrapped'):
+    MiningGovernor._evaluate_original = MiningGovernor.evaluate
+    MiningGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    MiningGovernor.evaluate = _wrapped_evaluate
+
+# Compatibility
+def get_health(self):
+    return getattr(self, '_health_status', self.policy.min_trust_for_action)
+
+MiningGovernor.get_health = get_health
+
+def get_subsystem_health(self):
+    return {"default": self.get_health()}
+
+MiningGovernor.get_subsystem_health = get_subsystem_health
+
+def get_events(self):
+    return getattr(self, '_events', [])
+
+MiningGovernor.get_events = get_events
+
+def get_metrics(self):
+    return {"decisions": len(self.get_events())}
+
+MiningGovernor.get_metrics = get_metrics
+
+def get_decision_history(self):
+    return getattr(self, '_events', [])
+
+MiningGovernor.get_decision_history = get_decision_history

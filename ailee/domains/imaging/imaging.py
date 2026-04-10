@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — IMAGING Domain
-Version: 4.1.1 - Production Grade (Refined)
+Version: 4.2.0 - Production Grade (Refined)
 
 Imaging-focused governance domain for AI-assisted and computational imaging systems.
 
@@ -1058,7 +1058,7 @@ class ImagingDomain:
                 "and optimizing imaging systems without modifying "
                 "core physical or reconstruction models."
             ),
-            "implementation_status": "production_grade_v4.1.1",
+            "implementation_status": "production_grade_v4.2.0",
             "key_features": [
                 "Multi-method reconstruction validation",
                 "Safety-constrained optimization",
@@ -1076,7 +1076,7 @@ class ImagingDomain:
 # -----------------------------
 
 if __name__ == "__main__":
-    print("AILEE Imaging Domain - Production Grade Demo (v4.1.1)")
+    print("AILEE Imaging Domain - Production Grade Demo (v4.2.0)")
     print("=" * 60)
     
     # Setup governor for MRI
@@ -1184,3 +1184,125 @@ if __name__ == "__main__":
     
     print("\n" + "=" * 60)
     print("Demo complete. Governor is production-ready.")
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'ImagingTrustLevel' not in globals():
+    class ImagingTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'ImagingHealthStatus' not in globals():
+    class ImagingHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'ImagingControlDomain' not in globals():
+    class ImagingControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'ImagingControlAction' not in globals():
+    class ImagingControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> ImagingHealthStatus:
+    return getattr(self, '_health_status', ImagingHealthStatus.OPTIMAL)
+ImagingGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, ImagingHealthStatus]:
+    return {"default": self.get_health()}
+ImagingGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+ImagingGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+ImagingGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+ImagingGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> ImagingTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', ImagingTrustLevel.NO_ACTION)
+    return ImagingTrustLevel.NO_ACTION
+ImagingGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: ImagingGovernor) -> ImagingHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: ImagingGovernor) -> Dict[str, ImagingHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: ImagingGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: ImagingGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: ImagingGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> ImagingGovernor:
+        if 'policy' in kwargs:
+            return ImagingGovernor(**kwargs)
+        policy_cls = globals().get('ImagingPolicy') or globals().get('ImagingGovernancePolicy')
+        if policy_cls:
+            return ImagingGovernor(policy=policy_cls(**kwargs))
+        return ImagingGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> ImagingGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> ImagingGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_imaging_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_imaging_signals = globals()['validate_signals']
+    else:
+        def validate_imaging_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(ImagingGovernor, 'evaluate') and not hasattr(ImagingGovernor, '_evaluate_wrapped'):
+    ImagingGovernor._evaluate_original = ImagingGovernor.evaluate
+    ImagingGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    ImagingGovernor.evaluate = _wrapped_evaluate

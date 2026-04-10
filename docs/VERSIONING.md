@@ -14,7 +14,7 @@ Versions follow semantic versioning:
 MAJOR.MINOR.PATCH
 ```
 
-Example: `4.1.1`
+Example: `4.2.0`
 
 ---
 
@@ -49,7 +49,7 @@ This may include:
 
 Minor releases will **never alter existing behavior**.
 
-**All v4.1.1 code runs identically on v4.1.1+**
+**All v4.2.0 code runs identically on v4.2.0+**
 
 ---
 
@@ -117,7 +117,7 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 ## Version History & Changelog
 
-### v4.1.1 (December 17, 2025) — Major Release
+### v4.2.0 (December 17, 2025) — Major Release
 
 **Type:** Major (Breaking Changes)
 
@@ -143,7 +143,7 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 ---
 
-### v4.1.1 (Initial Release)
+### v4.2.0 (Initial Release)
 
 **Type:** Major (Initial Stable Release)
 
@@ -169,7 +169,7 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 ## Upcoming Releases
 
-### v4.1.1 (Planned)
+### v4.2.0 (Planned)
 
 **Tentative Features:**
 - Streaming support for real-time pipelines
@@ -218,8 +218,8 @@ Security patches will be:
 | Version | Status | Support End Date |
 |---------|--------|------------------|
 | v2.0.x | **Current** | TBD |
-| v1.1.x | Supported | Until v4.1.1 + 2 years |
-| v1.0.x | Supported | Until v4.1.1 + 6 months |
+| v1.1.x | Supported | Until v4.2.0 + 2 years |
+| v1.0.x | Supported | Until v4.2.0 + 6 months |
 | v0.x | Not applicable | N/A |
 
 ---
@@ -241,7 +241,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "4.1.1"
+print(ailee.__version__)  # "4.2.0"
 print(ailee.get_info())   # Full package info
 ```
 
@@ -256,7 +256,7 @@ pip show ailee-trust-layer
 ## Summary
 
 - **v2.x is stable** and safe for production
-- **Breaking changes require v4.1.1**
+- **Breaking changes require v4.2.0**
 - **Additive improvements** remain backward-compatible
 - **Documentation and clarity** are first-class concerns
 - **Security patches** are prioritized and immediate

@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Data Center Domain
-Version: 4.1.1
+Version: 4.2.0
 
 First-class AILEE domain implementation for data center decision integrity.
 

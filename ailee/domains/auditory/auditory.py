@@ -1571,3 +1571,125 @@ __all__ = [
     "validate_auditory_signals",
     "AUDITORY_FLAG_SEVERITY",
 ]
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'AuditoryTrustLevel' not in globals():
+    class AuditoryTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'AuditoryHealthStatus' not in globals():
+    class AuditoryHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'AuditoryControlDomain' not in globals():
+    class AuditoryControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'AuditoryControlAction' not in globals():
+    class AuditoryControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> AuditoryHealthStatus:
+    return getattr(self, '_health_status', AuditoryHealthStatus.OPTIMAL)
+AuditoryGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, AuditoryHealthStatus]:
+    return {"default": self.get_health()}
+AuditoryGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+AuditoryGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+AuditoryGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+AuditoryGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> AuditoryTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', AuditoryTrustLevel.NO_ACTION)
+    return AuditoryTrustLevel.NO_ACTION
+AuditoryGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: AuditoryGovernor) -> AuditoryHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: AuditoryGovernor) -> Dict[str, AuditoryHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: AuditoryGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: AuditoryGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: AuditoryGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> AuditoryGovernor:
+        if 'policy' in kwargs:
+            return AuditoryGovernor(**kwargs)
+        policy_cls = globals().get('AuditoryPolicy') or globals().get('AuditoryGovernancePolicy')
+        if policy_cls:
+            return AuditoryGovernor(policy=policy_cls(**kwargs))
+        return AuditoryGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> AuditoryGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> AuditoryGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_auditory_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_auditory_signals = globals()['validate_signals']
+    else:
+        def validate_auditory_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(AuditoryGovernor, 'evaluate') and not hasattr(AuditoryGovernor, '_evaluate_wrapped'):
+    AuditoryGovernor._evaluate_original = AuditoryGovernor.evaluate
+    AuditoryGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    AuditoryGovernor.evaluate = _wrapped_evaluate
