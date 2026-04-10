@@ -743,6 +743,7 @@ ailee-trust-layer/
 │
 ├── docs/
 │   ├── AI_INTEGRATION_GUIDE.md       # Complete AI framework integration guide
+|   ├── ARCHITECTURE.md                   # System architecture overview
 │   ├── GRACE_LAYER.md                # Grace mediation & override logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability & compliance schema
 │   ├── RUST_IMPLEMENTATION_SUMMARY.md # Rust core implementation summary
@@ -773,7 +774,6 @@ ailee-trust-layer/
 │   ├── test_telecommunications_domain.py # Telecommunications domain test suite
 │   └── test_topology_domain.py       # Topology domain test suite
 │
-├── ARCHITECTURE.md                   # System architecture overview
 ├── CHANGELOG.md                      # Version history & release notes
 ├── Cargo.toml                        # Rust crate manifest
 ├── LICENSE                           # License terms
