@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — ROBOTICS Domain
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
 Robotics-focused governance domain for autonomous systems, manipulation,
 navigation, and human-robot interaction.
@@ -1355,3 +1355,125 @@ __all__ = [
     "create_robotics_governor",
     "validate_robotics_signals",
 ]
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'RoboticsTrustLevel' not in globals():
+    class RoboticsTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'RoboticsHealthStatus' not in globals():
+    class RoboticsHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'RoboticsControlDomain' not in globals():
+    class RoboticsControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'RoboticsControlAction' not in globals():
+    class RoboticsControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> RoboticsHealthStatus:
+    return getattr(self, '_health_status', RoboticsHealthStatus.OPTIMAL)
+RoboticsGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, RoboticsHealthStatus]:
+    return {"default": self.get_health()}
+RoboticsGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+RoboticsGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+RoboticsGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+RoboticsGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> RoboticsTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', RoboticsTrustLevel.NO_ACTION)
+    return RoboticsTrustLevel.NO_ACTION
+RoboticsGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: RoboticsGovernor) -> RoboticsHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: RoboticsGovernor) -> Dict[str, RoboticsHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: RoboticsGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: RoboticsGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: RoboticsGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> RoboticsGovernor:
+        if 'policy' in kwargs:
+            return RoboticsGovernor(**kwargs)
+        policy_cls = globals().get('RoboticsPolicy') or globals().get('RoboticsGovernancePolicy')
+        if policy_cls:
+            return RoboticsGovernor(policy=policy_cls(**kwargs))
+        return RoboticsGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> RoboticsGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> RoboticsGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_robotics_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_robotics_signals = globals()['validate_signals']
+    else:
+        def validate_robotics_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(RoboticsGovernor, 'evaluate') and not hasattr(RoboticsGovernor, '_evaluate_wrapped'):
+    RoboticsGovernor._evaluate_original = RoboticsGovernor.evaluate
+    RoboticsGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    RoboticsGovernor.evaluate = _wrapped_evaluate

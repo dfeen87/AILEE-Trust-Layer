@@ -9,6 +9,22 @@ It governs whether received communications are trustworthy enough
 to act upon.
 """
 
+
+from .telecommunications import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_telecommunications_signals,
+    TelecomTrustLevel,
+    TelecomHealthStatus,
+    TelecomControlDomain,
+    TelecomControlAction,
+)
 from .telecommunications import (
     # Trust levels
     CommunicationTrustLevel,
@@ -67,7 +83,19 @@ __all__ = [
     "create_degraded_signals",
     "validate_signals",
     "export_events_to_dict",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "validate_telecommunications_signals",
+    "TelecomTrustLevel",
+    "TelecomHealthStatus",
+    "TelecomControlDomain",
+    "TelecomControlAction",
 ]
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __status__ = "Production/Stable"

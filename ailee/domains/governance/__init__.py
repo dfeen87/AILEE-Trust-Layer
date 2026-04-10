@@ -1,5 +1,5 @@
 """
-AILEE Governance Domain — v4.1.1
+AILEE Governance Domain — v4.2.0
 
 A layered governance pipeline for evaluating trust and authorization in AI systems.
 
@@ -31,6 +31,22 @@ Quick Start:
 For detailed documentation, see: https://github.com/dfeen87/ailee-trust-layer
 """
 
+
+from .governance import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_governance_signals,
+    GovernanceTrustLevel,
+    GovernanceHealthStatus,
+    GovernanceControlDomain,
+    GovernanceControlAction,
+)
 from .governance import (
     # Core Classes
     GovernanceGovernor,
@@ -46,7 +62,7 @@ from .governance import (
 )
 
 # Version info
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __author__ = "AILEE Project"
 __license__ = "Non-Commercial"
 
@@ -66,6 +82,18 @@ __all__ = [
     
     # Version
     "__version__",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "create_default_governor",
+    "validate_governance_signals",
+    "GovernanceHealthStatus",
+    "GovernanceControlDomain",
+    "GovernanceControlAction",
 ]
 
 

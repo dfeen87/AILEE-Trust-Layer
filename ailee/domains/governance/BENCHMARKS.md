@@ -1,6 +1,6 @@
 # AILEE Governance Domain - Benchmark Results & Standards
 
-**Version:** 4.1.1
+**Version:** 4.2.0
 **Last Updated:** December 2025  
 **Test Platform:** Python 3.9+, x86_64 architecture  
 **Domain:** Authority & Authorization Governance
@@ -949,7 +949,7 @@ The governance system satisfies audit requirements for:
 
 ### Roadmap
 
-**v4.1.1 - Cryptographic Verification**
+**v4.2.0 - Cryptographic Verification**
 - Digital signature validation
 - Public key infrastructure (PKI) integration
 - Certificate chain verification
@@ -967,7 +967,7 @@ The governance system satisfies audit requirements for:
 - Real-time revocation checking
 - Grace period for revocation propagation
 
-**v4.1.1 - Formal Verification**
+**v4.2.0 - Formal Verification**
 - TLA+ specification
 - Model checking for security properties
 - Proof of correctness for critical paths

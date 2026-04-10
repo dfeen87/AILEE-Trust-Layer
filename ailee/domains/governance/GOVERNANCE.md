@@ -1,7 +1,7 @@
 # AILEE Governance Domain
 **Deterministic Trust Governance for Civic, Institutional, and Political Signals**
 
-Version: 4.1.1
+Version: 4.2.0
 
 ---
 
@@ -416,7 +416,7 @@ if not data_result.used_fallback and gov_result.actionable:
 ## License & Attribution
 
 **AILEE Trust Pipeline & Governance Domain**  
-Version: 4.1.1
+Version: 4.2.0
 License: Non-Commercial
 Single-file reference implementation for AI developers.
 

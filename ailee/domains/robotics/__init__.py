@@ -18,6 +18,22 @@ from __future__ import annotations
 # Core Enums
 # -----------------------------------------------------------------------------
 
+
+from .robotics import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_robotics_signals,
+    RoboticsTrustLevel,
+    RoboticsHealthStatus,
+    RoboticsControlDomain,
+    RoboticsControlAction,
+)
 from .robotics import (
     RobotType,
     OperationalMode,
@@ -105,7 +121,7 @@ class RoboticsDomain:
                 "decision-making without modifying control, planning, or "
                 "perception algorithms."
             ),
-            "implementation_status": "production_grade_v4.1.1",
+            "implementation_status": "production_grade_v4.2.0",
         }
 
 
@@ -142,9 +158,21 @@ __all__ = [
 
     # Domain descriptor
     "RoboticsDomain",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "create_default_governor",
+    "RoboticsTrustLevel",
+    "RoboticsHealthStatus",
+    "RoboticsControlDomain",
+    "RoboticsControlAction",
 ]
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"

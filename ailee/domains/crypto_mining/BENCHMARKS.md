@@ -4,7 +4,7 @@
 > All data is produced by running the Python implementation under controlled conditions.
 
 **Date:** February 2026  
-**Version:** AILEE Trust Layer v4.1.1
+**Version:** AILEE Trust Layer v4.2.0
 **Component:** `ailee/domains/crypto_mining/ailee_crypto_mining_domain.py`  
 **Environment:** Python 3.10 · Intel Xeon · 16 GB RAM  
 

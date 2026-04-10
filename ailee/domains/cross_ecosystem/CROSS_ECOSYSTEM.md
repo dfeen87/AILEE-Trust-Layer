@@ -1,5 +1,5 @@
 # AILEE Trust Layer — Cross-Ecosystem Translation Domain
-**Version:** 4.1.1
+**Version:** 4.2.0
 **Status:** Production-Grade  
 **License:** Non-Commercial
 
@@ -315,7 +315,7 @@ If you use this domain in research or production systems:
   title = {AILEE Cross-Ecosystem Translation Domain},
   author = {AILEE Trust Layer Project},
   year = {2025},
-  version = {4.1.1},
+  version = {4.2.0},
   license = {Non-Commercial},
   url = {https://github.com/ailee-trust-layer/cross-ecosystem}
 }

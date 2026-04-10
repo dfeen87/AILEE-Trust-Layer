@@ -1,6 +1,6 @@
 """
 AILEE Trust Pipeline - Peer Adapters
-Version: 4.1.1
+Version: 4.2.0
 
 Adapters for integrating peer values from distributed or multi-model systems
 into the AILEE consensus layer.

@@ -1,6 +1,6 @@
 # AILEE Imaging Governance - Benchmark Results & Standards
 
-**Version:** 4.1.1
+**Version:** 4.2.0
 **Last Updated:** December 2025  
 **Test Platform:** Python 3.9+, x86_64 architecture  
 **Domain:** Medical & Scientific Imaging QA
@@ -719,7 +719,7 @@ python benchmark_imaging.py --quick
 
 **Pre-Release Validation:**
 ```bash
-python benchmark_imaging.py --export-json release_v4.1.1.json
+python benchmark_imaging.py --export-json release_v4.2.0.json
 ```
 - Full 1000-iteration suite
 - Compare against baseline from previous release
@@ -866,7 +866,7 @@ The benchmark suite validates compliance with:
 
 ### Roadmap
 
-**v4.1.1 - Advanced Modalities**
+**v4.2.0 - Advanced Modalities**
 - PET/SPECT dual-isotope validation
 - OCT (Optical Coherence Tomography) speckle handling
 - Electron microscopy dose fractionation
@@ -884,7 +884,7 @@ The benchmark suite validates compliance with:
 - HL7 FHIR messaging performance
 - Real-time streaming reconstruction QA
 
-**v4.1.1 - Formal Verification**
+**v4.2.0 - Formal Verification**
 - TLA+ specification for safety properties
 - Model checking for quality gates
 - Proof of correctness for critical paths
@@ -912,7 +912,7 @@ The benchmark suite validates compliance with:
 
 **Performance Regression:**
 ```
-Title: [PERF] Throughput degraded by 12% in v4.1.1
+Title: [PERF] Throughput degraded by 12% in v4.2.0
 Include: Platform details, benchmark output, comparison baseline
 ```
 

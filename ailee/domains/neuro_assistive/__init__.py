@@ -1,6 +1,6 @@
 """
 NEURO-ASSISTIVE Domain — AILEE Trust Layer
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
 Governance and restraint framework for AI systems that assist human cognition,
 communication, and perception while preserving autonomy, consent, identity, and dignity.
@@ -11,6 +11,22 @@ Primary entry point: NeuroGovernor
 Quick start with: create_neuro_governor()
 """
 
+
+from .neuro_assistive import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_neuro_assistive_signals,
+    NeuroTrustLevel,
+    NeuroHealthStatus,
+    NeuroControlDomain,
+    NeuroControlAction,
+)
 from .neuro_assistive import (
     # === Primary API ===
     NeuroGovernor,
@@ -45,7 +61,7 @@ from .neuro_assistive import (
     CognitiveStateTracker,
 )
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 
 __all__ = [
     # Primary API
@@ -77,4 +93,17 @@ __all__ = [
     # Advanced (optional)
     "PolicyEvaluator",
     "CognitiveStateTracker",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "create_default_governor",
+    "validate_neuro_assistive_signals",
+    "NeuroTrustLevel",
+    "NeuroHealthStatus",
+    "NeuroControlDomain",
+    "NeuroControlAction",
 ]

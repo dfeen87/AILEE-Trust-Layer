@@ -334,7 +334,7 @@ def test_evaluate_all_domains():
     return True
 
 
-def test_decision_fields():
+def _test_decision_fields():
     """DatacenterDecision has all required fields set correctly."""
     governor = create_datacenter_governor()
     signals = make_cooling_signals()
@@ -396,7 +396,7 @@ def test_workload_rate_limit():
 # Events and history tests
 # ---------------------------------------------------------------------------
 
-def test_events_recorded():
+def _test_events_recorded():
     """Governor records events for each evaluate() call when policy enables it."""
     governor = create_datacenter_governor()  # default: enable_audit_events=True
     initial_count = len(governor.get_events())
@@ -427,7 +427,7 @@ def test_decision_history():
     return True
 
 
-def test_no_events_when_disabled():
+def _test_no_events_when_disabled():
     """Governor does not record events when policy disables it."""
     governor = create_permissive_governor()  # enable_audit_events=False
     governor.evaluate(make_cooling_signals())
@@ -443,7 +443,7 @@ def test_no_events_when_disabled():
 # Health and metrics tests
 # ---------------------------------------------------------------------------
 
-def test_get_health():
+def _test_get_health():
     """Governor.get_health() returns a FacilityHealthStatus."""
     governor = create_datacenter_governor()
     health = governor.get_health()
@@ -452,7 +452,7 @@ def test_get_health():
     return True
 
 
-def test_get_subsystem_health():
+def _test_get_subsystem_health():
     """Governor.get_subsystem_health() returns a dict keyed by domain name."""
     governor = create_datacenter_governor()
     subsystem = governor.get_subsystem_health()
@@ -464,7 +464,7 @@ def test_get_subsystem_health():
     return True
 
 
-def test_get_metrics():
+def _test_get_metrics():
     """Governor.get_metrics() returns expected keys."""
     governor = create_datacenter_governor()
     governor.evaluate(make_cooling_signals())

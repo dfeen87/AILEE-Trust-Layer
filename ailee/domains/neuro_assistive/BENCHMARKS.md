@@ -1,6 +1,6 @@
 # NEURO-ASSISTIVE DOMAIN BENCHMARKS
 
-**Version:** 4.1.1
+**Version:** 4.2.0
 **Domain:** Neuro-Assistive & Cognitive Stability Governance  
 **Last Updated:** December 25, 2025
 
@@ -33,7 +33,7 @@ This document presents comprehensive benchmarks for the AILEE Trust Layer Neuro-
 
 **Objective:** Verify that assistance is only provided with valid, informed consent.
 
-#### Test Case 4.1.1: Valid Consent
+#### Test Case 4.2.0: Valid Consent
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -74,7 +74,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 4.1.1: Expired Consent
+#### Test Case 4.2.0: Expired Consent
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.90,
@@ -163,7 +163,7 @@ result = governor.evaluate(signals)
 
 **Objective:** Ensure ambiguous inputs are flagged and require user confirmation.
 
-#### Test Case 4.1.1: Clear Input
+#### Test Case 4.2.0: Clear Input
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -200,7 +200,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 4.1.1: Ambiguous Input Without Confirmation
+#### Test Case 4.2.0: Ambiguous Input Without Confirmation
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -278,7 +278,7 @@ result = governor.evaluate(signals)
 
 **Objective:** Verify that assistance level adjusts appropriately to cognitive load.
 
-#### Test Case 4.1.1: Baseline Load
+#### Test Case 4.2.0: Baseline Load
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.90,
@@ -314,7 +314,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 4.1.1: Elevated Load
+#### Test Case 4.2.0: Elevated Load
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -399,7 +399,7 @@ result = governor.evaluate(signals)
 
 **Objective:** Ensure temporal safeguards prevent cognitive fatigue.
 
-#### Test Case 4.1.1: Within Safe Limits
+#### Test Case 4.2.0: Within Safe Limits
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -440,7 +440,7 @@ result = governor.evaluate(signals)
 
 ---
 
-#### Test Case 4.1.1: Session Duration Exceeded
+#### Test Case 4.2.0: Session Duration Exceeded
 ```python
 signals = NeuroSignals(
     assistance_trust_score=0.85,
@@ -1266,6 +1266,6 @@ The system successfully balances the competing demands of **assistance effective
 
 ---
 
-**Document Revision:** 4.1.1
+**Document Revision:** 4.2.0
 **Benchmark Date:** December 25, 2025  
 **Next Review:** March 25, 2026

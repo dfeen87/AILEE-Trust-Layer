@@ -1172,7 +1172,7 @@ exporter = PrometheusExporter(monitor, namespace="dc_ailee")
 def metrics():
     return Response(exporter.export(), mimetype='text/plain')
 
-app.run(host='4.1.1.0', port=9091)
+app.run(host='4.2.0.0', port=9091)
 ```
 
 ### B.2 Alert Rules (Prometheus)
@@ -1218,6 +1218,6 @@ groups:
 **AILEE Trust Layer for Data Centers**  
 *When uncertainty is unavoidable, trust must be structured.*
 
-Version: 4.1.1
+Version: 4.2.0
 Last Updated: December 17, 2025  
 Maintained by: Don Michael Feeney Jr.

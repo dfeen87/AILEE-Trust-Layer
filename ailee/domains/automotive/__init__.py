@@ -19,6 +19,22 @@ Designed for:
 - ISO 26262 / UL 4600 aligned workflows
 """
 
+
+from .ailee_automotive_domain import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_automotive_signals,
+    AutonomyTrustLevel,
+    AutonomyHealthStatus,
+    AutonomyControlDomain,
+    AutonomyControlAction,
+)
 from .ailee_automotive_domain import (
     # Core enums / signals
     AutonomyLevel,
@@ -73,4 +89,17 @@ __all__ = [
 
     # Utilities
     "create_test_signals",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "create_default_governor",
+    "validate_automotive_signals",
+    "AutonomyTrustLevel",
+    "AutonomyHealthStatus",
+    "AutonomyControlDomain",
+    "AutonomyControlAction",
 ]

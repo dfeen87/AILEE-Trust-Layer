@@ -1,5 +1,21 @@
+
+from .cross_ecosystem import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_cross_ecosystem_signals,
+    CrossEcosystemTrustLevel,
+    CrossEcosystemHealthStatus,
+    CrossEcosystemControlDomain,
+    CrossEcosystemControlAction,
+)
 """
-AILEE Cross-Ecosystem Translation Domain — v4.1.1
+AILEE Cross-Ecosystem Translation Domain — v4.2.0
 
 Governance for semantic state and intent translation between incompatible
 software-hardware ecosystems (e.g., iOS ↔ Android, proprietary wearables).
@@ -45,7 +61,7 @@ Quick Start:
 For detailed documentation, see: https://github.com/dfeen87/ailee-trust-layer
 """
 
-from .cross_ecosystem_governor import (
+from .cross_ecosystem import (
     # Core Classes
     CrossEcosystemGovernor,
     CrossEcosystemPolicy,
@@ -84,7 +100,7 @@ from .cross_ecosystem_governor import (
 )
 
 # Version info
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __author__ = "AILEE Project"
 __license__ = "Non-Commercial"
 
@@ -134,6 +150,16 @@ __all__ = [
     
     # Version
     "__version__",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "validate_cross_ecosystem_signals",
+    "CrossEcosystemTrustLevel",
+    "CrossEcosystemHealthStatus",
+    "CrossEcosystemControlDomain",
+    "CrossEcosystemControlAction",
 ]
 
 
@@ -165,7 +191,7 @@ def create_strict_governor(**policy_overrides) -> CrossEcosystemGovernor:
         >>> signals = create_health_data_signals()
         >>> level, decision = governor.evaluate(signals)
     """
-    from .cross_ecosystem_governor import CrossEcosystemPolicy
+    from .cross_ecosystem import CrossEcosystemPolicy
     
     strict_policy = {
         "min_semantic_fidelity_for_advisory": 0.80,
@@ -217,7 +243,7 @@ def create_permissive_governor(**policy_overrides) -> CrossEcosystemGovernor:
         >>> signals = create_health_data_signals(fidelity=0.65)
         >>> level, decision = governor.evaluate(signals)
     """
-    from .cross_ecosystem_governor import CrossEcosystemPolicy
+    from .cross_ecosystem import CrossEcosystemPolicy
     
     permissive_policy = {
         "min_semantic_fidelity_for_advisory": 0.50,

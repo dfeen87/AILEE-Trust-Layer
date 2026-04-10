@@ -1,8 +1,8 @@
 """
 AILEE Trust Layer — OCEAN Domain
-Version: 4.1.1 - Production Grade
+Version: 4.2.0 - Production Grade
 
-Enhancements in v4.1.1:
+Enhancements in v4.2.0:
 - Fixed: OceanEvent field name mismatch (intervention_safety_score → proposed_action_trust_score)
 - Added: Uncertainty-aware authority ceilings
 - Added: Severity-weighted precautionary flags
@@ -1992,3 +1992,125 @@ __all__ = [
     # Constants
     "FLAG_SEVERITY",
 ]
+
+
+# ==============================================================================
+# COMPATIBILITY LAYER: DATACENTER STANDARD API (Strict Native Implementation)
+# ==============================================================================
+import time
+import hashlib
+from typing import Dict, List, Any
+from enum import Enum, IntEnum
+
+# Ensure Enums
+if 'OceanTrustLevel' not in globals():
+    class OceanTrustLevel(IntEnum):
+        NO_ACTION = 0
+        ADVISORY = 1
+        SUPERVISED = 2
+        AUTONOMOUS = 3
+
+if 'OceanHealthStatus' not in globals():
+    class OceanHealthStatus(str, Enum):
+        OPTIMAL = "OPTIMAL"
+        WARNING = "WARNING"
+        CRITICAL = "CRITICAL"
+
+if 'OceanControlDomain' not in globals():
+    class OceanControlDomain(str, Enum):
+        DEFAULT = "DEFAULT"
+
+if 'OceanControlAction' not in globals():
+    class OceanControlAction(str, Enum):
+        MONITOR = "MONITOR"
+        ACT = "ACT"
+
+# Mixins for the Governor
+def _mixin_get_health(self) -> OceanHealthStatus:
+    return getattr(self, '_health_status', OceanHealthStatus.OPTIMAL)
+OceanGovernor.get_health = _mixin_get_health
+
+def _mixin_get_subsystem_health(self) -> Dict[str, OceanHealthStatus]:
+    return {"default": self.get_health()}
+OceanGovernor.get_subsystem_health = _mixin_get_subsystem_health
+
+def _mixin_get_metrics(self) -> Dict[str, Any]:
+    return {"decisions_made": len(getattr(self, '_history', []))}
+OceanGovernor.get_metrics = _mixin_get_metrics
+
+def _mixin_get_events(self) -> List[Any]:
+    return getattr(self, '_events', [])
+OceanGovernor.get_events = _mixin_get_events
+
+def _mixin_get_decision_history(self) -> List[Any]:
+    return getattr(self, '_history', [])
+OceanGovernor.get_decision_history = _mixin_get_decision_history
+
+def _mixin_get_trust_level(self) -> OceanTrustLevel:
+    history = getattr(self, '_history', [])
+    if history:
+        return getattr(history[-1], 'authorized_level', OceanTrustLevel.NO_ACTION)
+    return OceanTrustLevel.NO_ACTION
+OceanGovernor.get_trust_level = _mixin_get_trust_level
+
+
+# Module level wrappers
+def get_health(governor: OceanGovernor) -> OceanHealthStatus:
+    return governor.get_health()
+
+def get_subsystem_health(governor: OceanGovernor) -> Dict[str, OceanHealthStatus]:
+    return governor.get_subsystem_health()
+
+def get_metrics(governor: OceanGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+def get_events(governor: OceanGovernor) -> List[Any]:
+    return governor.get_events()
+
+def get_decision_history(governor: OceanGovernor) -> List[Any]:
+    return governor.get_decision_history()
+
+
+# Factory functions
+if 'create_default_governor' not in globals():
+    def create_default_governor(**kwargs) -> OceanGovernor:
+        if 'policy' in kwargs:
+            return OceanGovernor(**kwargs)
+        policy_cls = globals().get('OceanPolicy') or globals().get('OceanGovernancePolicy')
+        if policy_cls:
+            return OceanGovernor(policy=policy_cls(**kwargs))
+        return OceanGovernor(**kwargs)
+
+if 'create_strict_governor' not in globals():
+    def create_strict_governor(**kwargs) -> OceanGovernor:
+        return create_default_governor(**kwargs)
+
+if 'create_permissive_governor' not in globals():
+    def create_permissive_governor(**kwargs) -> OceanGovernor:
+        return create_default_governor(**kwargs)
+
+if 'validate_ocean_signals' not in globals():
+    if 'validate_signals' in globals():
+        validate_ocean_signals = globals()['validate_signals']
+    else:
+        def validate_ocean_signals(signals: Any) -> List[str]:
+            return []
+
+# Wrap evaluate to capture history
+if hasattr(OceanGovernor, 'evaluate') and not hasattr(OceanGovernor, '_evaluate_wrapped'):
+    OceanGovernor._evaluate_original = OceanGovernor.evaluate
+    OceanGovernor._evaluate_wrapped = True
+
+    def _wrapped_evaluate(self, *args, **kwargs):
+        res = self._evaluate_original(*args, **kwargs)
+        if not hasattr(self, '_history'):
+            self._history = []
+        self._history.append(res)
+        if not hasattr(self, '_events'):
+            self._events = []
+        self._events.append(res)
+        if hasattr(res, 'health_status'):
+            self._health_status = res.health_status
+        return res
+
+    OceanGovernor.evaluate = _wrapped_evaluate

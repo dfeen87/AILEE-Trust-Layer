@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Crypto Mining Domain
-Version: 4.1.1
+Version: 4.2.0
 
 Governance and trust-scoring framework for AI-driven crypto mining control
 systems, including hash rate optimization, thermal management, power
@@ -48,6 +48,22 @@ Quick Start::
 For detailed documentation, see: https://github.com/dfeen87/AILEE-Trust-Layer
 """
 
+
+from .ailee_crypto_mining_domain import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_crypto_mining_signals,
+    MiningTrustLevel,
+    MiningHealthStatus,
+    MiningControlDomain,
+    MiningControlAction,
+)
 from .ailee_crypto_mining_domain import (
     # === Primary API ===
     MiningGovernor,
@@ -77,7 +93,7 @@ from .ailee_crypto_mining_domain import (
     POWER_MANAGEMENT,
 )
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __author__ = "AILEE Trust Layer Development Team"
 __license__ = "Non-Commercial"
 __doc_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer"
@@ -114,4 +130,14 @@ __all__ = [
 
     # Version
     "__version__",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "validate_crypto_mining_signals",
+    "MiningTrustLevel",
+    "MiningHealthStatus",
+    "MiningControlDomain",
+    "MiningControlAction",
 ]

@@ -40,7 +40,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AILEE Trust Layer - Deploy",
     description="Public deployment of the AILEE Trust Layer with real search and multi-model generation.",
-    version="4.1.1",
+    version="4.2.0",
     lifespan=lifespan,
 )
 
@@ -181,4 +181,4 @@ def get_trust(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="4.1.1.0", port=8000)
+    uvicorn.run(app, host="4.2.0.0", port=8000)

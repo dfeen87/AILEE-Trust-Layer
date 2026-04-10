@@ -9,6 +9,22 @@ of imaging outputs. It does NOT implement imaging physics,
 acquisition hardware, or reconstruction algorithms.
 """
 
+
+from .imaging import (
+    get_health,
+    get_subsystem_health,
+    get_metrics,
+    get_events,
+    get_decision_history,
+    create_strict_governor,
+    create_permissive_governor,
+    create_default_governor,
+    validate_imaging_signals,
+    ImagingTrustLevel,
+    ImagingHealthStatus,
+    ImagingControlDomain,
+    ImagingControlAction,
+)
 from .imaging import (
     ImagingDomain,
     ImagingGovernor,
@@ -43,9 +59,22 @@ __all__ = [
     "ReconstructionResult",
     "AdaptiveStrategy",
     "default_imaging_config",
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
+    "create_strict_governor",
+    "create_permissive_governor",
+    "create_default_governor",
+    "validate_imaging_signals",
+    "ImagingTrustLevel",
+    "ImagingHealthStatus",
+    "ImagingControlDomain",
+    "ImagingControlAction",
 ]
 
-__version__ = "4.1.1"
+__version__ = "4.2.0"
 __doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"
