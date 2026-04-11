@@ -55,7 +55,14 @@ from enum import Enum, IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 
 # Import core AILEE components
-from ...ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig, DecisionResult
+from ...ailee_trust_pipeline_v1 import (
+    AileeTrustPipeline,
+    AileeConfig,
+    DecisionResult,
+    SafetyStatus,
+    GraceStatus,
+    ConsensusStatus,
+)
 from ...optional.ailee_monitors import TrustMonitor, AlertingMonitor
 from ...optional.ailee_peer_adapters import StaticPeerAdapter, FilteredPeerAdapter, MultiSourcePeerAdapter
 
@@ -595,7 +602,7 @@ class TrustRelationshipController:
         ai_integrity_score: float,
         ai_confidence: float,
         peer_scores: List[float],
-    ) -> Tuple[bool, Optional[DecisionResult]]:
+    ) -> Tuple[bool, DecisionResult]:
         """
         Evaluate a proposed trust relationship mutation (promote or revoke).
 
@@ -615,7 +622,19 @@ class TrustRelationshipController:
             self.last_hour_reset = now
 
         if self.mutations_last_hour >= 10:
-            return False, None
+            return False, DecisionResult(
+                value=ai_integrity_score,
+                safety_status=SafetyStatus.OUTRIGHT_REJECTED,
+                grace_status=GraceStatus.SKIPPED,
+                consensus_status=ConsensusStatus.SKIPPED,
+                used_fallback=True,
+                confidence_score=0.0,
+                reasons=["Rate limit reached: too many trust mutations this hour"],
+                metadata={
+                    "rate_limited": True,
+                    "mutations_this_hour": self.mutations_last_hour,
+                },
+            )
 
         result = self.pipeline.process(
             raw_value=ai_integrity_score,
