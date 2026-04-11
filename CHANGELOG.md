@@ -1,3 +1,7 @@
+### **v4.3.0 — Topology Domain: Full Uplift**
+
+The Topology domain has been elevated to full production standard, completing the interior work that 4.2.0 began. The domain now runs all governance decisions through the AILEE Trust Pipeline across five real control domains — node connectivity, trust relationships, deployment graph, structural integrity, and route reliability — each with its own tuned configuration, rate limiting, and domain-aware validation. Accompanying this release are production documentation and validated benchmarks, bringing the Topology domain to full parity with the Datacenters reference implementation in implementation quality, documentation depth, and benchmark coverage.
+
 ### v4.2.0 — Security Hardening & Robustness (March 2026)
 
 **Type:** Minor (Additive, backward-compatible)
