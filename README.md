@@ -943,7 +943,7 @@ AILEE provides deterministic governance for AI-driven topology orchestration, st
 ### 🖼️ Imaging Systems
 AILEE provides deterministic governance for AI-assisted and computational imaging.
 
-High-Impact Applications
+**High-Impact Applications**
 
 🧠 Medical imaging QA — Validate AI reconstructions under dose and safety constraints  
 🔬 Scientific imaging — Maximize information yield in photon-limited regimes  
