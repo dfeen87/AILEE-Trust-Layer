@@ -55,7 +55,14 @@ from enum import Enum, IntEnum
 from typing import Any, Dict, List, Optional, Tuple
 
 # Import core AILEE components
-from ...ailee_trust_pipeline_v1 import AileeTrustPipeline, AileeConfig, DecisionResult
+from ...ailee_trust_pipeline_v1 import (
+    AileeTrustPipeline,
+    AileeConfig,
+    DecisionResult,
+    SafetyStatus,
+    GraceStatus,
+    ConsensusStatus,
+)
 from ...optional.ailee_monitors import TrustMonitor, AlertingMonitor
 from ...optional.ailee_peer_adapters import StaticPeerAdapter, FilteredPeerAdapter, MultiSourcePeerAdapter
 
@@ -235,6 +242,7 @@ class TopologyTrustLevel(IntEnum):
 
 class TopologyHealthStatus(str, Enum):
     """Overall health status of a topology domain or subsystem."""
+    OPTIMAL = "OPTIMAL"
     HEALTHY = "HEALTHY"
     WARNING = "WARNING"
     DEGRADED = "DEGRADED"
@@ -364,7 +372,7 @@ class TopologyDecision:
     pipeline_result: Optional[Any] = None
 
     # Safety and health
-    health_status: TopologyHealthStatus = TopologyHealthStatus.HEALTHY
+    health_status: TopologyHealthStatus = TopologyHealthStatus.OPTIMAL
     safety_flags: List[str] = field(default_factory=list)
 
     # Fallback information
@@ -614,7 +622,19 @@ class TrustRelationshipController:
             self.last_hour_reset = now
 
         if self.mutations_last_hour >= 10:
-            return False, None
+            return False, DecisionResult(
+                value=ai_integrity_score,
+                safety_status=SafetyStatus.OUTRIGHT_REJECTED,
+                grace_status=GraceStatus.SKIPPED,
+                consensus_status=ConsensusStatus.SKIPPED,
+                used_fallback=True,
+                confidence_score=0.0,
+                reasons=["Rate limit reached: too many trust mutations this hour"],
+                metadata={
+                    "rate_limited": True,
+                    "mutations_this_hour": self.mutations_last_hour,
+                },
+            )
 
         result = self.pipeline.process(
             raw_value=ai_integrity_score,
@@ -1004,7 +1024,7 @@ class TopologyGovernor:
             return TopologyHealthStatus.DEGRADED
         if fallback_rate > 0.10:
             return TopologyHealthStatus.WARNING
-        return TopologyHealthStatus.HEALTHY
+        return TopologyHealthStatus.OPTIMAL
 
     def get_subsystem_health(self) -> Dict[str, TopologyHealthStatus]:
         """
@@ -1292,6 +1312,27 @@ def validate_topology_signals(signals: TopologySignals) -> List[str]:
     return issues
 
 
+# Module-level wrappers
+def get_health(governor: TopologyGovernor) -> TopologyHealthStatus:
+    return governor.get_health()
+
+
+def get_subsystem_health(governor: TopologyGovernor) -> Dict[str, TopologyHealthStatus]:
+    return governor.get_subsystem_health()
+
+
+def get_metrics(governor: TopologyGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+
+def get_events(governor: TopologyGovernor) -> List[TopologyEvent]:
+    return governor.get_events()
+
+
+def get_decision_history(governor: TopologyGovernor) -> List[TopologyDecision]:
+    return governor.get_decision_history()
+
+
 # ===========================
 # Convenience Exports
 # ===========================
@@ -1311,6 +1352,13 @@ __all__ = [
 
     # Governor
     "TopologyGovernor",
+
+    # Module-level wrappers
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
 
     # Factory Functions
     "create_topology_governor",
