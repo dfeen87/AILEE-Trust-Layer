@@ -235,6 +235,7 @@ class TopologyTrustLevel(IntEnum):
 
 class TopologyHealthStatus(str, Enum):
     """Overall health status of a topology domain or subsystem."""
+    OPTIMAL = "OPTIMAL"
     HEALTHY = "HEALTHY"
     WARNING = "WARNING"
     DEGRADED = "DEGRADED"
@@ -364,7 +365,7 @@ class TopologyDecision:
     pipeline_result: Optional[Any] = None
 
     # Safety and health
-    health_status: TopologyHealthStatus = TopologyHealthStatus.HEALTHY
+    health_status: TopologyHealthStatus = TopologyHealthStatus.OPTIMAL
     safety_flags: List[str] = field(default_factory=list)
 
     # Fallback information
@@ -594,7 +595,7 @@ class TrustRelationshipController:
         ai_integrity_score: float,
         ai_confidence: float,
         peer_scores: List[float],
-    ) -> Tuple[bool, DecisionResult]:
+    ) -> Tuple[bool, Optional[DecisionResult]]:
         """
         Evaluate a proposed trust relationship mutation (promote or revoke).
 
@@ -1004,7 +1005,7 @@ class TopologyGovernor:
             return TopologyHealthStatus.DEGRADED
         if fallback_rate > 0.10:
             return TopologyHealthStatus.WARNING
-        return TopologyHealthStatus.HEALTHY
+        return TopologyHealthStatus.OPTIMAL
 
     def get_subsystem_health(self) -> Dict[str, TopologyHealthStatus]:
         """
@@ -1292,6 +1293,27 @@ def validate_topology_signals(signals: TopologySignals) -> List[str]:
     return issues
 
 
+# Module-level wrappers
+def get_health(governor: TopologyGovernor) -> TopologyHealthStatus:
+    return governor.get_health()
+
+
+def get_subsystem_health(governor: TopologyGovernor) -> Dict[str, TopologyHealthStatus]:
+    return governor.get_subsystem_health()
+
+
+def get_metrics(governor: TopologyGovernor) -> Dict[str, Any]:
+    return governor.get_metrics()
+
+
+def get_events(governor: TopologyGovernor) -> List[TopologyEvent]:
+    return governor.get_events()
+
+
+def get_decision_history(governor: TopologyGovernor) -> List[TopologyDecision]:
+    return governor.get_decision_history()
+
+
 # ===========================
 # Convenience Exports
 # ===========================
@@ -1311,6 +1333,13 @@ __all__ = [
 
     # Governor
     "TopologyGovernor",
+
+    # Module-level wrappers
+    "get_health",
+    "get_subsystem_health",
+    "get_metrics",
+    "get_events",
+    "get_decision_history",
 
     # Factory Functions
     "create_topology_governor",
