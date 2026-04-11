@@ -940,7 +940,7 @@ AILEE provides deterministic governance for AI-driven topology orchestration, st
 
 ---
 
-🖼️ Imaging Systems
+### 🖼️ Imaging Systems
 AILEE provides deterministic governance for AI-assisted and computational imaging.
 
 High-Impact Applications
