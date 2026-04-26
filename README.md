@@ -44,6 +44,7 @@
   - [Crypto Mining](#%EF%B8%8F-crypto-mining)
   - [Neuro-Assistive & Cognitive Support](#-neuro-assistive--cognitive-support-systems)
   - [Auditory & Assistive Listening Systems](#-auditory--assistive-listening-systems)
+  - [CRISPR & Genetic Verification](#-crispr--genetic-verification)
 - [Design Philosophy](#design-philosophy)
 - [Documentation](#documentation)
 - [Status & Roadmap](#status--roadmap)
@@ -1221,6 +1222,25 @@ or autonomous audio control.
 
 > AILEE **does not amplify indiscriminately** — it determines *when, how, and how much enhancement is appropriate*,  
 > acting as a **hearing safety governor, not an audio authority**.
+
+---
+
+### 🧬 CRISPR & Genetic Verification
+
+AILEE provides a **strict safety and verification filter** for genetic sequences (specifically CRISPR gRNA) before they are passed to downstream computational simulations.
+
+This domain implements a deterministic gating process focused entirely on genetic sequence verification, thermodynamic tolerance scoring, and consensus gating architecture.
+
+**Governed Decisions**
+- Gate 3.1: Immediate rejection of known hazardous sequences based on external prior art.
+- Threshold Validation (PAM): Absolute verification of the required Protospacer Adjacent Motif (e.g., 'NGG').
+- Threshold Validation (Seed): Absolute requirement for a 100% strict character match in the critical seed region.
+- Grace Layer (Distal Tolerance): Weighted penalty assessment for distal mismatches, allowing safe sequence variations to proceed if the aggregate trust score remains above a configurable thermodynamic tolerance threshold.
+
+**Typical Impact**
+- Provides a guaranteed structural framework to validate gRNA sequences.
+- Prevents downstream computational execution on sequences that fail basic safety heuristics or lack target fidelity.
+- Delivers a deterministic, auditable output (`status`, `trust_score`, `consensus_route`) for every sequence analyzed.
 
 ---
 
