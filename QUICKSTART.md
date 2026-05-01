@@ -201,10 +201,10 @@ Generate full API docs:
 cargo doc --open
 ```
 
-## Support & Commercial Licensing
+## Support & Licensing
 
 - **Documentation**: See `RUST_README.md` for full documentation.
 - **Examples**: Check `examples/` for more patterns.
 - **Tests**: Run `cargo test` to see test examples.
 
-For commercial licensing and enterprise support, please contact the author directly at [dfeen87@gmail.com](mailto:dfeen87@gmail.com). See `README.md` and the `LICENSE` file for details on non-commercial vs. commercial usage.
+For support questions, please contact the author at [dfeen87@gmail.com](mailto:dfeen87@gmail.com). This project is licensed under the MIT License; see `LICENSE` for details.

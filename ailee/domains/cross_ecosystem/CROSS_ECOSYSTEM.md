@@ -295,12 +295,9 @@ See `CONTRIBUTING.md` for guidelines.
 
 ## License
 
-**Non-Commercial License**
+**MIT License**
 
-This domain is released under a Non-Commercial License to ensure:
-- Full code auditability for trust verification
-- Support for academic research, personal projects, and non-profit work
-- No vendor lock-in within non-commercial use cases
+This domain is released under the MIT License.
 
 Trust governance **must be transparent** to be effective.
 
