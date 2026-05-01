@@ -52,7 +52,7 @@
 - [Contributing](#contributing)
 - [Testing](#testing)
 - [Continuous Integration](#continuous-integration)
-- [License & Commercial Use](#license--commercial-use)
+- [License](#license)
 - [Citation](#citation)
 - [Acknowledgments](#acknowledgments)
 - [Contact & Support](#contact--support)
@@ -1351,19 +1351,11 @@ if [ -d tests ]; then python -m pytest tests/ -v; else echo "No tests/ directory
 
 ---
 
-## License & Commercial Use
+## License
 
-This project is governed by a **hybrid license**.
+This project is now **100% open-source** and distributed under the **MIT License**.
 
-The core software is freely available for **non-commercial, academic, and personal use** under the terms of the included `LICENSE` file.
-
-**Commercial use is strictly prohibited without a separate commercial license.**
-Commercial use includes (but is not limited to):
-- Integration into paid products, enterprise services, or client-facing applications
-- Generating direct or indirect revenue
-- Usage in a for-profit enterprise environment
-
-To inquire about commercial licensing options, contact the author directly at [dfeen87@gmail.com](mailto:dfeen87@gmail.com).
+You are free to use, modify, distribute, and incorporate this software in personal, academic, and commercial environments in accordance with the terms in the `LICENSE` file.
 
 ---
 
@@ -1404,6 +1396,12 @@ Special thanks to early adopters who validated these patterns in production.
 - **Issues**: [GitHub Issues](https://github.com/dfeen87/ailee-trust-layer/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/dfeen87/ailee-trust-layer/discussions)
 - **Email**: [Contact via GitHub](https://github.com/dfeen87)
+
+---
+
+## Enterprise Consulting & Integration
+
+This architecture is fully open-source under the MIT License. If your organization requires custom scaling, proprietary integration, or dedicated technical consulting to deploy these models at an enterprise level, please reach out at: dfeen87@gmail.com
 
 ---
 
