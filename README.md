@@ -1,6 +1,7 @@
 # AILEE Trust Layer
 ### Adaptive Integrity Layer for AI Decision Systems
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-4.3.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
