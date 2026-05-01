@@ -1,45 +1,21 @@
-Copyright (c) 2026 Don Michael Feeney Jr.  
-All rights reserved.
+MIT License
 
-NON-COMMERCIAL LICENSE  
-Permission is hereby granted to any individual, researcher, or organization to use, copy, modify, and distribute this software for NON-COMMERCIAL purposes only, subject to the following conditions:
+Copyright (c) 2026 Don Michael Feeney Jr.
 
-1. Non-commercial use includes:
-   - Academic research
-   - Personal projects
-   - Educational use
-   - Non-profit work
-   - Internal evaluation that does not result in a commercial product or service
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-2. Attribution is required.  
-   You must retain this notice in all copies or substantial portions of the software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-3. No warranty is provided.  
-   This software is offered “as is,” without warranty of any kind.
-
-COMMERCIAL USE PROHIBITED WITHOUT LICENSE  
-Commercial use of this software is NOT permitted under this license.  
-Commercial use includes, but is not limited to:
-
-- Integrating this software into a commercial product or service  
-- Using it within a for-profit business  
-- Using it to generate revenue, directly or indirectly  
-- Using it in any paid, enterprise, or client-facing environment  
-
-To obtain a commercial license, contact:  
-dfeen87@gmail.com
-
-COMMERCIAL LICENSE OPTIONS  
-A separate paid commercial license is available for companies or individuals who wish to:
-
-- Use this software in production  
-- Integrate it into commercial systems  
-- Offer it as part of a paid service  
-- Use it in enterprise environments  
-- Modify and redistribute it commercially  
-
-Until a commercial license is obtained, all commercial use is strictly prohibited.
-
-TEMPORARY NOTICE  
-Licensing terms are currently under review.  
-All commercial rights are reserved until the final commercial license is published.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
