@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Crypto Mining Domain
-Version: 4.2.0
+Version: 4.6.0
 
 Governance and trust-scoring framework for AI-driven crypto mining control
 systems, including hash rate optimization, thermal management, power
@@ -93,7 +93,7 @@ from .ailee_crypto_mining_domain import (
     POWER_MANAGEMENT,
 )
 
-__version__ = "4.2.0"
+__version__ = "4.6.0"
 __author__ = "AILEE Trust Layer Development Team"
 __license__ = "Non-Commercial"
 __doc_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer"

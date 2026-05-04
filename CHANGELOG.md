@@ -1,6 +1,26 @@
+### **v4.6.0 — Memory Domain Hardening & Benchmark Coverage**
+
+**Type:** Minor (Additive, backward-compatible)
+
+#### Memory Domain
+- Hardened `MemoryGovernor.evaluate()` with optional pre-flight signal validation
+- Added `MemoryPolicy.__post_init__` validation for critical policy fields
+- Replaced string-literal `SafetyStatus` comparisons with proper enum references
+- Fixed `fallback_reason` field to always carry an explicit `str` value (`.value`)
+- Updated `_determine_trust_level` return type to use `Tuple` from `typing` for Python 3.8+ compatibility
+- Added `from __future__ import annotations` for clean forward-reference handling
+- Created `ailee/domains/memory/BENCHMARK.md` with simulated performance and control quality metrics
+
+#### Consistency
+- Updated version strings to 4.6.0 across all Python packages, Rust crate, markdown docs, and deployment configs
+
+---
+
 ### **v4.3.0 — Topology Domain: Full Uplift**
 
 The Topology domain has been elevated to full production standard, completing the interior work that 4.2.0 began. The domain now runs all governance decisions through the AILEE Trust Pipeline across five real control domains — node connectivity, trust relationships, deployment graph, structural integrity, and route reliability — each with its own tuned configuration, rate limiting, and domain-aware validation. Accompanying this release are production documentation and validated benchmarks, bringing the Topology domain to full parity with the Datacenters reference implementation in implementation quality, documentation depth, and benchmark coverage.
+
+---
 
 ### v4.2.0 — Security Hardening & Robustness (March 2026)
 

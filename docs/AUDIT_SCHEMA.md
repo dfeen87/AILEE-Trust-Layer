@@ -1,7 +1,7 @@
 # AILEE Audit & Decision Schema
 ## Traceability, Transparency, and Explainability
 
-Version: 4.2.0
+Version: 4.6.0
 Status: Stable (Reference Specification)
 
 ---

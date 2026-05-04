@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Memory Domain
-Version: 4.2.0
+Version: 4.6.0
 
 Governance and trust-scoring framework for AI-driven memory control
 systems, including RAM allocation, heap monitoring, swap management, and process memory.
@@ -35,7 +35,7 @@ from .ailee_memory_domain import (
     PROCESS_MEMORY,
 )
 
-__version__ = "4.2.0"
+__version__ = "4.6.0"
 __author__ = "AILEE Trust Layer Development Team"
 __license__ = "Non-Commercial"
 

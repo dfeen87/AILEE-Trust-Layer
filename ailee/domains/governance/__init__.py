@@ -1,5 +1,5 @@
 """
-AILEE Governance Domain — v4.2.0
+AILEE Governance Domain — v4.6.0
 
 A layered governance pipeline for evaluating trust and authorization in AI systems.
 
@@ -62,7 +62,7 @@ from .governance import (
 )
 
 # Version info
-__version__ = "4.2.0"
+__version__ = "4.6.0"
 __author__ = "AILEE Project"
 __license__ = "Non-Commercial"
 
