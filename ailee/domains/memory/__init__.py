@@ -37,7 +37,7 @@ from .ailee_memory_domain import (
 
 __version__ = "4.6.0"
 __author__ = "AILEE Trust Layer Development Team"
-__license__ = "Non-Commercial"
+__license__ = "MIT"
 
 __all__ = [
     # Primary API
