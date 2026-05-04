@@ -1,5 +1,5 @@
 """
-AILEE Governance Domain — v4.2.0
+AILEE Governance Domain — v4.6.0
 Single-file reference implementation for governance trust evaluation.
 
 Implements a layered governance pipeline:

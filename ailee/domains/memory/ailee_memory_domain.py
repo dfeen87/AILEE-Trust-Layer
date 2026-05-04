@@ -1,13 +1,15 @@
 """
 AILEE Trust Layer — Memory Domain
-Version: 4.2.0
+Version: 4.6.0
 
 First-class AILEE domain implementation for Memory decision integrity.
 """
 
+from __future__ import annotations
+
 import time
 import hashlib
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum, IntEnum
 from dataclasses import dataclass, field
 
@@ -157,6 +159,24 @@ class MemoryPolicy:
     enable_audit_events: bool = True
     track_decision_history: bool = True
 
+    def __post_init__(self) -> None:
+        if not (0.0 < self.oom_emergency_threshold <= 1.0):
+            raise ValueError(
+                f"oom_emergency_threshold must be in (0.0, 1.0], got {self.oom_emergency_threshold}"
+            )
+        if not (0.0 < self.swap_enable_threshold <= 1.0):
+            raise ValueError(
+                f"swap_enable_threshold must be in (0.0, 1.0], got {self.swap_enable_threshold}"
+            )
+        if self.max_oom_kills_per_hour < 0:
+            raise ValueError(
+                f"max_oom_kills_per_hour must be >= 0, got {self.max_oom_kills_per_hour}"
+            )
+        if not (0.0 < self.max_allocation_change_per_cycle <= 1.0):
+            raise ValueError(
+                f"max_allocation_change_per_cycle must be in (0.0, 1.0], got {self.max_allocation_change_per_cycle}"
+            )
+
 @dataclass
 class MemorySignals:
     memory_domain: MemoryDomain
@@ -224,6 +244,30 @@ class MemoryGovernor:
     def evaluate(self, signals: MemorySignals) -> MemoryDecision:
         ts = signals.timestamp or time.time()
         peer_values = [r.value for r in signals.memory_readings]
+
+        # Optional pre-flight validation
+        if self.policy.require_reading_validation:
+            issues = validate_memory_signals(signals)
+            if issues:
+                reason = f"Signal validation failed: {'; '.join(issues)}"
+                decision = self._build_no_action_decision(
+                    signals,
+                    reason=reason,
+                    flags=["validation_failed"],
+                    health=MemoryHealthStatus.WARNING,
+                    ts=ts
+                )
+                self._record_event(MemoryEvent(
+                    event_type="validation_failed",
+                    memory_domain=signals.memory_domain,
+                    timestamp=ts,
+                    decision=decision,
+                    details={"reason": reason, "issues": issues}
+                ))
+                if self.policy.track_decision_history:
+                    self._decision_history.append(decision)
+                self._update_health(signals.memory_domain, decision)
+                return decision
 
         # Reset hourly counter if needed
         if ts - self._hour_start_time >= 3600:
@@ -299,7 +343,7 @@ class MemoryGovernor:
         decision_id = hashlib.sha256(f"{ts}{signals.memory_domain}{signals.ai_value}".encode()).hexdigest()[:16]
 
         flags = []
-        if result.safety_status == "OUTRIGHT_REJECTED":
+        if result.safety_status == SafetyStatus.OUTRIGHT_REJECTED:
             flags.append("unsafe_value")
         if fallback_used:
             flags.append("fallback_used")
@@ -307,7 +351,7 @@ class MemoryGovernor:
         health = MemoryHealthStatus.HEALTHY
         if fallback_used:
             health = MemoryHealthStatus.DEGRADED
-        elif result.safety_status == "OUTRIGHT_REJECTED":
+        elif result.safety_status == SafetyStatus.OUTRIGHT_REJECTED:
             health = MemoryHealthStatus.WARNING
 
         metadata = {
@@ -326,7 +370,7 @@ class MemoryGovernor:
             health_status=health,
             safety_flags=flags,
             used_fallback=fallback_used,
-            fallback_reason=result.safety_status if fallback_used else None,
+            fallback_reason=result.safety_status.value if fallback_used else None,
             timestamp=ts,
             decision_id=decision_id,
             reasons=result.reasons,
@@ -377,9 +421,9 @@ class MemoryGovernor:
             metadata={}
         )
 
-    def _determine_trust_level(self, result: DecisionResult) -> tuple[MemoryTrustLevel, bool, bool]:
+    def _determine_trust_level(self, result: DecisionResult) -> Tuple[MemoryTrustLevel, bool, bool]:
         fallback_used = result.used_fallback
-        if result.safety_status == "OUTRIGHT_REJECTED":
+        if result.safety_status == SafetyStatus.OUTRIGHT_REJECTED:
             return MemoryTrustLevel.NO_ACTION, False, False
 
         if fallback_used:

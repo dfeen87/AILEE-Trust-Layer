@@ -1282,6 +1282,6 @@ groups:
 **AILEE Trust Layer for Topology Systems**
 *When structural uncertainty is unavoidable, trust must be governed.*
 
-Version: 4.2.0
+Version: 4.6.0
 Last Updated: April 11, 2026
 Maintained by: Don Michael Feeney Jr.

@@ -16,7 +16,7 @@ from .auditory import (
 )
 """
 AILEE Trust Layer — AUDITORY Domain
-Version: 4.2.0 - Production Grade
+Version: 4.6.0 - Production Grade
 
 Auditory governance domain for AI-enhanced hearing and assistive audio systems.
 
@@ -121,7 +121,7 @@ from .auditory import (
     AUDITORY_FLAG_SEVERITY,
 )
 
-__version__ = "4.2.0"
+__version__ = "4.6.0"
 __author__ = "AILEE Trust Layer Development Team"
 __all__ = [
     # Enums

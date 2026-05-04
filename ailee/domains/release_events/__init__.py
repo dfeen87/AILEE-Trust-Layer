@@ -1,6 +1,6 @@
 from .ailee_release_events_domain import *
 
-__version__ = "4.2.0"
+__version__ = "4.6.0"
 
 __all__ = [
     'ReleaseEventsTrustLevel',

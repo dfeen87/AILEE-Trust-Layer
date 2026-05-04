@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-4.3.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-4.6.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -46,6 +46,7 @@
   - [Neuro-Assistive & Cognitive Support](#-neuro-assistive--cognitive-support-systems)
   - [Auditory & Assistive Listening Systems](#-auditory--assistive-listening-systems)
   - [CRISPR & Genetic Verification](#-crispr--genetic-verification)
+  - [Memory Management Systems](#-memory-management-systems)
 - [Design Philosophy](#design-philosophy)
 - [Documentation](#documentation)
 - [Status & Roadmap](#status--roadmap)
@@ -635,7 +636,7 @@ ailee-trust-layer/
 │   │       ├── INTEGRATION.md        # Boundary documentation: what FEEN provides vs what AILEE expects
 │   │       └── benchmarks.py         # Engineering validation: latency, determinism, boundary overhead
 │   │
-│   ├── domains/                      # Domain-specific governance layers (16 domains)
+│   ├── domains/                      # Domain-specific governance layers (17 domains)
 │   │   ├── __init__.py               # Domains namespace
 │   │   │
 │   │   ├── auditory/
@@ -685,6 +686,12 @@ ailee-trust-layer/
 │   │   │   ├── imaging.py            # Imaging QA, safety & efficiency governance
 │   │   │   ├── IMAGING.md            # Imaging domain conceptual framework
 │   │   │   └── BENCHMARKS.md         # Imaging performance & validation benchmarks
+│   │   │
+│   │   ├── memory/
+│   │   │   ├── __init__.py           # MEMORY domain exports
+│   │   │   ├── ailee_memory_domain.py  # RAM, heap, swap & process memory governance
+│   │   │   ├── MEMORY.md             # Memory domain framework
+│   │   │   └── BENCHMARK.md          # Memory performance & governance benchmarks
 │   │   │
 │   │   ├── neuro_assistive/
 │   │   │   ├── __init__.py           # NEURO-ASSISTIVE domain exports
@@ -1245,6 +1252,47 @@ This domain implements a deterministic gating process focused entirely on geneti
 
 ---
 
+### 💾 Memory Management Systems
+
+AILEE provides deterministic trust governance for AI-driven memory management operations — ensuring
+that RAM allocation, heap control, swap management, and process memory decisions are acted upon
+**only when confidence is sufficient, sensors agree, and safety constraints are met**.
+
+This domain is designed for *operational optimization with hard safety ceilings*, not unrestricted
+AI control of host memory.
+
+**Governed Decisions**
+- RAM allocation limit enforcement (observe → advisory → supervised → autonomous)
+- Heap utilization monitoring with GC trigger gating
+- Swap enablement with unconditional OOM emergency override
+- Process memory throttle and OOM-kill rate limiting
+- Per-node and per-process memory footprint governance
+
+**Typical Use Cases**
+- Hypervisor and container memory balloon tuning
+- JVM heap governance and GC trigger optimization
+- OS-level swappiness and swap partition management
+- Per-process RSS limit enforcement
+- Cloud-native memory auto-scaling and cgroup governance
+
+**Typical Impact (Representative Systems)**
+
+- Unsafe OOM actions blocked: **100%** (unconditional override at configurable threshold)
+- OOM-kill rate-limiting events enforced: up to **policy cap** (default: 5/hr)
+- Governance decision latency: **< 0.21 ms** (< 0.008 ms on OOM hard-path override)
+- Throughput: **> 4,700 decisions/sec** (Python 3.12, single core)
+- Audit & traceability: **Immediate** (every decision carries a unique ID and full rationale)
+
+**Deployment Model**
+
+**Observe → Advisory → Supervised → Autonomous**  
+*(History-aware warm-up; autonomous action requires demonstrated stability, consensus, and earned confidence)*
+
+> See [MEMORY.md](ailee/domains/memory/MEMORY.md) for full domain overview,  
+> and [BENCHMARK.md](ailee/domains/memory/BENCHMARK.md) for simulated performance and governance findings.
+
+---
+
 ## Design Philosophy
 
 > Trust is not a probability.  
@@ -1269,17 +1317,18 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v4.2.0 (Production/Stable)
+### Current: v4.6.0 (Production/Stable)
 
-AILEE Trust Layer **v4.2.0** is production-ready with enterprise features:
+AILEE Trust Layer **v4.6.0** is production-ready with enterprise features:
 
+✅ 17 domain governance layers  
 ✅ 9 domain-optimized presets  
 ✅ Advanced peer adapters for multi-model systems  
 ✅ Real-time monitoring & alerting  
 ✅ Comprehensive audit trails  
 ✅ Deterministic replay for testing  
 
-### Future Considerations (v4.2.0+)
+### Future Considerations (v4.6.0+)
 
 Future versions may add:
 - Streaming support for real-time pipelines
@@ -1369,7 +1418,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {4.2.0},
+  version = {4.6.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1414,7 +1463,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v4.2.0**
+**AILEE Trust Layer v4.6.0**
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.

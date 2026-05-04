@@ -1,6 +1,6 @@
 """
 AILEE Trust Pipeline - Serialization Helpers
-Version: 4.2.0
+Version: 4.6.0
 
 Provides utilities for serializing/deserializing DecisionResult objects
 for logging, storage, transmission, and audit trails.

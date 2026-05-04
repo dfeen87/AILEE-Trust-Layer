@@ -1,6 +1,6 @@
 # AILEE Cross-Ecosystem Translation Domain - Benchmarks
 
-**Version:** 4.2.0
+**Version:** 4.6.0
 **Date:** December 2025  
 **Domain:** Privacy-Preserving Semantic Translation Governance
 
