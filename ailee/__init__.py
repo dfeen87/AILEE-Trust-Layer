@@ -316,6 +316,32 @@ try:
 except ImportError:
     _HAS_CRYPTO_MINING_DOMAIN = False
 
+try:
+    from .domains.memory import (
+        MemoryGovernor,
+        MemoryPolicy,
+        MemorySignals,
+        MemoryDecision,
+        MemoryEvent,
+        MemoryTrustLevel,
+        MemoryHealthStatus,
+        MemoryDomain,
+        MemoryAction,
+        MemoryReading,
+        RAM_ALLOCATION,
+        HEAP_MONITORING,
+        SWAP_MANAGEMENT,
+        PROCESS_MEMORY,
+        create_memory_governor,
+        create_default_governor as create_default_memory_governor,
+        create_strict_governor as create_strict_memory_governor,
+        create_permissive_governor as create_permissive_memory_governor,
+        validate_memory_signals,
+    )
+    _HAS_MEMORY_DOMAIN = True
+except ImportError:
+    _HAS_MEMORY_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
@@ -563,6 +589,28 @@ if _HAS_CRYPTO_MINING_DOMAIN:
         "create_permissive_mining_governor",
         "validate_mining_signals",
     ])
+if _HAS_MEMORY_DOMAIN:
+    __all__.extend([
+        "MemoryGovernor",
+        "MemoryPolicy",
+        "MemorySignals",
+        "MemoryDecision",
+        "MemoryEvent",
+        "MemoryTrustLevel",
+        "MemoryHealthStatus",
+        "MemoryDomain",
+        "MemoryAction",
+        "MemoryReading",
+        "RAM_ALLOCATION",
+        "HEAP_MONITORING",
+        "SWAP_MANAGEMENT",
+        "PROCESS_MEMORY",
+        "create_memory_governor",
+        "create_default_memory_governor",
+        "create_strict_memory_governor",
+        "create_permissive_memory_governor",
+        "validate_memory_signals",
+    ])
 
 # =============================================================================
 # Convenience
@@ -617,6 +665,7 @@ def get_available_domains():
         "neuro_assistive": _HAS_NEURO_ASSISTIVE_DOMAIN,
         "auditory": _HAS_AUDITORY_DOMAIN,
         "crypto_mining": _HAS_CRYPTO_MINING_DOMAIN,
+        "memory": _HAS_MEMORY_DOMAIN,
     }
 
 
