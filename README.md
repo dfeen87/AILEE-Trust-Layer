@@ -39,6 +39,7 @@
   - [Topology Systems](#-topology-systems)
   - [Robotics Systems](#-robotics-systems)
   - [Telecommunications Systems](#-telecommunications-systems)
+  - [Light Transition Systems](#-light-transition-systems)
   - [Cross-Ecosystem Systems](#-cross-ecosystem-systems)
   - [Governance Systems](#-governance-systems)
   - [Ocean Systems](#-ocean-systems)
@@ -636,7 +637,7 @@ ailee-trust-layer/
 │   │       ├── INTEGRATION.md        # Boundary documentation: what FEEN provides vs what AILEE expects
 │   │       └── benchmarks.py         # Engineering validation: latency, determinism, boundary overhead
 │   │
-│   ├── domains/                      # Domain-specific governance layers (17 domains)
+│   ├── domains/                      # Domain-specific governance layers (18 domains)
 │   │   ├── __init__.py               # Domains namespace
 │   │   │
 │   │   ├── auditory/
@@ -720,6 +721,12 @@ ailee-trust-layer/
 │   │   │   ├── telecommunications.py # Network trust, freshness & QoS governance
 │   │   │   ├── TELECOMMUNICATIONS.md # Telecommunications domain framework
 │   │   │   └── BENCHMARKS.md         # Telecom latency, throughput & trust benchmarks
+│   │   │
+│   │   ├── light_transition/
+│   │   │   ├── __init__.py           # LIGHT_TRANSITION domain exports
+│   │   │   ├── light_transition.py   # Photonic signal integrity & physics-bound governance
+│   │   │   ├── LIGHT_TRANSITION.md   # Light-transition domain framework
+│   │   │   └── BENCHMARKS.md         # Optical signal trust benchmarks
 │   │   │
 │   │   └── topology/
 │   │       ├── __init__.py           # TOPOLOGY domain exports
@@ -1034,6 +1041,27 @@ High-Impact Applications
 - Real-time compliance margin: 10×–100× requirements
 
 - Audit & traceability readiness: Immediate
+
+---
+
+## 💡 Light Transition Systems
+
+AILEE provides deterministic governance for optical, photonic, laser, fiber, and free-space light-carried data signals. The domain treats the speed of light as a hard physics boundary: it can govern signals that propagate at physically permitted light speeds, but it does not create faster-than-light transport.
+
+### High-Impact Applications
+
+- 🔦 **Free-space optical links** — Validate line-of-sight telemetry under atmospheric loss, scintillation, and alignment uncertainty.
+- 🧬 **Photonic interconnects** — Govern chip-to-chip and rack-scale optical data frames before downstream action.
+- 🧵 **Fiber transport** — Combine BER, SNR, dispersion, eye opening, and peer tap-monitor consensus.
+- 🛰️ **Laser communications** — Enforce freshness, time-of-flight plausibility, and clock discipline on long-distance links.
+- ⏱️ **Clock-sensitive signaling** — Detect unsafe clock offset before accepting light-transition data.
+
+### Typical Impact (Representative Systems)
+
+- Physics-bound violations surfaced: **100% in deterministic policy checks**
+- Stale optical frame rejection: **policy-enforced in nanosecond units**
+- Peer disagreement containment: **fallback or non-actionable decision**
+- Audit & traceability readiness: **Immediate**
 
 ---
 
