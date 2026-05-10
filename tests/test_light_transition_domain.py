@@ -6,6 +6,7 @@ from ailee.domains.light_transition import (
     LightTransitionTrustLevel,
     OpticalReading,
     PropagationMedium,
+    REFRACTIVE_INDEX_BY_MEDIUM,
     create_default_governor,
     create_degraded_signals,
     create_example_signals,
@@ -65,6 +66,61 @@ def test_light_transition_flags_physics_boundary_violation():
     decision = gov.evaluate(signals)
     assert any(flag.startswith("physics_bound_violation") for flag in decision.safety_flags)
     assert decision.actionable is False
+
+
+def test_light_transition_uses_medium_aware_speed_limit():
+    gov = create_permissive_governor()
+    signals = LightTransitionSignals(
+        control_domain=LightTransitionControlDomain.PHOTONIC_SIGNAL_INTEGRITY,
+        proposed_action=LightTransitionControlAction.ACCEPT_FRAME,
+        ai_value=0.95,
+        ai_confidence=0.95,
+        optical_readings=[
+            OpticalReading(0.95, 1.0, "sensor_a"),
+            OpticalReading(0.94, 1.0, "sensor_b"),
+            OpticalReading(0.96, 1.0, "sensor_c"),
+        ],
+        medium=PropagationMedium.FIBER,
+        distance_m=299_792_458.0,
+        measured_time_of_flight_ns=1_250_000_000.0,
+    )
+
+    decision = gov.evaluate(signals)
+
+    assert REFRACTIVE_INDEX_BY_MEDIUM[PropagationMedium.FIBER] == 1.467
+    assert decision.metadata["dynamic_speed_limit_fraction_c"] < 0.69
+    assert any(
+        flag.startswith("physics_bound_violation:") and "for FIBER" in flag
+        for flag in decision.safety_flags
+    )
+
+
+def test_light_transition_accepts_refractive_index_override():
+    gov = create_permissive_governor()
+    signals = LightTransitionSignals(
+        control_domain=LightTransitionControlDomain.PHOTONIC_SIGNAL_INTEGRITY,
+        proposed_action=LightTransitionControlAction.ACCEPT_FRAME,
+        ai_value=0.95,
+        ai_confidence=0.95,
+        optical_readings=[
+            OpticalReading(0.95, 1.0, "sensor_a"),
+            OpticalReading(0.94, 1.0, "sensor_b"),
+            OpticalReading(0.96, 1.0, "sensor_c"),
+        ],
+        medium=PropagationMedium.FIBER,
+        distance_m=299_792_458.0,
+        measured_time_of_flight_ns=1_250_000_000.0,
+        refractive_index_override=1.0,
+    )
+
+    decision = gov.evaluate(signals)
+
+    assert decision.metadata["refractive_index"] == 1.0
+    assert decision.metadata["dynamic_speed_limit_fraction_c"] == 1.005
+    assert not any(
+        flag.startswith("physics_bound_violation")
+        for flag in decision.safety_flags
+    )
 
 
 def test_light_transition_validation_and_degraded_signal():

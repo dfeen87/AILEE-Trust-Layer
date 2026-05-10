@@ -23,6 +23,9 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple
 from ...ailee_trust_pipeline_v1 import AileeConfig, AileeTrustPipeline, DecisionResult, SafetyStatus
 
 SPEED_OF_LIGHT_M_PER_S = 299_792_458.0
+STANDARD_ATMOSPHERE_PRESSURE_PA = 101_325.0
+STANDARD_ATMOSPHERE_TEMPERATURE_K = 288.15
+REFRACTIVE_INDEX_JITTER_BUFFER = 0.005
 
 
 # ===========================
@@ -141,6 +144,16 @@ class PropagationMedium(str, Enum):
     UNKNOWN = "UNKNOWN"
 
 
+REFRACTIVE_INDEX_BY_MEDIUM: Dict[PropagationMedium, float] = {
+    PropagationMedium.VACUUM: 1.0000,
+    PropagationMedium.FREE_SPACE: 1.0003,
+    PropagationMedium.FIBER: 1.467,
+    PropagationMedium.WAVEGUIDE: 1.500,
+    PropagationMedium.INTERCONNECT: 1.330,
+    PropagationMedium.UNKNOWN: 1.0000,
+}
+
+
 # ===========================
 # Policy & Signal Types
 # ===========================
@@ -191,6 +204,9 @@ class LightTransitionSignals:
     dispersion_ps_nm: Optional[float] = None
     data_rate_gbps: Optional[float] = None
     wavelength_nm: Optional[float] = None
+    environmental_temperature_c: Optional[float] = None
+    environmental_pressure_pa: Optional[float] = None
+    refractive_index_override: Optional[float] = None
     channel_id: str = "default"
     timestamp: Optional[float] = None
     context: Dict[str, Any] = field(default_factory=dict)
@@ -248,6 +264,62 @@ def _propagation_fraction_c(distance_m: Optional[float], tof_ns: Optional[float]
     return measured_velocity / SPEED_OF_LIGHT_M_PER_S
 
 
+def _get_refractive_index(
+    medium: PropagationMedium,
+    temp: Optional[float] = None,
+    pressure: Optional[float] = None,
+    override_n: Optional[float] = None,
+) -> float:
+    """Return the deterministic refractive index for a propagation medium."""
+    if override_n is not None:
+        return float(override_n)
+
+    base_n = REFRACTIVE_INDEX_BY_MEDIUM.get(
+        medium,
+        REFRACTIVE_INDEX_BY_MEDIUM[PropagationMedium.UNKNOWN],
+    )
+    if medium != PropagationMedium.FREE_SPACE:
+        return base_n
+    if temp is None and pressure is None:
+        return base_n
+
+    temperature_k = (
+        STANDARD_ATMOSPHERE_TEMPERATURE_K
+        if temp is None
+        else float(temp) + 273.15
+    )
+    if temperature_k <= 0.0:
+        return base_n
+
+    pressure_pa = (
+        STANDARD_ATMOSPHERE_PRESSURE_PA
+        if pressure is None
+        else max(0.0, float(pressure))
+    )
+    density_ratio = (
+        pressure_pa / STANDARD_ATMOSPHERE_PRESSURE_PA
+    ) * (STANDARD_ATMOSPHERE_TEMPERATURE_K / temperature_k)
+    return 1.0 + ((base_n - 1.0) * density_ratio)
+
+
+def _get_dynamic_speed_limit(
+    medium: PropagationMedium,
+    temp: Optional[float] = None,
+    pressure: Optional[float] = None,
+    override_n: Optional[float] = None,
+) -> float:
+    """Return the medium-aware maximum propagation fraction of c."""
+    refractive_index = _get_refractive_index(
+        medium=medium,
+        temp=temp,
+        pressure=pressure,
+        override_n=override_n,
+    )
+    if refractive_index <= 0.0:
+        return 0.0
+    return (1.0 / refractive_index) + REFRACTIVE_INDEX_JITTER_BUFFER
+
+
 def _trust_level_from_result(
     result: DecisionResult,
     flags: Sequence[str],
@@ -299,6 +371,10 @@ def validate_light_transition_signals(signals: LightTransitionSignals) -> Tuple[
         issues.append("distance_m must be non-negative")
     if signals.measured_time_of_flight_ns is not None and signals.measured_time_of_flight_ns <= 0.0:
         issues.append("measured_time_of_flight_ns must be positive")
+    if signals.environmental_pressure_pa is not None and signals.environmental_pressure_pa < 0.0:
+        issues.append("environmental_pressure_pa must be non-negative")
+    if signals.refractive_index_override is not None and signals.refractive_index_override <= 0.0:
+        issues.append("refractive_index_override must be positive")
     return len(issues) == 0, issues
 
 
@@ -327,6 +403,22 @@ class LightTransitionGovernor:
         peer_values = [r.value for r in signals.optical_readings]
         timestamp = float(signals.timestamp if signals.timestamp is not None else time.time())
         flags = self._safety_flags(signals) + validation_issues
+        propagation_fraction_c = _propagation_fraction_c(
+            signals.distance_m,
+            signals.measured_time_of_flight_ns,
+        )
+        dynamic_speed_limit = _get_dynamic_speed_limit(
+            signals.medium,
+            signals.environmental_temperature_c,
+            signals.environmental_pressure_pa,
+            signals.refractive_index_override,
+        )
+        refractive_index = _get_refractive_index(
+            signals.medium,
+            signals.environmental_temperature_c,
+            signals.environmental_pressure_pa,
+            signals.refractive_index_override,
+        )
 
         if not valid:
             peer_values = []
@@ -346,10 +438,12 @@ class LightTransitionGovernor:
                 "peer_count": len(peer_values),
                 "data_rate_gbps": signals.data_rate_gbps,
                 "wavelength_nm": signals.wavelength_nm,
-                "propagation_fraction_c": _propagation_fraction_c(
-                    signals.distance_m,
-                    signals.measured_time_of_flight_ns,
-                ),
+                "environmental_temperature_c": signals.environmental_temperature_c,
+                "environmental_pressure_pa": signals.environmental_pressure_pa,
+                "refractive_index_override": signals.refractive_index_override,
+                "propagation_fraction_c": propagation_fraction_c,
+                "dynamic_speed_limit_fraction_c": dynamic_speed_limit,
+                "refractive_index": refractive_index,
                 **signals.context,
             },
         )
@@ -384,10 +478,9 @@ class LightTransitionGovernor:
                 "safety_status": result.safety_status.value,
                 "consensus_status": result.consensus_status.value,
                 "grace_status": result.grace_status.value,
-                "propagation_fraction_c": _propagation_fraction_c(
-                    signals.distance_m,
-                    signals.measured_time_of_flight_ns,
-                ),
+                "propagation_fraction_c": propagation_fraction_c,
+                "dynamic_speed_limit_fraction_c": dynamic_speed_limit,
+                "refractive_index": refractive_index,
             },
         )
         self.last_decision = decision
@@ -421,8 +514,18 @@ class LightTransitionGovernor:
         if signals.dispersion_ps_nm is not None and abs(signals.dispersion_ps_nm) > p.max_dispersion_ps_nm:
             flags.append(f"dispersion_high:{signals.dispersion_ps_nm:.1f}ps/nm>{p.max_dispersion_ps_nm:.1f}ps/nm")
         fraction_c = _propagation_fraction_c(signals.distance_m, signals.measured_time_of_flight_ns)
-        if fraction_c is not None and fraction_c > p.max_propagation_fraction_c + 1e-9:
-            flags.append(f"physics_bound_violation:{fraction_c:.6f}c>{p.max_propagation_fraction_c:.6f}c")
+        dynamic_limit = _get_dynamic_speed_limit(
+            signals.medium,
+            signals.environmental_temperature_c,
+            signals.environmental_pressure_pa,
+            signals.refractive_index_override,
+        )
+        if fraction_c is not None and fraction_c > dynamic_limit + 1e-9:
+            flags.append(
+                "physics_bound_violation:"
+                f" measured {fraction_c:.6f}c > limit {dynamic_limit:.6f}c"
+                f" for {signals.medium.value}"
+            )
         return flags
 
     def _decision_id(self, signals: LightTransitionSignals, timestamp: float) -> str:
