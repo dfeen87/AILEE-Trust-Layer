@@ -1,6 +1,6 @@
 """
 OCEAN Domain — AILEE Trust Layer
-Version: 4.6.0 - Production Grade
+Version: 4.7.0 - Production Grade
 
 Governance and restraint framework for marine ecosystem monitoring
 and environmental intervention decisions.
@@ -102,7 +102,7 @@ from .ocean import (
     FLAG_SEVERITY,
 )
 
-__version__ = "4.6.0"
+__version__ = "4.7.0"
 __author__ = "AILEE Project"
 __license__ = "Non-Commercial"
 

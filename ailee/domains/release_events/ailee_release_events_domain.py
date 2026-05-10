@@ -1,7 +1,7 @@
 
 """
 AILEE Trust Layer — ReleaseEvents Domain
-Version: 4.6.0
+Version: 4.7.0
 
 Governance and trust-scoring framework for ReleaseEvents systems.
 """

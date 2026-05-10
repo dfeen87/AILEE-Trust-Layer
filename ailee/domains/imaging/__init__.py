@@ -74,7 +74,7 @@ __all__ = [
     "ImagingControlAction",
 ]
 
-__version__ = "4.6.0"
+__version__ = "4.7.0"
 __doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"

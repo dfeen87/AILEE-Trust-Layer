@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-4.6.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-4.7.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -1345,9 +1345,9 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v4.6.0 (Production/Stable)
+### Current: v4.7.0 (Production/Stable)
 
-AILEE Trust Layer **v4.6.0** is production-ready with enterprise features:
+AILEE Trust Layer **v4.7.0** is production-ready with enterprise features:
 
 ✅ 17 domain governance layers  
 ✅ 9 domain-optimized presets  
@@ -1356,7 +1356,7 @@ AILEE Trust Layer **v4.6.0** is production-ready with enterprise features:
 ✅ Comprehensive audit trails  
 ✅ Deterministic replay for testing  
 
-### Future Considerations (v4.6.0+)
+### Future Considerations (v4.7.0+)
 
 Future versions may add:
 - Streaming support for real-time pipelines
@@ -1446,7 +1446,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {4.6.0},
+  version = {4.7.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1491,7 +1491,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v4.6.0**
+**AILEE Trust Layer v4.7.0**
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.

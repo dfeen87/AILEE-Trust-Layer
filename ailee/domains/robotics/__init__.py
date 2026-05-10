@@ -121,7 +121,7 @@ class RoboticsDomain:
                 "decision-making without modifying control, planning, or "
                 "perception algorithms."
             ),
-            "implementation_status": "production_grade_v4.6.0",
+            "implementation_status": "production_grade_v4.7.0",
         }
 
 
@@ -172,7 +172,7 @@ __all__ = [
     "RoboticsControlAction",
 ]
 
-__version__ = "4.6.0"
+__version__ = "4.7.0"
 __doc_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __source_url__ = "https://github.com/dfeen87/ailee-trust-layer"
 __bug_tracker_url__ = "https://github.com/dfeen87/ailee-trust-layer/issues"

@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — ROBOTICS Domain
-Version: 4.2.0 - Production Grade
+Version: 4.7.0 - Production Grade
 
 Robotics-focused governance domain for autonomous systems, manipulation,
 navigation, and human-robot interaction.

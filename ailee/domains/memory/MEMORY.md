@@ -219,6 +219,6 @@ decision = governor.evaluate(signals)
 
 ## **12. Versioning**
 
-- **Domain Version:** 4.6.0  
+- **Domain Version:** 4.7.0  
 - Fully compatible with AileeTrustPipeline v1  
 - Mirrors patterns from Datacenter and Crypto Mining domains  

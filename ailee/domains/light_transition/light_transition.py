@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Light Transition Domain
-Version: 4.6.0
+Version: 4.7.0
 
 Deterministic governance for optical, photonic, laser, fiber, free-space, and
 light-transition signaling systems.

@@ -1,6 +1,6 @@
 """
 AILEE Trust Pipeline - AI Framework Integrations
-Version: 4.6.0
+Version: 4.7.0
 
 Easy-to-use adapters for integrating AILEE with popular AI frameworks
 and services including OpenAI, Anthropic, HuggingFace, and LangChain.

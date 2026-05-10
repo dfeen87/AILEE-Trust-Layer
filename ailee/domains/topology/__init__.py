@@ -1,6 +1,6 @@
 from .ailee_topology_domain import *
 
-__version__ = "4.6.0"
+__version__ = "4.7.0"
 
 __all__ = [
     'TopologyTrustLevel',
