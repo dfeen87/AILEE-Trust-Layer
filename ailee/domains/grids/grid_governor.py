@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Power Grid Governance Domain
-Version: 4.6.0 - Production Grade
+Version: 4.7.0 - Production Grade
 
 Governance-only authorization layer for power grid and energy systems.
 
@@ -889,7 +889,7 @@ def create_example_signals() -> GridSignals:
     )
 
 
-__version__ = "4.6.0"
+__version__ = "4.7.0"
 __all__ = [
     "GridAuthorityLevel",
     "GridSignals",

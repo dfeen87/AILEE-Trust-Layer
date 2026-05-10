@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Automotive Autonomy Governance Domain
-Version: 4.6.0 - Production Grade
+Version: 4.7.0 - Production Grade
 
 Governance-only domain for autonomous driving decision integrity.
 

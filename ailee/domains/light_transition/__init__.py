@@ -77,5 +77,5 @@ __all__ = [
     "validate_signals",
 ]
 
-__version__ = "4.6.0"
+__version__ = "4.7.0"
 __status__ = "Production/Stable"

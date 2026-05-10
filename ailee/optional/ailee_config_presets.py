@@ -1,6 +1,6 @@
 """
 AILEE Trust Pipeline - Configuration Presets
-Version: 4.6.0
+Version: 4.7.0
 
 Drop-in configurations optimized for common AI domains.
 These presets are battle-tested starting points that can be

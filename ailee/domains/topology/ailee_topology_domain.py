@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — Topology Domain
-Version: 4.6.0
+Version: 4.7.0
 
 First-class AILEE domain implementation for Trust Layer topology governance.
 

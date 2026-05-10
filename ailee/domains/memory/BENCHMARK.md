@@ -8,7 +8,7 @@ Performance and control quality metrics for memory governance systems.
 - **Warm-up:** 200 iterations before quality measurement; 100 iterations before latency measurement
 - **Hardware:** Commodity control-plane hardware (representative)
 - **Date:** May 2026
-- **Version:** AILEE Trust Layer v4.6.0
+- **Version:** AILEE Trust Layer v4.7.0
 
 ---
 

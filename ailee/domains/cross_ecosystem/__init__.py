@@ -15,7 +15,7 @@ from .cross_ecosystem import (
     CrossEcosystemControlAction,
 )
 """
-AILEE Cross-Ecosystem Translation Domain — v4.6.0
+AILEE Cross-Ecosystem Translation Domain — v4.7.0
 
 Governance for semantic state and intent translation between incompatible
 software-hardware ecosystems (e.g., iOS ↔ Android, proprietary wearables).
@@ -100,7 +100,7 @@ from .cross_ecosystem import (
 )
 
 # Version info
-__version__ = "4.6.0"
+__version__ = "4.7.0"
 __author__ = "AILEE Project"
 __license__ = "Non-Commercial"
 

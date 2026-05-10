@@ -1,6 +1,6 @@
 """
 AILEE Trust Layer — NEURO-ASSISTIVE Domain
-Version: 4.6.0 - Production Grade
+Version: 4.7.0 - Production Grade
 
 Neuro-assistive and cognitive stability governance for AI systems that assist
 human cognition, communication, and perception while preserving autonomy,

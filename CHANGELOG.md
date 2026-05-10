@@ -1,4 +1,4 @@
-### **v4.6.0 — Memory Domain Hardening & Benchmark Coverage**
+### **v4.7.0 — Memory Domain Hardening & Benchmark Coverage**
 
 **Type:** Minor (Additive, backward-compatible)
 
@@ -12,7 +12,7 @@
 - Created `ailee/domains/memory/BENCHMARK.md` with simulated performance and control quality metrics
 
 #### Consistency
-- Updated version strings to 4.6.0 across all Python packages, Rust crate, markdown docs, and deployment configs
+- Updated version strings to 4.7.0 across all Python packages, Rust crate, markdown docs, and deployment configs
 
 ---
 
