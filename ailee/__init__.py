@@ -342,6 +342,45 @@ try:
 except ImportError:
     _HAS_MEMORY_DOMAIN = False
 
+try:
+    from .domains.light_transition import (
+        LIGHT_CLOCK_SYNCHRONIZATION,
+        OPTICAL_PATH_RELIABILITY,
+        PHOTONIC_SIGNAL_INTEGRITY,
+        SPEED_OF_LIGHT_M_PER_S,
+        LightTransitionConfig,
+        LightTransitionControlAction,
+        LightTransitionControlDomain,
+        LightTransitionDecision,
+        LightTransitionEvent,
+        LightTransitionGovernor,
+        LightTransitionHealthStatus,
+        LightTransitionPolicy,
+        LightTransitionSignals,
+        LightTransitionTrustLevel,
+        LightTrustLevel,
+        OpticalReading,
+        PropagationMedium,
+        create_degraded_signals,
+        create_default_governor as create_default_light_transition_governor,
+        create_example_signals,
+        create_light_transition_governor,
+        create_permissive_governor as create_permissive_light_transition_governor,
+        create_strict_governor as create_strict_light_transition_governor,
+        default_light_transition_config,
+        export_events_to_dict,
+        get_decision_history,
+        get_events,
+        get_health,
+        get_metrics,
+        get_subsystem_health,
+        validate_light_transition_signals,
+        validate_signals,
+    )
+    _HAS_LIGHT_TRANSITION_DOMAIN = True
+except ImportError:
+    _HAS_LIGHT_TRANSITION_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
@@ -611,6 +650,41 @@ if _HAS_MEMORY_DOMAIN:
         "create_permissive_memory_governor",
         "validate_memory_signals",
     ])
+if _HAS_LIGHT_TRANSITION_DOMAIN:
+    __all__.extend([
+        "LIGHT_CLOCK_SYNCHRONIZATION",
+        "OPTICAL_PATH_RELIABILITY",
+        "PHOTONIC_SIGNAL_INTEGRITY",
+        "SPEED_OF_LIGHT_M_PER_S",
+        "LightTransitionConfig",
+        "LightTransitionControlAction",
+        "LightTransitionControlDomain",
+        "LightTransitionDecision",
+        "LightTransitionEvent",
+        "LightTransitionGovernor",
+        "LightTransitionHealthStatus",
+        "LightTransitionPolicy",
+        "LightTransitionSignals",
+        "LightTransitionTrustLevel",
+        "LightTrustLevel",
+        "OpticalReading",
+        "PropagationMedium",
+        "create_degraded_signals",
+        "create_default_light_transition_governor",
+        "create_example_signals",
+        "create_light_transition_governor",
+        "create_permissive_light_transition_governor",
+        "create_strict_light_transition_governor",
+        "default_light_transition_config",
+        "export_events_to_dict",
+        "get_decision_history",
+        "get_events",
+        "get_health",
+        "get_metrics",
+        "get_subsystem_health",
+        "validate_light_transition_signals",
+        "validate_signals",
+    ])
 
 # =============================================================================
 # Convenience
@@ -666,6 +740,7 @@ def get_available_domains():
         "auditory": _HAS_AUDITORY_DOMAIN,
         "crypto_mining": _HAS_CRYPTO_MINING_DOMAIN,
         "memory": _HAS_MEMORY_DOMAIN,
+        "light_transition": _HAS_LIGHT_TRANSITION_DOMAIN,
     }
 
 
