@@ -1,12 +1,12 @@
 """
-models.py - Helper module for Search and Multi-Model Generation
+ailee.web.models - Helper module for Search and Multi-Model Generation
 
 This module encapsulates the logic for:
 1. Real internet search via DuckDuckGo.
 2. Real multi-model generation via OpenAI, Anthropic, and Gemini.
 3. Fallback mock generation if no API keys are available.
 
-It is designed to be imported by app.py to keep the main application logic clean.
+It is designed to be imported by ailee.web.app to keep the main application logic clean.
 """
 
 import os

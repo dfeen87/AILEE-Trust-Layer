@@ -10,10 +10,10 @@ domain governance layers, and backend abstractions.
 Production-grade Rust implementation providing generative AI trust scoring,
 consensus engines, and cryptographic lineage verification.
 
-### Deployment Application (root-level)
-- `app.py` — FastAPI web application serving the AILEE demo
-- `models.py` — Multi-model generation and search orchestration
-- `formatters.py` — Output formatting (JSON, text, markdown, HTML)
+### Deployment Application (`ailee/web/` + static root assets)
+- `ailee/web/app.py` — FastAPI web application serving the AILEE demo
+- `ailee/web/models.py` — Multi-model generation and search orchestration
+- `ailee/web/formatters.py` — Output formatting (JSON, text, markdown, HTML)
 - `index.html`, `script.js`, `styles.css` — Frontend chat interface
 - `render.yaml` — Render.com deployment configuration
 
@@ -26,6 +26,7 @@ Unit and integration test suite (currently empty — see Roadmap).
 
 ## Separation of Concerns
 
-The `ailee/` package is **independently installable** and has **no dependency** on
-the root-level deployment files. The deployment application imports from `ailee/`
-as a consumer.
+The core `ailee/` package is **independently installable**. The deployable web
+application lives in `ailee/web/`, while static assets and platform configuration
+remain at the repository root. The deployment application imports the core
+package as a consumer.

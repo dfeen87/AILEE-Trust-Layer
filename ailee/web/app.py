@@ -14,8 +14,7 @@ from ailee import AileeTrustPipeline, AileeConfig
 from ailee.optional.ailee_ai_integrations import MultiModelEnsemble
 
 # Local helpers
-import models
-import formatters
+from . import models, formatters
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -117,7 +116,7 @@ def get_trust(
                 model_name=name,
                 raw_response=response,
                 adapter=adapter
-                # context is handled by the custom extractor in models.py
+                # context is handled by the custom extractor in ailee.web.models
             )
         except Exception as e:
             logger.warning(f"Failed to add response from {name}: {e}")
@@ -181,4 +180,4 @@ def get_trust(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="4.2.0.0", port=8000)
+    uvicorn.run("ailee.web.app:app", host="0.0.0.0", port=8000)
