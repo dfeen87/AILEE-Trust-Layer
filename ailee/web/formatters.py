@@ -1,5 +1,5 @@
 """
-formatters.py - Helper module for formatting trust results.
+ailee.web.formatters - Helper module for formatting trust results.
 
 This module converts the dictionary output of the AILEE Trust Layer
 into human-readable text, Markdown, or HTML.

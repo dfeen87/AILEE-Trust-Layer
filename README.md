@@ -741,6 +741,12 @@ ailee-trust-layer/
 │       ├── ailee_serialization.py    # Audit trails & structured logging
 │       └── ailee_replay.py           # Deterministic replay & regression testing
 │
+├── ailee/web/                        # Deployable FastAPI app package
+│   ├── __init__.py                   # Web package exports
+│   ├── app.py                        # FastAPI application entry point
+│   ├── models.py                     # Search and multi-model generation helpers
+│   └── formatters.py                 # JSON, text, Markdown, and HTML output formatters
+│
 ├── src/                              # Rust core implementation
 │   ├── lib.rs                        # Crate root & public API
 │   ├── model.rs                      # ModelAdapter trait & output types
@@ -755,11 +761,14 @@ ailee-trust-layer/
 │   ├── ai_integration_gemini.py      # Google Gemini integration guide
 │   ├── ai_integration_multi_model.py # Multi-model ensemble patterns
 │   ├── ai_integration_complete.py    # End-to-end AI integration workflows
-│   └── complete_workflow.rs          # End-to-end Rust workflow example
+│   ├── complete_workflow.rs          # End-to-end Rust workflow example
+│   └── memory/                       # Memory-domain smoke examples
+│       ├── check_memory_import.py    # Minimal import check for the memory governor
+│       └── memory_domain_smoke.py    # Runnable memory-domain evaluation smoke script
 │
 ├── docs/
 │   ├── AI_INTEGRATION_GUIDE.md       # Complete AI framework integration guide
-|   ├── ARCHITECTURE.md                   # System architecture overview
+│   ├── ARCHITECTURE.md               # System architecture overview
 │   ├── GRACE_LAYER.md                # Grace mediation & override logic
 │   ├── AUDIT_SCHEMA.md               # Decision traceability & compliance schema
 │   ├── RUST_IMPLEMENTATION_SUMMARY.md # Rust core implementation summary
@@ -790,17 +799,20 @@ ailee-trust-layer/
 │   ├── test_telecommunications_domain.py # Telecommunications domain test suite
 │   └── test_topology_domain.py       # Topology domain test suite
 │
+├── scripts/
+│   └── maintenance/                  # Historical maintenance scripts kept out of the repo root
+│       ├── memory_status_patch.py    # Memory-domain status migration helper
+│       ├── memory_reasons_patch.py   # Memory-domain reasons migration helper
+│       └── memory_result_fields_patch.py  # Memory-domain result-field migration helper
+│
 ├── CHANGELOG.md                      # Version history & release notes
 ├── Cargo.toml                        # Rust crate manifest
 ├── LICENSE                           # License terms
 ├── QUICKSTART.md                     # Quick-start guide for Rust core
 ├── README.md                         # Project overview & usage (this file)
-├── app.py                            # Web application entry point
-├── formatters.py                     # Output formatting utilities
-├── models.py                         # Shared data models
 ├── requirements.txt                  # Python runtime dependencies
-├── render.yaml                       # Render deployment configuration
-├── setup.py                          # Python package configuration
+├── render.yaml                       # Render deployment configuration (uses ailee.web.app:app)
+├── setup.py                          # Python package configuration (kept at root by convention)
 ├── index.html                        # Web UI entry point
 ├── script.js                         # Web UI scripts
 └── styles.css                        # Web UI styles
