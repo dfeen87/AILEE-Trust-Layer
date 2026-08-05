@@ -1,7 +1,7 @@
 # AILEE Trust Layer
 ### Adaptive Integrity Layer for AI Decision Systems
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![License: PolyForm Noncommercial](https://img.shields.io/badge/License-PolyForm_Noncommercial-blue.svg)](https://polyformproject.org/licenses/noncommercial/1.0.0)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-4.7.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
@@ -1443,9 +1443,9 @@ if [ -d tests ]; then python -m pytest tests/ -v; else echo "No tests/ directory
 
 ## License
 
-This project is now **100% open-source** and distributed under the **MIT License**.
+This project is licensed under the **PolyForm Noncommercial License 1.0.0**.
 
-You are free to use, modify, distribute, and incorporate this software in personal, academic, and commercial environments in accordance with the terms in the `LICENSE` file.
+Under this license, any noncommercial purpose is a permitted purpose. This includes personal use for research, experiment, testing, study, private entertainment, hobby projects, amateur pursuits, or religious observance, without any anticipated commercial application. Use by noncommercial organizations—such as charitable organizations, educational institutions, public research organizations, public safety/health organizations, environmental protection organizations, or government institutions—is also permitted. Commercial use requires a separate agreement or commercial license. Please refer to the `LICENSE` file for full terms and conditions.
 
 ---
 
@@ -1491,7 +1491,7 @@ Special thanks to early adopters who validated these patterns in production.
 
 ## Enterprise Consulting & Integration
 
-This architecture is fully open-source under the MIT License. If your organization requires custom scaling, proprietary integration, or dedicated technical consulting to deploy these models at an enterprise level, please reach out at: dfeen87@gmail.com
+This architecture is distributed under the PolyForm Noncommercial License 1.0.0. If your organization requires commercial use, custom scaling, proprietary integration, or dedicated technical consulting to deploy these models at an enterprise level, please reach out at: dfeen87@gmail.com
 
 ---
 

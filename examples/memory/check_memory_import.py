@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """Minimal import check for the AILEE memory-domain governor."""
 
 from pathlib import Path

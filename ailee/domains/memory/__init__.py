@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 AILEE Trust Layer — Memory Domain
 Version: 4.7.0
@@ -37,7 +38,7 @@ from .ailee_memory_domain import (
 
 __version__ = "4.7.0"
 __author__ = "AILEE Trust Layer Development Team"
-__license__ = "MIT"
+__license__ = "PolyForm Noncommercial 1.0.0"
 
 __all__ = [
     # Primary API

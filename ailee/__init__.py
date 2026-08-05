@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 AILEE Trust Layer v4.7.0
 Adaptive Integrity Layer for AI Decision Systems

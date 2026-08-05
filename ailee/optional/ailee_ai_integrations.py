@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 AILEE Trust Pipeline - AI Framework Integrations
 Version: 4.7.0

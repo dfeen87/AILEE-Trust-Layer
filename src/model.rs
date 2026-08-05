@@ -1,3 +1,4 @@
+//! Licensed under the PolyForm Noncommercial License 1.0.0
 //! Model adapter trait and related types for integrating AI models with AILEE.
 
 use async_trait::async_trait;

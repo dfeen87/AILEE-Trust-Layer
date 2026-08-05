@@ -1,3 +1,4 @@
+/* Licensed under the PolyForm Noncommercial License 1.0.0 */
 /* script.js - Handles Chat Logic */
 
 class SessionManager {

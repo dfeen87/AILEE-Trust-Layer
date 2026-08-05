@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 ailee.web.models - Helper module for Search and Multi-Model Generation
 

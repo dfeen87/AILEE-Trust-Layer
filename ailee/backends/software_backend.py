@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 from typing import Any, Dict, Optional, Sequence
 
 from ..ailee_trust_pipeline_v1 import (

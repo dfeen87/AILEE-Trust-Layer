@@ -1,3 +1,4 @@
+//! Licensed under the PolyForm Noncommercial License 1.0.0
 //! Generation request and result types for the AILEE Trust Layer.
 
 use serde::{Deserialize, Serialize};

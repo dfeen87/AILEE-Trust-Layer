@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 NEURO-ASSISTIVE Domain — AILEE Trust Layer
 Version: 4.7.0 - Production Grade
