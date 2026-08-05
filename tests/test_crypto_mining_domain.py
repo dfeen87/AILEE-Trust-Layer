@@ -1,5 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
 #!/usr/bin/env python
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 Crypto Mining Domain Test Suite
 =================================
