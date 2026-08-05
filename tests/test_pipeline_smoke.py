@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """Minimal smoke test for the AILEE trust pipeline."""
 import pytest
 from ailee import AileeTrustPipeline, AileeConfig

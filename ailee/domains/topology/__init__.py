@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 from .ailee_topology_domain import *
 
 __version__ = "4.7.0"

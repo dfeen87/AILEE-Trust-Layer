@@ -1,3 +1,4 @@
+//! Licensed under the PolyForm Noncommercial License 1.0.0
 //! Trust scoring module for evaluating model outputs.
 //!
 //! Provides multi-dimensional trust evaluation using deterministic,

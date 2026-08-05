@@ -207,4 +207,4 @@ cargo doc --open
 - **Examples**: Check `examples/` for more patterns.
 - **Tests**: Run `cargo test` to see test examples.
 
-For support questions, please contact the author at [dfeen87@gmail.com](mailto:dfeen87@gmail.com). This project is licensed under the MIT License; see `LICENSE` for details.
+For support questions, please contact the author at [dfeen87@gmail.com](mailto:dfeen87@gmail.com). This project is licensed under the PolyForm Noncommercial License 1.0.0; see `LICENSE` for details.

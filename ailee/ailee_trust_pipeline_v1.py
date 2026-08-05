@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 AILEE Trust Pipeline — v4.7.0
 Single-file reference implementation for AI developers.

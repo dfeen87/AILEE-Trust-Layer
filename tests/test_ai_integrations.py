@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 #!/usr/bin/env python
 """
 AI Integrations Test

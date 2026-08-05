@@ -1,3 +1,4 @@
+//! Licensed under the PolyForm Noncommercial License 1.0.0
 //! Example: Complete AILEE Trust Layer workflow
 //!
 //! This example demonstrates the full end-to-end workflow of the AILEE Trust Layer,

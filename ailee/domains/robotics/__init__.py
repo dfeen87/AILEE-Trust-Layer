@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """
 AILEE Trust Layer — ROBOTICS Domain
 Production-grade governance for robotic safety, autonomy, and human interaction.

@@ -1,3 +1,4 @@
+//! Licensed under the PolyForm Noncommercial License 1.0.0
 //! Consensus engine for selecting or synthesizing final outputs.
 //!
 //! Provides deterministic consensus mechanisms with explainable metadata.

@@ -1,3 +1,4 @@
+//! Licensed under the PolyForm Noncommercial License 1.0.0
 //! Integration tests for the AILEE Trust Layer
 //!
 //! Tests demonstrate complete workflows from generation request to verified result

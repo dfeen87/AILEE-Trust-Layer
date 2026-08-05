@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 import logging
 from ailee import AileeClient, AileeConfig
 

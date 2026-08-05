@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 """Runnable smoke example for the AILEE memory-domain governor."""
 
 from pathlib import Path

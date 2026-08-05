@@ -1,3 +1,4 @@
+# Licensed under the PolyForm Noncommercial License 1.0.0
 with open("ailee/domains/memory/ailee_memory_domain.py", "r") as f:
     content = f.read()
 

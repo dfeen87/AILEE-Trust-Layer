@@ -295,9 +295,9 @@ See `CONTRIBUTING.md` for guidelines.
 
 ## License
 
-**MIT License**
+**PolyForm Noncommercial License 1.0.0**
 
-This domain is released under the MIT License.
+This domain is released under the PolyForm Noncommercial License 1.0.0.
 
 Trust governance **must be transparent** to be effective.
 
