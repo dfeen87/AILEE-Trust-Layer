@@ -12,7 +12,13 @@ def process_file(filepath, header):
     if header.strip() in content:
         return False
 
-    new_content = header + "\n" + content
+    # Preserve executable shebang on Python files.
+    if content.startswith("#!") and header.startswith("#"):
+        first_line, sep, rest = content.partition("\n")
+        new_content = first_line + "\n" + header + "\n" + (rest if sep else "")
+    else:
+        new_content = header + "\n" + content
+
     with open(filepath, 'w', encoding='utf-8') as f:
         f.write(new_content)
     print(f"Added header to: {filepath}")
