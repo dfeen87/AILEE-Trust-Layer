@@ -281,7 +281,7 @@ See `examples/` for complete integration patterns.
 
 ## Contributing
 
-This domain is **released under a Non-Commercial License** to maximize adoption and enable derivative work.
+This domain is **released under the MIT License** to maximize adoption and enable derivative work.
 
 Contributions welcome:
 - New ecosystem connectors (platform capability profiles)
@@ -295,9 +295,9 @@ See `CONTRIBUTING.md` for guidelines.
 
 ## License
 
-**PolyForm Noncommercial License 1.0.0**
+**MIT License**
 
-This domain is released under the PolyForm Noncommercial License 1.0.0.
+This domain is released under the MIT License.
 
 Trust governance **must be transparent** to be effective.
 
@@ -313,7 +313,7 @@ If you use this domain in research or production systems:
   author = {AILEE Trust Layer Project},
   year = {2025},
   version = {4.7.0},
-  license = {Non-Commercial},
+  license = {MIT},
   url = {https://github.com/ailee-trust-layer/cross-ecosystem}
 }
 ```

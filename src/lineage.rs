@@ -1,4 +1,5 @@
-//! Licensed under the PolyForm Noncommercial License 1.0.0
+//! Copyright (c) Don Michael Feeney Jr.
+//! Licensed under the MIT License.
 //! Lineage and verification module for cryptographic proof of generation.
 //!
 //! Provides deterministic verification using SHA-256 hashing over canonical

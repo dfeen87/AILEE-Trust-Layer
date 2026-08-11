@@ -1,4 +1,5 @@
-//! Licensed under the PolyForm Noncommercial License 1.0.0
+//! Copyright (c) Don Michael Feeney Jr.
+//! Licensed under the MIT License.
 //! Example: Complete AILEE Trust Layer workflow
 //!
 //! This example demonstrates the full end-to-end workflow of the AILEE Trust Layer,

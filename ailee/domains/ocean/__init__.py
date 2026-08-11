@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 """
 OCEAN Domain — AILEE Trust Layer
 Version: 4.7.0 - Production Grade
@@ -105,7 +106,7 @@ from .ocean import (
 
 __version__ = "4.7.0"
 __author__ = "AILEE Project"
-__license__ = "Non-Commercial"
+__license__ = "MIT"
 
 __all__ = [
     # Primary API

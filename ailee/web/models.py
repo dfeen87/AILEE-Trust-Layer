@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 """
 ailee.web.models - Helper module for Search and Multi-Model Generation
 

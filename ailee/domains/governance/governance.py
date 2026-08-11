@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 """
 AILEE Governance Domain — v4.7.0
 Single-file reference implementation for governance trust evaluation.

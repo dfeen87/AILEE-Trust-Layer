@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 """
 AILEE Trust Layer — Telecommunications Governance Domain
 Version: 4.7.0 - Production Grade
