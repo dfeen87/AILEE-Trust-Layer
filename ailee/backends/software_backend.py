@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 from typing import Any, Dict, Optional, Sequence
 
 from ..ailee_trust_pipeline_v1 import (

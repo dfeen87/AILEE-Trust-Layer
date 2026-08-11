@@ -1,4 +1,5 @@
-//! Licensed under the PolyForm Noncommercial License 1.0.0
+//! Copyright (c) Don Michael Feeney Jr.
+//! Licensed under the MIT License.
 //! # AILEE Trust Layer
 //!
 //! A deterministic, trust-scored generative AI platform that provides:

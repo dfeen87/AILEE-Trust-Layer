@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 
 from .cross_ecosystem import (
     get_health,
@@ -103,7 +104,7 @@ from .cross_ecosystem import (
 # Version info
 __version__ = "4.7.0"
 __author__ = "AILEE Project"
-__license__ = "Non-Commercial"
+__license__ = "MIT"
 
 # Public API
 __all__ = [

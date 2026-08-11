@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 """
 AILEE Trust Layer — Optional Modules
 Version: 4.7.0
@@ -152,7 +153,7 @@ except ImportError:
 # =============================================================================
 __version__ = "4.7.0"
 __author__ = "Don Michael Feeney Jr."
-__license__ = "Non-Commercial"
+__license__ = "MIT"
 
 # =============================================================================
 # Public API (Dynamic Export)

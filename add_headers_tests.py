@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 import os
 
 
@@ -34,11 +35,11 @@ def main():
         for file in files:
             filepath = os.path.join(root, file)
             if file.endswith('.py'):
-                header = "# Licensed under the PolyForm Noncommercial License 1.0.0"
+                header = "# Copyright (c) Don Michael Feeney Jr.\n# Licensed under the MIT License."
                 if process_file(filepath, header):
                     count += 1
             elif file.endswith('.rs'):
-                header = "//! Licensed under the PolyForm Noncommercial License 1.0.0"
+                header = "//! Copyright (c) Don Michael Feeney Jr.\n//! Licensed under the MIT License."
                 if process_file(filepath, header):
                     count += 1
 

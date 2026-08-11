@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 """
 AILEE Trust Layer — Crypto Mining Domain
 Version: 4.7.0
@@ -96,7 +97,7 @@ from .ailee_crypto_mining_domain import (
 
 __version__ = "4.7.0"
 __author__ = "AILEE Trust Layer Development Team"
-__license__ = "Non-Commercial"
+__license__ = "MIT"
 __doc_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer"
 __source_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer"
 __bug_tracker_url__ = "https://github.com/dfeen87/AILEE-Trust-Layer/issues"

@@ -1,4 +1,5 @@
-# Licensed under the PolyForm Noncommercial License 1.0.0
+# Copyright (c) Don Michael Feeney Jr.
+# Licensed under the MIT License.
 class AileeCRISPRTrustLayer:
     """
     A standalone, production-ready Python module acting as a strict safety
