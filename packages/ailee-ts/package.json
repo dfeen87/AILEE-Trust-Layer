@@ -1,6 +1,6 @@
 {
   "name": "@ailee/trust-layer",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "Adaptive Integrity Layer for AI Decision Systems - TypeScript Hardware Adapter & Trust Core",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",

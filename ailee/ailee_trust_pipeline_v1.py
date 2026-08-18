@@ -1,7 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 """
-AILEE Trust Pipeline — v5.0.0
+AILEE Trust Pipeline — v6.0.0
 Single-file reference implementation for AI developers.
 
 Implements a layered trust/validation pipeline:

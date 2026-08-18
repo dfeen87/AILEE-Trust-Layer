@@ -41,7 +41,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AILEE Trust Layer - Deploy",
     description="Public deployment of the AILEE Trust Layer with real search and multi-model generation.",
-    version="5.0.0",
+    version="6.0.0",
     lifespan=lifespan,
 )
 

@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-5.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-6.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -728,6 +728,11 @@ ailee-trust-layer/
 │   │   │   ├── LIGHT_TRANSITION.md   # Light-transition domain framework
 │   │   │   └── BENCHMARKS.md         # Optical signal trust benchmarks
 │   │   │
+│   │   ├── watermark_provenance/
+│   │   │   ├── __init__.py           # WATERMARK_PROVENANCE domain exports
+│   │   │   ├── watermark_provenance.py # Watermark interpretation, multi-event custody & provenance governance
+│   │   │   └── wrapper.py            # Integration wrapper for legacy watermark classifiers
+│   │   │
 │   │   └── topology/
 │   │       ├── __init__.py           # TOPOLOGY domain exports
 │   │       └── ailee_topology_domain.py  # Network topology & graph-state trust governance
@@ -1333,6 +1338,32 @@ AI control of host memory.
 
 ---
 
+### 🏷️ Watermark-Provenance-Governance
+
+AILEE provides deterministic trust governance for evaluating, interpreting, and contextualizing AI watermark signals (e.g., SynthID-Text, Claude watermarking) across real workflows.
+
+Watermark detection is treated as **one fragment of provenance, never a verdict on authorship**.
+
+**Governed Decisions**
+- Signal interpretation distinguishing model involvement from model authorship.
+- Automatic rejection and flagging of binary labels (`"AI-generated"`, `"Human-written"`).
+- Multi-event custody chain tracking (generation → edits → verification → authorization → publication).
+- Attack surface disruption risk mapping (paraphrasing, back-translation, regeneration, public removal tool usage).
+- High-stakes safeguards requiring multi-event corroboration or human verification steps before permitting automated action.
+- Mandatory challenge route and human review metadata (`requires_human_review = True`, `challenge_available = True`).
+
+**Canonical Non-Binary Qualifiers**
+- `MODEL_INVOLVED_NOT_AUTHORED`
+- `MODEL_PRIMARY_DRAFTER`
+- `HUMAN_PRIMARY_DRAFTER_MODEL_EDITOR`
+- `HUMAN_EDITED`
+- `LIGHTLY_TOUCHED` (e.g. grammar, tone, formatting)
+- `TRANSLATED`
+- `STRUCTURALLY_REWRITTEN`
+- `UNKNOWN_ROLE_MODEL_INVOLVEMENT`
+
+---
+
 ## Design Philosophy
 
 > Trust is not a probability.  
@@ -1357,9 +1388,9 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v5.0.0 (Production/Stable)
+### Current: v6.0.0 (Production/Stable)
 
-AILEE Trust Layer **v5.0.0** is production-ready with enterprise features:
+AILEE Trust Layer **v6.0.0** is production-ready with enterprise features:
 
 ✅ 17 domain governance layers  
 ✅ 9 domain-optimized presets  
@@ -1458,7 +1489,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {5.0.0},
+  version = {6.0.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1503,7 +1534,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v5.0.0**
+**AILEE Trust Layer v6.0.0**
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
