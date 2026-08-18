@@ -728,6 +728,11 @@ ailee-trust-layer/
 │   │   │   ├── LIGHT_TRANSITION.md   # Light-transition domain framework
 │   │   │   └── BENCHMARKS.md         # Optical signal trust benchmarks
 │   │   │
+│   │   ├── watermark_provenance/
+│   │   │   ├── __init__.py           # WATERMARK_PROVENANCE domain exports
+│   │   │   ├── watermark_provenance.py # Watermark interpretation, multi-event custody & provenance governance
+│   │   │   └── wrapper.py            # Integration wrapper for legacy watermark classifiers
+│   │   │
 │   │   └── topology/
 │   │       ├── __init__.py           # TOPOLOGY domain exports
 │   │       └── ailee_topology_domain.py  # Network topology & graph-state trust governance
@@ -1330,6 +1335,32 @@ AI control of host memory.
 
 > See [MEMORY.md](ailee/domains/memory/MEMORY.md) for full domain overview,  
 > and [BENCHMARK.md](ailee/domains/memory/BENCHMARK.md) for simulated performance and governance findings.
+
+---
+
+### 🏷️ Watermark-Provenance-Governance
+
+AILEE provides deterministic trust governance for evaluating, interpreting, and contextualizing AI watermark signals (e.g., SynthID-Text, Claude watermarking) across real workflows.
+
+Watermark detection is treated as **one fragment of provenance, never a verdict on authorship**.
+
+**Governed Decisions**
+- Signal interpretation distinguishing model involvement from model authorship.
+- Automatic rejection and flagging of binary labels (`"AI-generated"`, `"Human-written"`).
+- Multi-event custody chain tracking (generation → edits → verification → authorization → publication).
+- Attack surface disruption risk mapping (paraphrasing, back-translation, regeneration, public removal tool usage).
+- High-stakes safeguards requiring multi-event corroboration or human verification steps before permitting automated action.
+- Mandatory challenge route and human review metadata (`requires_human_review = True`, `challenge_available = True`).
+
+**Canonical Non-Binary Qualifiers**
+- `MODEL_INVOLVED_NOT_AUTHORED`
+- `MODEL_PRIMARY_DRAFTER`
+- `HUMAN_PRIMARY_DRAFTER_MODEL_EDITOR`
+- `HUMAN_EDITED`
+- `LIGHTLY_TOUCHED` (e.g. grammar, tone, formatting)
+- `TRANSLATED`
+- `STRUCTURALLY_REWRITTEN`
+- `UNKNOWN_ROLE_MODEL_INVOLVEMENT`
 
 ---
 
