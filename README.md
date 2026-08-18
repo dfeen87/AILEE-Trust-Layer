@@ -1362,6 +1362,137 @@ Watermark detection is treated as **one fragment of provenance, never a verdict 
 - `STRUCTURALLY_REWRITTEN`
 - `UNKNOWN_ROLE_MODEL_INVOLVEMENT`
 
+To use this feature after cloning, developers must register the Watermark‑Provenance‑Governance domain, wrap their model calls through the governor, and consume the provenance decision object (qualifiers, custody chain, attack‑surface flags, human‑review metadata) inside their own application logic.
+
+#### 🚀 Step‑by‑step integration workflow
+
+1. **Install dependencies**
+   Clone the repo, then install the Python or TypeScript packages locally:
+
+   **Python**
+   ```bash
+   pip install -e .
+   ```
+
+   **TypeScript**
+   ```bash
+   npm install
+   npm run build
+   ```
+   This makes the AILEE domains available as importable modules.
+
+2. **Import the Watermark‑Provenance domain**
+   Bring the governor and policy into your project:
+
+   **Python**
+   ```python
+   from ailee.domains.watermark_provenance import (
+       WatermarkProvenanceGovernor,
+       WatermarkProvenancePolicy
+   )
+   ```
+
+   **TypeScript**
+   ```ts
+   import {
+     WatermarkProvenanceGovernor,
+     WatermarkProvenancePolicy
+   } from "@ailee-ts/domains/watermark_provenance";
+   ```
+   This is the core module that interprets watermark signals.
+
+3. **Instantiate the governor**
+   Create a governor instance that will wrap model calls:
+
+   **Python**
+   ```python
+   governor = WatermarkProvenanceGovernor(
+       policy=WatermarkProvenancePolicy()
+   )
+   ```
+
+   **TypeScript**
+   ```ts
+   const governor = new WatermarkProvenanceGovernor(
+     new WatermarkProvenancePolicy()
+   );
+   ```
+   This object enforces non‑binary provenance, custody chains, and safeguards.
+
+4. **Wrap model calls**
+   Instead of calling their model directly, route the input/output through the governor:
+
+   **Python**
+   ```python
+   raw_output = model.generate(prompt)
+   decision = governor.evaluate(prompt, raw_output)
+   ```
+
+   **TypeScript**
+   ```ts
+   const rawOutput = await model.generate(prompt);
+   const decision = governor.evaluate(prompt, rawOutput);
+   ```
+   This produces the structured provenance decision object.
+
+5. **Consume the provenance decision**
+   The decision object includes:
+   - Non‑binary qualifiers (`MODEL_INVOLVED_NOT_AUTHORED`, `HUMAN_EDITED`, etc.)
+   - Custody chain (`G0` → `E1` → `V2` → `A3` → `P4`)
+   - Attack‑surface disruption flags (paraphrasing, regeneration, removal tools)
+   - High‑stakes safeguards (`actionable=False`)
+   - Human‑review metadata (`requires_human_review=True`)
+
+   Integrate these into your own logic:
+
+   **Python**
+   ```python
+   if not decision.actionable:
+       trigger_human_review(decision)
+   log_provenance(decision)
+   ```
+
+   **TypeScript**
+   ```ts
+   if (!decision.actionable) {
+     triggerHumanReview(decision);
+   }
+   logProvenance(decision);
+   ```
+   This is where the governance value becomes real.
+
+6. **Register the domain globally**
+   If the project uses AILEE’s multi‑domain architecture, add:
+
+   **Python**
+   ```python
+   from ailee import register_domain
+   register_domain("watermark_provenance", governor)
+   ```
+
+   **TypeScript**
+   ```ts
+   import { registerDomain } from "@ailee-ts/core";
+   registerDomain("watermark_provenance", governor);
+   ```
+   This makes the domain available across the entire stack.
+
+7. **Add unit tests**
+   You should test:
+   - Qualifier correctness
+   - Attack‑surface detection
+   - Custody‑chain integrity
+   - Safeguard enforcement
+   - Decision metadata completeness
+
+   The repo already includes examples you can copy.
+
+#### 📦 What you get after integration
+- A trust layer that interprets watermark signals as contextual evidence, not authorship.
+- A custody chain that preserves the artifact’s history.
+- A governance shield that prevents misuse of watermark signals in hiring, discipline, compliance, or legal contexts.
+- A human‑review pathway baked into every decision.
+
 ---
 
 ## Design Philosophy
