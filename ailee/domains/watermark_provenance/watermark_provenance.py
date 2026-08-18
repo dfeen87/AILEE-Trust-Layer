@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-AILEE Watermark-Provenance-Governance Domain — v5.0.0
+AILEE Watermark-Provenance-Governance Domain — v6.0.0
 
 Evaluates, interprets, and contextualizes AI watermark signals (e.g. SynthID-Text,
 Claude watermarking) across real workflows. Treats watermark detection as one fragment
