@@ -345,6 +345,32 @@ except ImportError:
     _HAS_MEMORY_DOMAIN = False
 
 try:
+    from .domains.watermark_provenance import (
+        WatermarkProvenanceGovernor,
+        WatermarkProvenancePolicy,
+        WatermarkProvenanceSignals,
+        WatermarkProvenanceDecision,
+        WatermarkProvenanceEvent,
+        WatermarkProvenanceTrustLevel,
+        WatermarkProvenanceHealthStatus,
+        WatermarkProvenanceControlDomain,
+        WatermarkProvenanceControlAction,
+        ProvenanceQualifier,
+        ProvenanceEventNode,
+        WatermarkSignalData,
+        WatermarkProvenanceWrapper,
+        create_watermark_provenance_governor,
+        create_default_governor as create_default_watermark_provenance_governor,
+        create_strict_governor as create_strict_watermark_provenance_governor,
+        create_permissive_governor as create_permissive_watermark_provenance_governor,
+        create_watermark_provenance_wrapper,
+        validate_watermark_provenance_signals,
+    )
+    _HAS_WATERMARK_PROVENANCE_DOMAIN = True
+except ImportError:
+    _HAS_WATERMARK_PROVENANCE_DOMAIN = False
+
+try:
     from .domains.light_transition import (
         LIGHT_CLOCK_SYNCHRONIZATION,
         OPTICAL_PATH_RELIABILITY,
@@ -745,6 +771,7 @@ def get_available_domains():
         "crypto_mining": _HAS_CRYPTO_MINING_DOMAIN,
         "memory": _HAS_MEMORY_DOMAIN,
         "light_transition": _HAS_LIGHT_TRANSITION_DOMAIN,
+        "watermark_provenance": _HAS_WATERMARK_PROVENANCE_DOMAIN,
     }
 
 
