@@ -8,6 +8,7 @@ import ctypes
 import os
 import platform
 from dataclasses import dataclass
+from typing import List, Dict, Any
 
 class TemporalIntegrityMetricsCTypes(ctypes.Structure):
     _align_ = 64
@@ -45,6 +46,7 @@ class TPEFFIWrapper:
     def __init__(self):
         self._lib = self._load_lib()
         self._handle = None
+        self._fallback_frames: List[Dict[str, Any]] = []
         if self._lib:
             self._setup_prototypes()
             self._handle = self._lib.ailee_tpe_create()
@@ -97,10 +99,20 @@ class TPEFFIWrapper:
         self._lib.ailee_tpe_verify_watermark.argtypes = [ctypes.c_void_p, ctypes.c_uint64, ctypes.c_char_p, ctypes.c_size_t]
 
     def reset(self):
+        self._fallback_frames.clear()
         if self._lib and self._handle:
             self._lib.ailee_tpe_reset(self._handle)
 
     def ingest_frame(self, frame_idx: int, timestamp: float, raw_trust: float, hash_delta: float, dx: float, dy: float, flow_consistency: float) -> bool:
+        self._fallback_frames.append({
+            "frame_idx": frame_idx,
+            "timestamp": timestamp,
+            "raw_trust": raw_trust,
+            "hash_delta": hash_delta,
+            "dx": dx,
+            "dy": dy,
+            "flow_consistency": flow_consistency,
+        })
         if self._lib and self._handle:
             res = self._lib.ailee_tpe_ingest_frame(
                 self._handle, frame_idx, timestamp, raw_trust, hash_delta, dx, dy, flow_consistency
@@ -128,22 +140,67 @@ class TPEFFIWrapper:
                     anomaly_count=metrics_c.anomaly_count,
                     safety_status=status_str
                 )
-        # Fallback pure-Python evaluation
+
+        # Pure-Python fallback evaluation
+        if not self._fallback_frames:
+            return TemporalIntegrityMetricsPy(
+                overall_trust_score=0.0,
+                mean_frame_trust=0.0,
+                transition_integrity_avg=0.0,
+                scene_boundary_trust_avg=0.0,
+                temporal_continuity_score=0.0,
+                optical_flow_stability=0.0,
+                rhythm_stability=0.0,
+                total_frames=0,
+                total_transitions=0,
+                total_scene_boundaries=0,
+                anomaly_count=0,
+                safety_status="OUTRIGHT_REJECTED"
+            )
+
+        total_frames = len(self._fallback_frames)
+        mean_frame_trust = sum(f["raw_trust"] for f in self._fallback_frames) / total_frames
+
+        anomaly_count = 0
+        scene_boundaries = 0
+        for f in self._fallback_frames:
+            if f["flow_consistency"] < 0.35 or f["raw_trust"] < 50.0 or abs(f["hash_delta"]) > 0.75:
+                anomaly_count += 1
+            if abs(f["hash_delta"]) > 0.35:
+                scene_boundaries += 1
+
+        transition_avg = max(0.0, 100.0 - (anomaly_count * 15.0))
+        continuity_score = max(0.0, 100.0 - (anomaly_count * 10.0))
+        sb_trust = 90.0 if scene_boundaries > 0 else 100.0
+
+        overall_trust = max(0.0, min(100.0, (mean_frame_trust * 0.35) + (transition_avg * 0.30) + (continuity_score * 0.25) + (sb_trust * 0.10) - (anomaly_count * 10.0)))
+        status = "ACCEPTED" if overall_trust >= 85.0 and anomaly_count == 0 else ("PARTIALLY_TRUSTED" if overall_trust >= 50.0 else "OUTRIGHT_REJECTED")
+
         return TemporalIntegrityMetricsPy(
-            overall_trust_score=100.0,
-            mean_frame_trust=100.0,
-            transition_integrity_avg=100.0,
-            scene_boundary_trust_avg=100.0,
-            temporal_continuity_score=100.0,
-            optical_flow_stability=100.0,
-            rhythm_stability=100.0,
-            total_frames=0,
-            total_transitions=0,
-            total_scene_boundaries=0,
-            anomaly_count=0,
-            safety_status="ACCEPTED"
+            overall_trust_score=overall_trust,
+            mean_frame_trust=mean_frame_trust,
+            transition_integrity_avg=transition_avg,
+            scene_boundary_trust_avg=sb_trust,
+            temporal_continuity_score=continuity_score,
+            optical_flow_stability=85.0,
+            rhythm_stability=95.0,
+            total_frames=total_frames,
+            total_transitions=max(0, total_frames - 1),
+            total_scene_boundaries=scene_boundaries,
+            anomaly_count=anomaly_count,
+            safety_status=status
         )
 
+    def close(self):
+        if hasattr(self, '_lib') and hasattr(self, '_handle') and self._lib and self._handle:
+            try:
+                self._lib.ailee_tpe_destroy(self._handle)
+            except Exception:
+                pass
+            self._handle = None
+
     def __del__(self):
-        if self._lib and self._handle:
-            self._lib.ailee_tpe_destroy(self._handle)
+        try:
+            self.close()
+        except Exception:
+            pass
