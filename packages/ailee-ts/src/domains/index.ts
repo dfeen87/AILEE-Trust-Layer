@@ -19,3 +19,4 @@ export * from "./robotics/index.js";
 export * from "./telecommunications/index.js";
 export * from "./topology/index.js";
 export * from "./watermark_provenance/index.js";
+export * from "./video_temporal_provenance/index.js";

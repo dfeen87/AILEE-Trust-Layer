@@ -1,7 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 """
-AILEE Trust Layer v6.0.0
+AILEE Trust Layer v7.0.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -410,10 +410,24 @@ try:
 except ImportError:
     _HAS_LIGHT_TRANSITION_DOMAIN = False
 
+try:
+    from .domains.video_temporal_provenance import (
+        VideoTemporalConfig,
+        VideoTemporalPolicy,
+        VideoTemporalGovernor,
+        FrameSignal,
+        VideoGovernorDecision,
+        TPEFFIWrapper,
+        TemporalIntegrityMetricsPy,
+    )
+    _HAS_VIDEO_TEMPORAL_PROVENANCE_DOMAIN = True
+except ImportError:
+    _HAS_VIDEO_TEMPORAL_PROVENANCE_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "6.0.0"
+__version__ = "7.0.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
@@ -772,6 +786,7 @@ def get_available_domains():
         "memory": _HAS_MEMORY_DOMAIN,
         "light_transition": _HAS_LIGHT_TRANSITION_DOMAIN,
         "watermark_provenance": _HAS_WATERMARK_PROVENANCE_DOMAIN,
+        "video_temporal_provenance": _HAS_VIDEO_TEMPORAL_PROVENANCE_DOMAIN,
     }
 
 

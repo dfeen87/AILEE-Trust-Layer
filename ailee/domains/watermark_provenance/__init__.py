@@ -3,7 +3,7 @@
 
 """
 AILEE Trust Layer — Watermark-Provenance-Governance Domain
-Version: 6.0.0
+Version: 7.0.0
 
 Governance domain evaluating, interpreting, and contextualizing AI watermark signals
 (e.g., SynthID-Text, Claude watermarking) across real workflows. Treats watermark detection

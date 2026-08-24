@@ -27,8 +27,10 @@ pub mod generation;
 pub mod lineage;
 pub mod model;
 pub mod trust;
+pub mod video_temporal_provenance;
 
 pub use consensus::{ConsensusEngine, ConsensusMetadata, ConsensusStrategy};
+pub use video_temporal_provenance::{FrameSignal, TemporalIntegrityMetrics, VideoTemporalGovernor};
 pub use generation::{GenerationRequest, GenerationResult};
 pub use lineage::Lineage;
 pub use model::{ModelAdapter, ModelCapability, ModelLocality, ModelOutput};
@@ -43,4 +45,5 @@ pub mod prelude {
     pub use crate::lineage::Lineage;
     pub use crate::model::{ModelAdapter, ModelCapability, ModelLocality, ModelOutput};
     pub use crate::trust::{TrustScore, TrustScorer};
+    pub use crate::video_temporal_provenance::{FrameSignal, TemporalIntegrityMetrics, VideoTemporalGovernor};
 }
