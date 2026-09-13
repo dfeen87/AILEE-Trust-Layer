@@ -27,10 +27,10 @@ export function validateActuationCommand(data: unknown): { valid: boolean; error
   if (!validTypes.includes(c.commandType as CommandType)) {
     errors.push(`commandType must be one of: ${validTypes.join(", ")}`);
   }
-  if (typeof c.payloadValue !== "number" || Number.isNaN(c.payloadValue)) {
+  if (typeof c.payloadValue !== "number" || !Number.isFinite(c.payloadValue)) {
     errors.push("payloadValue must be a valid number");
   }
-  if (typeof c.timestamp !== "number" || Number.isNaN(c.timestamp) || c.timestamp <= 0) {
+  if (typeof c.timestamp !== "number" || !Number.isFinite(c.timestamp) || c.timestamp <= 0) {
     errors.push("timestamp must be a valid positive epoch timestamp");
   }
   if (typeof c.requestingAgentId !== "string" || c.requestingAgentId.trim() === "") {
