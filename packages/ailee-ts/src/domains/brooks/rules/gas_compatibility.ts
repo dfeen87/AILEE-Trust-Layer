@@ -54,12 +54,14 @@ export class GasSafetyGuard {
     currentFlowRate: number,
     isPurgeActive: boolean
   ): RuleCheckResult {
-if (currentGasId === requestedGasId && lookupGas(currentGasId)) {
-      return { passed: true, status: "ACCEPTED", confidencePenalty: 0.0 };
-    }
-
     const currentGas = lookupGas(currentGasId);
     const requestedGas = lookupGas(requestedGasId);
+    const currentCanonicalGasId = currentGas?.gasId;
+    const requestedCanonicalGasId = requestedGas?.gasId;
+
+    if (currentCanonicalGasId !== undefined && requestedCanonicalGasId !== undefined && currentCanonicalGasId === requestedCanonicalGasId) {
+      return { passed: true, status: "ACCEPTED", confidencePenalty: 0.0 };
+    }
 
     if (!requestedGas) {
       return {

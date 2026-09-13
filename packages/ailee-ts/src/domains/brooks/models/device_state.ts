@@ -13,9 +13,11 @@ export class DeviceStateMachine {
   public fullScaleFlowSlpm: number = 100.0;
   public currentFlowRate: number = 0.0;
   public currentSetpoint: number = 0.0;
+  public previousSetpoint: number = 0.0;
   public currentPressurePsi: number = 0.0;
   public zeroOffsetPercentFS: number = 0.0;
   public lastTelemetryTimestamp: number = Date.now();
+  public previousTelemetryTimestamp: number = Date.now();
 
   constructor(deviceId: string, fullScaleFlowSlpm = 100.0, initialGasId: string | number = 1) {
     this.deviceId = deviceId;
@@ -28,6 +30,8 @@ export class DeviceStateMachine {
   }
 
   public updateMFCTelemetry(telemetry: MFCDeviceTelemetry, timestamp = Date.now()): void {
+    this.previousSetpoint = this.currentSetpoint;
+    this.previousTelemetryTimestamp = this.lastTelemetryTimestamp;
     this.currentFlowRate = telemetry.flowRate;
     this.currentSetpoint = telemetry.setpoint;
     this.zeroOffsetPercentFS = telemetry.zeroOffset;

@@ -213,6 +213,9 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       expect(flowGasChange.passed).toBe(false);
       expect(flowGasChange.reason).toContain("active flow detected");
 
+      const canonicalNoOpGasChange = gGuard.evaluateGasChange(28, "SiH4", 5.0, false);
+      expect(canonicalNoOpGasChange.passed).toBe(true);
+
       const noPurgeGasChange = gGuard.evaluateGasChange(1, 28, 0.0, false);
       expect(noPurgeGasChange.passed).toBe(false);
       expect(noPurgeGasChange.reason).toContain("requires prior line purge");
@@ -223,7 +226,7 @@ describe("Brooks Instrument Domain Unit Tests", () => {
   });
 
   describe("Fieldbus Protocol Adapters & Manifest Offsets", () => {
-    it("EtherNet/IP CIP adapter uses SLA5800 manifest for Big-Endian frame conversion", () => {
+    it("EtherNet/IP CIP adapter uses SLA5800 manifest for Little-Endian frame conversion", () => {
       const telemetry: MFCDeviceTelemetry = {
         flowRate: 25.5,
         setpoint: 25.0,
@@ -243,6 +246,58 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       expect(parsed.setpoint).toBeCloseTo(25.0, 3);
       expect(parsed.gasId).toBe(1);
       expect(parsed.deviceStatus).toBe("OK");
+    });
+
+    it("decodes real-style little-endian EtherNet/IP status flags and multibyte values", () => {
+      const buffer = new ArrayBuffer(24);
+      const view = new DataView(buffer);
+      view.setFloat32(0, 12.5, true);
+      view.setFloat32(4, 10.0, true);
+      view.setFloat32(8, 50.0, true);
+      view.setFloat32(12, 22.0, true);
+      view.setFloat32(16, 0.2, true);
+      view.setUint16(20, 28, true);
+      view.setUint16(22, 0x8000, true);
+
+      const parsed = EtherNetIPAdapter.parseCIPFrame(buffer, manifestJson as any);
+      expect(parsed.statusFlags).toBe(0x8000);
+      expect(parsed.deviceStatus).toBe("FAULT");
+      expect(parsed.gasId).toBe(28);
+      expect(parsed.flowRate).toBeCloseTo(12.5, 3);
+    });
+
+    it("serializes named gas aliases to canonical numeric gas IDs", () => {
+      const telemetry: MFCDeviceTelemetry = {
+        flowRate: 1.0,
+        setpoint: 1.0,
+        valvePosition: 10.0,
+        temperature: 21.0,
+        zeroOffset: 0.0,
+        gasId: "SiH4",
+        deviceStatus: "OK",
+        statusFlags: 0,
+      };
+
+      const cip = EtherNetIPAdapter.serializeCIPFrame(telemetry, manifestJson as any);
+      const ethercat = EtherCATAdapter.serializePDOFrame(telemetry, manifestJson as any);
+      expect(new DataView(cip).getUint16(20, true)).toBe(28);
+      expect(new DataView(ethercat).getUint16(20, true)).toBe(28);
+    });
+
+    it("rejects unknown gas IDs instead of defaulting to N2 in serializers", () => {
+      const telemetry: MFCDeviceTelemetry = {
+        flowRate: 1.0,
+        setpoint: 1.0,
+        valvePosition: 10.0,
+        temperature: 21.0,
+        zeroOffset: 0.0,
+        gasId: "UNKNOWN_GAS",
+        deviceStatus: "OK",
+        statusFlags: 0,
+      };
+
+      expect(() => EtherNetIPAdapter.serializeCIPFrame(telemetry, manifestJson as any)).toThrow("Unknown or unregistered gas ID");
+      expect(() => EtherCATAdapter.serializePDOFrame(telemetry, manifestJson as any)).toThrow("Unknown or unregistered gas ID");
     });
 
     it("EtherCAT PDO adapter uses SLA5800 manifest for Little-Endian frame conversion", () => {
@@ -293,6 +348,62 @@ describe("Brooks Instrument Domain Unit Tests", () => {
 
       expect(decision.safetyStatus).toBe("OUTRIGHT_REJECTED");
       expect(domain.stateMachine.mode).toBe("FAULT");
+    });
+
+    it("rejects ramp jumps using actual short sample intervals and previous setpoint", async () => {
+      const domain = new BrooksDomain("mfc_ramp_guard_test");
+      const now = Date.now();
+      const snapshot = {
+        timestamp: now,
+        deviceId: "mfc_ramp_guard_test",
+        quality: 0.99,
+        readings: {
+          flowRate: 0.0,
+          setpoint: 10.0,
+          valvePosition: 0.0,
+          temperature: 23.0,
+          gasId: 1,
+          zeroOffset: 0.0,
+          pressure: 10.0,
+          overpressureTrip: false,
+          upstreamPressure: 10.0,
+          downstreamPressure: 10.0,
+          telemetryTimestamp: now,
+          previousTelemetryTimestamp: now - 1,
+          previousSetpoint: 0.0,
+        },
+      };
+
+      const decision = await domain.evaluateState(snapshot);
+      expect(decision.safetyStatus).toBe("OUTRIGHT_REJECTED");
+      expect(decision.reasons.some((r) => r.includes("Ramp rate breach"))).toBe(true);
+    });
+
+    it("fails closed when pressure telemetry is malformed", async () => {
+      const domain = new BrooksDomain("mfc_pressure_nan_test");
+      const now = Date.now();
+      const snapshot = {
+        timestamp: now,
+        deviceId: "mfc_pressure_nan_test",
+        quality: 0.99,
+        readings: {
+          flowRate: 0.0,
+          setpoint: 0.0,
+          valvePosition: 0.0,
+          temperature: 23.0,
+          gasId: 1,
+          zeroOffset: 0.0,
+          pressure: "not-a-number",
+          overpressureTrip: false,
+          telemetryTimestamp: now,
+          previousTelemetryTimestamp: now - 100,
+          previousSetpoint: 0.0,
+        },
+      };
+
+      const decision = await domain.evaluateState(snapshot);
+      expect(decision.safetyStatus).toBe("OUTRIGHT_REJECTED");
+      expect(decision.reasons.some((r) => r.includes("Invalid pressure telemetry"))).toBe(true);
     });
 
     it("captures zero-drift warning for inert gas line without triggering hazardous close", async () => {

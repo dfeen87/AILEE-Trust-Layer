@@ -92,6 +92,8 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
         pressure: this.stateMachine.currentPressurePsi,
         overpressureTrip: this.stateMachine.mode === "FAULT",
         telemetryTimestamp: this.stateMachine.lastTelemetryTimestamp,
+        previousTelemetryTimestamp: this.stateMachine.previousTelemetryTimestamp,
+        previousSetpoint: this.stateMachine.previousSetpoint,
       },
     };
   }
@@ -105,12 +107,15 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     const flowRate = Number(snapshot.readings.flowRate ?? 0.0);
     const targetSetpoint = Number(snapshot.readings.setpoint ?? flowRate);
     const gasId = (snapshot.readings.gasId as string | number) ?? this.stateMachine.activeGasId;
+    const currentSetpoint = Number(snapshot.readings.previousSetpoint ?? this.stateMachine.previousSetpoint ?? this.stateMachine.currentSetpoint);
     const zeroOffset = Number(snapshot.readings.zeroOffset ?? 0.0);
     const pressure = Number(snapshot.readings.pressure ?? 0.0);
     const overpressureTrip = Boolean(snapshot.readings.overpressureTrip ?? false);
     const upstreamP = Number(snapshot.readings.upstreamPressure ?? pressure);
     const downstreamP = Number(snapshot.readings.downstreamPressure ?? 0.0);
     const isPurging = snapshot.readings.isPurging === true;
+    const previousTelemetryTs = Number(snapshot.readings.previousTelemetryTimestamp ?? this.stateMachine.previousTelemetryTimestamp ?? telemetryTs);
+    const sampleIntervalMs = Math.max(1, now - previousTelemetryTs);
 
     let confidencePenalty = 0.0;
     const reasons: string[] = [];
@@ -122,21 +127,31 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     }
 
     // 1. Pressure Containment Check
-    const pressureRes = this.pressureGuard.evaluateContainment(pressure, overpressureTrip);
-    if (!pressureRes.passed) {
-      confidencePenalty += pressureRes.confidencePenalty;
-      reasons.push(pressureRes.reason || "Pressure containment check failed");
+    if (!Number.isFinite(pressure)) {
+      confidencePenalty = 1.0;
+      reasons.push("Invalid pressure telemetry: non-finite pressure value");
+    } else {
+      const pressureRes = this.pressureGuard.evaluateContainment(pressure, overpressureTrip);
+      if (!pressureRes.passed) {
+        confidencePenalty += pressureRes.confidencePenalty;
+        reasons.push(pressureRes.reason || "Pressure containment check failed");
+      }
     }
 
     // 2. Pressure Delta Check (if valve open requested)
-    const deltaRes = this.pressureDeltaGuard.evaluateDeltaP(upstreamP, downstreamP, targetSetpoint > 0);
-    if (!deltaRes.passed) {
-      confidencePenalty += deltaRes.confidencePenalty;
-      reasons.push(deltaRes.reason || "Delta pressure limit exceeded");
+    if (!Number.isFinite(upstreamP) || !Number.isFinite(downstreamP)) {
+      confidencePenalty = 1.0;
+      reasons.push("Invalid pressure telemetry: non-finite upstream/downstream pressure value");
+    } else {
+      const deltaRes = this.pressureDeltaGuard.evaluateDeltaP(upstreamP, downstreamP, targetSetpoint > 0);
+      if (!deltaRes.passed) {
+        confidencePenalty += deltaRes.confidencePenalty;
+        reasons.push(deltaRes.reason || "Delta pressure limit exceeded");
+      }
     }
 
     // 3. Ramp Rate Ramp Check
-    const rampRes = this.rampGuard.evaluate(this.stateMachine.currentSetpoint, targetSetpoint, this.stateMachine.fullScaleFlowSlpm);
+    const rampRes = this.rampGuard.evaluate(currentSetpoint, targetSetpoint, this.stateMachine.fullScaleFlowSlpm, sampleIntervalMs);
     if (!rampRes.passed) {
       confidencePenalty += rampRes.confidencePenalty;
       reasons.push(rampRes.reason || "Ramp rate limit breached");
@@ -150,8 +165,10 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     }
 
     // 5. Gas Change Check
-    if (gasId !== this.stateMachine.activeGasId) {
-      const gasChangeRes = this.gasSafetyGuard.evaluateGasChange(this.stateMachine.activeGasId, gasId, flowRate, isPurging);
+    const currentGasCanonical = lookupGas(this.stateMachine.activeGasId)?.gasId ?? this.stateMachine.activeGasId;
+    const requestedGasCanonical = lookupGas(gasId)?.gasId ?? gasId;
+    if (currentGasCanonical !== requestedGasCanonical) {
+      const gasChangeRes = this.gasSafetyGuard.evaluateGasChange(currentGasCanonical, requestedGasCanonical, flowRate, isPurging);
       if (!gasChangeRes.passed) {
         confidencePenalty += gasChangeRes.confidencePenalty;
         reasons.push(gasChangeRes.reason || "Gas change rule violation");
