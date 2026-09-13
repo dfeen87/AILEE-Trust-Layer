@@ -186,7 +186,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     const isHazardous = activeGas ? isHazardousGas(activeGas) : true;
 
     // Hazardous lines -> Immediate VALVE_CLOSE; Inert lines -> VALVE_HOLD
-    const fallbackAction = isHazardous ? "VALVE_CLOSE" : "VALVE_HOLD";
+const fallbackAction = isHazardous && this.policy.strictHazardousMode ? "VALVE_CLOSE" : "VALVE_HOLD";
 
     await this.writeActuators({
       actuatorId: `${this.stateMachine.deviceId}_actuator`,
