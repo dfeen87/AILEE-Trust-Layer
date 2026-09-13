@@ -43,9 +43,15 @@ export function validateMFCTelemetry(data: unknown): { valid: boolean; errors: s
     errors.push("valvePosition must be a number between 0.0 and 100.0%");
   }
   if (typeof t.temperature !== "number" || Number.isNaN(t.temperature)) errors.push("Invalid or missing temperature");
-  if (t.gasId === undefined || t.gasId === null || (typeof t.gasId !== "string" && typeof t.gasId !== "number")) {
-    errors.push("gasId must be a non-empty string or number");
-  }
+if (
+  t.gasId === undefined ||
+  t.gasId === null ||
+  (typeof t.gasId === "string" && t.gasId.trim() === "") ||
+  (typeof t.gasId === "number" && !Number.isFinite(t.gasId)) ||
+  (typeof t.gasId !== "string" && typeof t.gasId !== "number")
+) {
+  errors.push("gasId must be a non-empty string or number");
+}
   if (typeof t.zeroOffset !== "number" || Number.isNaN(t.zeroOffset)) errors.push("Invalid or missing zeroOffset");
   if (t.deviceStatus !== "OK" && t.deviceStatus !== "WARN" && t.deviceStatus !== "FAULT") {
     errors.push("deviceStatus must be 'OK', 'WARN', or 'FAULT'");
