@@ -67,7 +67,7 @@ export class ZeroDriftGuard {
    * If zero-drift exceeds ±0.5% of Full Scale when setpoint is 0, issue POLICY_DEGRADED warning.
    */
   public evaluate(setpoint: number, zeroOffsetPercentFS: number): RuleCheckResult {
-    if (setpoint === 0 && Math.abs(zeroOffsetPercentFS) > this.policy.zeroDrift.maxDriftPercentFS) {
+    if (this.policy.zeroDrift.requireWarningOnExceed && setpoint === 0 && Math.abs(zeroOffsetPercentFS) > this.policy.zeroDrift.maxDriftPercentFS) {
       return {
         passed: false,
         status: "BORDERLINE",
