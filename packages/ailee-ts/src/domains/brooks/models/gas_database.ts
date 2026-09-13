@@ -27,6 +27,20 @@ export function lookupGas(gasId: number | string): GasDefinition | undefined {
   return GAS_DATABASE[gasId];
 }
 
+export function canonicalizeGasId(gasId: number | string): number {
+  const gas = lookupGas(gasId);
+  if (!gas) {
+    throw new Error(`Unknown or unregistered gas ID: ${gasId}`);
+  }
+
+  const canonical = typeof gas.gasId === "number" ? gas.gasId : Number(gas.gasId);
+  if (!Number.isFinite(canonical)) {
+    throw new Error(`Invalid canonical gas ID: ${gas.gasId}`);
+  }
+
+  return canonical;
+}
+
 export function isHazardousGas(gas: GasDefinition): boolean {
   return gas.classifications.some((c) => ["FLAMMABLE", "TOXIC", "CORROSIVE", "OXIDIZER", "PYROPHORIC"].includes(c));
 }

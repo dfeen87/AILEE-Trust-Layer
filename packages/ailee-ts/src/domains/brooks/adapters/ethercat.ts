@@ -3,6 +3,7 @@
 
 import { DeviceStatus, MFCDeviceTelemetry } from "../types/telemetry.js";
 import { DEFAULT_MANIFEST, FieldbusManifest } from "./ethernet_ip.js";
+import { canonicalizeGasId } from "../models/gas_database.js";
 
 /**
  * EtherCAT Compact Cyclic PDO Parser & Serializer.
@@ -55,8 +56,7 @@ export class EtherCATAdapter {
     view.setFloat32(offsets.valvePosition, telemetry.valvePosition, true);
     view.setFloat32(offsets.temperature, telemetry.temperature, true);
     view.setFloat32(offsets.zeroOffset, telemetry.zeroOffset, true);
-    const gasNumeric = typeof telemetry.gasId === "number" ? telemetry.gasId : parseInt(String(telemetry.gasId), 10) || 1;
-    view.setUint16(offsets.gasId, gasNumeric, true);
+    view.setUint16(offsets.gasId, canonicalizeGasId(telemetry.gasId), true);
 
     let flags = telemetry.statusFlags || 0;
     if (telemetry.deviceStatus === "FAULT") flags |= 0x8000;

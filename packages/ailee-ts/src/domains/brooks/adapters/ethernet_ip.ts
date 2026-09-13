@@ -2,6 +2,7 @@
 //! Licensed under the MIT License.
 
 import manifestJson from "../configs/sla5800_manifest.json" assert { type: "json" };
+import { canonicalizeGasId } from "../models/gas_database.js";
 import { DeviceStatus, MFCDeviceTelemetry } from "../types/telemetry.js";
 
 export interface FieldbusManifest {
@@ -37,7 +38,7 @@ export const DEFAULT_MANIFEST: FieldbusManifest = manifestJson as FieldbusManife
 
 /**
  * EtherNet/IP (CIP) Fieldbus Parser & Serializer.
- * EtherNet/IP uses Big-Endian (Network Byte Order) for standard float32 values and uint16 register maps.
+ * EtherNet/IP CIP application data is encoded in little-endian byte order.
  * Decoupled via hardware configuration manifest.
  */
 export class EtherNetIPAdapter {
@@ -49,13 +50,13 @@ export class EtherNetIPAdapter {
     const view = new DataView(buffer);
     const offsets = manifest.ethernetIP.byteOffsets;
 
-    const flowRate = view.getFloat32(offsets.flowRate, false); // false = Big-Endian
-    const setpoint = view.getFloat32(offsets.setpoint, false);
-    const valvePosition = view.getFloat32(offsets.valvePosition, false);
-    const temperature = view.getFloat32(offsets.temperature, false);
-    const zeroOffset = view.getFloat32(offsets.zeroOffset, false);
-    const gasId = view.getUint16(offsets.gasId, false);
-    const statusFlags = view.getUint16(offsets.statusFlags, false);
+    const flowRate = view.getFloat32(offsets.flowRate, true);
+    const setpoint = view.getFloat32(offsets.setpoint, true);
+    const valvePosition = view.getFloat32(offsets.valvePosition, true);
+    const temperature = view.getFloat32(offsets.temperature, true);
+    const zeroOffset = view.getFloat32(offsets.zeroOffset, true);
+    const gasId = view.getUint16(offsets.gasId, true);
+    const statusFlags = view.getUint16(offsets.statusFlags, true);
 
     let deviceStatus: DeviceStatus = "OK";
     if ((statusFlags & 0x8000) !== 0) {
@@ -81,18 +82,17 @@ export class EtherNetIPAdapter {
     const view = new DataView(buffer);
     const offsets = manifest.ethernetIP.byteOffsets;
 
-    view.setFloat32(offsets.flowRate, telemetry.flowRate, false);
-    view.setFloat32(offsets.setpoint, telemetry.setpoint, false);
-    view.setFloat32(offsets.valvePosition, telemetry.valvePosition, false);
-    view.setFloat32(offsets.temperature, telemetry.temperature, false);
-    view.setFloat32(offsets.zeroOffset, telemetry.zeroOffset, false);
-    const gasNumeric = typeof telemetry.gasId === "number" ? telemetry.gasId : parseInt(String(telemetry.gasId), 10) || 1;
-    view.setUint16(offsets.gasId, gasNumeric, false);
+    view.setFloat32(offsets.flowRate, telemetry.flowRate, true);
+    view.setFloat32(offsets.setpoint, telemetry.setpoint, true);
+    view.setFloat32(offsets.valvePosition, telemetry.valvePosition, true);
+    view.setFloat32(offsets.temperature, telemetry.temperature, true);
+    view.setFloat32(offsets.zeroOffset, telemetry.zeroOffset, true);
+    view.setUint16(offsets.gasId, canonicalizeGasId(telemetry.gasId), true);
 
     let flags = telemetry.statusFlags || 0;
     if (telemetry.deviceStatus === "FAULT") flags |= 0x8000;
     if (telemetry.deviceStatus === "WARN") flags |= 0x4000;
-    view.setUint16(offsets.statusFlags, flags, false);
+    view.setUint16(offsets.statusFlags, flags, true);
 
     return buffer;
   }
