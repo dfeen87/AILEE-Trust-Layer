@@ -1,0 +1,76 @@
+{
+  "gases": [
+    {
+      "gasId": 1,
+      "formula": "N2",
+      "name": "Nitrogen",
+      "gcf": 1.0,
+      "classifications": ["INERT"],
+      "defaultMaxFlowSlpm": 1000,
+      "purgeRequiredOnChange": false
+    },
+    {
+      "gasId": 2,
+      "formula": "Air",
+      "name": "Air",
+      "gcf": 1.0,
+      "classifications": ["INERT"],
+      "defaultMaxFlowSlpm": 1000,
+      "purgeRequiredOnChange": false
+    },
+    {
+      "gasId": 3,
+      "formula": "Ar",
+      "name": "Argon",
+      "gcf": 1.415,
+      "classifications": ["INERT"],
+      "defaultMaxFlowSlpm": 1000,
+      "purgeRequiredOnChange": false
+    },
+    {
+      "gasId": 10,
+      "formula": "H2",
+      "name": "Hydrogen",
+      "gcf": 1.01,
+      "classifications": ["FLAMMABLE"],
+      "defaultMaxFlowSlpm": 100,
+      "purgeRequiredOnChange": true
+    },
+    {
+      "gasId": 11,
+      "formula": "NH3",
+      "name": "Ammonia",
+      "gcf": 0.73,
+      "classifications": ["TOXIC", "CORROSIVE"],
+      "defaultMaxFlowSlpm": 50,
+      "purgeRequiredOnChange": true
+    },
+    {
+      "gasId": 15,
+      "formula": "O2",
+      "name": "Oxygen",
+      "gcf": 0.993,
+      "classifications": ["OXIDIZER"],
+      "defaultMaxFlowSlpm": 200,
+      "purgeRequiredOnChange": true
+    },
+    {
+      "gasId": 28,
+      "formula": "SiH4",
+      "name": "Silane",
+      "gcf": 0.598,
+      "classifications": ["PYROPHORIC"],
+      "defaultMaxFlowSlpm": 20,
+      "purgeRequiredOnChange": true
+    },
+    {
+      "gasId": 42,
+      "formula": "Cl2",
+      "name": "Chlorine",
+      "gcf": 0.86,
+      "classifications": ["CORROSIVE", "TOXIC"],
+      "defaultMaxFlowSlpm": 30,
+      "purgeRequiredOnChange": true
+    }
+  ]
+}

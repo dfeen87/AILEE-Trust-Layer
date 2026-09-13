@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-7.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-8.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -36,6 +36,7 @@
   - [Autonomous & Automotive Systems](#-autonomous--automotive-systems)
   - [Power Grid & Energy Systems](#-power-grid--energy-systems)
   - [Data Center Operations](#-data-center-operations)
+  - [Brooks Instrument Physical Domain](#-brooks-instrument-physical-domain)
   - [Topology Systems](#-topology-systems)
   - [Robotics Systems](#-robotics-systems)
   - [Telecommunications Systems](#-telecommunications-systems)
@@ -315,7 +316,7 @@ At its core is the idea that **output confidence must be integrated over time, e
 This principle is captured by the governing equation:
 
 ```
-Δv = Iₛₚ · η · e⁻ᵅᵛ₀² ∫₀ᵗᶠ [Pᵢₙₚᵤₜ(t) · e⁻ᵅʷ⁽ᵗ⁾² · e²ᵅᵛ₀ · v(t)] / M(t) dt
+Δv = Iₛₚ · η · e⁻ᵅᵛ₀² ∫₀ᵗᶠ [Pᵢₙₚᵤᵗ(t) · e⁻ᵅʷ⁽ᵗ⁾² · e²ᵅᵛ₀ · v(t)] / M(t) dt
 ```
 
 ### Interpretation (System-Level)
@@ -328,7 +329,7 @@ This principle is captured by the governing equation:
 | **α** | Risk sensitivity parameter |
 | **v(t)** | Decision velocity over time |
 | **M(t)** | System mass (inertia, history, stability) |
-| **Pᵢₙₚᵤₜ(t)** | Input energy (model output signal) |
+| **Pᵢₙₚᵤᵗ(t)** | Input energy (model output signal) |
 
 In AILEE:
 - Decisions are **earned**, not assumed
@@ -746,6 +747,21 @@ ailee-trust-layer/
 │       ├── ailee_serialization.py    # Audit trails & structured logging
 │       └── ailee_replay.py           # Deterministic replay & regression testing
 │
+├── packages/ailee-ts/                # TypeScript Hardware Adapter Package (@ailee/trust-layer v8.0.0)
+│   ├── src/
+│   │   ├── core/                     # Core TS Trust Pipeline, Consensus & Fallback engines
+│   │   ├── hardware/                 # Hardware adapters & protocol bridges
+│   │   └── domains/                  # TypeScript Domain Adapters
+│   │       ├── brooks/               # Brooks Instrument Physical Domain
+│   │       │   ├── configs/          # Hardware & Gas DB JSON manifests (sla5800_manifest.json, gas_db.json)
+│   │       │   ├── types/            # Telemetry, command, policy schemas & pure TS validators
+│   │       │   ├── models/           # Device state machine & Gas safety database
+│   │       │   ├── rules/            # Ramp rate, zero drift, pressure delta & gas safety guards
+│   │       │   ├── adapters/         # Fieldbus frame adapters (EtherNet/IP CIP, EtherCAT PDO)
+│   │       │   ├── index.ts          # BrooksDomain hardware adapter export
+│   │       │   └── __tests__/        # Unit and integration test suite
+│   │       └── index.ts              # Domain re-exports
+│
 ├── ailee/web/                        # Deployable FastAPI app package
 │   ├── __init__.py                   # Web package exports
 │   ├── app.py                        # FastAPI application entry point
@@ -948,6 +964,57 @@ AILEE provides deterministic governance for AI-driven data center automation.
 - Annual savings: **$1.9M+**
 - Payback period: **< 2 months**
 - Year-1 ROI: **650%+**
+
+---
+
+### 🧪 Brooks Instrument Physical Domain
+
+AILEE provides deterministic safety bounds enforcement, telemetry ingestion, and fieldbus payload parsing for **Brooks Instrument physical hardware** (Mass Flow Controllers like the SLA5800 series, Pressure Controllers, and Ultrasonic Flow Meters) in semiconductor fabrication and chemical process control lines.
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│             Brooks Instrument Physical Domain               │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Fieldbus Data (EtherNet/IP CIP / EtherCAT PDO)             │
+│                         │                                   │
+│                         ▼                                   │
+│            Hardware Offset Manifests                        │
+│          (sla5800_manifest.json / gas_db.json)              │
+│                         │                                   │
+│                         ▼                                   │
+│              Pure TS Zero-Allocation                        │
+│              Telemetry Schema Validators                    │
+│                         │                                   │
+│                         ▼                                   │
+│           Deterministic Safety Rule Engine                  │
+│       • RampRateGuard   • ZeroDriftGuard                     │
+│       • PressureGuard   • PressureDeltaGuard                 │
+│       • GasSafetyGuard                                      │
+│                         │                                   │
+│                         ▼                                   │
+│             AILEE Trust Pipeline Process                    │
+│                         │                                   │
+│                         ▼                                   │
+│           Deterministic Hardware Fallback                   │
+│   • Hazardous Line Breach   ──► VALVE_CLOSE (Isolation)     │
+│   • Inert Line Drift        ──► VALVE_HOLD  (Maintain)      │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+#### High-Impact Physical Safety Features
+- 🛡️ **Zero-Dependency Pure TS Execution**: Sub-2ms synchronous evaluation loops operating with zero external runtime dependencies.
+- 📡 **Manifest-Driven Fieldbus Adapters**: Byte buffer parsers for Big-Endian EtherNet/IP CIP (`adapters/ethernet_ip.ts`) and Little-Endian EtherCAT PDO (`adapters/ethercat.ts`), configured dynamically via `configs/sla5800_manifest.json`.
+- ⚗️ **8-Gas Process Database**: Pre-populated catalog (`models/gas_database.ts` backed by `configs/gas_db.json`) covering $N_2$, Air, Argon, $H_2$, $NH_3$, $O_2$, $SiH_4$, and $Cl_2$ with Gas Correction Factors (GCF), safety classifications (`INERT`, `FLAMMABLE`, `TOXIC`, `CORROSIVE`, `OXIDIZER`, `PYROPHORIC`), max flow ceilings, and mandatory purge-on-switch flags.
+- ⚡ **Physical Guard Rules**:
+  - `RampRateGuard`: Prevents thermal shock or pressure spikes by capping setpoint changes (e.g., max 20% FS per 100ms).
+  - `ZeroDriftGuard`: Monitors baseline flow drift, issuing `POLICY_DEGRADED` warnings if drift exceeds ±0.5% FS when setpoint is 0.
+  - `PressureGuard` & `PressureDeltaGuard`: Enforces containment ceilings and valve pressure differential limits ($\Delta P$).
+  - `GasSafetyGuard`: Prevents cross-contamination by blocking hazardous gas switches under active flow without a prior line purge (`PURGE_LINE`).
+- 🚨 **Deterministic Hardware Fallback Matrix**:
+  - **Hazardous Lines** (`TOXIC`, `PYROPHORIC`, `CORROSIVE`, `FLAMMABLE`): Immediate **`VALVE_CLOSE`** physical isolation on overpressure, setpoint breach, telemetry loss, or heartbeat timeout (>1000ms).
+  - **Inert Lines** (`INERT`): Immediate **`VALVE_HOLD`** position hold to maintain system pressure balance.
 
 ---
 
@@ -1519,18 +1586,18 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v7.0.0 (Production/Stable)
+### Current: v8.0.0 (Production/Stable)
 
-AILEE Trust Layer **v7.0.0** is production-ready with enterprise features:
+AILEE Trust Layer **v8.0.0** is production-ready with enterprise features:
 
-✅ 17 domain governance layers  
+✅ 18 domain governance layers
 ✅ 9 domain-optimized presets  
 ✅ Advanced peer adapters for multi-model systems  
 ✅ Real-time monitoring & alerting  
 ✅ Comprehensive audit trails  
 ✅ Deterministic replay for testing  
 
-### Future Considerations (v4.7.0+)
+### Future Considerations (v8.1.0+)
 
 Future versions may add:
 - Streaming support for real-time pipelines
@@ -1620,7 +1687,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {7.0.0},
+  version = {8.0.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1665,7 +1732,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v7.0.0**
+**AILEE Trust Layer v8.0.0**
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
