@@ -54,7 +54,7 @@ export class GasSafetyGuard {
     currentFlowRate: number,
     isPurgeActive: boolean
   ): RuleCheckResult {
-    if (currentGasId === requestedGasId) {
+if (currentGasId === requestedGasId && lookupGas(currentGasId)) {
       return { passed: true, status: "ACCEPTED", confidencePenalty: 0.0 };
     }
 
