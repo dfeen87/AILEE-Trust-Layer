@@ -51,6 +51,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
   private pipeline: AileeTrustPipeline;
   private policy: BrooksSafetyPolicy;
   public stateMachine: DeviceStateMachine;
+  public heartbeatTimeoutMs: number = 1000; // 1000ms maximum telemetry staleness window
 
   private rampGuard: RampRateGuard;
   private zeroDriftGuard: ZeroDriftGuard;
@@ -61,10 +62,12 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
   constructor(
     deviceId = "mfc_brooks_sla5800",
     policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY,
-    aileeConfig: AileeConfig = BROOKS_PRESETS.STRICT_PHYSICAL
+    aileeConfig: AileeConfig = BROOKS_PRESETS.STRICT_PHYSICAL,
+    heartbeatTimeoutMs = 1000
   ) {
     this.pipeline = new AileeTrustPipeline(aileeConfig);
     this.policy = policy;
+    this.heartbeatTimeoutMs = heartbeatTimeoutMs;
     this.stateMachine = new DeviceStateMachine(deviceId, 100.0, 1); // Default N2
 
     this.rampGuard = new RampRateGuard(this.policy);
@@ -88,6 +91,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
         zeroOffset: this.stateMachine.zeroOffsetPercentFS,
         pressure: this.stateMachine.currentPressurePsi,
         overpressureTrip: this.stateMachine.mode === "FAULT",
+        telemetryTimestamp: this.stateMachine.lastTelemetryTimestamp,
       },
     };
   }
@@ -96,6 +100,8 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
    * Deterministic synchronous evaluation (< 2ms execution budget).
    */
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
+    const now = snapshot.timestamp || Date.now();
+    const telemetryTs = Number(snapshot.readings.telemetryTimestamp ?? snapshot.timestamp ?? now);
     const flowRate = Number(snapshot.readings.flowRate ?? 0.0);
     const targetSetpoint = Number(snapshot.readings.setpoint ?? flowRate);
     const gasId = (snapshot.readings.gasId as string | number) ?? this.stateMachine.activeGasId;
@@ -108,6 +114,12 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
 
     let confidencePenalty = 0.0;
     const reasons: string[] = [];
+
+    // 0. Heartbeat Timeout / Telemetry Drop Check
+    if (now - telemetryTs > this.heartbeatTimeoutMs) {
+      confidencePenalty = 1.0;
+      reasons.push(`Heartbeat timeout: telemetry stale by ${(now - telemetryTs).toFixed(0)}ms (limit ${this.heartbeatTimeoutMs}ms)`);
+    }
 
     // 1. Pressure Containment Check
     const pressureRes = this.pressureGuard.evaluateContainment(pressure, overpressureTrip);

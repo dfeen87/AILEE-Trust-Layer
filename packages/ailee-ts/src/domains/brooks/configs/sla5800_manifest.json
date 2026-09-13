@@ -1,0 +1,32 @@
+{
+  "deviceName": "SLA5800 Series Mass Flow Controller",
+  "frameSizeBytes": 24,
+  "ethernetIP": {
+    "endianness": "BigEndian",
+    "byteOffsets": {
+      "flowRate": 0,
+      "setpoint": 4,
+      "valvePosition": 8,
+      "temperature": 12,
+      "zeroOffset": 16,
+      "gasId": 20,
+      "statusFlags": 22
+    }
+  },
+  "etherCAT": {
+    "endianness": "LittleEndian",
+    "byteOffsets": {
+      "flowRate": 0,
+      "setpoint": 4,
+      "valvePosition": 8,
+      "temperature": 12,
+      "zeroOffset": 16,
+      "gasId": 20,
+      "statusFlags": 22
+    }
+  },
+  "statusBitmask": {
+    "faultFlag": "0x8000",
+    "warnFlag": "0x4000"
+  }
+}

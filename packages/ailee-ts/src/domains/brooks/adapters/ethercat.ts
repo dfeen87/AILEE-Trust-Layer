@@ -2,34 +2,29 @@
 //! Licensed under the MIT License.
 
 import { DeviceStatus, MFCDeviceTelemetry } from "../types/telemetry.js";
+import { DEFAULT_MANIFEST, FieldbusManifest } from "./ethernet_ip.js";
 
 /**
  * EtherCAT Compact Cyclic PDO Parser & Serializer.
  * EtherCAT (CoE / CANopen over EtherCAT) uses Little-Endian native byte order for process data objects (PDOs).
- *
- * Binary Layout (24 bytes):
- * - Byte 0-3: flowRate (Float32, Little-Endian)
- * - Byte 4-7: setpoint (Float32, Little-Endian)
- * - Byte 8-11: valvePosition (Float32, Little-Endian)
- * - Byte 12-15: temperature (Float32, Little-Endian)
- * - Byte 16-19: zeroOffset (Float32, Little-Endian)
- * - Byte 20-21: gasId (Uint16, Little-Endian)
- * - Byte 22-23: statusFlags (Uint16, Little-Endian)
+ * Decoupled via hardware configuration manifest.
  */
 export class EtherCATAdapter {
-  public static parsePDOFrame(buffer: ArrayBuffer): MFCDeviceTelemetry {
-    if (buffer.byteLength < 24) {
-      throw new Error(`EtherCAT buffer underflow: expected at least 24 bytes, got ${buffer.byteLength}`);
+  public static parsePDOFrame(buffer: ArrayBuffer, manifest: FieldbusManifest = DEFAULT_MANIFEST): MFCDeviceTelemetry {
+    if (buffer.byteLength < manifest.frameSizeBytes) {
+      throw new Error(`EtherCAT buffer underflow: expected at least ${manifest.frameSizeBytes} bytes, got ${buffer.byteLength}`);
     }
 
     const view = new DataView(buffer);
-    const flowRate = view.getFloat32(0, true); // true = Little-Endian
-    const setpoint = view.getFloat32(4, true);
-    const valvePosition = view.getFloat32(8, true);
-    const temperature = view.getFloat32(12, true);
-    const zeroOffset = view.getFloat32(16, true);
-    const gasId = view.getUint16(20, true);
-    const statusFlags = view.getUint16(22, true);
+    const offsets = manifest.etherCAT.byteOffsets;
+
+    const flowRate = view.getFloat32(offsets.flowRate, true); // true = Little-Endian
+    const setpoint = view.getFloat32(offsets.setpoint, true);
+    const valvePosition = view.getFloat32(offsets.valvePosition, true);
+    const temperature = view.getFloat32(offsets.temperature, true);
+    const zeroOffset = view.getFloat32(offsets.zeroOffset, true);
+    const gasId = view.getUint16(offsets.gasId, true);
+    const statusFlags = view.getUint16(offsets.statusFlags, true);
 
     let deviceStatus: DeviceStatus = "OK";
     if ((statusFlags & 0x8000) !== 0) {
@@ -50,22 +45,23 @@ export class EtherCATAdapter {
     };
   }
 
-  public static serializePDOFrame(telemetry: MFCDeviceTelemetry): ArrayBuffer {
-    const buffer = new ArrayBuffer(24);
+  public static serializePDOFrame(telemetry: MFCDeviceTelemetry, manifest: FieldbusManifest = DEFAULT_MANIFEST): ArrayBuffer {
+    const buffer = new ArrayBuffer(manifest.frameSizeBytes);
     const view = new DataView(buffer);
+    const offsets = manifest.etherCAT.byteOffsets;
 
-    view.setFloat32(0, telemetry.flowRate, true);
-    view.setFloat32(4, telemetry.setpoint, true);
-    view.setFloat32(8, telemetry.valvePosition, true);
-    view.setFloat32(12, telemetry.temperature, true);
-    view.setFloat32(16, telemetry.zeroOffset, true);
+    view.setFloat32(offsets.flowRate, telemetry.flowRate, true);
+    view.setFloat32(offsets.setpoint, telemetry.setpoint, true);
+    view.setFloat32(offsets.valvePosition, telemetry.valvePosition, true);
+    view.setFloat32(offsets.temperature, telemetry.temperature, true);
+    view.setFloat32(offsets.zeroOffset, telemetry.zeroOffset, true);
     const gasNumeric = typeof telemetry.gasId === "number" ? telemetry.gasId : parseInt(String(telemetry.gasId), 10) || 1;
-    view.setUint16(20, gasNumeric, true);
+    view.setUint16(offsets.gasId, gasNumeric, true);
 
     let flags = telemetry.statusFlags || 0;
     if (telemetry.deviceStatus === "FAULT") flags |= 0x8000;
     if (telemetry.deviceStatus === "WARN") flags |= 0x4000;
-    view.setUint16(22, flags, true);
+    view.setUint16(offsets.statusFlags, flags, true);
 
     return buffer;
   }

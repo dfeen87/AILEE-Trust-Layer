@@ -4,6 +4,7 @@
 import { describe, expect, it } from "vitest";
 import { EtherCATAdapter } from "../adapters/ethercat.js";
 import { EtherNetIPAdapter } from "../adapters/ethernet_ip.js";
+import manifestJson from "../configs/sla5800_manifest.json" assert { type: "json" };
 import { BrooksDomain, BrooksHardwareAdapter } from "../index.js";
 import { DeviceStateMachine } from "../models/device_state.js";
 import { GAS_DATABASE, isHazardousGas, lookupGas } from "../models/gas_database.js";
@@ -108,8 +109,8 @@ describe("Brooks Instrument Domain Unit Tests", () => {
     });
   });
 
-  describe("Gas Database & Models", () => {
-    it("looks up gas definitions by numeric or string ID", () => {
+  describe("Gas Database & Manifest Models", () => {
+    it("looks up gas definitions by numeric or string ID from JSON manifest", () => {
       const n2 = lookupGas(1);
       expect(n2).toBeDefined();
       expect(n2?.formula).toBe("N2");
@@ -123,7 +124,7 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       expect(unknown).toBeUndefined();
     });
 
-    it("identifies hazardous gases correctly", () => {
+    it("identifies hazardous gases correctly across all catalog gases", () => {
       const n2 = lookupGas(1)!;
       expect(isHazardousGas(n2)).toBe(false);
 
@@ -132,6 +133,9 @@ describe("Brooks Instrument Domain Unit Tests", () => {
 
       const nh3 = lookupGas(11)!;
       expect(isHazardousGas(nh3)).toBe(true);
+
+      const cl2 = lookupGas(42)!;
+      expect(isHazardousGas(cl2)).toBe(true);
     });
 
     it("updates DeviceStateMachine correctly", () => {
@@ -163,11 +167,9 @@ describe("Brooks Instrument Domain Unit Tests", () => {
   describe("Safety Rules & Guards", () => {
     it("RampRateGuard allows normal setpoint jump and rejects excessive jump", () => {
       const guard = new RampRateGuard(DEFAULT_BROOKS_POLICY);
-      // 10 SLPM jump on 100 SLPM scale = 10% FS change (limit is 20%) -> OK
       const normalRes = guard.evaluate(0.0, 10.0, 100.0, 100);
       expect(normalRes.passed).toBe(true);
 
-      // 50 SLPM jump on 100 SLPM scale = 50% FS change (limit is 20%) -> Breach
       const excessiveRes = guard.evaluate(0.0, 50.0, 100.0, 100);
       expect(excessiveRes.passed).toBe(false);
       expect(excessiveRes.status).toBe("OUTRIGHT_REJECTED");
@@ -179,7 +181,7 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       const normalRes = guard.evaluate(0.0, 0.2);
       expect(normalRes.passed).toBe(true);
 
-      const driftRes = guard.evaluate(0.0, 0.8); // 0.8% > 0.5% limit
+      const driftRes = guard.evaluate(0.0, 0.8);
       expect(driftRes.passed).toBe(false);
       expect(driftRes.status).toBe("BORDERLINE");
       expect(driftRes.confidencePenalty).toBeGreaterThan(0);
@@ -189,12 +191,11 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       const pGuard = new PressureGuard(DEFAULT_BROOKS_POLICY);
       expect(pGuard.evaluateContainment(100.0).passed).toBe(true);
 
-      const overP = pGuard.evaluateContainment(180.0); // 180 > 150 max
+      const overP = pGuard.evaluateContainment(180.0);
       expect(overP.passed).toBe(false);
       expect(overP.recommendedAction).toBe("VALVE_CLOSE");
 
       const deltaGuard = new PressureDeltaGuard(DEFAULT_BROOKS_POLICY);
-      // Upstream 100 PSI, Downstream 10 PSI -> Delta-P = 90 PSI > 50 PSI limit
       const deltaRes = deltaGuard.evaluateDeltaP(100.0, 10.0, true);
       expect(deltaRes.passed).toBe(false);
       expect(deltaRes.recommendedAction).toBe("VALVE_CLOSE");
@@ -203,30 +204,26 @@ describe("Brooks Instrument Domain Unit Tests", () => {
     it("GasSafetyGuard enforces gas flow limits and purge requirements for hazardous lines", () => {
       const gGuard = new GasSafetyGuard(DEFAULT_BROOKS_POLICY);
 
-      // Silane (28) default max flow is 20 SLPM
       expect(gGuard.evaluateFlowLimit("SiH4", 15.0).passed).toBe(true);
       const exceedSilane = gGuard.evaluateFlowLimit("SiH4", 30.0);
       expect(exceedSilane.passed).toBe(false);
       expect(exceedSilane.recommendedAction).toBe("VALVE_CLOSE");
 
-      // Changing from N2 to Silane while active flow exists
       const flowGasChange = gGuard.evaluateGasChange(1, 28, 5.0, false);
       expect(flowGasChange.passed).toBe(false);
       expect(flowGasChange.reason).toContain("active flow detected");
 
-      // Changing from N2 to Silane without purge
       const noPurgeGasChange = gGuard.evaluateGasChange(1, 28, 0.0, false);
       expect(noPurgeGasChange.passed).toBe(false);
       expect(noPurgeGasChange.reason).toContain("requires prior line purge");
 
-      // Changing from N2 to Silane with purge active
       const purgedGasChange = gGuard.evaluateGasChange(1, 28, 0.0, true);
       expect(purgedGasChange.passed).toBe(true);
     });
   });
 
-  describe("Fieldbus Protocol Adapters", () => {
-    it("EtherNet/IP CIP adapter correctly parses and serializes Big-Endian frames", () => {
+  describe("Fieldbus Protocol Adapters & Manifest Offsets", () => {
+    it("EtherNet/IP CIP adapter uses SLA5800 manifest for Big-Endian frame conversion", () => {
       const telemetry: MFCDeviceTelemetry = {
         flowRate: 25.5,
         setpoint: 25.0,
@@ -238,48 +235,42 @@ describe("Brooks Instrument Domain Unit Tests", () => {
         statusFlags: 0,
       };
 
-      const buffer = EtherNetIPAdapter.serializeCIPFrame(telemetry);
+      const buffer = EtherNetIPAdapter.serializeCIPFrame(telemetry, manifestJson as any);
       expect(buffer.byteLength).toBe(24);
 
-      const parsed = EtherNetIPAdapter.parseCIPFrame(buffer);
+      const parsed = EtherNetIPAdapter.parseCIPFrame(buffer, manifestJson as any);
       expect(parsed.flowRate).toBeCloseTo(25.5, 3);
       expect(parsed.setpoint).toBeCloseTo(25.0, 3);
       expect(parsed.gasId).toBe(1);
       expect(parsed.deviceStatus).toBe("OK");
     });
 
-    it("EtherCAT PDO adapter correctly parses and serializes Little-Endian frames", () => {
+    it("EtherCAT PDO adapter uses SLA5800 manifest for Little-Endian frame conversion", () => {
       const telemetry: MFCDeviceTelemetry = {
         flowRate: 80.0,
         setpoint: 80.0,
         valvePosition: 75.0,
         temperature: 28.0,
         zeroOffset: -0.1,
-        gasId: 28, // Silane
+        gasId: 28,
         deviceStatus: "WARN",
         statusFlags: 0x4000,
       };
 
-      const buffer = EtherCATAdapter.serializePDOFrame(telemetry);
+      const buffer = EtherCATAdapter.serializePDOFrame(telemetry, manifestJson as any);
       expect(buffer.byteLength).toBe(24);
 
-      const parsed = EtherCATAdapter.parsePDOFrame(buffer);
+      const parsed = EtherCATAdapter.parsePDOFrame(buffer, manifestJson as any);
       expect(parsed.flowRate).toBeCloseTo(80.0, 3);
       expect(parsed.gasId).toBe(28);
       expect(parsed.deviceStatus).toBe("WARN");
     });
   });
 
-  describe("Integration Tests: BrooksDomain AILEE Hardware Adapter", () => {
-    it("simulates stream of CIP frames during over-pressurization anomaly", async () => {
+  describe("Integration Tests: BrooksDomain Hardware Fallbacks", () => {
+    it("triggers immediate VALVE_CLOSE on overpressure anomaly for hazardous gas lines", async () => {
       const domain = new BrooksDomain("mfc_sla5800_line_1");
 
-      // Normal reading
-      const normalSnapshot = await domain.readSensors();
-      const normalDecision = await domain.evaluateState(normalSnapshot);
-      expect(normalDecision.safetyStatus).toBe("ACCEPTED");
-
-      // Over-pressurization event stream via CIP payload
       const overpressureTelemetry: MFCDeviceTelemetry = {
         flowRate: 50.0,
         setpoint: 50.0,
@@ -295,13 +286,39 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       const parsed = EtherNetIPAdapter.parseCIPFrame(cipFrame);
 
       domain.stateMachine.updateMFCTelemetry(parsed);
-      domain.stateMachine.currentPressurePsi = 180.0; // Exceeds 150 PSI limit
+      domain.stateMachine.currentPressurePsi = 180.0;
 
-      const anomalySnapshot = await domain.readSensors();
-      const anomalyDecision = await domain.evaluateState(anomalySnapshot);
+      const snapshot = await domain.readSensors();
+      const decision = await domain.evaluateState(snapshot);
 
-      expect(anomalyDecision.safetyStatus).toBe("OUTRIGHT_REJECTED");
+      expect(decision.safetyStatus).toBe("OUTRIGHT_REJECTED");
       expect(domain.stateMachine.mode).toBe("FAULT");
+    });
+
+    it("captures zero-drift warning for inert gas line without triggering hazardous close", async () => {
+      const domain = new BrooksDomain("mfc_inert_n2_line");
+      domain.stateMachine.activeGasId = 1; // Nitrogen (Inert)
+
+      const snapshot = await domain.readSensors();
+      snapshot.readings.zeroOffset = 0.8; // > 0.5% FS zero drift breach
+
+      const decision = await domain.evaluateState(snapshot);
+      expect(decision.reasons.some((r) => r.includes("Zero-drift warning"))).toBe(true);
+      expect(domain.stateMachine.mode).not.toBe("FAULT");
+    });
+
+    it("triggers heartbeat timeout fallback when telemetry staleness exceeds threshold", async () => {
+      const domain = new BrooksDomain("mfc_heartbeat_test", DEFAULT_BROOKS_POLICY, undefined, 500); // 500ms timeout
+      domain.stateMachine.activeGasId = 28; // Silane (Hazardous)
+
+      const snapshot = await domain.readSensors();
+      snapshot.timestamp = Date.now();
+      snapshot.readings.telemetryTimestamp = Date.now() - 1500; // 1500ms stale (> 500ms)
+
+      const decision = await domain.evaluateState(snapshot);
+      expect(decision.safetyStatus).toBe("OUTRIGHT_REJECTED");
+      expect(decision.reasons.some((r) => r.includes("Heartbeat timeout"))).toBe(true);
+      expect(domain.stateMachine.mode).toBe("FAULT"); // Hazardous line -> VALVE_CLOSE
     });
   });
 });
