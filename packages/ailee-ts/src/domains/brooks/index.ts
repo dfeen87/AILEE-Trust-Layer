@@ -110,7 +110,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     const overpressureTrip = Boolean(snapshot.readings.overpressureTrip ?? false);
     const upstreamP = Number(snapshot.readings.upstreamPressure ?? pressure);
     const downstreamP = Number(snapshot.readings.downstreamPressure ?? 0.0);
-    const isPurging = Boolean(snapshot.readings.isPurging ?? false);
+    const isPurging = snapshot.readings.isPurging === true;
 
     let confidencePenalty = 0.0;
     const reasons: string[] = [];
