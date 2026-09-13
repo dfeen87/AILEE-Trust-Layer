@@ -165,7 +165,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
       reasons.push(zeroRes.reason || "Zero drift threshold warning");
     }
 
-    const calculatedConfidence = Math.max(0.0, 1.0 - confidencePenalty);
+const calculatedConfidence = Number.isFinite(snapshot.quality) ? Math.max(0.0, Math.min(1.0, snapshot.quality, 1.0 - confidencePenalty)) : 0.0;
     const decision = await this.pipeline.process(targetSetpoint, calculatedConfidence, [], trustContext);
 
     // Append custom rule reasons if any
