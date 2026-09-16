@@ -1,7 +1,7 @@
 //! Copyright (c) Don Michael Feeney Jr.
 //! Licensed under the MIT License.
 
-import { DeviceStatus, MFCDeviceTelemetry } from "../types/telemetry.js";
+import { DeviceStatus, MFCDeviceTelemetry, validateMFCTelemetry } from "../types/telemetry.js";
 import { DEFAULT_MANIFEST, FieldbusManifest } from "./ethernet_ip.js";
 import { canonicalizeGasId } from "../models/gas_database.js";
 
@@ -47,6 +47,10 @@ export class EtherCATAdapter {
   }
 
   public static serializePDOFrame(telemetry: MFCDeviceTelemetry, manifest: FieldbusManifest = DEFAULT_MANIFEST): ArrayBuffer {
+    const validation = validateMFCTelemetry(telemetry);
+    if (!validation.valid) {
+      throw new Error(`Invalid EtherCAT telemetry: ${validation.errors.join("; ")}`);
+    }
     const buffer = new ArrayBuffer(manifest.frameSizeBytes);
     const view = new DataView(buffer);
     const offsets = manifest.etherCAT.byteOffsets;
