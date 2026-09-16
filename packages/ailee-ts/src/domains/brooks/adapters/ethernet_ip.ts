@@ -3,7 +3,7 @@
 
 import manifestJson from "../configs/sla5800_manifest.json" assert { type: "json" };
 import { canonicalizeGasId } from "../models/gas_database.js";
-import { DeviceStatus, MFCDeviceTelemetry } from "../types/telemetry.js";
+import { DeviceStatus, MFCDeviceTelemetry, validateMFCTelemetry } from "../types/telemetry.js";
 
 export interface FieldbusManifest {
   deviceName: string;
@@ -78,6 +78,10 @@ export class EtherNetIPAdapter {
   }
 
   public static serializeCIPFrame(telemetry: MFCDeviceTelemetry, manifest: FieldbusManifest = DEFAULT_MANIFEST): ArrayBuffer {
+    const validation = validateMFCTelemetry(telemetry);
+    if (!validation.valid) {
+      throw new Error(`Invalid EtherNet/IP telemetry: ${validation.errors.join("; ")}`);
+    }
     const buffer = new ArrayBuffer(manifest.frameSizeBytes);
     const view = new DataView(buffer);
     const offsets = manifest.ethernetIP.byteOffsets;

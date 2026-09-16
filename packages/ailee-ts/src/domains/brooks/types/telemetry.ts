@@ -37,12 +37,12 @@ export function validateMFCTelemetry(data: unknown): { valid: boolean; errors: s
 
   const t = data as Record<string, unknown>;
 
-  if (typeof t.flowRate !== "number" || Number.isNaN(t.flowRate)) errors.push("Invalid or missing flowRate");
-  if (typeof t.setpoint !== "number" || Number.isNaN(t.setpoint)) errors.push("Invalid or missing setpoint");
-  if (typeof t.valvePosition !== "number" || Number.isNaN(t.valvePosition) || t.valvePosition < 0 || t.valvePosition > 100) {
+  if (typeof t.flowRate !== "number" || !Number.isFinite(t.flowRate)) errors.push("Invalid or missing flowRate");
+  if (typeof t.setpoint !== "number" || !Number.isFinite(t.setpoint)) errors.push("Invalid or missing setpoint");
+  if (typeof t.valvePosition !== "number" || !Number.isFinite(t.valvePosition) || t.valvePosition < 0 || t.valvePosition > 100) {
     errors.push("valvePosition must be a number between 0.0 and 100.0%");
   }
-  if (typeof t.temperature !== "number" || Number.isNaN(t.temperature)) errors.push("Invalid or missing temperature");
+  if (typeof t.temperature !== "number" || !Number.isFinite(t.temperature)) errors.push("Invalid or missing temperature");
 if (
   t.gasId === undefined ||
   t.gasId === null ||
@@ -52,9 +52,12 @@ if (
 ) {
   errors.push("gasId must be a non-empty string or number");
 }
-  if (typeof t.zeroOffset !== "number" || Number.isNaN(t.zeroOffset)) errors.push("Invalid or missing zeroOffset");
+  if (typeof t.zeroOffset !== "number" || !Number.isFinite(t.zeroOffset)) errors.push("Invalid or missing zeroOffset");
   if (t.deviceStatus !== "OK" && t.deviceStatus !== "WARN" && t.deviceStatus !== "FAULT") {
     errors.push("deviceStatus must be 'OK', 'WARN', or 'FAULT'");
+  }
+  if (t.statusFlags !== undefined && (typeof t.statusFlags !== "number" || !Number.isInteger(t.statusFlags) || t.statusFlags < 0 || t.statusFlags > 0xffff)) {
+    errors.push("statusFlags must be an unsigned 16-bit integer when provided");
   }
 
   return { valid: errors.length === 0, errors };
@@ -68,11 +71,11 @@ export function validatePressureControllerTelemetry(data: unknown): { valid: boo
 
   const t = data as Record<string, unknown>;
 
-  if (typeof t.pressure !== "number" || Number.isNaN(t.pressure)) errors.push("Invalid or missing pressure");
-  if (typeof t.setpoint !== "number" || Number.isNaN(t.setpoint)) errors.push("Invalid or missing setpoint");
+  if (typeof t.pressure !== "number" || !Number.isFinite(t.pressure)) errors.push("Invalid or missing pressure");
+  if (typeof t.setpoint !== "number" || !Number.isFinite(t.setpoint)) errors.push("Invalid or missing setpoint");
   if (
     typeof t.controlValveOpenPercent !== "number" ||
-    Number.isNaN(t.controlValveOpenPercent) ||
+    !Number.isFinite(t.controlValveOpenPercent) ||
     t.controlValveOpenPercent < 0 ||
     t.controlValveOpenPercent > 100
   ) {
@@ -94,8 +97,8 @@ export function validateUltrasonicTelemetry(data: unknown): { valid: boolean; er
 
   const t = data as Record<string, unknown>;
 
-  if (typeof t.flowRate !== "number" || Number.isNaN(t.flowRate)) errors.push("Invalid or missing flowRate");
-  if (typeof t.signalStrength !== "number" || Number.isNaN(t.signalStrength)) errors.push("Invalid or missing signalStrength");
+  if (typeof t.flowRate !== "number" || !Number.isFinite(t.flowRate)) errors.push("Invalid or missing flowRate");
+  if (typeof t.signalStrength !== "number" || !Number.isFinite(t.signalStrength)) errors.push("Invalid or missing signalStrength");
   if (typeof t.bubbleDetect !== "boolean") errors.push("bubbleDetect must be a boolean");
   if (t.deviceStatus !== "OK" && t.deviceStatus !== "WARN" && t.deviceStatus !== "FAULT") {
     errors.push("deviceStatus must be 'OK', 'WARN', or 'FAULT'");

@@ -48,6 +48,8 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       const res = validateMFCTelemetry(invalidMFC);
       expect(res.valid).toBe(false);
       expect(res.errors.length).toBeGreaterThan(0);
+
+      expect(validateMFCTelemetry({ ...validMFC, flowRate: Infinity }).valid).toBe(false);
     });
 
     it("validates PressureControllerTelemetry correctly", () => {
@@ -174,6 +176,8 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       expect(excessiveRes.passed).toBe(false);
       expect(excessiveRes.status).toBe("OUTRIGHT_REJECTED");
       expect(excessiveRes.reason).toContain("Ramp rate breach");
+
+      expect(guard.evaluate(0.0, Infinity, 100.0, 100).passed).toBe(false);
     });
 
     it("ZeroDriftGuard issues borderline warning when zero offset exceeds ±0.5%", () => {
@@ -199,6 +203,8 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       const deltaRes = deltaGuard.evaluateDeltaP(100.0, 10.0, true);
       expect(deltaRes.passed).toBe(false);
       expect(deltaRes.recommendedAction).toBe("VALVE_CLOSE");
+      expect(pGuard.evaluateContainment(NaN).passed).toBe(false);
+      expect(deltaGuard.evaluateDeltaP(Infinity, 10.0, true).passed).toBe(false);
     });
 
     it("GasSafetyGuard enforces gas flow limits and purge requirements for hazardous lines", () => {
@@ -222,6 +228,9 @@ describe("Brooks Instrument Domain Unit Tests", () => {
 
       const purgedGasChange = gGuard.evaluateGasChange(1, 28, 0.0, true);
       expect(purgedGasChange.passed).toBe(true);
+      expect(gGuard.evaluateFlowLimit(1, -1.0).passed).toBe(false);
+      expect(gGuard.evaluateGasChange(1, 28, NaN, true).passed).toBe(false);
+      expect(gGuard.evaluateGasChange("UNKNOWN_GAS", 1, 0.0, true).passed).toBe(false);
     });
   });
 
@@ -298,6 +307,15 @@ describe("Brooks Instrument Domain Unit Tests", () => {
 
       expect(() => EtherNetIPAdapter.serializeCIPFrame(telemetry, manifestJson as any)).toThrow("Unknown or unregistered gas ID");
       expect(() => EtherCATAdapter.serializePDOFrame(telemetry, manifestJson as any)).toThrow("Unknown or unregistered gas ID");
+    });
+
+    it("rejects non-finite process values and invalid status flags in serializers", () => {
+      const telemetry: MFCDeviceTelemetry = {
+        flowRate: Infinity, setpoint: 1.0, valvePosition: 10.0, temperature: 21.0,
+        zeroOffset: 0.0, gasId: 1, deviceStatus: "OK", statusFlags: 0,
+      };
+      expect(() => EtherNetIPAdapter.serializeCIPFrame(telemetry)).toThrow("Invalid EtherNet/IP telemetry");
+      expect(() => EtherCATAdapter.serializePDOFrame({ ...telemetry, flowRate: 1.0, statusFlags: -1 })).toThrow("Invalid EtherCAT telemetry");
     });
 
     it("EtherCAT PDO adapter uses SLA5800 manifest for Little-Endian frame conversion", () => {
@@ -404,6 +422,34 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       const decision = await domain.evaluateState(snapshot);
       expect(decision.safetyStatus).toBe("OUTRIGHT_REJECTED");
       expect(decision.reasons.some((r) => r.includes("Invalid pressure telemetry"))).toBe(true);
+    });
+
+    it("fails closed for malformed process values and future telemetry timestamps", async () => {
+      const domain = new BrooksDomain("mfc_invalid_process_test");
+      const now = Date.now();
+      const snapshot = {
+        timestamp: now,
+        deviceId: "mfc_invalid_process_test",
+        quality: 0.99,
+        readings: {
+          flowRate: 0.0,
+          setpoint: Number.NaN,
+          gasId: 1,
+          zeroOffset: 0.0,
+          pressure: 10.0,
+          upstreamPressure: 10.0,
+          downstreamPressure: 10.0,
+          telemetryTimestamp: now + 1,
+          previousTelemetryTimestamp: now - 100,
+          previousSetpoint: 0.0,
+        },
+      };
+
+      const decision = await domain.evaluateState(snapshot);
+      expect(decision.safetyStatus).toBe("OUTRIGHT_REJECTED");
+      expect(decision.value).toBe(0.0);
+      expect(decision.reasons.some((r) => r.includes("Invalid telemetry timestamp"))).toBe(true);
+      expect(decision.reasons.some((r) => r.includes("Invalid flow, setpoint"))).toBe(true);
     });
 
     it("captures zero-drift warning for inert gas line without triggering hazardous close", async () => {

@@ -27,6 +27,10 @@ export class GasSafetyGuard {
       };
     }
 
+    if (!Number.isFinite(targetSetpointSlpm) || targetSetpointSlpm < 0 || !Number.isFinite(gas.defaultMaxFlowSlpm) || gas.defaultMaxFlowSlpm < 0) {
+      return { passed: false, status: "OUTRIGHT_REJECTED", confidencePenalty: 1.0, reason: "Invalid gas flow setpoint or gas flow limit", recommendedAction: "VALVE_CLOSE" };
+    }
+
     if (targetSetpointSlpm > gas.defaultMaxFlowSlpm) {
       const isHaz = isHazardousGas(gas);
       return {
@@ -71,6 +75,20 @@ export class GasSafetyGuard {
         reason: `Unknown requested gas ID: ${requestedGasId}`,
         recommendedAction: "VALVE_CLOSE",
       };
+    }
+
+    if (!currentGas) {
+      return {
+        passed: false,
+        status: "OUTRIGHT_REJECTED",
+        confidencePenalty: 1.0,
+        reason: `Unknown current gas ID: ${currentGasId}`,
+        recommendedAction: "VALVE_CLOSE",
+      };
+    }
+
+    if (!Number.isFinite(currentFlowRate) || currentFlowRate < 0) {
+      return { passed: false, status: "OUTRIGHT_REJECTED", confidencePenalty: 1.0, reason: "Invalid current flow rate during gas transition", recommendedAction: "VALVE_CLOSE" };
     }
 
     // Changing gas while active flow is present is unsafe

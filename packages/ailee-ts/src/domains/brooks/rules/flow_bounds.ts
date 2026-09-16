@@ -23,12 +23,13 @@ export class RampRateGuard {
    * e.g., max 20% SLPM jump per 100ms.
    */
   public evaluate(currentSetpoint: number, newSetpoint: number, fullScaleFlow: number, durationMs = 100): RuleCheckResult {
-    if (fullScaleFlow <= 0) {
+    if (![currentSetpoint, newSetpoint, fullScaleFlow, durationMs, this.policy.rampRate.maxPercentJumpPer100ms, this.policy.rampRate.timeWindowMs].every(Number.isFinite)
+      || fullScaleFlow <= 0 || durationMs <= 0 || this.policy.rampRate.maxPercentJumpPer100ms < 0 || this.policy.rampRate.timeWindowMs <= 0) {
       return {
         passed: false,
         status: "OUTRIGHT_REJECTED",
         confidencePenalty: 1.0,
-        reason: "Invalid Full Scale flow rate specified (must be > 0)",
+        reason: "Invalid ramp-rate input or policy configuration",
         recommendedAction: "VALVE_HOLD",
       };
     }
@@ -67,6 +68,9 @@ export class ZeroDriftGuard {
    * If zero-drift exceeds ±0.5% of Full Scale when setpoint is 0, issue POLICY_DEGRADED warning.
    */
   public evaluate(setpoint: number, zeroOffsetPercentFS: number): RuleCheckResult {
+    if (![setpoint, zeroOffsetPercentFS, this.policy.zeroDrift.maxDriftPercentFS].every(Number.isFinite) || this.policy.zeroDrift.maxDriftPercentFS < 0) {
+      return { passed: false, status: "OUTRIGHT_REJECTED", confidencePenalty: 1.0, reason: "Invalid zero-drift input or policy configuration", recommendedAction: "VALVE_HOLD" };
+    }
     if (this.policy.zeroDrift.requireWarningOnExceed && setpoint === 0 && Math.abs(zeroOffsetPercentFS) > this.policy.zeroDrift.maxDriftPercentFS) {
       return {
         passed: false,

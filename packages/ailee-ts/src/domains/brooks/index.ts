@@ -106,28 +106,36 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
    * Deterministic synchronous evaluation (< 2ms execution budget).
    */
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const now = snapshot.timestamp || Date.now();
-    const telemetryTs = Number(snapshot.readings.telemetryTimestamp ?? snapshot.timestamp ?? now);
-    const flowRate = Number(snapshot.readings.flowRate ?? 0.0);
+    const now = Number.isFinite(snapshot.timestamp) ? snapshot.timestamp : Date.now();
+    const telemetryTs = Number(snapshot.readings.telemetryTimestamp ?? snapshot.timestamp);
+    const flowRate = Number(snapshot.readings.flowRate);
     const targetSetpoint = Number(snapshot.readings.setpoint ?? flowRate);
     const gasId = (snapshot.readings.gasId as string | number) ?? this.stateMachine.activeGasId;
-    const currentSetpoint = Number(snapshot.readings.previousSetpoint ?? this.stateMachine.previousSetpoint ?? this.stateMachine.currentSetpoint);
-    const zeroOffset = Number(snapshot.readings.zeroOffset ?? 0.0);
-    const pressure = Number(snapshot.readings.pressure ?? 0.0);
+    const currentSetpoint = Number(snapshot.readings.previousSetpoint ?? this.stateMachine.previousSetpoint);
+    const zeroOffset = Number(snapshot.readings.zeroOffset);
+    const pressure = Number(snapshot.readings.pressure);
     const overpressureTrip = Boolean(snapshot.readings.overpressureTrip ?? false);
     const upstreamP = Number(snapshot.readings.upstreamPressure ?? pressure);
     const downstreamP = Number(snapshot.readings.downstreamPressure ?? 0.0);
     const isPurging = snapshot.readings.isPurging === true;
-    const previousTelemetryTs = Number(snapshot.readings.previousTelemetryTimestamp ?? this.stateMachine.previousTelemetryTimestamp ?? telemetryTs);
-    const sampleIntervalMs = Math.max(1, now - previousTelemetryTs);
+    const previousTelemetryTs = Number(snapshot.readings.previousTelemetryTimestamp ?? this.stateMachine.previousTelemetryTimestamp);
+    const sampleIntervalMs = Number.isFinite(previousTelemetryTs) ? Math.max(1, now - previousTelemetryTs) : Number.NaN;
 
     let confidencePenalty = 0.0;
     const reasons: string[] = [];
 
     // 0. Heartbeat Timeout / Telemetry Drop Check
-    if (now - telemetryTs > this.heartbeatTimeoutMs) {
+    if (!Number.isFinite(telemetryTs) || telemetryTs > now || !Number.isFinite(this.heartbeatTimeoutMs) || this.heartbeatTimeoutMs < 0) {
+      confidencePenalty = 1.0;
+      reasons.push("Invalid telemetry timestamp or heartbeat timeout configuration");
+    } else if (now - telemetryTs > this.heartbeatTimeoutMs) {
       confidencePenalty = 1.0;
       reasons.push(`Heartbeat timeout: telemetry stale by ${(now - telemetryTs).toFixed(0)}ms (limit ${this.heartbeatTimeoutMs}ms)`);
+    }
+
+    if (![flowRate, targetSetpoint, currentSetpoint, zeroOffset, sampleIntervalMs].every(Number.isFinite) || flowRate < 0 || targetSetpoint < 0 || currentSetpoint < 0) {
+      confidencePenalty = 1.0;
+      reasons.push("Invalid flow, setpoint, zero-offset, or telemetry interval");
     }
 
     // 1. Pressure Containment Check
@@ -189,7 +197,10 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     const calculatedConfidence = Number.isFinite(snapshot.quality) ? Math.max(0.0, Math.min(1.0, snapshot.quality, 1.0 - confidencePenalty)) : 0.0;
     const calibrationMetadata = trustContext?.calibration as CalibrationMetadata | undefined;
     const calibration = this.calibrationLayer.calibrate(calculatedConfidence, calibrationMetadata);
-    const decision = await this.pipeline.process(targetSetpoint, calibration.confidence, [], trustContext);
+    // Never pass an invalid process target into the generic pipeline: use its
+    // configured safe fallback path after the fail-closed confidence penalty.
+    const safeTargetSetpoint = Number.isFinite(targetSetpoint) && targetSetpoint >= 0 ? targetSetpoint : 0.0;
+    const decision = await this.pipeline.process(safeTargetSetpoint, calibration.confidence, [], trustContext);
     if (calibration.event !== "DISABLED") {
       decision.reasons = [...decision.reasons, ...calibration.reasons];
       decision.context = { ...trustContext, calibration: { ...calibration } };

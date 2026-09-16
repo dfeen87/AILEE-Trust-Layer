@@ -15,6 +15,9 @@ export class PressureGuard {
    * Checks current line pressure against max allowable containment pressure.
    */
   public evaluateContainment(currentPressurePsi: number, overpressureTrip = false): RuleCheckResult {
+    if (!Number.isFinite(currentPressurePsi) || !Number.isFinite(this.policy.pressure.maxOperatingPressurePsi) || this.policy.pressure.maxOperatingPressurePsi < 0) {
+      return { passed: false, status: "OUTRIGHT_REJECTED", confidencePenalty: 1.0, reason: "Invalid pressure input or policy configuration", recommendedAction: "VALVE_CLOSE" };
+    }
     if (overpressureTrip || currentPressurePsi > this.policy.pressure.maxOperatingPressurePsi) {
       return {
         passed: false,
@@ -44,6 +47,10 @@ export class PressureDeltaGuard {
    * Blocks valve opening commands if upstream/downstream pressure differential exceeds device operating limits.
    */
   public evaluateDeltaP(upstreamPressurePsi: number, downstreamPressurePsi: number, requestingValveOpen: boolean): RuleCheckResult {
+    if (![upstreamPressurePsi, downstreamPressurePsi, this.policy.pressure.maxDifferentialPressurePsi].every(Number.isFinite)
+      || this.policy.pressure.maxDifferentialPressurePsi < 0) {
+      return { passed: false, status: "OUTRIGHT_REJECTED", confidencePenalty: 1.0, reason: "Invalid differential-pressure input or policy configuration", recommendedAction: "VALVE_CLOSE" };
+    }
     const deltaP = Math.abs(upstreamPressurePsi - downstreamPressurePsi);
 
     if (requestingValveOpen && deltaP > this.policy.pressure.maxDifferentialPressurePsi) {
