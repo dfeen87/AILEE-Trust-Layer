@@ -36,6 +36,46 @@ export interface AileeConfig {
   defaultFallbackValue?: number;
 }
 
+/**
+ * Optional V8.1 confidence refinement settings. The layer is disabled by
+ * default so existing V8 pipeline callers retain their exact confidence path.
+ */
+export interface CalibrationConfig {
+  enabled: boolean;
+  acceptanceThreshold: number;
+  uncertaintyBand: number;
+  maxGraceMargin: number;
+  consensusThreshold: number;
+  minimumPeerCount: number;
+}
+
+export interface CalibrationMetadata {
+  graceMargin?: number;
+  peerConsensus?: {
+    agreement: number;
+    peerCount: number;
+  };
+}
+
+export interface CalibrationResult {
+  confidence: number;
+  applied: boolean;
+  fallbackUsed: boolean;
+  event: "DISABLED" | "OUTSIDE_UNCERTAINTY_BAND" | "GRACE_APPLIED" | "CONSENSUS_NOT_MET" | "INVALID_INPUT";
+  thresholdDecision: "ABOVE_THRESHOLD" | "UNCERTAINTY_ZONE" | "BELOW_UNCERTAINTY_ZONE" | "BASELINE";
+  consensusChecked: boolean;
+  reasons: string[];
+}
+
+export const DEFAULT_CALIBRATION_CONFIG: CalibrationConfig = {
+  enabled: false,
+  acceptanceThreshold: 0.95,
+  uncertaintyBand: 0.05,
+  maxGraceMargin: 0.02,
+  consensusThreshold: 0.8,
+  minimumPeerCount: 2,
+};
+
 export const DEFAULT_CONFIG: AileeConfig = {
   borderlineLow: 0.7,
   borderlineHigh: 0.9,

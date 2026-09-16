@@ -167,6 +167,10 @@ State machine integration is handled by `DeviceStateMachine` and `writeActuators
 
 ## 7) TypeScript API & Usage Examples
 
+## 7.0 V8.1 Optional Calibration Layer
+
+V8.1 adds an opt-in confidence calibration wrapper. It refines only an uncertainty-zone confidence when explicit peer-consensus metadata qualifies; the V8 guard and pipeline logic remain unchanged. See [`docs/CALIBRATION_LAYER.md`](../../../../../docs/CALIBRATION_LAYER.md) for configuration, failure semantics, and audit fields.
+
 ## 7.1 Initialize `BrooksDomain`
 
 ```ts

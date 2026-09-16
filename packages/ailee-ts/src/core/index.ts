@@ -4,6 +4,7 @@
 export * from "./types.js";
 export * from "./trustScorer.js";
 export * from "./graceLayer.js";
+export * from "./calibration.js";
 export * from "./consensusEngine.js";
 export * from "./fallbackEngine.js";
 export * from "./routingMembrane.js";

@@ -2,7 +2,8 @@
 //! Licensed under the MIT License.
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
-import { AileeConfig, DecisionResult } from "../../core/types.js";
+import { CalibrationLayer } from "../../core/calibration.js";
+import { AileeConfig, CalibrationConfig, CalibrationMetadata, DecisionResult } from "../../core/types.js";
 import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
 import { EtherCATAdapter } from "./adapters/ethercat.js";
 import { EtherNetIPAdapter } from "./adapters/ethernet_ip.js";
@@ -49,6 +50,7 @@ export const BROOKS_PRESETS: Record<string, AileeConfig> = {
 export class BrooksHardwareAdapter implements DomainHardwareAdapter {
   public domainName = "brooks";
   private pipeline: AileeTrustPipeline;
+  private calibrationLayer: CalibrationLayer;
   private policy: BrooksSafetyPolicy;
   public stateMachine: DeviceStateMachine;
   public heartbeatTimeoutMs: number = 1000; // 1000ms maximum telemetry staleness window
@@ -63,9 +65,11 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     deviceId = "mfc_brooks_sla5800",
     policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY,
     aileeConfig: AileeConfig = BROOKS_PRESETS.STRICT_PHYSICAL,
-    heartbeatTimeoutMs = 1000
+    heartbeatTimeoutMs = 1000,
+    calibrationConfig: Partial<CalibrationConfig> = {}
   ) {
     this.pipeline = new AileeTrustPipeline(aileeConfig);
+    this.calibrationLayer = new CalibrationLayer({ acceptanceThreshold: aileeConfig.borderlineHigh, ...calibrationConfig });
     this.policy = policy;
     this.heartbeatTimeoutMs = heartbeatTimeoutMs;
     this.stateMachine = new DeviceStateMachine(deviceId, 100.0, 1); // Default N2
@@ -182,8 +186,14 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
       reasons.push(zeroRes.reason || "Zero drift threshold warning");
     }
 
-const calculatedConfidence = Number.isFinite(snapshot.quality) ? Math.max(0.0, Math.min(1.0, snapshot.quality, 1.0 - confidencePenalty)) : 0.0;
-    const decision = await this.pipeline.process(targetSetpoint, calculatedConfidence, [], trustContext);
+    const calculatedConfidence = Number.isFinite(snapshot.quality) ? Math.max(0.0, Math.min(1.0, snapshot.quality, 1.0 - confidencePenalty)) : 0.0;
+    const calibrationMetadata = trustContext?.calibration as CalibrationMetadata | undefined;
+    const calibration = this.calibrationLayer.calibrate(calculatedConfidence, calibrationMetadata);
+    const decision = await this.pipeline.process(targetSetpoint, calibration.confidence, [], trustContext);
+    if (calibration.event !== "DISABLED") {
+      decision.reasons = [...decision.reasons, ...calibration.reasons];
+      decision.context = { ...trustContext, calibration: { ...calibration } };
+    }
 
     // Append custom rule reasons if any
     if (reasons.length > 0) {
