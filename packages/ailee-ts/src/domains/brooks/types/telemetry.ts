@@ -12,6 +12,7 @@ export interface MFCDeviceTelemetry {
   zeroOffset: number; // Zero calibration offset (% of Full Scale)
   deviceStatus: DeviceStatus;
   statusFlags?: number; // Bitfield flags from fieldbus
+  predictiveScore?: number; // 0 to 255 byte representing predictive stability risk score
 }
 
 export interface PressureControllerTelemetry {
@@ -58,6 +59,9 @@ if (
   }
   if (t.statusFlags !== undefined && (typeof t.statusFlags !== "number" || !Number.isInteger(t.statusFlags) || t.statusFlags < 0 || t.statusFlags > 0xffff)) {
     errors.push("statusFlags must be an unsigned 16-bit integer when provided");
+  }
+  if (t.predictiveScore !== undefined && (typeof t.predictiveScore !== "number" || !Number.isInteger(t.predictiveScore) || t.predictiveScore < 0 || t.predictiveScore > 255)) {
+    errors.push("predictiveScore must be an unsigned 8-bit integer (0-255) when provided");
   }
 
   return { valid: errors.length === 0, errors };

@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-8.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-8.2.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -748,6 +748,9 @@ AILEE provides deterministic governance for AI-driven data center automation.
 
 > Brooks Instrument was not acknoledged prior to the v8 and v8.1 releases. This was indpendent coding to show appreciation for what they do.
 
+AILEE v8.3 introduces adaptive calibration behavior and predictive stability scoring to the Brooks physical domain.
+The trust pipeline now anticipates degraded or hazardous states before they occur, tightening guard behavior and improving safety determinism. All adaptive logic is strictly hardened and reverts to static v8.2 behavior when telemetry is malformed or insufficient.
+
 AILEE provides deterministic safety bounds enforcement, telemetry ingestion, and fieldbus payload parsing for **Brooks Instrument physical hardware** (Mass Flow Controllers like the SLA5800 series, Pressure Controllers, and Ultrasonic Flow Meters) in semiconductor fabrication and chemical process control lines.
 
 ```
@@ -1365,9 +1368,9 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v8.0.0 (Production/Stable)
+### Current: v8.2.0 (Production/Stable)
 
-AILEE Trust Layer **v8.0.0** is production-ready with enterprise features:
+AILEE Trust Layer **v8.2.0** is production-ready with enterprise features:
 
 ✅ 18 domain governance layers
 ✅ 9 domain-optimized presets  
@@ -1466,7 +1469,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {8.0.0},
+  version = {8.2.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1511,7 +1514,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v8.0.0**
+**AILEE Trust Layer v8.2.0**
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
