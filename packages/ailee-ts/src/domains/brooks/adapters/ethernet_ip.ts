@@ -18,6 +18,7 @@ export interface FieldbusManifest {
       zeroOffset: number;
       gasId: number;
       statusFlags: number;
+      predictiveScore?: number;
     };
   };
   etherCAT: {
@@ -30,6 +31,7 @@ export interface FieldbusManifest {
       zeroOffset: number;
       gasId: number;
       statusFlags: number;
+      predictiveScore?: number;
     };
   };
 }
@@ -58,6 +60,11 @@ export class EtherNetIPAdapter {
     const gasId = view.getUint16(offsets.gasId, true);
     const statusFlags = view.getUint16(offsets.statusFlags, true);
 
+    let predictiveScore: number | undefined;
+    if (offsets.predictiveScore !== undefined && buffer.byteLength > offsets.predictiveScore) {
+      predictiveScore = view.getUint8(offsets.predictiveScore);
+    }
+
     let deviceStatus: DeviceStatus = "OK";
     if ((statusFlags & 0x8000) !== 0) {
       deviceStatus = "FAULT";
@@ -74,6 +81,7 @@ export class EtherNetIPAdapter {
       gasId,
       deviceStatus,
       statusFlags,
+      predictiveScore,
     };
   }
 
@@ -97,6 +105,11 @@ export class EtherNetIPAdapter {
     if (telemetry.deviceStatus === "FAULT") flags |= 0x8000;
     if (telemetry.deviceStatus === "WARN") flags |= 0x4000;
     view.setUint16(offsets.statusFlags, flags, true);
+
+    if (offsets.predictiveScore !== undefined && buffer.byteLength > offsets.predictiveScore) {
+      const predScore = telemetry.predictiveScore !== undefined ? Math.min(255, Math.max(0, Math.round(telemetry.predictiveScore))) : 0;
+      view.setUint8(offsets.predictiveScore, predScore);
+    }
 
     return buffer;
   }

@@ -9,6 +9,8 @@ import { EtherCATAdapter } from "./adapters/ethercat.js";
 import { EtherNetIPAdapter } from "./adapters/ethernet_ip.js";
 import { DeviceStateMachine } from "./models/device_state.js";
 import { GAS_DATABASE, isHazardousGas, lookupGas } from "./models/gas_database.js";
+import { PredictiveStabilityLayer, PredictiveResult } from "./models/predictive_stability.js";
+import { RollingTelemetryWindow, SelfTuningCalibrationModule } from "./models/telemetry_window.js";
 import { RampRateGuard, ZeroDriftGuard } from "./rules/flow_bounds.js";
 import { GasSafetyGuard } from "./rules/gas_compatibility.js";
 import { PressureDeltaGuard, PressureGuard } from "./rules/pressure_guard.js";
@@ -28,6 +30,8 @@ export * from "./types/commands.js";
 export * from "./types/policy.js";
 export * from "./models/gas_database.js";
 export * from "./models/device_state.js";
+export * from "./models/telemetry_window.js";
+export * from "./models/predictive_stability.js";
 export * from "./rules/flow_bounds.js";
 export * from "./rules/pressure_guard.js";
 export * from "./rules/gas_compatibility.js";
@@ -61,6 +65,11 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
   private pressureDeltaGuard: PressureDeltaGuard;
   private gasSafetyGuard: GasSafetyGuard;
 
+  public telemetryWindow: RollingTelemetryWindow;
+  public selfTuningCalibration: SelfTuningCalibrationModule;
+  public predictiveStability: PredictiveStabilityLayer;
+  public lastPredictiveScoreByte: number = 0;
+
   constructor(
     deviceId = "mfc_brooks_sla5800",
     policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY,
@@ -79,6 +88,10 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     this.pressureGuard = new PressureGuard(this.policy);
     this.pressureDeltaGuard = new PressureDeltaGuard(this.policy);
     this.gasSafetyGuard = new GasSafetyGuard(this.policy);
+
+    this.telemetryWindow = new RollingTelemetryWindow(20);
+    this.selfTuningCalibration = new SelfTuningCalibrationModule(aileeConfig.borderlineHigh, 0.05, aileeConfig.consensusThreshold);
+    this.predictiveStability = new PredictiveStabilityLayer();
   }
 
   public async readSensors(): Promise<SensorSnapshot> {
@@ -124,6 +137,54 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     let confidencePenalty = 0.0;
     const reasons: string[] = [];
 
+    // Add telemetry sample to rolling window
+    if (Number.isFinite(telemetryTs) && Number.isFinite(flowRate) && Number.isFinite(pressure) && Number.isFinite(zeroOffset)) {
+      this.telemetryWindow.addSample({
+        timestamp: telemetryTs,
+        flowRate,
+        setpoint: targetSetpoint,
+        pressure,
+        zeroOffset,
+        isDegraded: this.stateMachine.mode !== "NORMAL",
+      });
+    }
+
+    // Compute rolling statistics & predictive stability
+    const stats = this.telemetryWindow.getStats();
+    const predictiveRes = this.predictiveStability.evaluatePredictiveState(stats, [flowRate]);
+
+    // Hardening Pass: Validate inputs and predictive outputs
+    const isHardenedDegraded =
+      !stats.isValid ||
+      stats.count < 5 ||
+      !predictiveRes.isValid ||
+      predictiveRes.isMonotonicViolation ||
+      !Number.isFinite(predictiveRes.score) ||
+      predictiveRes.score < 0 ||
+      predictiveRes.score > 1.0;
+
+    let tighteningFactor = 1.0;
+    let selfTuningEvent = "STABLE";
+
+    if (isHardenedDegraded) {
+      selfTuningEvent = "SELF_TUNING_DEGRADED";
+      this.lastPredictiveScoreByte = 0;
+      reasons.push("SELF_TUNING_DEGRADED: Telemetry window sparse, non-finite, or predictive score invalid; reverting to static v8.2 behavior");
+    } else {
+      tighteningFactor = predictiveRes.tighteningFactor;
+      this.lastPredictiveScoreByte = predictiveRes.scoreByte;
+
+      const selfTuning = this.selfTuningCalibration.computeTuning(stats);
+      if (selfTuning.reasons.length > 0) {
+        reasons.push(...selfTuning.reasons);
+      }
+
+      if (predictiveRes.reasons.length > 0) {
+        reasons.push(...predictiveRes.reasons);
+      }
+      selfTuningEvent = predictiveRes.state;
+    }
+
     // 0. Heartbeat Timeout / Telemetry Drop Check
     if (!Number.isFinite(telemetryTs) || telemetryTs > now || !Number.isFinite(this.heartbeatTimeoutMs) || this.heartbeatTimeoutMs < 0) {
       confidencePenalty = 1.0;
@@ -143,7 +204,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
       confidencePenalty = 1.0;
       reasons.push("Invalid pressure telemetry: non-finite pressure value");
     } else {
-      const pressureRes = this.pressureGuard.evaluateContainment(pressure, overpressureTrip);
+      const pressureRes = this.pressureGuard.evaluateContainment(pressure, overpressureTrip, tighteningFactor);
       if (!pressureRes.passed) {
         confidencePenalty += pressureRes.confidencePenalty;
         reasons.push(pressureRes.reason || "Pressure containment check failed");
@@ -155,7 +216,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
       confidencePenalty = 1.0;
       reasons.push("Invalid pressure telemetry: non-finite upstream/downstream pressure value");
     } else {
-      const deltaRes = this.pressureDeltaGuard.evaluateDeltaP(upstreamP, downstreamP, targetSetpoint > 0);
+      const deltaRes = this.pressureDeltaGuard.evaluateDeltaP(upstreamP, downstreamP, targetSetpoint > 0, tighteningFactor);
       if (!deltaRes.passed) {
         confidencePenalty += deltaRes.confidencePenalty;
         reasons.push(deltaRes.reason || "Delta pressure limit exceeded");
@@ -163,14 +224,14 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     }
 
     // 3. Ramp Rate Ramp Check
-    const rampRes = this.rampGuard.evaluate(currentSetpoint, targetSetpoint, this.stateMachine.fullScaleFlowSlpm, sampleIntervalMs);
+    const rampRes = this.rampGuard.evaluate(currentSetpoint, targetSetpoint, this.stateMachine.fullScaleFlowSlpm, sampleIntervalMs, tighteningFactor);
     if (!rampRes.passed) {
       confidencePenalty += rampRes.confidencePenalty;
       reasons.push(rampRes.reason || "Ramp rate limit breached");
     }
 
     // 4. Gas Safety Check
-    const gasRes = this.gasSafetyGuard.evaluateFlowLimit(gasId, targetSetpoint);
+    const gasRes = this.gasSafetyGuard.evaluateFlowLimit(gasId, targetSetpoint, tighteningFactor);
     if (!gasRes.passed) {
       confidencePenalty += gasRes.confidencePenalty;
       reasons.push(gasRes.reason || "Gas flow safety threshold breached");
@@ -188,10 +249,16 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     }
 
     // 6. Zero Drift Warning
-    const zeroRes = this.zeroDriftGuard.evaluate(targetSetpoint, zeroOffset);
+    const zeroRes = this.zeroDriftGuard.evaluate(targetSetpoint, zeroOffset, tighteningFactor);
     if (!zeroRes.passed) {
       confidencePenalty += zeroRes.confidencePenalty;
       reasons.push(zeroRes.reason || "Zero drift threshold warning");
+    }
+
+    // 7. Pre-emptive Predictive State Trigger
+    if (!isHardenedDegraded && predictiveRes.state === "HAZARDOUS_SOON" && predictiveRes.score >= 0.85) {
+      confidencePenalty = Math.max(confidencePenalty, 1.0);
+      reasons.push(`Pre-emptive override: predictive risk score (${predictiveRes.score.toFixed(2)}) breached hazardous threshold (0.85); triggering early valve protection`);
     }
 
     const calculatedConfidence = Number.isFinite(snapshot.quality) ? Math.max(0.0, Math.min(1.0, snapshot.quality, 1.0 - confidencePenalty)) : 0.0;
@@ -203,7 +270,9 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     const decision = await this.pipeline.process(safeTargetSetpoint, calibration.confidence, [], trustContext);
     if (calibration.event !== "DISABLED") {
       decision.reasons = [...decision.reasons, ...calibration.reasons];
-      decision.context = { ...trustContext, calibration: { ...calibration } };
+      decision.context = { ...trustContext, calibration: { ...calibration }, selfTuningEvent, predictiveScoreByte: this.lastPredictiveScoreByte };
+    } else {
+      decision.context = { ...trustContext, selfTuningEvent, predictiveScoreByte: this.lastPredictiveScoreByte };
     }
 
     // Append custom rule reasons if any
