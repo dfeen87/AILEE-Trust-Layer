@@ -57,40 +57,6 @@ export interface CalibrationMetadata {
   };
 }
 
-export interface TelemetrySample {
-  value: number;
-  isDegraded?: boolean;
-  timestamp?: number;
-}
-
-export interface RollingWindowStats {
-  mean: number;
-  variance: number;
-  stdDev: number;
-  degradationFrequency: number;
-  sampleCount: number;
-}
-
-export interface SelfTuningCalibrationConfig extends CalibrationConfig {
-  windowSize: number;
-  minSamples: number;
-  varianceSensitivity: number;
-  degradationSensitivity: number;
-}
-
-export const DEFAULT_SELF_TUNING_CONFIG: SelfTuningCalibrationConfig = {
-  enabled: false,
-  acceptanceThreshold: 0.95,
-  uncertaintyBand: 0.05,
-  maxGraceMargin: 0.02,
-  consensusThreshold: 0.8,
-  minimumPeerCount: 2,
-  windowSize: 20,
-  minSamples: 5,
-  varianceSensitivity: 0.5,
-  degradationSensitivity: 0.2,
-};
-
 export interface CalibrationResult {
   confidence: number;
   applied: boolean;

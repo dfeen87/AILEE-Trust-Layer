@@ -1,4 +1,4 @@
-# Brooks Domain Technical Manual v8.3 (`@ailee/trust-layer`)
+# Brooks Domain Technical Manual (`@ailee/trust-layer`)
 
 ## 1) Executive Overview
 

@@ -2,7 +2,7 @@
 //! Licensed under the MIT License.
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
-import { CalibrationLayer, SelfTuningCalibrationModule } from "../../core/calibration.js";
+import { CalibrationLayer } from "../../core/calibration.js";
 import { AileeConfig, CalibrationConfig, CalibrationMetadata, DecisionResult } from "../../core/types.js";
 import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
 import { EtherCATAdapter } from "./adapters/ethercat.js";
@@ -12,7 +12,6 @@ import { GAS_DATABASE, isHazardousGas, lookupGas } from "./models/gas_database.j
 import { RampRateGuard, ZeroDriftGuard } from "./rules/flow_bounds.js";
 import { GasSafetyGuard } from "./rules/gas_compatibility.js";
 import { PressureDeltaGuard, PressureGuard } from "./rules/pressure_guard.js";
-import { PredictiveStabilityLayer } from "./rules/predictive_stability.js";
 import { ActuationCommand, validateActuationCommand } from "./types/commands.js";
 import { BrooksSafetyPolicy, DEFAULT_BROOKS_POLICY } from "./types/policy.js";
 import {
@@ -32,11 +31,8 @@ export * from "./models/device_state.js";
 export * from "./rules/flow_bounds.js";
 export * from "./rules/pressure_guard.js";
 export * from "./rules/gas_compatibility.js";
-export * from "./rules/predictive_stability.js";
 export * from "./adapters/ethernet_ip.js";
 export * from "./adapters/ethercat.js";
-
-export const BROOKS_VERSION = "8.3.0";
 
 export const BROOKS_PRESETS: Record<string, AileeConfig> = {
   STRICT_PHYSICAL: {
@@ -55,9 +51,6 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
   public domainName = "brooks";
   private pipeline: AileeTrustPipeline;
   private calibrationLayer: CalibrationLayer;
-  private selfTuningModule: SelfTuningCalibrationModule;
-  private predictiveLayer: PredictiveStabilityLayer;
-  private telemetryHistory: number[] = [];
   private policy: BrooksSafetyPolicy;
   public stateMachine: DeviceStateMachine;
   public heartbeatTimeoutMs: number = 1000; // 1000ms maximum telemetry staleness window
@@ -77,12 +70,6 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
   ) {
     this.pipeline = new AileeTrustPipeline(aileeConfig);
     this.calibrationLayer = new CalibrationLayer({ acceptanceThreshold: aileeConfig.borderlineHigh, ...calibrationConfig });
-    this.selfTuningModule = new SelfTuningCalibrationModule({
-      enabled: true,
-      acceptanceThreshold: aileeConfig.borderlineHigh,
-      ...calibrationConfig,
-    });
-    this.predictiveLayer = new PredictiveStabilityLayer();
     this.policy = policy;
     this.heartbeatTimeoutMs = heartbeatTimeoutMs;
     this.stateMachine = new DeviceStateMachine(deviceId, 100.0, 1); // Default N2
@@ -137,47 +124,6 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     let confidencePenalty = 0.0;
     const reasons: string[] = [];
 
-    // Push flow rate to telemetry history window for predictive & self-tuning analysis
-    if (Number.isFinite(flowRate) && flowRate >= 0) {
-      this.telemetryHistory.push(flowRate);
-      if (this.telemetryHistory.length > 20) {
-        this.telemetryHistory.shift();
-      }
-      this.selfTuningModule.recordTelemetry({ value: flowRate, isDegraded: overpressureTrip, timestamp: now });
-    }
-
-    // Evaluate Predictive Stability Layer
-    const predEval = this.predictiveLayer.evaluateTrends(this.telemetryHistory);
-
-    // Hardening Pass: Validate adaptive inputs and predictive outputs
-    let isAdaptiveDegraded = predEval.isDegraded;
-    let tighteningMultiplier = 1.0;
-    let serializedPredictiveScore = 0;
-
-    if (
-      isAdaptiveDegraded ||
-      this.telemetryHistory.length < 5 ||
-      !this.telemetryHistory.every(Number.isFinite) ||
-      !Number.isFinite(predEval.score) ||
-      predEval.score < 0 ||
-      predEval.score > 1.0
-    ) {
-      isAdaptiveDegraded = true;
-      tighteningMultiplier = 1.0; // Revert to static v8.2 baseline configuration
-      serializedPredictiveScore = 0; // Block adaptive changes from fieldbus serialization
-      reasons.push("SELF_TUNING_DEGRADED: Telemetry sparse, non-finite, or out-of-bounds; reverting to static v8.2 baseline behavior.");
-    } else {
-      tighteningMultiplier = predEval.tighteningMultiplier;
-      serializedPredictiveScore = Math.round(predEval.score * 255);
-      reasons.push(...predEval.reasons);
-
-      if (predEval.state === "HAZARDOUS_SOON") {
-        confidencePenalty += 0.8;
-      } else if (predEval.state === "DEGRADED_SOON") {
-        confidencePenalty += 0.15;
-      }
-    }
-
     // 0. Heartbeat Timeout / Telemetry Drop Check
     if (!Number.isFinite(telemetryTs) || telemetryTs > now || !Number.isFinite(this.heartbeatTimeoutMs) || this.heartbeatTimeoutMs < 0) {
       confidencePenalty = 1.0;
@@ -192,12 +138,12 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
       reasons.push("Invalid flow, setpoint, zero-offset, or telemetry interval");
     }
 
-    // 1. Pressure Containment Check (with predictive tightening)
+    // 1. Pressure Containment Check
     if (!Number.isFinite(pressure)) {
       confidencePenalty = 1.0;
       reasons.push("Invalid pressure telemetry: non-finite pressure value");
     } else {
-      const pressureRes = this.pressureGuard.evaluateContainment(pressure, overpressureTrip, tighteningMultiplier);
+      const pressureRes = this.pressureGuard.evaluateContainment(pressure, overpressureTrip);
       if (!pressureRes.passed) {
         confidencePenalty += pressureRes.confidencePenalty;
         reasons.push(pressureRes.reason || "Pressure containment check failed");
@@ -209,22 +155,22 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
       confidencePenalty = 1.0;
       reasons.push("Invalid pressure telemetry: non-finite upstream/downstream pressure value");
     } else {
-      const deltaRes = this.pressureDeltaGuard.evaluateDeltaP(upstreamP, downstreamP, targetSetpoint > 0, tighteningMultiplier);
+      const deltaRes = this.pressureDeltaGuard.evaluateDeltaP(upstreamP, downstreamP, targetSetpoint > 0);
       if (!deltaRes.passed) {
         confidencePenalty += deltaRes.confidencePenalty;
         reasons.push(deltaRes.reason || "Delta pressure limit exceeded");
       }
     }
 
-    // 3. Ramp Rate Check (with predictive tightening)
-    const rampRes = this.rampGuard.evaluate(currentSetpoint, targetSetpoint, this.stateMachine.fullScaleFlowSlpm, sampleIntervalMs, tighteningMultiplier);
+    // 3. Ramp Rate Ramp Check
+    const rampRes = this.rampGuard.evaluate(currentSetpoint, targetSetpoint, this.stateMachine.fullScaleFlowSlpm, sampleIntervalMs);
     if (!rampRes.passed) {
       confidencePenalty += rampRes.confidencePenalty;
       reasons.push(rampRes.reason || "Ramp rate limit breached");
     }
 
-    // 4. Gas Safety Check (with predictive tightening)
-    const gasRes = this.gasSafetyGuard.evaluateFlowLimit(gasId, targetSetpoint, tighteningMultiplier);
+    // 4. Gas Safety Check
+    const gasRes = this.gasSafetyGuard.evaluateFlowLimit(gasId, targetSetpoint);
     if (!gasRes.passed) {
       confidencePenalty += gasRes.confidencePenalty;
       reasons.push(gasRes.reason || "Gas flow safety threshold breached");
@@ -241,8 +187,8 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
       }
     }
 
-    // 6. Zero Drift Warning (with predictive tightening)
-    const zeroRes = this.zeroDriftGuard.evaluate(targetSetpoint, zeroOffset, tighteningMultiplier);
+    // 6. Zero Drift Warning
+    const zeroRes = this.zeroDriftGuard.evaluate(targetSetpoint, zeroOffset);
     if (!zeroRes.passed) {
       confidencePenalty += zeroRes.confidencePenalty;
       reasons.push(zeroRes.reason || "Zero drift threshold warning");
@@ -257,28 +203,7 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
     const decision = await this.pipeline.process(safeTargetSetpoint, calibration.confidence, [], trustContext);
     if (calibration.event !== "DISABLED") {
       decision.reasons = [...decision.reasons, ...calibration.reasons];
-      decision.context = {
-        ...trustContext,
-        calibration: { ...calibration },
-        predictive: {
-          state: predEval.state,
-          score: predEval.score,
-          serializedPredictiveScore,
-          tighteningMultiplier,
-          selfTuningDegraded: isAdaptiveDegraded,
-        },
-      };
-    } else {
-      decision.context = {
-        ...trustContext,
-        predictive: {
-          state: predEval.state,
-          score: predEval.score,
-          serializedPredictiveScore,
-          tighteningMultiplier,
-          selfTuningDegraded: isAdaptiveDegraded,
-        },
-      };
+      decision.context = { ...trustContext, calibration: { ...calibration } };
     }
 
     // Append custom rule reasons if any

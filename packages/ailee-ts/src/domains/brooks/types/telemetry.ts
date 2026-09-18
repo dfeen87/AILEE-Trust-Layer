@@ -12,7 +12,6 @@ export interface MFCDeviceTelemetry {
   zeroOffset: number; // Zero calibration offset (% of Full Scale)
   deviceStatus: DeviceStatus;
   statusFlags?: number; // Bitfield flags from fieldbus
-  predictiveScore?: number; // 1-byte fieldbus predictive score (0..255 or 0.0..1.0)
 }
 
 export interface PressureControllerTelemetry {

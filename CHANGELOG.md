@@ -1,18 +1,3 @@
-### **v8.3.0 — Self-Tuning Calibration & Predictive Stability Engine**
-
-**Type:** Minor (Additive, backward-compatible)
-
-#### Brooks Instrument Physical Domain & Self-Tuning Calibration
-- **Self-Tuning Calibration Module:** Added dynamic tuning of confidence thresholds, uncertainty bands, and consensus weights driven by rolling telemetry statistics (moving averages, variance, degradation frequency).
-- **Predictive Stability Layer:** Classifies upcoming physical states into `STABLE`, `DEGRADED_SOON`, and `HAZARDOUS_SOON` using real-time trend analysis. Routes predictive scores into Brooks physical guards (`RampRateGuard`, `PressureDeltaGuard`, `ZeroDriftGuard`, `GasSafetyGuard`, `PressureGuard`) to pre-emptively tighten limits or trigger early `VALVE_HOLD` / `VALVE_CLOSE` physical overrides.
-- **Deterministic Hardening Pass:** Implemented strict input/output validation for sparse telemetry windows, non-finite signals, out-of-bounds telemetry, and non-monotonic predictive scores. Automatically reverts to static v8.2 baseline configuration, emits a `SELF_TUNING_DEGRADED` event, and blocks adaptive adjustments from influencing fieldbus serialization or hardware overrides.
-- **Fieldbus Payload Expansion:** Added 1-byte predictive score field to EtherNet/IP (CIP) and EtherCAT (CoE PDO) fieldbus frame assemblies (25-byte manifest).
-
-#### Versioning
-- Updated unified versioning to 8.3.0 across `@ailee/trust-layer` TypeScript package, Python library (`setup.py`, `ailee/__init__.py`), Rust core (`Cargo.toml`), and domain documentation.
-
----
-
 ### **v4.7.0 — Memory Domain Hardening & Benchmark Coverage**
 
 **Type:** Minor (Additive, backward-compatible)

@@ -248,7 +248,7 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       };
 
       const buffer = EtherNetIPAdapter.serializeCIPFrame(telemetry, manifestJson as any);
-      expect(buffer.byteLength).toBe(25);
+      expect(buffer.byteLength).toBe(24);
 
       const parsed = EtherNetIPAdapter.parseCIPFrame(buffer, manifestJson as any);
       expect(parsed.flowRate).toBeCloseTo(25.5, 3);
@@ -258,7 +258,7 @@ describe("Brooks Instrument Domain Unit Tests", () => {
     });
 
     it("decodes real-style little-endian EtherNet/IP status flags and multibyte values", () => {
-      const buffer = new ArrayBuffer(25);
+      const buffer = new ArrayBuffer(24);
       const view = new DataView(buffer);
       view.setFloat32(0, 12.5, true);
       view.setFloat32(4, 10.0, true);
@@ -331,7 +331,7 @@ describe("Brooks Instrument Domain Unit Tests", () => {
       };
 
       const buffer = EtherCATAdapter.serializePDOFrame(telemetry, manifestJson as any);
-      expect(buffer.byteLength).toBe(25);
+      expect(buffer.byteLength).toBe(24);
 
       const parsed = EtherCATAdapter.parsePDOFrame(buffer, manifestJson as any);
       expect(parsed.flowRate).toBeCloseTo(80.0, 3);
