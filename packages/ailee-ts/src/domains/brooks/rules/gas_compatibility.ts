@@ -15,7 +15,7 @@ export class GasSafetyGuard {
   /**
    * Verifies setpoint for reactive or toxic gases does not exceed maximum allowable flow limits for line manifold.
    */
-  public evaluateFlowLimit(gasId: string | number, targetSetpointSlpm: number): RuleCheckResult {
+  public evaluateFlowLimit(gasId: string | number, targetSetpointSlpm: number, tighteningMultiplier = 1.0): RuleCheckResult {
     const gas = lookupGas(gasId);
     if (!gas) {
       return {
@@ -27,17 +27,18 @@ export class GasSafetyGuard {
       };
     }
 
-    if (!Number.isFinite(targetSetpointSlpm) || targetSetpointSlpm < 0 || !Number.isFinite(gas.defaultMaxFlowSlpm) || gas.defaultMaxFlowSlpm < 0) {
+    const effectiveMaxFlow = gas.defaultMaxFlowSlpm * tighteningMultiplier;
+    if (!Number.isFinite(targetSetpointSlpm) || targetSetpointSlpm < 0 || !Number.isFinite(effectiveMaxFlow) || effectiveMaxFlow < 0) {
       return { passed: false, status: "OUTRIGHT_REJECTED", confidencePenalty: 1.0, reason: "Invalid gas flow setpoint or gas flow limit", recommendedAction: "VALVE_CLOSE" };
     }
 
-    if (targetSetpointSlpm > gas.defaultMaxFlowSlpm) {
+    if (targetSetpointSlpm > effectiveMaxFlow) {
       const isHaz = isHazardousGas(gas);
       return {
         passed: false,
         status: "OUTRIGHT_REJECTED",
         confidencePenalty: isHaz ? 1.0 : 0.7,
-        reason: `Gas flow limit breach: setpoint ${targetSetpointSlpm} SLPM exceeds maximum allowable manifold limit of ${gas.defaultMaxFlowSlpm} SLPM for ${gas.name} (${gas.formula})`,
+        reason: `Gas flow limit breach: setpoint ${targetSetpointSlpm} SLPM exceeds maximum allowable manifold limit of ${effectiveMaxFlow.toFixed(2)} SLPM for ${gas.name} (${gas.formula})`,
         recommendedAction: isHaz ? "VALVE_CLOSE" : "VALVE_HOLD",
       };
     }

@@ -1,4 +1,4 @@
-# AILEE V8.1 Calibration Layer
+# AILEE V8.3 Calibration Layer
 
 ## Purpose and compatibility
 
@@ -51,8 +51,8 @@ For example, a baseline of `0.94` with a `0.95` threshold, `0.02` maximum grace,
 
 The returned `DecisionResult.context.calibration` contains deterministic audit fields: `event`, `thresholdDecision`, `consensusChecked`, `fallbackUsed`, `applied`, `confidence`, and human-readable `reasons`. These fields make calibration events, threshold decisions, fallback triggers, and consensus checks available to existing structured decision logging without adding a logging dependency.
 
-## Degraded operation and V8.2 extension
+## Degraded operation and V8.3 Self-Tuning Extension
 
 Malformed metadata (non-finite/out-of-range agreement, negative grace, invalid peer counts), invalid calibration configuration, or a disabled layer leaves the V8 baseline unchanged. Standard V8 safety rejection and hardware fallback continue to operate afterwards.
 
-V8.2 can add domain-specific, versioned consensus evidence or calibration profiles while keeping this boundary: normalize external evidence first, invoke the pure `CalibrationLayer`, and continue to delegate safety/fallback decisions to the established V8 pipeline.
+AILEE v8.3 introduces dynamic self-tuning calibration and predictive stability scoring. When rolling telemetry statistics (moving average, variance, degradation frequency) indicate increasing instability or noise, the calibration module dynamically tunes thresholds, uncertainty bands, and consensus weights. In the event of sparse, non-finite, out-of-bounds, or non-monotonic telemetry signals, the system deterministically reverts to static v8.2 baseline behavior, emits a `SELF_TUNING_DEGRADED` event, and blocks adaptive adjustments from affecting fieldbus outputs or physical hardware overrides.

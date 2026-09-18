@@ -22,9 +22,9 @@ export class RampRateGuard {
    * Evaluates setpoint change jump percentage relative to Full Scale flow over duration.
    * e.g., max 20% SLPM jump per 100ms.
    */
-  public evaluate(currentSetpoint: number, newSetpoint: number, fullScaleFlow: number, durationMs = 100): RuleCheckResult {
-    if (![currentSetpoint, newSetpoint, fullScaleFlow, durationMs, this.policy.rampRate.maxPercentJumpPer100ms, this.policy.rampRate.timeWindowMs].every(Number.isFinite)
-      || fullScaleFlow <= 0 || durationMs <= 0 || this.policy.rampRate.maxPercentJumpPer100ms < 0 || this.policy.rampRate.timeWindowMs <= 0) {
+  public evaluate(currentSetpoint: number, newSetpoint: number, fullScaleFlow: number, durationMs = 100, tighteningMultiplier = 1.0): RuleCheckResult {
+    if (![currentSetpoint, newSetpoint, fullScaleFlow, durationMs, this.policy.rampRate.maxPercentJumpPer100ms, this.policy.rampRate.timeWindowMs, tighteningMultiplier].every(Number.isFinite)
+      || fullScaleFlow <= 0 || durationMs <= 0 || this.policy.rampRate.maxPercentJumpPer100ms < 0 || this.policy.rampRate.timeWindowMs <= 0 || tighteningMultiplier <= 0) {
       return {
         passed: false,
         status: "OUTRIGHT_REJECTED",
@@ -36,7 +36,7 @@ export class RampRateGuard {
 
     const deltaPercentFS = (Math.abs(newSetpoint - currentSetpoint) / fullScaleFlow) * 100.0;
     const timeScale = durationMs > 0 ? durationMs / this.policy.rampRate.timeWindowMs : 1.0;
-    const normalizedMaxJump = this.policy.rampRate.maxPercentJumpPer100ms * timeScale;
+    const normalizedMaxJump = this.policy.rampRate.maxPercentJumpPer100ms * timeScale * tighteningMultiplier;
 
     if (deltaPercentFS > normalizedMaxJump) {
       return {
@@ -67,16 +67,17 @@ export class ZeroDriftGuard {
    * Analyzes zero-flow baseline telemetry.
    * If zero-drift exceeds ±0.5% of Full Scale when setpoint is 0, issue POLICY_DEGRADED warning.
    */
-  public evaluate(setpoint: number, zeroOffsetPercentFS: number): RuleCheckResult {
-    if (![setpoint, zeroOffsetPercentFS, this.policy.zeroDrift.maxDriftPercentFS].every(Number.isFinite) || this.policy.zeroDrift.maxDriftPercentFS < 0) {
+  public evaluate(setpoint: number, zeroOffsetPercentFS: number, tighteningMultiplier = 1.0): RuleCheckResult {
+    const effectiveMaxDrift = this.policy.zeroDrift.maxDriftPercentFS * tighteningMultiplier;
+    if (![setpoint, zeroOffsetPercentFS, effectiveMaxDrift].every(Number.isFinite) || effectiveMaxDrift < 0) {
       return { passed: false, status: "OUTRIGHT_REJECTED", confidencePenalty: 1.0, reason: "Invalid zero-drift input or policy configuration", recommendedAction: "VALVE_HOLD" };
     }
-    if (this.policy.zeroDrift.requireWarningOnExceed && setpoint === 0 && Math.abs(zeroOffsetPercentFS) > this.policy.zeroDrift.maxDriftPercentFS) {
+    if (this.policy.zeroDrift.requireWarningOnExceed && setpoint === 0 && Math.abs(zeroOffsetPercentFS) > effectiveMaxDrift) {
       return {
         passed: false,
         status: "BORDERLINE",
         confidencePenalty: 0.35,
-        reason: `Zero-drift warning: zero offset ${zeroOffsetPercentFS.toFixed(2)}% FS exceeds safe limit of ±${this.policy.zeroDrift.maxDriftPercentFS}% FS`,
+        reason: `Zero-drift warning: zero offset ${zeroOffsetPercentFS.toFixed(2)}% FS exceeds safe limit of ±${effectiveMaxDrift.toFixed(2)}% FS`,
         recommendedAction: "PROCEED",
       };
     }

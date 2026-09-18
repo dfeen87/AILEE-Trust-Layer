@@ -27,6 +27,9 @@ export class EtherCATAdapter {
     const gasId = view.getUint16(offsets.gasId, true);
     const statusFlags = view.getUint16(offsets.statusFlags, true);
 
+    const predictiveScoreOffset = offsets.predictiveScore ?? 24;
+    const predictiveScore = buffer.byteLength >= predictiveScoreOffset + 1 ? view.getUint8(predictiveScoreOffset) : 0;
+
     let deviceStatus: DeviceStatus = "OK";
     if ((statusFlags & 0x8000) !== 0) {
       deviceStatus = "FAULT";
@@ -43,6 +46,7 @@ export class EtherCATAdapter {
       gasId,
       deviceStatus,
       statusFlags,
+      predictiveScore,
     };
   }
 
@@ -66,6 +70,16 @@ export class EtherCATAdapter {
     if (telemetry.deviceStatus === "FAULT") flags |= 0x8000;
     if (telemetry.deviceStatus === "WARN") flags |= 0x4000;
     view.setUint16(offsets.statusFlags, flags, true);
+
+    const predictiveScoreOffset = offsets.predictiveScore ?? 24;
+    if (buffer.byteLength > predictiveScoreOffset) {
+      let scoreVal = 0;
+      if (typeof telemetry.predictiveScore === "number" && Number.isFinite(telemetry.predictiveScore)) {
+        scoreVal = telemetry.predictiveScore <= 1.0 ? Math.round(telemetry.predictiveScore * 255) : Math.round(telemetry.predictiveScore);
+        scoreVal = Math.max(0, Math.min(255, scoreVal));
+      }
+      view.setUint8(predictiveScoreOffset, scoreVal);
+    }
 
     return buffer;
   }

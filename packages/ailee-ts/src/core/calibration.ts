@@ -6,6 +6,10 @@ import {
   CalibrationMetadata,
   CalibrationResult,
   DEFAULT_CALIBRATION_CONFIG,
+  DEFAULT_SELF_TUNING_CONFIG,
+  RollingWindowStats,
+  SelfTuningCalibrationConfig,
+  TelemetrySample,
 } from "./types.js";
 
 /**
@@ -80,5 +84,161 @@ export class CalibrationLayer {
     return !consensus || (typeof consensus === "object" && !Array.isArray(consensus)
       && Number.isFinite(consensus.agreement) && consensus.agreement >= 0 && consensus.agreement <= 1
       && Number.isInteger(consensus.peerCount) && consensus.peerCount >= 0);
+  }
+}
+
+/**
+ * Rolling window data structure storing recent telemetry samples for
+ * dynamic statistical analysis (moving averages, sample variance, degradation frequency).
+ */
+export class RollingTelemetryWindow {
+  private samples: TelemetrySample[] = [];
+  private readonly capacity: number;
+
+  constructor(capacity = 20) {
+    this.capacity = Math.max(1, capacity);
+  }
+
+  public push(sample: TelemetrySample): void {
+    if (!Number.isFinite(sample.value)) return;
+    if (this.samples.length >= this.capacity) {
+      this.samples.shift();
+    }
+    this.samples.push(sample);
+  }
+
+  public clear(): void {
+    this.samples = [];
+  }
+
+  public size(): number {
+    return this.samples.length;
+  }
+
+  public getSamples(): readonly TelemetrySample[] {
+    return this.samples;
+  }
+
+  public getStats(): RollingWindowStats {
+    const n = this.samples.length;
+    if (n === 0) {
+      return { mean: 0, variance: 0, stdDev: 0, degradationFrequency: 0, sampleCount: 0 };
+    }
+
+    let sum = 0;
+    let degradedCount = 0;
+    for (const s of this.samples) {
+      sum += s.value;
+      if (s.isDegraded) degradedCount++;
+    }
+    const mean = sum / n;
+
+    let sqDiffSum = 0;
+    for (const s of this.samples) {
+      sqDiffSum += (s.value - mean) ** 2;
+    }
+    const variance = n > 1 ? sqDiffSum / (n - 1) : 0;
+    const stdDev = Math.sqrt(variance);
+    const degradationFrequency = degradedCount / n;
+
+    return {
+      mean,
+      variance,
+      stdDev,
+      degradationFrequency,
+      sampleCount: n,
+    };
+  }
+}
+
+/**
+ * Self-tuning calibration module that uses rolling telemetry statistics
+ * to dynamically adjust thresholds, uncertainty bands, and consensus requirements.
+ */
+export class SelfTuningCalibrationModule {
+  private window: RollingTelemetryWindow;
+  private selfTuningConfig: SelfTuningCalibrationConfig;
+
+  constructor(config: Partial<SelfTuningCalibrationConfig> = {}) {
+    this.selfTuningConfig = { ...DEFAULT_SELF_TUNING_CONFIG, ...config };
+    this.window = new RollingTelemetryWindow(this.selfTuningConfig.windowSize);
+  }
+
+  public recordTelemetry(sample: TelemetrySample): void {
+    this.window.push(sample);
+  }
+
+  public getWindow(): RollingTelemetryWindow {
+    return this.window;
+  }
+
+  public computeTunedConfig(): {
+    config: CalibrationConfig;
+    isDegraded: boolean;
+    reasons: string[];
+    stats: RollingWindowStats;
+  } {
+    const stats = this.window.getStats();
+    const cfg = this.selfTuningConfig;
+    const reasons: string[] = [];
+
+    // Check sparse window
+    if (stats.sampleCount < cfg.minSamples) {
+      return {
+        config: {
+          enabled: cfg.enabled,
+          acceptanceThreshold: cfg.acceptanceThreshold,
+          uncertaintyBand: cfg.uncertaintyBand,
+          maxGraceMargin: cfg.maxGraceMargin,
+          consensusThreshold: cfg.consensusThreshold,
+          minimumPeerCount: cfg.minimumPeerCount,
+        },
+        isDegraded: true,
+        reasons: [`Sparse telemetry window: ${stats.sampleCount} samples < minimum required ${cfg.minSamples}`],
+        stats,
+      };
+    }
+
+    // Dynamic adjustment based on variance & degradation frequency
+    const varAdjustment = stats.stdDev * cfg.varianceSensitivity;
+    const degAdjustment = stats.degradationFrequency * cfg.degradationSensitivity;
+    const totalShift = varAdjustment + degAdjustment;
+
+    // Tighten acceptance threshold (cap at 0.99)
+    const tunedAcceptanceThreshold = Math.min(0.99, Math.max(cfg.acceptanceThreshold, cfg.acceptanceThreshold + totalShift * 0.1));
+
+    // Widen uncertainty band (cap at tunedAcceptanceThreshold)
+    const tunedUncertaintyBand = Math.min(tunedAcceptanceThreshold, Math.max(cfg.uncertaintyBand, cfg.uncertaintyBand + totalShift * 0.1));
+
+    // Tighten consensus threshold (cap at 0.99)
+    const tunedConsensusThreshold = Math.min(0.99, Math.max(cfg.consensusThreshold, cfg.consensusThreshold + totalShift * 0.15));
+
+    reasons.push(
+      `Self-tuning calibration calculated dynamic parameters (stdDev=${stats.stdDev.toFixed(4)}, degFreq=${(stats.degradationFrequency * 100).toFixed(1)}%).`
+    );
+
+    return {
+      config: {
+        enabled: cfg.enabled,
+        acceptanceThreshold: tunedAcceptanceThreshold,
+        uncertaintyBand: tunedUncertaintyBand,
+        maxGraceMargin: cfg.maxGraceMargin,
+        consensusThreshold: tunedConsensusThreshold,
+        minimumPeerCount: cfg.minimumPeerCount,
+      },
+      isDegraded: false,
+      reasons,
+      stats,
+    };
+  }
+
+  public calibrate(baselineConfidence: number, metadata?: CalibrationMetadata): CalibrationResult & { stats?: RollingWindowStats } {
+    const tuned = this.computeTunedConfig();
+    const calibrationLayer = new CalibrationLayer(tuned.config);
+    const result = calibrationLayer.calibrate(baselineConfidence, metadata);
+    if (tuned.reasons.length > 0 && tuned.config.enabled) {
+      result.reasons = [...result.reasons, ...tuned.reasons];
+    }
+    return { ...result, stats: tuned.stats };
   }
 }
