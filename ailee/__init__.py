@@ -1,7 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 """
-AILEE Trust Layer v8.2.0
+AILEE Trust Layer v9.0.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -427,7 +427,7 @@ except ImportError:
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "8.2.0"
+__version__ = "9.0.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
@@ -859,8 +859,10 @@ from .ailee_client import AileeClient
 __all__.append("AileeClient")
 
 # =============================================================================
-# Governance Architecture v1.0
+# Governance Architecture v9.0.0
 # =============================================================================
+from . import governance_v1
+
 try:
     from .governance_v1 import (
         GovernanceInput,
@@ -876,6 +878,11 @@ try:
         evaluate_grace,
         evaluate_consensus,
         evaluate_fallback,
+        CompartmentRegistry,
+        SAFETY_REGISTRY,
+        GRACE_REGISTRY,
+        CONSENSUS_REGISTRY,
+        FALLBACK_REGISTRY,
         LedgerStore,
         InMemoryLedgerStore,
         FileLedgerStore,
@@ -890,6 +897,7 @@ try:
     )
     _HAS_GOVERNANCE_V1 = True
     __all__.extend([
+        "governance_v1",
         "GovernanceInput",
         "CompartmentDecision",
         "ALCOAMetadata",
@@ -903,6 +911,11 @@ try:
         "evaluate_grace",
         "evaluate_consensus",
         "evaluate_fallback",
+        "CompartmentRegistry",
+        "SAFETY_REGISTRY",
+        "GRACE_REGISTRY",
+        "CONSENSUS_REGISTRY",
+        "FALLBACK_REGISTRY",
         "LedgerStore",
         "InMemoryLedgerStore",
         "FileLedgerStore",
