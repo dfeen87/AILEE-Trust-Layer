@@ -361,6 +361,7 @@ def test_interpretation_mismatched_request_ids():
 
 
 def test_fastapi_governance_routes():
+    pytest.importorskip("fastapi")
     from fastapi.testclient import TestClient
     from ailee.governance_v1.api.routes import app
 
