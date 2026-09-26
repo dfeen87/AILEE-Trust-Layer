@@ -35,6 +35,7 @@ from .ledger import (
     InMemoryLedgerStore,
     FileLedgerStore,
     write_ledger_entry,
+    verify_ledger_integrity,
     get_default_ledger_store,
     set_default_ledger_store,
 )
@@ -73,6 +74,7 @@ __all__ = [
     "InMemoryLedgerStore",
     "FileLedgerStore",
     "write_ledger_entry",
+    "verify_ledger_integrity",
     "get_default_ledger_store",
     "set_default_ledger_store",
     # Interpretation

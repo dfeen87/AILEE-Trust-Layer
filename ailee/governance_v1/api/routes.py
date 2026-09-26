@@ -83,28 +83,45 @@ def evaluate_fallback_endpoint(req: EvaluateAndLogRequest):
     return {"decision": decision, "ledger_entry": entry}
 
 
+VALID_COMPARTMENTS = {"safety", "grace", "consensus", "fallback", "global"}
+
+
 @app.get("/api/v1/ledger/{compartment}")
 def get_ledger_entries(
     compartment: str,
     min_risk: Optional[float] = None,
     max_risk: Optional[float] = None,
+    offset: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=1000),
 ):
+    if compartment not in VALID_COMPARTMENTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid compartment '{compartment}'. Valid compartments are: {sorted(list(VALID_COMPARTMENTS))}",
+        )
+
     store = get_default_ledger_store()
     entries = store.get_entries(compartment)
 
     # Optional filtering
     filtered = []
     for e in entries:
-        payload = e.decision.get("payload", {})
-        risk = payload.get("risk_score")
+        payload = e.decision.get("payload", {}) if isinstance(e.decision, dict) else getattr(e.decision, "payload", {})
+        risk = payload.get("risk_score") if isinstance(payload, dict) else None
         if min_risk is not None and (risk is None or risk < min_risk):
             continue
         if max_risk is not None and (risk is None or risk > max_risk):
             continue
         filtered.append(e)
 
-    return {"compartment": compartment, "total": len(filtered), "entries": filtered[:limit]}
+    paginated = filtered[offset : offset + limit]
+    return {
+        "compartment": compartment,
+        "total": len(filtered),
+        "offset": offset,
+        "limit": limit,
+        "entries": paginated,
+    }
 
 
 @app.get("/api/v1/ledger/diff")
@@ -134,26 +151,32 @@ def get_event_correlation():
     fallback_entries = store.get_entries("fallback")
     global_entries = store.get_entries("global")
 
-    correlated = []
-    min_len = min(
-        len(safety_entries),
-        len(grace_entries),
-        len(consensus_entries),
-        len(fallback_entries),
-    )
+    # Index entries by request_id
+    def _map_by_req_id(entries):
+        m = {}
+        for e in entries:
+            req_id = e.input_snapshot.get("request_id") if isinstance(e.input_snapshot, dict) else None
+            if req_id:
+                m[req_id] = e
+        return m
 
-    for i in range(min_len):
-        s, g, c, f = (
-            safety_entries[i],
-            grace_entries[i],
-            consensus_entries[i],
-            fallback_entries[i],
-        )
+    s_map = _map_by_req_id(safety_entries)
+    g_map = _map_by_req_id(grace_entries)
+    c_map = _map_by_req_id(consensus_entries)
+    f_map = _map_by_req_id(fallback_entries)
+
+    # Find request_ids present in all 4 compartments
+    common_req_ids = set(s_map.keys()) & set(g_map.keys()) & set(c_map.keys()) & set(f_map.keys())
+
+    correlated = []
+    # Process matching request_ids
+    for idx, req_id in enumerate(sorted(common_req_ids)):
+        s, g, c, f = s_map[req_id], g_map[req_id], c_map[req_id], f_map[req_id]
         res = interpret_event(s, g, c, f)
         correlated.append(
             {
-                "index": i,
-                "request_id": s.input_snapshot.get("request_id"),
+                "index": idx,
+                "request_id": req_id,
                 "safety_entry_id": s.id,
                 "grace_entry_id": g.id,
                 "consensus_entry_id": c.id,
@@ -163,6 +186,37 @@ def get_event_correlation():
                 "training_signals_count": len(res.training_signals),
             }
         )
+
+    # Fallback to positional alignment if no matching request_ids exist
+    if not correlated:
+        min_len = min(
+            len(safety_entries),
+            len(grace_entries),
+            len(consensus_entries),
+            len(fallback_entries),
+        )
+        for i in range(min_len):
+            s, g, c, f = (
+                safety_entries[i],
+                grace_entries[i],
+                consensus_entries[i],
+                fallback_entries[i],
+            )
+            res = interpret_event(s, g, c, f)
+            req_id = s.input_snapshot.get("request_id") if isinstance(s.input_snapshot, dict) else None
+            correlated.append(
+                {
+                    "index": i,
+                    "request_id": req_id,
+                    "safety_entry_id": s.id,
+                    "grace_entry_id": g.id,
+                    "consensus_entry_id": c.id,
+                    "fallback_entry_id": f.id,
+                    "alignment_issues": res.alignment_issues,
+                    "features": res.features,
+                    "training_signals_count": len(res.training_signals),
+                }
+            )
 
     return {"total_correlated_events": len(correlated), "correlated_events": correlated, "global_ledger_count": len(global_entries)}
 

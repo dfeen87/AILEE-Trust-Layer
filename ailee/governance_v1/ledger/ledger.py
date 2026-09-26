@@ -266,6 +266,14 @@ def get_default_ledger_store() -> LedgerStore:
     return _GLOBAL_STORE
 
 
+def verify_ledger_integrity(compartment: str, store: Optional[LedgerStore] = None) -> bool:
+    """
+    Public API function to verify the hash-chain integrity of a specific compartment's ledger.
+    """
+    target_store = store or _GLOBAL_STORE
+    return target_store.verify_integrity(compartment)
+
+
 def write_ledger_entry(
     compartment: str,
     input_payload: Union[GovernanceInput, Dict[str, Any]],
@@ -307,6 +315,7 @@ def write_ledger_entry(
         alcoa = ALCOAMetadata(
             attributable_to="system_governance_v1",
             system_id="ailee_trust_layer_v1",
+            version="9.0.0",
         )
         metadata_dict = alcoa.to_dict()
     elif isinstance(metadata, ALCOAMetadata):
@@ -314,7 +323,15 @@ def write_ledger_entry(
     else:
         metadata_dict = dict(metadata)
         # Ensure ALCOA minimal fields exist
-        required_alcoa = ["attributable_to", "system_id", "version", "contemporaneous_timestamp", "is_original"]
+        required_alcoa = [
+            "attributable_to",
+            "system_id",
+            "version",
+            "contemporaneous_timestamp",
+            "is_original",
+            "validation_status",
+            "legible_format",
+        ]
         for key in required_alcoa:
             if key not in metadata_dict:
                 if key == "attributable_to":
@@ -322,11 +339,15 @@ def write_ledger_entry(
                 elif key == "system_id":
                     metadata_dict["system_id"] = "ailee_trust_layer_v1"
                 elif key == "version":
-                    metadata_dict["version"] = "gov_v1.0"
+                    metadata_dict["version"] = "9.0.0"
                 elif key == "contemporaneous_timestamp":
                     metadata_dict["contemporaneous_timestamp"] = datetime.utcnow().isoformat()
                 elif key == "is_original":
                     metadata_dict["is_original"] = True
+                elif key == "validation_status":
+                    metadata_dict["validation_status"] = "VALID"
+                elif key == "legible_format":
+                    metadata_dict["legible_format"] = "json_v1"
 
     latest = target_store.get_latest_entry(compartment)
     previous_hash = latest.current_hash if latest else GENESIS_PREVIOUS_HASH

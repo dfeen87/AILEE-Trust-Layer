@@ -303,3 +303,94 @@ def test_end_to_end_governance_flow_v9():
     approval_resp = final_approval(approval_req, store=store)
     assert approval_resp.approved is True
     assert approval_resp.policyId == "POLICY_OK"
+
+
+def test_verify_ledger_integrity_public_api():
+    from ailee.governance_v1 import verify_ledger_integrity
+    store = InMemoryLedgerStore()
+    inp = GovernanceInput(request_id="public-api-1", raw_input="Public API test")
+    dec = evaluate_safety(inp)
+    write_ledger_entry("safety", inp, dec, store=store)
+
+    assert verify_ledger_integrity("safety", store=store) is True
+
+
+def test_dispatcher_duplicate_and_lock_safety():
+    dispatcher = DispatcherRegistry(log_file_path=tempfile.mktemp())
+    call_count = [0]
+
+    def cb(signal: TrainingSignal):
+        call_count[0] += 1
+
+    dispatcher.register_callback(cb)
+
+    sig = TrainingSignal(
+        id="sig-dup-1",
+        target_model="safety_classifier",
+        features={"risk": 0.8},
+        label="RE-TRAIN",
+        source_ledger_ids=["entry-1"],
+    )
+
+    # First dispatch
+    apply_training_signal(sig, dispatcher=dispatcher)
+    assert call_count[0] == 1
+
+    # Duplicate dispatch should be ignored
+    apply_training_signal(sig, dispatcher=dispatcher)
+    assert call_count[0] == 1
+
+
+def test_interpretation_mismatched_request_ids():
+    store = InMemoryLedgerStore()
+    inp1 = GovernanceInput(request_id="req-1", raw_input="Prompt 1")
+    inp2 = GovernanceInput(request_id="req-2", raw_input="Prompt 2")
+
+    s_dec = evaluate_safety(inp1)
+    g_dec = evaluate_grace(inp2)
+    c_dec = evaluate_consensus(inp1)
+    f_dec = evaluate_fallback(inp1)
+
+    s_e = write_ledger_entry("safety", inp1, s_dec, store=store)
+    g_e = write_ledger_entry("grace", inp2, g_dec, store=store)
+    c_e = write_ledger_entry("consensus", inp1, c_dec, store=store)
+    f_e = write_ledger_entry("fallback", inp1, f_dec, store=store)
+
+    interp = interpret_event(s_e, g_e, c_e, f_e)
+    assert any("Mismatched request_ids" in issue for issue in interp.alignment_issues)
+
+
+def test_fastapi_governance_routes():
+    from fastapi.testclient import TestClient
+    from ailee.governance_v1.api.routes import app
+
+    client = TestClient(app)
+
+    # Test safety evaluation endpoint
+    payload = {
+        "input": {
+            "request_id": "api-1",
+            "raw_input": "Hello from API test",
+            "user_context": {},
+            "candidate_outputs": [],
+            "conversation_state": {},
+            "error_flags": {},
+        },
+        "attributable_to": "api_test_user",
+    }
+    res = client.post("/api/v1/evaluate/safety", json=payload)
+    assert res.status_code == 200
+    data = res.json()
+    assert "decision" in data
+    assert "ledger_entry" in data
+
+    # Test ledger entries query endpoint
+    res_ledger = client.get("/api/v1/ledger/safety")
+    assert res_ledger.status_code == 200
+    ledger_data = res_ledger.json()
+    assert ledger_data["compartment"] == "safety"
+    assert ledger_data["total"] >= 1
+
+    # Test invalid compartment endpoint
+    res_invalid = client.get("/api/v1/ledger/invalid_comp")
+    assert res_invalid.status_code == 400

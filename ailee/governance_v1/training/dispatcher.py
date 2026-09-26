@@ -24,6 +24,7 @@ class DispatcherRegistry:
         self.callbacks: List[Callable[[TrainingSignal], None]] = []
         self._lock = threading.Lock()
         self._history: List[TrainingSignal] = []
+        self._seen_ids: set = set()
 
     def register_callback(self, callback: Callable[[TrainingSignal], None]):
         with self._lock:
@@ -34,14 +35,20 @@ class DispatcherRegistry:
         Atomically applies, logs, and broadcasts training signals.
         Requirements:
           - Every training signal must reference ledger IDs
-          - Updates must be atomic
-          - Updates must be logged
+          - Duplicate signals are rejected/ignored
+          - Updates must be atomic and logged
+          - Callbacks executed outside lock to prevent deadlock
         """
         if not signal.source_ledger_ids:
             raise ValueError("TrainingSignal must reference at least one source ledger ID.")
 
         with self._lock:
+            if signal.id in self._seen_ids:
+                logger.warning(f"Duplicate TrainingSignal '{signal.id}' detected. Skipping.")
+                return
+
             # 1. Record in memory
+            self._seen_ids.add(signal.id)
             self._history.append(signal)
 
             # 2. Append to log file atomically
@@ -57,12 +64,14 @@ class DispatcherRegistry:
             with open(self.log_file_path, "a", encoding="utf-8") as f:
                 f.write(json.dumps(record, sort_keys=True) + "\n")
 
-            # 3. Notify callbacks
-            for cb in self.callbacks:
-                try:
-                    cb(signal)
-                except Exception as e:
-                    logger.error(f"Error in training signal callback: {e}")
+            callbacks_to_invoke = list(self.callbacks)
+
+        # 3. Notify callbacks outside lock to prevent deadlocks
+        for cb in callbacks_to_invoke:
+            try:
+                cb(signal)
+            except Exception as e:
+                logger.error(f"Error in training signal callback: {e}")
 
     def get_history(self) -> List[TrainingSignal]:
         with self._lock:
