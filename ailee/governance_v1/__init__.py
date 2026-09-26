@@ -23,6 +23,11 @@ from .compartments import (
     evaluate_grace,
     evaluate_consensus,
     evaluate_fallback,
+    CompartmentRegistry,
+    SAFETY_REGISTRY,
+    GRACE_REGISTRY,
+    CONSENSUS_REGISTRY,
+    FALLBACK_REGISTRY,
 )
 
 from .ledger import (
@@ -58,6 +63,11 @@ __all__ = [
     "evaluate_grace",
     "evaluate_consensus",
     "evaluate_fallback",
+    "CompartmentRegistry",
+    "SAFETY_REGISTRY",
+    "GRACE_REGISTRY",
+    "CONSENSUS_REGISTRY",
+    "FALLBACK_REGISTRY",
     # Ledger
     "LedgerStore",
     "InMemoryLedgerStore",

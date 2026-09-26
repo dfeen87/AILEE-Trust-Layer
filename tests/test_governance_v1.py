@@ -21,6 +21,11 @@ from ailee.governance_v1 import (
     evaluate_grace,
     evaluate_consensus,
     evaluate_fallback,
+    CompartmentRegistry,
+    SAFETY_REGISTRY,
+    GRACE_REGISTRY,
+    CONSENSUS_REGISTRY,
+    FALLBACK_REGISTRY,
     InMemoryLedgerStore,
     FileLedgerStore,
     write_ledger_entry,
@@ -29,6 +34,7 @@ from ailee.governance_v1 import (
     apply_training_signal,
     final_approval,
 )
+import ailee
 
 
 def test_safety_compartment_evaluation():
@@ -212,3 +218,88 @@ def test_final_approval_gate():
     # Check global ledger entry was written
     global_entries = store.get_entries("global")
     assert len(global_entries) == 3
+
+
+def test_v9_hash_chain_tamper_resistance():
+    store = InMemoryLedgerStore()
+    inp = GovernanceInput(request_id="tamper-1", raw_input="Tamper test")
+    dec = evaluate_safety(inp)
+    e1 = write_ledger_entry("safety", inp, dec, store=store)
+
+    assert store.verify_integrity("safety") is True
+
+    # Tamper with stored entry decision payload
+    entry_list = store._store["safety"]
+    original_decision = entry_list[0].decision
+    tampered_decision = dict(original_decision)
+    tampered_decision["payload"] = {"allow": True, "risk_score": 0.0}
+
+    # Replace with tampered entry
+    tampered_entry = LedgerEntry(
+        id=e1.id,
+        compartment=e1.compartment,
+        input_snapshot=e1.input_snapshot,
+        decision=tampered_decision,
+        metadata=e1.metadata,
+        previous_hash=e1.previous_hash,
+        current_hash=e1.current_hash,
+        created_at=e1.created_at,
+    )
+    entry_list[0] = tampered_entry
+
+    assert store.verify_integrity("safety") is False
+
+
+def test_compartment_scoped_registries_v9():
+    store = InMemoryLedgerStore()
+    reg = CompartmentRegistry("safety", evaluator=evaluate_safety, store=store)
+
+    inp = GovernanceInput(request_id="reg-1", raw_input="Registry test")
+    dec, entry = reg.evaluate_and_log(inp, attributable_to="test_user")
+
+    assert dec.compartment == "safety"
+    assert entry.metadata["version"] == "9.0.0"
+    assert entry.metadata["attributable_to"] == "test_user"
+    assert store.verify_integrity("safety") is True
+
+
+def test_top_level_ailee_governance_v9_exports():
+    assert ailee.__version__ == "9.0.0"
+    assert callable(ailee.evaluate_safety)
+    assert callable(ailee.evaluate_grace)
+    assert callable(ailee.evaluate_consensus)
+    assert callable(ailee.evaluate_fallback)
+    assert callable(ailee.write_ledger_entry)
+    assert callable(ailee.interpret_event)
+    assert callable(ailee.apply_training_signal)
+    assert callable(ailee.final_approval)
+    assert isinstance(ailee.SAFETY_REGISTRY, CompartmentRegistry)
+
+
+def test_end_to_end_governance_flow_v9():
+    store = InMemoryLedgerStore()
+    inp = GovernanceInput(
+        request_id="e2e-100",
+        raw_input="Help me analyze system log",
+        candidate_outputs=["Help me analyze system log", "Help me analyze system log"],
+    )
+
+    s_dec, s_entry = SAFETY_REGISTRY.evaluate_and_log(inp, attributable_to="e2e_user")
+    g_dec, g_entry = GRACE_REGISTRY.evaluate_and_log(inp, attributable_to="e2e_user")
+    c_dec, c_entry = CONSENSUS_REGISTRY.evaluate_and_log(inp, attributable_to="e2e_user")
+    f_dec, f_entry = FALLBACK_REGISTRY.evaluate_and_log(inp, attributable_to="e2e_user")
+
+    # Event correlation and micro-training signal generation
+    interp = interpret_event(s_entry, g_entry, c_entry, f_entry)
+    assert isinstance(interp.alignment_issues, list)
+
+    # Final approval gate
+    approval_req = {
+        "safetyDecision": {"id": s_dec.id, "compartment": s_dec.compartment, "payload": s_dec.payload},
+        "graceDecision": {"id": g_dec.id, "compartment": g_dec.compartment, "payload": g_dec.payload},
+        "consensusDecision": {"id": c_dec.id, "compartment": c_dec.compartment, "payload": c_dec.payload},
+        "fallbackDecision": {"id": f_dec.id, "compartment": f_dec.compartment, "payload": f_dec.payload},
+    }
+    approval_resp = final_approval(approval_req, store=store)
+    assert approval_resp.approved is True
+    assert approval_resp.policyId == "POLICY_OK"

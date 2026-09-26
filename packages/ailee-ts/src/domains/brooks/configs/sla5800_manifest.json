@@ -1,6 +1,6 @@
 {
   "deviceName": "SLA5800 Series Mass Flow Controller",
-  "version": "8.2.0",
+  "version": "9.0.0",
   "frameSizeBytes": 25,
   "ethernetIP": {
     "endianness": "LittleEndian",
