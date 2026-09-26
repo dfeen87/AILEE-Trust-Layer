@@ -15,6 +15,9 @@ from ..schemas import ALCOAMetadata, CompartmentDecision, GovernanceInput, Ledge
 from ..ledger import LedgerStore, get_default_ledger_store, write_ledger_entry
 
 
+from ..training import DispatcherRegistry, apply_training_signal
+
+
 class CompartmentRegistry:
     """
     Compartment-scoped registry that owns rules, evaluators, dispatchers, and store
@@ -26,10 +29,12 @@ class CompartmentRegistry:
         compartment: str,
         evaluator: Optional[Callable[[GovernanceInput], CompartmentDecision]] = None,
         store: Optional[LedgerStore] = None,
+        dispatcher: Optional[DispatcherRegistry] = None,
     ):
         self.compartment = compartment
         self.evaluator = evaluator
         self._store = store
+        self.dispatcher = dispatcher or DispatcherRegistry()
         self._rules: List[Callable[[GovernanceInput], Dict[str, Any]]] = []
         self._lock = threading.Lock()
 
@@ -56,12 +61,28 @@ class CompartmentRegistry:
         metadata_overrides: Optional[Dict[str, Any]] = None,
     ) -> Tuple[CompartmentDecision, LedgerEntry]:
         """
-        Evaluates input using registered evaluator and immediately writes an immutable ALCOA-compliant ledger entry.
+        Evaluates input using registered evaluator, executes custom registered rules,
+        and immediately writes an immutable ALCOA-compliant ledger entry.
         """
         if self.evaluator is None:
             raise ValueError(f"No evaluator registered for compartment '{self.compartment}'.")
 
         decision = self.evaluator(input_payload)
+
+        # Run registered rules and update payload rule_findings if rules exist
+        rule_results = []
+        rules = self.get_rules()
+        if rules:
+            for rule in rules:
+                try:
+                    res = rule(input_payload)
+                    if res:
+                        rule_results.append(res)
+                except Exception as e:
+                    rule_results.append({"rule_error": str(e)})
+
+        if rule_results:
+            decision.payload["rule_findings"] = rule_results
 
         # Build ALCOA metadata
         meta = ALCOAMetadata(

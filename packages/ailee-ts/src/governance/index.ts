@@ -10,12 +10,16 @@ export type CompartmentType = 'safety' | 'grace' | 'consensus' | 'fallback' | 'g
 export interface LedgerEntry {
   id: string;
   compartment: CompartmentType;
-  inputSnapshot: Record<string, unknown>;
+  inputSnapshot?: Record<string, unknown>;
+  input_snapshot?: Record<string, unknown>;
   decision: Record<string, unknown>;
   metadata: Record<string, unknown>;
-  previousHash: string;
-  currentHash: string;
-  createdAt: string;
+  previousHash?: string;
+  previous_hash?: string;
+  currentHash?: string;
+  current_hash?: string;
+  createdAt?: string;
+  created_at?: string;
 }
 
 export interface DecisionSummary {
