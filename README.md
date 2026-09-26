@@ -38,6 +38,7 @@
   - [Data Center Operations](#-data-center-operations)
   - [Brooks Instrument Physical Domain](#-brooks-instrument-physical-domain)
   - [Topology Systems](#-topology-systems)
+  - [Imaging Systems](#-imaging-systems)
   - [Robotics Systems](#-robotics-systems)
   - [Telecommunications Systems](#-telecommunications-systems)
   - [Light Transition Systems](#-light-transition-systems)
@@ -49,6 +50,8 @@
   - [Auditory & Assistive Listening Systems](#-auditory--assistive-listening-systems)
   - [CRISPR & Genetic Verification](#-crispr--genetic-verification)
   - [Memory Management Systems](#-memory-management-systems)
+  - [Watermark-Provenance-Governance](#-watermark-provenance-governance)
+  - [Video Temporal Provenance Engine](#-video-temporal-provenance-engine)
 - [Design Philosophy](#design-philosophy)
 - [Documentation](#documentation)
 - [Status & Roadmap](#status--roadmap)
@@ -617,6 +620,24 @@ If the system acts, you can explain **why**.
 
 ---
 
+## Project Structure
+
+```
+ailee-trust-layer/
+├── ailee/                         # Core Python Trust Library & Governance Framework
+│   ├── domains/                   # 18 Domain Governance Modules (Automotive, Datacenter, Memory, Video, etc.)
+│   ├── governance_v1/             # Microservice Governance Engine & ALCOA Hash-Chained Ledger
+│   └── optional/                  # Presets, Adapters, Monitors, Serialization, Replay, AI Integrations
+├── include/                       # C++ Engine Headers (Video Temporal Provenance Engine C ABI)
+├── src/                           # Rust Core Engine (`ailee_trust_core`) & C++ Engine Source (`ailee_video_temporal_provenance`)
+├── packages/ailee-ts/             # `@ailee/trust-layer` TypeScript Adapter Package & Governance Dashboard
+├── docs/                          # Architecture Whitepapers & Domain Specifications
+├── app.py                         # FastAPI Production Server Entry Point
+└── index.html                     # Web Interface
+```
+
+---
+
 ## Unified Trust Interface (`AileeClient`)
 
 AILEE provides a single, stable entrypoint for trust validation through the **`AileeClient`** interface.
@@ -854,11 +875,11 @@ Shadow → Advisory → Guarded → Full Automation (8–16 weeks)
 
 ---
 
-## 🤖 Robotics Systems
+### 🤖 Robotics Systems
 
 AILEE provides deterministic governance for autonomous and semi-autonomous robotic systems operating in safety-critical environments.
 
-### High-Impact Applications
+#### High-Impact Applications
 
 🦾 **Industrial robotics** — Enforce collision, force, and workspace safety without modifying controllers  
 🤝 **Collaborative robots (cobots)** — Human-aware action gating and adaptive speed control  
@@ -867,7 +888,7 @@ AILEE provides deterministic governance for autonomous and semi-autonomous robot
 🚁 **Drones & mobile robots** — Safe autonomy under uncertainty, bandwidth, and power limits  
 🧪 **Research platforms** — Auditable experimentation without compromising safety guarantees  
 
-### Typical Impact (Representative Systems)
+#### Typical Impact (Representative Systems)
 
 - Unsafe action prevention: **90%+**  
 - Emergency stop false positives reduction: **40–60%**  
@@ -875,46 +896,41 @@ AILEE provides deterministic governance for autonomous and semi-autonomous robot
 - Operational uptime improvement: **15–30%**  
 - Audit & certification readiness: **Immediate**
 
-### Deployment Model
+#### Deployment Model
 
 Shadow → Advisory → Guarded → Adaptive (6–12 weeks)
 
 ---
 
-📡 Telecommunications Systems
+### 📡 Telecommunications Systems
 
 AILEE provides deterministic trust governance for communication systems operating under latency, reliability, and freshness constraints—without interfering with transport protocols or carrier infrastructure.
 
-High-Impact Applications
+#### High-Impact Applications
 
-📶 5G / edge networks — Enforce trust levels based on latency, jitter, packet loss, and link stability
-🌐 Distributed systems & APIs — Validate message freshness and downgrade trust under degraded conditions
-🛰️ Satellite & long-haul links — Govern trust under high-latency and intermittent connectivity
-🏭 Industrial IoT (IIoT) — Ensure timely, trustworthy telemetry in noisy or constrained networks
-🚗 V2X & vehicular networks — Real-time message validation and multi-path consensus
-💱 Financial & market data feeds — Ultra-low-latency freshness enforcement and cross-source agreement
+📶 **5G / edge networks** — Enforce trust levels based on latency, jitter, packet loss, and link stability
+🌐 **Distributed systems & APIs** — Validate message freshness and downgrade trust under degraded conditions
+🛰️ **Satellite & long-haul links** — Govern trust under high-latency and intermittent connectivity
+🏭 **Industrial IoT (IIoT)** — Ensure timely, trustworthy telemetry in noisy or constrained networks
+🚗 **V2X & vehicular networks** — Real-time message validation and multi-path consensus
+💱 **Financial & market data feeds** — Ultra-low-latency freshness enforcement and cross-source agreement
 
-### Typical Impact (Representative Systems)
+#### Typical Impact (Representative Systems)
 
-- Stale or unsafe message rejection: 95%+
-
-- Missed downgrade events: <1%
-
-- Trust thrashing reduction (via hysteresis): 60–80%
-
-- Mean governance latency: <0.05 ms
-
-- Real-time compliance margin: 10×–100× requirements
-
-- Audit & traceability readiness: Immediate
+- Stale or unsafe message rejection: **95%+**
+- Missed downgrade events: **<1%**
+- Trust thrashing reduction (via hysteresis): **60–80%**
+- Mean governance latency: **<0.05 ms**
+- Real-time compliance margin: **10×–100× requirements**
+- Audit & traceability readiness: **Immediate**
 
 ---
 
-## 💡 Light Transition Systems
+### 💡 Light Transition Systems
 
 AILEE provides deterministic governance for optical, photonic, laser, fiber, and free-space light-carried data signals. The domain treats the speed of light as a hard physics boundary: it can govern signals that propagate at physically permitted light speeds, but it does not create faster-than-light transport.
 
-### High-Impact Applications
+#### High-Impact Applications
 
 - 🔦 **Free-space optical links** — Validate line-of-sight telemetry under atmospheric loss, scintillation, and alignment uncertainty.
 - 🧬 **Photonic interconnects** — Govern chip-to-chip and rack-scale optical data frames before downstream action.
@@ -922,7 +938,7 @@ AILEE provides deterministic governance for optical, photonic, laser, fiber, and
 - 🛰️ **Laser communications** — Enforce freshness, time-of-flight plausibility, and clock discipline on long-distance links.
 - ⏱️ **Clock-sensitive signaling** — Detect unsafe clock offset before accepting light-transition data.
 
-### Typical Impact (Representative Systems)
+#### Typical Impact (Representative Systems)
 
 - Physics-bound violations surfaced: **100% in deterministic policy checks**
 - Stale optical frame rejection: **policy-enforced in nanosecond units**
@@ -931,13 +947,13 @@ AILEE provides deterministic governance for optical, photonic, laser, fiber, and
 
 ---
 
-## 🔗 Cross-Ecosystem Systems
+### 🔗 Cross-Ecosystem Systems
 
 AILEE provides deterministic trust governance for **semantic state and intent translation across incompatible technology ecosystems**—without bypassing platform security, modifying hardware, or forcing architectural convergence.
 
 This domain governs **whether translated signals are safe, consented, and meaningful enough to act upon** when moving between tightly coupled systems (e.g., Apple ecosystems) and modular, high-optionality systems (e.g., Android and heterogeneous device platforms).
 
-### High-Impact Applications
+#### High-Impact Applications
 
 ⌚ **Wearables & health platforms** — Trust-governed continuity across Apple Watch, Wear OS, and third-party devices  
 📱 **Cross-platform user experiences** — Safe state carryover without violating platform boundaries  
@@ -946,7 +962,7 @@ This domain governs **whether translated signals are safe, consented, and meanin
 🧠 **Context-aware automation** — Intent preservation across asymmetric platform capabilities  
 🔄 **Device and service transitions** — Graceful degradation instead of brittle interoperability
 
-### Typical Impact (Representative Systems)
+#### Typical Impact (Representative Systems)
 
 - Unsafe or non-consented translation blocked: **95%+**
 - Semantic degradation detected and downgraded: **80–90%**
@@ -955,18 +971,18 @@ This domain governs **whether translated signals are safe, consented, and meanin
 - Governance decision latency: **<0.1 ms**
 - Audit & consent traceability: **Immediate**
 
-### Deployment Model
+#### Deployment Model
 
 **Observe → Advisory Trust → Constrained Trust → Full Continuity**  
 *(Progressive rollout over weeks, not forced convergence)*
 
 ---
 
-## 🏛️ Governance Systems
+### 🏛️ Governance Systems
 
 AILEE provides deterministic trust governance for civic, institutional, and political systems operating under ambiguity, authority constraints, and high societal impact—without enforcing ideology or outcomes.
 
-### High-Impact Applications
+#### High-Impact Applications
 
 🏛️ **Public policy & civic platforms** — Govern whether directives are advisory, enforceable, or non-actionable  
 🗳️ **Election & voting infrastructure** — Separate observation, reporting, auditing, and automation authority  
@@ -975,7 +991,7 @@ AILEE provides deterministic trust governance for civic, institutional, and poli
 🌐 **Cross-jurisdictional governance** — Apply authority and scope limits across regions and institutions  
 🤖 **AI-assisted governance tools** — Ensure models cannot act beyond explicitly delegated authority  
 
-### Typical Impact (Representative Systems)
+#### Typical Impact (Representative Systems)
 
 - Unauthorized action prevention: **95%+**  
 - Improper authority escalation reduction: **70–85%**  
@@ -983,13 +999,13 @@ AILEE provides deterministic trust governance for civic, institutional, and poli
 - Temporal misuse (stale / premature actions) reduction: **80%+**  
 - Audit & compliance readiness: **Immediate**
 
-### Deployment Model
+#### Deployment Model
 
 Observe → Advisory → Constrained Trust → Full Governance (4–8 weeks)
 
 ---
 
-## 🌊 Ocean Systems
+### 🌊 Ocean Systems
 
 AILEE provides deterministic trust governance for **marine ecosystem monitoring, intervention restraint, and environmental decision staging**—without assuming control authority, bypassing regulatory processes, or enabling irreversible ecological actions.
 
@@ -997,7 +1013,7 @@ This domain governs **whether proposed ocean interventions are safe, sufficientl
 
 Rather than optimizing for speed or scale, the Ocean domain prioritizes **precaution, reversibility, and temporal discipline** in complex, living systems where mistakes compound over decades.
 
-### High-Impact Applications
+#### High-Impact Applications
 
 🌊 **Marine ecosystem monitoring** — Trust-gated interpretation of sensor and model signals  
 🧪 **Nutrient & oxygen management** — Prevent unsafe or premature biogeochemical interventions  
@@ -1006,7 +1022,7 @@ Rather than optimizing for speed or scale, the Ocean domain prioritizes **precau
 📊 **Multi-model validation** — Detect disagreement and uncertainty before action  
 ⚖️ **Regulatory & compliance governance** — Explicit HOLD vs FAIL distinction for permits  
 
-### Typical Impact (Representative Systems)
+#### Typical Impact (Representative Systems)
 
 - Premature or unsafe interventions blocked: **90–98%**
 - Regulatory non-compliance detected pre-action: **95%+**
@@ -1016,7 +1032,7 @@ Rather than optimizing for speed or scale, the Ocean domain prioritizes **precau
 - Governance decision latency: **<1 ms**
 - Scientific traceability & audit readiness: **Immediate**
 
-### Deployment Model
+#### Deployment Model
 
 **Observe → Stage → Controlled Intervention → Emergency Response**  
 *(Progressive, evidence-driven escalation with uncertainty-aware ceilings)*
@@ -1026,7 +1042,7 @@ Rather than optimizing for speed or scale, the Ocean domain prioritizes **precau
 
 ---
 
-## ⛏️ Crypto Mining
+### ⛏️ Crypto Mining
 
 AILEE provides a **governance layer** for AI-driven crypto mining operations — ensuring that
 hash-rate tuning, thermal management, power capping, and pool switching are acted upon
@@ -1344,6 +1360,24 @@ To use this feature after cloning, developers must register the Watermark‑Prov
 
 ---
 
+### 📹 Video Temporal Provenance Engine
+
+AILEE provides real-time, zero-allocation temporal provenance verification for video streams and synthetic frame sequences through a high-performance C++ core (`include/ailee_video_temporal_provenance.hpp`), Python binding (`ailee/domains/video_temporal_provenance`), Rust crate (`src/video_temporal_provenance.rs`), and TypeScript module (`packages/ailee-ts/src/domains/video_temporal_provenance`).
+
+**Governed Decisions**
+- Real-time optical flow consistency and rhythm stability evaluation across frame chains.
+- Scene boundary classification (hard cuts, fades, cross-dissolves, synthetic interpolations).
+- Perceptual hash delta monitoring and motion hallucination detection.
+- Cryptographic temporal watermark embedding and verification across sequence frames.
+- Deterministic fallback handling on motion anomaly or missing provenance flags.
+
+**Key Features**
+- Allocator-free, 64-byte aligned data structures optimized for SIMD and low-latency frame ingestion.
+- C ABI export layer for native host integration across polyglot runtimes.
+- Pure Python fallback signal evaluator when native shared libraries are absent.
+
+---
+
 ## Design Philosophy
 
 > Trust is not a probability.  
@@ -1373,13 +1407,13 @@ It makes them **responsible**.
 AILEE Trust Layer **v9.0.0** is a fully governed, cryptographically anchored subsystem with enterprise features:
 
 ✅ 18 domain governance layers
-✅ 9 domain-optimized presets  
+✅ 17 domain-optimized presets
 ✅ Advanced peer adapters for multi-model systems  
 ✅ Real-time monitoring & alerting  
 ✅ Comprehensive audit trails  
 ✅ Deterministic replay for testing  
 
-### Future Considerations (v8.1.0+)
+### Future Considerations (v9.1.0+)
 
 Future versions may add:
 - Streaming support for real-time pipelines
