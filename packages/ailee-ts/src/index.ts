@@ -6,3 +6,4 @@ export const VERSION = "8.2.0";
 export * from "./core/index.js";
 export * from "./hardware/index.js";
 export * from "./domains/index.js";
+export * from "./governance/index.js";
