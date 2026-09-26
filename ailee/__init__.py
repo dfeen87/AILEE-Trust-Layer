@@ -858,3 +858,62 @@ __all__.extend(["optional", "domains"])
 from .ailee_client import AileeClient
 __all__.append("AileeClient")
 
+# =============================================================================
+# Governance Architecture v1.0
+# =============================================================================
+try:
+    from .governance_v1 import (
+        GovernanceInput,
+        CompartmentDecision,
+        ALCOAMetadata,
+        LedgerEntry,
+        TrainingSignal,
+        InterpretationResult,
+        DecisionSummary,
+        FinalApprovalRequest,
+        FinalApprovalResponse,
+        evaluate_safety,
+        evaluate_grace,
+        evaluate_consensus,
+        evaluate_fallback,
+        LedgerStore,
+        InMemoryLedgerStore,
+        FileLedgerStore,
+        write_ledger_entry,
+        get_default_ledger_store,
+        set_default_ledger_store,
+        interpret_event,
+        DispatcherRegistry,
+        apply_training_signal,
+        register_training_callback,
+        final_approval,
+    )
+    _HAS_GOVERNANCE_V1 = True
+    __all__.extend([
+        "GovernanceInput",
+        "CompartmentDecision",
+        "ALCOAMetadata",
+        "LedgerEntry",
+        "TrainingSignal",
+        "InterpretationResult",
+        "DecisionSummary",
+        "FinalApprovalRequest",
+        "FinalApprovalResponse",
+        "evaluate_safety",
+        "evaluate_grace",
+        "evaluate_consensus",
+        "evaluate_fallback",
+        "LedgerStore",
+        "InMemoryLedgerStore",
+        "FileLedgerStore",
+        "write_ledger_entry",
+        "get_default_ledger_store",
+        "set_default_ledger_store",
+        "interpret_event",
+        "DispatcherRegistry",
+        "apply_training_signal",
+        "register_training_callback",
+        "final_approval",
+    ])
+except ImportError:
+    _HAS_GOVERNANCE_V1 = False
