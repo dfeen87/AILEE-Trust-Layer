@@ -45,8 +45,8 @@ export class AuditoryHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const rawSpl = Number(snapshot.readings.soundPressureLevelDb || 70.0);
-    const snr = Number(snapshot.readings.signalToNoiseRatio || 15.0);
+    const rawSpl = Number(snapshot.readings.soundPressureLevelDb ?? 70.0);
+    const snr = Number(snapshot.readings.signalToNoiseRatio ?? 15.0);
     const rawConfidence = Math.min(1.0, snr / 25.0);
 
     const decision = this.pipeline.process(rawSpl, rawConfidence, [], trustContext);

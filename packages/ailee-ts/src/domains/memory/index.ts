@@ -37,7 +37,7 @@ export class MemoryHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const ramPercent = Number(snapshot.readings.ramUsagePercent || 50.0);
+    const ramPercent = Number(snapshot.readings.ramUsagePercent ?? 50.0);
     return this.pipeline.process(ramPercent, snapshot.quality, [], trustContext);
   }
 

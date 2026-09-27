@@ -38,8 +38,8 @@ export class AutomotiveHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const speed = Number(snapshot.readings.wheelSpeedKmh || 0.0);
-    const cameraConf = Number(snapshot.readings.cameraConfidence || 0.5);
+    const speed = Number(snapshot.readings.wheelSpeedKmh ?? 0.0);
+    const cameraConf = Number(snapshot.readings.cameraConfidence ?? 0.5);
 
     return this.pipeline.process(speed, cameraConf, [], trustContext);
   }

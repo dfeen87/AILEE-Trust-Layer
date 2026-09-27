@@ -45,8 +45,8 @@ export class WatermarkProvenanceHardwareAdapter implements DomainHardwareAdapter
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const rawScore = Number(snapshot.readings.rawWatermarkScore || 0.0);
-    const confidence = Number(snapshot.readings.detectorConfidence || 0.0);
+    const rawScore = Number(snapshot.readings.rawWatermarkScore ?? 0.0);
+    const confidence = Number(snapshot.readings.detectorConfidence ?? 0.0);
     const rawConf = Math.max(0, Math.min(1.0, rawScore * confidence));
 
     return this.pipeline.process(rawScore * 100, rawConf, [], trustContext);

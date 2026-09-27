@@ -62,7 +62,10 @@ export class AileeTrustPipeline {
     let finalValue = rawValue;
     let usedFallback = false;
 
-    if (trustScore.aggregateScore < this.config.borderlineLow) {
+    if (!Number.isFinite(rawValue)) {
+      safetyStatus = "OUTRIGHT_REJECTED";
+      reasons.push("Raw value must be a finite number.");
+    } else if (trustScore.aggregateScore < this.config.borderlineLow) {
       safetyStatus = "OUTRIGHT_REJECTED";
       reasons.push(`Score ${trustScore.aggregateScore.toFixed(3)} below borderline low threshold (${this.config.borderlineLow}).`);
     } else if (trustScore.aggregateScore < this.config.borderlineHigh) {

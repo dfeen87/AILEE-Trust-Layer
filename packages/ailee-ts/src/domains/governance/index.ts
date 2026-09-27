@@ -37,8 +37,8 @@ export class GovernanceHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const mandate = Number(snapshot.readings.mandateValidityScore || 0.0);
-    const quorum = Number(snapshot.readings.consensusQuorumPercent || 0.0);
+    const mandate = Number(snapshot.readings.mandateValidityScore ?? 0.0);
+    const quorum = Number(snapshot.readings.consensusQuorumPercent ?? 0.0);
     const rawConf = (quorum / 100.0) * snapshot.quality;
 
     return this.pipeline.process(mandate, rawConf, [], trustContext);

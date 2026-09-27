@@ -37,7 +37,7 @@ export class TopologyHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const connIndex = Number(snapshot.readings.connectivityIndex || 0.5);
+    const connIndex = Number(snapshot.readings.connectivityIndex ?? 0.5);
     return this.pipeline.process(connIndex, snapshot.quality, [], trustContext);
   }
 

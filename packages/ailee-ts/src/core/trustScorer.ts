@@ -11,7 +11,9 @@ export class TrustScorer {
   }
 
   public scoreOutput(output: ModelOutput, history: number[] = [], peerValues: number[] = []): TrustScore {
-    const confidence = Math.max(0, Math.min(1, output.confidence));
+    const confidence = Number.isFinite(output.confidence)
+      ? Math.max(0, Math.min(1, output.confidence))
+      : 0;
 
     let safety = 1.0;
     if (isNaN(output.value) || !isFinite(output.value)) {
