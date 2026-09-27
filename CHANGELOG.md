@@ -1,3 +1,13 @@
+### **v9.1.0 — Version Alignment**
+
+**Type:** Minor (Additive, backward-compatible)
+
+#### Consistency
+- Updated the public Python, Rust, and TypeScript package versions to 9.1.0
+- Aligned governance metadata, documentation, dashboard labels, manifests, lockfiles, and tests with the 9.1.0 release
+
+---
+
 ### **v4.7.0 — Memory Domain Hardening & Benchmark Coverage**
 
 **Type:** Minor (Additive, backward-compatible)
