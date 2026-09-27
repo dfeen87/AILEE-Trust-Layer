@@ -37,7 +37,7 @@ export class GridsHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const freq = Number(snapshot.readings.gridFrequencyHz || 60.0);
+    const freq = Number(snapshot.readings.gridFrequencyHz ?? 60.0);
     return this.pipeline.process(freq, snapshot.quality, [], trustContext);
   }
 

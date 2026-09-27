@@ -37,9 +37,9 @@ export class LightTransitionHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const power = Number(snapshot.readings.opticalPowerDbm || -5.0);
-    const ber = Number(snapshot.readings.bitErrorRate || 1e-6);
-    const rawConf = Math.max(0, 1.0 - Math.log10(ber + 1e-12) / -12.0);
+    const power = Number(snapshot.readings.opticalPowerDbm ?? -5.0);
+    const ber = Number(snapshot.readings.bitErrorRate ?? 1e-6);
+    const rawConf = Math.max(0, Math.min(1, -Math.log10(ber + 1e-12) / 12.0));
 
     return this.pipeline.process(power, rawConf, [], trustContext);
   }

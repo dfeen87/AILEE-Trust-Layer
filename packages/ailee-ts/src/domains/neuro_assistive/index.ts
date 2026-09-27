@@ -37,7 +37,7 @@ export class NeuroAssistiveHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const cogLoad = Number(snapshot.readings.cognitiveLoadIndex || 30.0);
+    const cogLoad = Number(snapshot.readings.cognitiveLoadIndex ?? 30.0);
     const consent = Boolean(snapshot.readings.userConsentVerified);
     const rawConf = consent ? snapshot.quality : 0.0;
 

@@ -37,8 +37,8 @@ export class TelecommunicationsHardwareAdapter implements DomainHardwareAdapter 
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const latency = Number(snapshot.readings.latencyMs || 10.0);
-    const loss = Number(snapshot.readings.packetLossPercent || 0.0);
+    const latency = Number(snapshot.readings.latencyMs ?? 10.0);
+    const loss = Number(snapshot.readings.packetLossPercent ?? 0.0);
     const rawConf = Math.max(0, 1.0 - loss * 100.0);
 
     return this.pipeline.process(latency, rawConf, [], trustContext);

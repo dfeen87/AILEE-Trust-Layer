@@ -37,7 +37,7 @@ export class DatacenterHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const inletTemp = Number(snapshot.readings.rackInletTempC || 24.0);
+    const inletTemp = Number(snapshot.readings.rackInletTempC ?? 24.0);
     return this.pipeline.process(inletTemp, snapshot.quality, [], trustContext);
   }
 

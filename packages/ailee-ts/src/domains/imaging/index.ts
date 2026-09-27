@@ -37,8 +37,8 @@ export class ImagingHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const rawVal = Number(snapshot.readings.photonCount || 10000);
-    const conf = Number(snapshot.readings.reconstructionConfidence || 0.8);
+    const rawVal = Number(snapshot.readings.photonCount ?? 10000);
+    const conf = Number(snapshot.readings.reconstructionConfidence ?? 0.8);
 
     return this.pipeline.process(rawVal, conf, [], trustContext);
   }

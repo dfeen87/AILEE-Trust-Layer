@@ -38,8 +38,8 @@ export class CrossEcosystemHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const semanticScore = Number(snapshot.readings.semanticEquivalenceScore || 0.0);
-    const translationConf = Number(snapshot.readings.translationConfidence || 0.0);
+    const semanticScore = Number(snapshot.readings.semanticEquivalenceScore ?? 0.0);
+    const translationConf = Number(snapshot.readings.translationConfidence ?? 0.0);
 
     return this.pipeline.process(semanticScore, translationConf, [], trustContext);
   }

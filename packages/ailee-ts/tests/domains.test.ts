@@ -59,4 +59,17 @@ describe("17 Hardware Domain Adapters", () => {
       }
     }
   });
+
+  it("preserves valid zero-valued light readings", async () => {
+    const adapter = new LightTransitionHardwareAdapter();
+    const decision = await adapter.evaluateState({
+      timestamp: Date.now(),
+      deviceId: "test-transceiver",
+      quality: 1,
+      readings: { opticalPowerDbm: 0, bitErrorRate: 1e-12 },
+    });
+
+    expect(decision.safetyStatus).toBe("ACCEPTED");
+    expect(decision.value).toBe(0);
+  });
 });

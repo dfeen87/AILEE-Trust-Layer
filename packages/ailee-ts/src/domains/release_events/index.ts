@@ -37,8 +37,8 @@ export class ReleaseEventsHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const rolloutTarget = Number(snapshot.readings.targetRolloutPercent || 0.0);
-    const errorRate = Number(snapshot.readings.errorRatePercent || 0.0);
+    const rolloutTarget = Number(snapshot.readings.targetRolloutPercent ?? 0.0);
+    const errorRate = Number(snapshot.readings.errorRatePercent ?? 0.0);
     const rawConf = Math.max(0, 1.0 - errorRate * 10.0);
 
     return this.pipeline.process(rolloutTarget, rawConf, [], trustContext);

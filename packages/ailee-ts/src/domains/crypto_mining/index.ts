@@ -38,7 +38,7 @@ export class CryptoMiningHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const tempC = Number(snapshot.readings.chipTemperatureC || 70.0);
+    const tempC = Number(snapshot.readings.chipTemperatureC ?? 70.0);
     const sensorHealth = snapshot.quality;
 
     return this.pipeline.process(tempC, sensorHealth, [], trustContext);

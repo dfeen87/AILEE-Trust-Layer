@@ -30,6 +30,18 @@ describe("Core AILEE Trust Pipeline", () => {
     expect(res.value).toBe(5.0);
   });
 
+  it("rejects non-finite values and confidence", () => {
+    const pipeline = new AileeTrustPipeline({ defaultFallbackValue: 5.0 });
+
+    const invalidValue = pipeline.process(Number.NaN, 1.0);
+    expect(invalidValue.safetyStatus).toBe("OUTRIGHT_REJECTED");
+    expect(invalidValue.value).toBe(5.0);
+
+    const invalidConfidence = pipeline.process(10.0, Number.NaN);
+    expect(invalidConfidence.trustScore.confidence).toBe(0);
+    expect(invalidConfidence.safetyStatus).toBe("OUTRIGHT_REJECTED");
+  });
+
   it("evaluates grace layer for borderline signals", () => {
     const pipeline = new AileeTrustPipeline({
       borderlineLow: 0.5,

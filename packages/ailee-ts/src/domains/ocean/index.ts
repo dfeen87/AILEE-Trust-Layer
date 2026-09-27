@@ -37,7 +37,7 @@ export class OceanHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const do2 = Number(snapshot.readings.dissolvedOxygenMgL || 7.0);
+    const do2 = Number(snapshot.readings.dissolvedOxygenMgL ?? 7.0);
     return this.pipeline.process(do2, snapshot.quality, [], trustContext);
   }
 

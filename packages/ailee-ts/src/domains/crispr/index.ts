@@ -38,7 +38,7 @@ export class CrisprHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const seedMatch = Number(snapshot.readings.seedMatchPercent || 0.0);
+    const seedMatch = Number(snapshot.readings.seedMatchPercent ?? 0.0);
     const pamVerified = Boolean(snapshot.readings.pamVerified);
     const rawConfidence = pamVerified ? seedMatch / 100.0 : 0.0;
 
