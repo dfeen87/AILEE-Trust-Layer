@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const MEMORY_PRESETS = {
   RAM_OOM_SAFEGUARD: {
@@ -37,7 +37,7 @@ export class MemoryHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const ramPercent = Number(snapshot.readings.ramUsagePercent ?? 50.0);
+    const ramPercent = finiteSensorReading(snapshot, "ramUsagePercent");
     return this.pipeline.process(ramPercent, snapshot.quality, [], trustContext);
   }
 

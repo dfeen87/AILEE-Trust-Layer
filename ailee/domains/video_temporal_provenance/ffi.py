@@ -143,7 +143,7 @@ class TPEFFIWrapper:
 
     def evaluate(self) -> TemporalIntegrityMetricsPy:
         if self._lib and self._handle:
-            metrics_c = TemporalIntegrityMetricsCTypes()
+            metrics_c, _metrics_buffer = self._new_aligned_metrics()
             res = self._lib.ailee_tpe_evaluate(self._handle, ctypes.byref(metrics_c))
             if res == 1:
                 status_str = "ACCEPTED" if metrics_c.safety_status == 0 else ("PARTIALLY_TRUSTED" if metrics_c.safety_status == 1 else "OUTRIGHT_REJECTED")
@@ -211,6 +211,15 @@ class TPEFFIWrapper:
             anomaly_count=anomaly_count,
             safety_status=status
         )
+
+    @staticmethod
+    def _new_aligned_metrics():
+        """Allocate metrics storage aligned for the native ``alignas(64)`` type."""
+        size = ctypes.sizeof(TemporalIntegrityMetricsCTypes)
+        storage = ctypes.create_string_buffer(size + 63)
+        offset = (-ctypes.addressof(storage)) % 64
+        metrics = TemporalIntegrityMetricsCTypes.from_buffer(storage, offset)
+        return metrics, storage
 
     def close(self):
         if hasattr(self, '_lib') and hasattr(self, '_handle') and self._lib and self._handle:

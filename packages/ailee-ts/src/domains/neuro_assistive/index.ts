@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, booleanSensorReading, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const NEURO_ASSISTIVE_PRESETS = {
   COGNITIVE_AUTONOMY: {
@@ -37,8 +37,8 @@ export class NeuroAssistiveHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const cogLoad = Number(snapshot.readings.cognitiveLoadIndex ?? 30.0);
-    const consent = Boolean(snapshot.readings.userConsentVerified);
+    const cogLoad = finiteSensorReading(snapshot, "cognitiveLoadIndex");
+    const consent = booleanSensorReading(snapshot, "userConsentVerified") === true;
     const rawConf = consent ? snapshot.quality : 0.0;
 
     return this.pipeline.process(cogLoad, rawConf, [], trustContext);

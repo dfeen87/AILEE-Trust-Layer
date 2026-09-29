@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const CROSS_ECOSYSTEM_PRESETS = {
   SEMANTIC_INVARIANCE: {
@@ -38,8 +38,8 @@ export class CrossEcosystemHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const semanticScore = Number(snapshot.readings.semanticEquivalenceScore ?? 0.0);
-    const translationConf = Number(snapshot.readings.translationConfidence ?? 0.0);
+    const semanticScore = finiteSensorReading(snapshot, "semanticEquivalenceScore");
+    const translationConf = finiteSensorReading(snapshot, "translationConfidence");
 
     return this.pipeline.process(semanticScore, translationConf, [], trustContext);
   }

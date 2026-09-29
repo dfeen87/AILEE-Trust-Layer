@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const ROBOTICS_PRESETS = {
   SAFETY_RATED_STOP: {
@@ -37,8 +37,8 @@ export class RoboticsHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const speed = Number(snapshot.readings.endEffectorSpeedMs ?? 0.0);
-    const humanDist = Number(snapshot.readings.humanDistanceMeters ?? 1.0);
+    const speed = finiteSensorReading(snapshot, "endEffectorSpeedMs");
+    const humanDist = finiteSensorReading(snapshot, "humanDistanceMeters");
     const rawConf = Math.min(1.0, humanDist / 2.0);
 
     return this.pipeline.process(speed, rawConf, [], trustContext);

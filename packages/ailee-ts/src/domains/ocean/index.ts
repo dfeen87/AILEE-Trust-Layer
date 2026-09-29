@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const OCEAN_PRESETS = {
   PRECAUTIONARY_RESTRAINT: {
@@ -37,7 +37,7 @@ export class OceanHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const do2 = Number(snapshot.readings.dissolvedOxygenMgL ?? 7.0);
+    const do2 = finiteSensorReading(snapshot, "dissolvedOxygenMgL");
     return this.pipeline.process(do2, snapshot.quality, [], trustContext);
   }
 

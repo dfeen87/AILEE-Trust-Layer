@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, booleanSensorReading, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const CRISPR_PRESETS = {
   THERMODYNAMIC_STRICT: {
@@ -38,8 +38,8 @@ export class CrisprHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const seedMatch = Number(snapshot.readings.seedMatchPercent ?? 0.0);
-    const pamVerified = Boolean(snapshot.readings.pamVerified);
+    const seedMatch = finiteSensorReading(snapshot, "seedMatchPercent");
+    const pamVerified = booleanSensorReading(snapshot, "pamVerified") === true;
     const rawConfidence = pamVerified ? seedMatch / 100.0 : 0.0;
 
     return this.pipeline.process(seedMatch, rawConfidence, [], trustContext);

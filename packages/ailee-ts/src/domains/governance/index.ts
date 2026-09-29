@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const GOVERNANCE_PRESETS = {
   INSTITUTIONAL_STRICT: {
@@ -37,8 +37,8 @@ export class GovernanceHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const mandate = Number(snapshot.readings.mandateValidityScore ?? 0.0);
-    const quorum = Number(snapshot.readings.consensusQuorumPercent ?? 0.0);
+    const mandate = finiteSensorReading(snapshot, "mandateValidityScore");
+    const quorum = finiteSensorReading(snapshot, "consensusQuorumPercent");
     const rawConf = (quorum / 100.0) * snapshot.quality;
 
     return this.pipeline.process(mandate, rawConf, [], trustContext);

@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const AUTOMOTIVE_PRESETS = {
   STRICT_ODD: {
@@ -38,8 +38,8 @@ export class AutomotiveHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const speed = Number(snapshot.readings.wheelSpeedKmh ?? 0.0);
-    const cameraConf = Number(snapshot.readings.cameraConfidence ?? 0.5);
+    const speed = finiteSensorReading(snapshot, "wheelSpeedKmh");
+    const cameraConf = finiteSensorReading(snapshot, "cameraConfidence");
 
     return this.pipeline.process(speed, cameraConf, [], trustContext);
   }

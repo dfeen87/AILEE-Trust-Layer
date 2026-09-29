@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const WATERMARK_PROVENANCE_PRESETS = {
   BALANCED_PROVENANCE: {
@@ -45,8 +45,8 @@ export class WatermarkProvenanceHardwareAdapter implements DomainHardwareAdapter
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const rawScore = Number(snapshot.readings.rawWatermarkScore ?? 0.0);
-    const confidence = Number(snapshot.readings.detectorConfidence ?? 0.0);
+    const rawScore = finiteSensorReading(snapshot, "rawWatermarkScore");
+    const confidence = finiteSensorReading(snapshot, "detectorConfidence");
     const rawConf = Math.max(0, Math.min(1.0, rawScore * confidence));
 
     return this.pipeline.process(rawScore * 100, rawConf, [], trustContext);

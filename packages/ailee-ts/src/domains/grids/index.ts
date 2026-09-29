@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const GRIDS_PRESETS = {
   FREQUENCY_STABILITY: {
@@ -37,7 +37,7 @@ export class GridsHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const freq = Number(snapshot.readings.gridFrequencyHz ?? 60.0);
+    const freq = finiteSensorReading(snapshot, "gridFrequencyHz");
     return this.pipeline.process(freq, snapshot.quality, [], trustContext);
   }
 

@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const CRYPTO_MINING_PRESETS = {
   THERMAL_SAFEGUARD: {
@@ -38,7 +38,7 @@ export class CryptoMiningHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const tempC = Number(snapshot.readings.chipTemperatureC ?? 70.0);
+    const tempC = finiteSensorReading(snapshot, "chipTemperatureC");
     const sensorHealth = snapshot.quality;
 
     return this.pipeline.process(tempC, sensorHealth, [], trustContext);

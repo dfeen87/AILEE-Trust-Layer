@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const TOPOLOGY_PRESETS = {
   GRAPH_STABILITY: {
@@ -37,7 +37,7 @@ export class TopologyHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const connIndex = Number(snapshot.readings.connectivityIndex ?? 0.5);
+    const connIndex = finiteSensorReading(snapshot, "connectivityIndex");
     return this.pipeline.process(connIndex, snapshot.quality, [], trustContext);
   }
 
