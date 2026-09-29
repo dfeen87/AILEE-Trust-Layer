@@ -1,3 +1,13 @@
+### **v9.1.1 — Version Alignment**
+
+**Type:** Patch (Bug fixes & maintenance)
+
+#### Consistency
+- Updated the public Python, Rust, and TypeScript package versions to 9.1.1
+- Aligned governance metadata, documentation, dashboard labels, manifests, lockfiles, and tests with the 9.1.1 release
+
+---
+
 ### **v9.1.0 — Version Alignment**
 
 **Type:** Minor (Additive, backward-compatible)

@@ -315,7 +315,7 @@ def write_ledger_entry(
         alcoa = ALCOAMetadata(
             attributable_to="system_governance_v1",
             system_id="ailee_trust_layer_v1",
-            version="9.1.0",
+            version="9.1.1",
         )
         metadata_dict = alcoa.to_dict()
     elif isinstance(metadata, ALCOAMetadata):
@@ -339,7 +339,7 @@ def write_ledger_entry(
                 elif key == "system_id":
                     metadata_dict["system_id"] = "ailee_trust_layer_v1"
                 elif key == "version":
-                    metadata_dict["version"] = "9.1.0"
+                    metadata_dict["version"] = "9.1.1"
                 elif key == "contemporaneous_timestamp":
                     metadata_dict["contemporaneous_timestamp"] = datetime.utcnow().isoformat()
                 elif key == "is_original":
