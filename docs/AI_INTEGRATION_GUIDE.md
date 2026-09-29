@@ -600,8 +600,7 @@ else:
 
 ## Resources
 
-- **Full API Documentation**: [docs/API.md](../docs/API.md)
-- **Configuration Presets**: [optional/ailee_config_presets.py](../optional/ailee_config_presets.py)
+- **Configuration Presets**: [ailee/optional/ailee_config_presets.py](../ailee/optional/ailee_config_presets.py)
 - **More Examples**: [examples/](../examples/)
 - **White Paper**: [docs/whitepaper/](../docs/whitepaper/)
 

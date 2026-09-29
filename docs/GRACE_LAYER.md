@@ -155,7 +155,7 @@ If GRACE fails, the system **falls back safely**.
 The GRACE Layer preserves the following invariants:
 
 - **Fail-safe behavior**: failure routes to fallback, never forward execution
-- **Determinism**: identical inputs produce identical outcomes
+- **Determinism**: identical inputs, configuration, and relevant history produce identical GRACE outcomes
 - **Auditability**: every decision includes explicit reasons
 - **Bounded authority**: GRACE cannot expand system capabilities
 
