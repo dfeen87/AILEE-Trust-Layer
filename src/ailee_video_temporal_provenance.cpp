@@ -256,7 +256,22 @@ void TemporalProvenanceEngine::reset() {
 }
 
 bool TemporalProvenanceEngine::ingest_frame(const FrameData& frame) {
+    if (!std::isfinite(frame.timestamp_sec) || frame.timestamp_sec < 0.0 ||
+        !std::isfinite(frame.trust_score) || frame.trust_score < 0.0f || frame.trust_score > 100.0f ||
+        !std::isfinite(frame.perceptual_hash_delta) ||
+        !std::isfinite(frame.motion.dx) || !std::isfinite(frame.motion.dy) ||
+        !std::isfinite(frame.motion.flow_consistency) ||
+        frame.motion.flow_consistency < 0.0f || frame.motion.flow_consistency > 1.0f) {
+        return false;
+    }
     size_t prev_count = chain_.frame_count();
+    if (prev_count > 0) {
+        const FrameData* previous = chain_.get_frame(prev_count - 1);
+        if (!previous || frame.frame_index <= previous->frame_index ||
+            frame.timestamp_sec <= previous->timestamp_sec) {
+            return false;
+        }
+    }
     if (!chain_.add_frame(frame)) return false;
 
     if (prev_count > 0) {
@@ -422,16 +437,28 @@ struct AileeTPEHandle {
 extern "C" {
 
 AileeTPEHandle* ailee_tpe_create(void) {
-    return new (std::nothrow) AileeTPEHandle();
+    try {
+        return new (std::nothrow) AileeTPEHandle();
+    } catch (...) {
+        return nullptr;
+    }
 }
 
 void ailee_tpe_destroy(AileeTPEHandle* handle) {
-    delete handle;
+    try {
+        delete handle;
+    } catch (...) {
+        // Destruction is idempotent for null handles and must not cross C ABI.
+    }
 }
 
 void ailee_tpe_reset(AileeTPEHandle* handle) {
-    if (handle) {
+    try {
+      if (handle) {
         handle->engine.reset();
+      }
+    } catch (...) {
+        // C ABI reset is best-effort and must never propagate C++ exceptions.
     }
 }
 
@@ -445,7 +472,11 @@ int ailee_tpe_ingest_frame(
     float motion_dy,
     float flow_consistency
 ) {
-    if (!handle) return 0;
+    if (!handle || !std::isfinite(timestamp_sec) || timestamp_sec < 0.0 ||
+        !std::isfinite(raw_trust) || raw_trust < 0.0f || raw_trust > 100.0f ||
+        !std::isfinite(perceptual_hash_delta) || !std::isfinite(motion_dx) ||
+        !std::isfinite(motion_dy) || !std::isfinite(flow_consistency) ||
+        flow_consistency < 0.0f || flow_consistency > 1.0f) return 0;
 
     ailee::video::FrameData f{};
     f.frame_index = frame_index;
@@ -461,7 +492,11 @@ int ailee_tpe_ingest_frame(
         f.provenance_flags |= ailee::video::PROV_FLAG_SYNTHETIC_INTERP;
     }
 
-    return handle->engine.ingest_frame(f) ? 1 : 0;
+    try {
+        return handle->engine.ingest_frame(f) ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
 }
 
 int ailee_tpe_evaluate(
@@ -469,7 +504,13 @@ int ailee_tpe_evaluate(
     ailee::video::TemporalIntegrityMetrics* out_metrics
 ) {
     if (!handle || !out_metrics) return 0;
-    return handle->engine.evaluate_chain(*out_metrics) ? 1 : 0;
+    try {
+        return handle->engine.evaluate_chain(*out_metrics) ? 1 : 0;
+    } catch (...) {
+        std::memset(out_metrics, 0, sizeof(*out_metrics));
+        out_metrics->safety_status = ailee::video::SafetyStatus::OUTRIGHT_REJECTED;
+        return 0;
+    }
 }
 
 int ailee_tpe_embed_watermark(
@@ -478,8 +519,12 @@ int ailee_tpe_embed_watermark(
     const uint8_t* key,
     size_t key_len
 ) {
-    if (!handle) return 0;
-    return handle->engine.embed_watermark_to_frame(static_cast<size_t>(frame_index), key, key_len) ? 1 : 0;
+    if (!handle || !key || key_len == 0) return 0;
+    try {
+        return handle->engine.embed_watermark_to_frame(static_cast<size_t>(frame_index), key, key_len) ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
 }
 
 int ailee_tpe_verify_watermark(
@@ -488,8 +533,12 @@ int ailee_tpe_verify_watermark(
     const uint8_t* key,
     size_t key_len
 ) {
-    if (!handle) return 0;
-    return handle->engine.verify_frame_watermark(static_cast<size_t>(frame_index), key, key_len) ? 1 : 0;
+    if (!handle || !key || key_len == 0) return 0;
+    try {
+        return handle->engine.verify_frame_watermark(static_cast<size_t>(frame_index), key, key_len) ? 1 : 0;
+    } catch (...) {
+        return 0;
+    }
 }
 
 } // extern "C"

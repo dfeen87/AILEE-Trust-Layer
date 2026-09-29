@@ -157,6 +157,23 @@ void test_engine_integration() {
     std::cout << "  ✓ Engine integration tests passed!" << std::endl;
 }
 
+void test_c_abi_rejects_invalid_inputs() {
+    std::cout << "[Test] C ABI fail-closed validation..." << std::endl;
+    using namespace ailee::video;
+
+    AileeTPEHandle* handle = ailee_tpe_create();
+    assert(handle != nullptr);
+    assert(ailee_tpe_ingest_frame(handle, 0, 0.0, NAN, 0.0f, 0.0f, 0.0f, 1.0f) == 0);
+    assert(ailee_tpe_ingest_frame(handle, 0, 0.0, 95.0f, 0.0f, 0.0f, 0.0f, 1.0f) == 1);
+    assert(ailee_tpe_ingest_frame(handle, 0, 1.0, 95.0f, 0.0f, 0.0f, 0.0f, 1.0f) == 0);
+    assert(ailee_tpe_embed_watermark(handle, 0, nullptr, 0) == 0);
+    assert(ailee_tpe_verify_watermark(handle, 0, nullptr, 0) == 0);
+    assert(ailee_tpe_evaluate(nullptr, nullptr) == 0);
+    ailee_tpe_destroy(handle);
+
+    std::cout << "  ✓ C ABI validation tests passed!" << std::endl;
+}
+
 int main() {
     std::cout << "==========================================" << std::endl;
     std::cout << "AILEE-Video Temporal Provenance Tests (v7.0.0)" << std::endl;
@@ -167,6 +184,7 @@ int main() {
     test_temporal_continuity_operator();
     test_watermark_layer();
     test_engine_integration();
+    test_c_abi_rejects_invalid_inputs();
 
     std::cout << "All C++ Unit Tests PASSED successfully!" << std::endl;
     return 0;

@@ -33,15 +33,23 @@ export class VideoTemporalGovernor {
 
   public evaluateSequence(frames: FrameSignal[]): VideoGovernorDecision {
     this.bridge.reset();
+    let rejectedFrames = 0;
+    if (!Array.isArray(frames)) {
+      frames = [];
+      rejectedFrames = 1;
+    }
     for (const f of frames) {
-      this.bridge.ingestFrame(f);
+      if (!this.bridge.ingestFrame(f)) rejectedFrames++;
     }
 
     const metrics = this.bridge.evaluate();
     let status = metrics.safetyStatus;
     let reason = "Sequence evaluated successfully.";
 
-    if (metrics.overallTrustScore < this.config.minTrustThreshold) {
+    if (rejectedFrames > 0) {
+      status = "OUTRIGHT_REJECTED";
+      reason = `Rejected ${rejectedFrames} invalid or out-of-order frame signal(s).`;
+    } else if (metrics.overallTrustScore < this.config.minTrustThreshold) {
       status = "OUTRIGHT_REJECTED";
       reason = `Overall trust ${metrics.overallTrustScore.toFixed(1)} below threshold ${this.config.minTrustThreshold.toFixed(1)}.`;
     } else if (metrics.anomalyCount > this.config.maxAllowedAnomalies) {

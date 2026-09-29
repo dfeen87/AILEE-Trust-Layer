@@ -5,6 +5,7 @@ Python FFI wrapper for AILEE-Video C++ Temporal Provenance Engine C ABI.
 """
 
 import ctypes
+import math
 import os
 import platform
 from dataclasses import dataclass
@@ -25,6 +26,10 @@ class TemporalIntegrityMetricsCTypes(ctypes.Structure):
         ("total_scene_boundaries", ctypes.c_uint32),
         ("anomaly_count", ctypes.c_uint32),
         ("safety_status", ctypes.c_uint8),
+        # C++ declares this structure alignas(64), making sizeof(...) 64.
+        # Keep the ctypes allocation equally large so native zero-initialization
+        # cannot write past Python's buffer.
+        ("_reserved", ctypes.c_uint8 * 19),
     ]
 
 @dataclass
@@ -104,7 +109,21 @@ class TPEFFIWrapper:
             self._lib.ailee_tpe_reset(self._handle)
 
     def ingest_frame(self, frame_idx: int, timestamp: float, raw_trust: float, hash_delta: float, dx: float, dy: float, flow_consistency: float) -> bool:
-        self._fallback_frames.append({
+        numeric_values = (timestamp, raw_trust, hash_delta, dx, dy, flow_consistency)
+        if (
+            not isinstance(frame_idx, int)
+            or isinstance(frame_idx, bool)
+            or frame_idx < 0
+            or not all(isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value) for value in numeric_values)
+            or not 0.0 <= raw_trust <= 100.0
+            or not 0.0 <= flow_consistency <= 1.0
+            or timestamp < 0.0
+            or (self._fallback_frames and frame_idx <= self._fallback_frames[-1]["frame_idx"])
+            or (self._fallback_frames and timestamp <= self._fallback_frames[-1]["timestamp"])
+        ):
+            return False
+
+        frame = {
             "frame_idx": frame_idx,
             "timestamp": timestamp,
             "raw_trust": raw_trust,
@@ -112,12 +131,14 @@ class TPEFFIWrapper:
             "dx": dx,
             "dy": dy,
             "flow_consistency": flow_consistency,
-        })
+        }
         if self._lib and self._handle:
             res = self._lib.ailee_tpe_ingest_frame(
                 self._handle, frame_idx, timestamp, raw_trust, hash_delta, dx, dy, flow_consistency
             )
-            return res == 1
+            if res != 1:
+                return False
+        self._fallback_frames.append(frame)
         return True
 
     def evaluate(self) -> TemporalIntegrityMetricsPy:

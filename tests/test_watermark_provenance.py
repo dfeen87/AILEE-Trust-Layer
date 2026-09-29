@@ -1,6 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 
+import math
 import time
 import pytest
 
@@ -184,3 +185,46 @@ def test_validation_function():
     issues = validate_watermark_provenance_signals(signals)
     assert len(issues) > 0
     assert "raw_score must be between 0.0 and 1.0" in issues[0]
+
+
+@pytest.mark.parametrize("bad_value", [math.nan, math.inf, -math.inf])
+def test_non_finite_watermark_evidence_fails_closed(bad_value):
+    governor = create_default_watermark_provenance_governor()
+    signals = WatermarkProvenanceSignals(
+        control_domain=WatermarkProvenanceControlDomain.WORKFLOW_EVALUATION,
+        proposed_action=WatermarkProvenanceControlAction.MONITOR,
+        watermark_signals=[WatermarkSignalData("detector", bad_value, True, 1.0)],
+    )
+    decision = governor.evaluate(signals)
+    assert decision.actionable is False
+    assert decision.authorized_level == WatermarkProvenanceTrustLevel.NO_ACTION
+    assert decision.health_status == WatermarkProvenanceHealthStatus.CRITICAL
+    assert decision.used_fallback is True
+
+
+def test_history_and_events_are_bounded():
+    policy = WatermarkProvenancePolicy(max_history_size=2, max_event_history_size=1)
+    governor = WatermarkProvenanceGovernor(policy)
+    signals = WatermarkProvenanceSignals(
+        control_domain=WatermarkProvenanceControlDomain.WORKFLOW_EVALUATION,
+        proposed_action=WatermarkProvenanceControlAction.MONITOR,
+    )
+    for _ in range(3):
+        governor.evaluate(signals)
+    assert len(governor.get_decision_history()) == 2
+    assert len(governor.get_events()) == 1
+
+
+def test_duplicate_custody_ids_and_invalid_policy_are_rejected():
+    now = time.time()
+    signals = WatermarkProvenanceSignals(
+        control_domain=WatermarkProvenanceControlDomain.WORKFLOW_EVALUATION,
+        proposed_action=WatermarkProvenanceControlAction.MONITOR,
+        custody_chain=[
+            ProvenanceEventNode("duplicate", "generation", "model:a", "draft", now),
+            ProvenanceEventNode("duplicate", "verification", "human:b", "verify", now + 1),
+        ],
+    )
+    assert "event_id must be unique" in ";".join(validate_watermark_provenance_signals(signals))
+    with pytest.raises(ValueError):
+        WatermarkProvenanceGovernor(WatermarkProvenancePolicy(max_history_size=0))

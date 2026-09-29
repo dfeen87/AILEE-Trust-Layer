@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import time
 import hashlib
+import math
+from collections import deque
 from enum import Enum, IntEnum
 from dataclasses import dataclass, field
 from typing import List, Dict, Any, Optional, Set
@@ -102,6 +104,9 @@ class WatermarkProvenancePolicy:
     allow_binary_labels: bool = False
     enable_audit_events: bool = True
     track_decision_history: bool = True
+    max_history_size: int = 1000
+    max_event_history_size: int = 1000
+    max_evidence_items: int = 10000
 
 
 @dataclass
@@ -158,8 +163,20 @@ class WatermarkProvenanceGovernor:
 
     def __init__(self, policy: Optional[WatermarkProvenancePolicy] = None):
         self.policy = policy or WatermarkProvenancePolicy()
-        self._events: List[WatermarkProvenanceEvent] = []
-        self._history: List[WatermarkProvenanceDecision] = []
+        if not isinstance(self.policy.max_history_size, int) or self.policy.max_history_size < 1:
+            raise ValueError("max_history_size must be a positive integer")
+        if not isinstance(self.policy.max_event_history_size, int) or self.policy.max_event_history_size < 1:
+            raise ValueError("max_event_history_size must be a positive integer")
+        if not isinstance(self.policy.max_evidence_items, int) or self.policy.max_evidence_items < 1:
+            raise ValueError("max_evidence_items must be a positive integer")
+        if not isinstance(self.policy.min_trust_for_action, WatermarkProvenanceTrustLevel):
+            raise ValueError("min_trust_for_action must be a WatermarkProvenanceTrustLevel")
+        if not isinstance(self.policy.high_stakes_contexts, set) or not all(isinstance(v, str) for v in self.policy.high_stakes_contexts):
+            raise ValueError("high_stakes_contexts must be a set of strings")
+        if not isinstance(self.policy.disruption_vectors, set) or not all(isinstance(v, str) for v in self.policy.disruption_vectors):
+            raise ValueError("disruption_vectors must be a set of strings")
+        self._events = deque(maxlen=self.policy.max_event_history_size)
+        self._history = deque(maxlen=self.policy.max_history_size)
 
     def evaluate(self, signals: WatermarkProvenanceSignals) -> WatermarkProvenanceDecision:
         ts = time.time()
@@ -175,6 +192,10 @@ class WatermarkProvenanceGovernor:
 
         # Validation
         issues = validate_watermark_provenance_signals(signals)
+        if isinstance(signals.watermark_signals, list) and len(signals.watermark_signals) > self.policy.max_evidence_items:
+            issues.append(f"watermark_signals exceeds policy maximum {self.policy.max_evidence_items}")
+        if isinstance(signals.custody_chain, list) and len(signals.custody_chain) > self.policy.max_evidence_items:
+            issues.append(f"custody_chain exceeds policy maximum {self.policy.max_evidence_items}")
         if issues:
             decision = WatermarkProvenanceDecision(
                 authorized_level=WatermarkProvenanceTrustLevel.NO_ACTION,
@@ -199,7 +220,7 @@ class WatermarkProvenanceGovernor:
 
         # 1. Check for attempted binary label over-interpretation
         over_interpreted = False
-        if signals.attempted_binary_label:
+        if signals.attempted_binary_label and not self.policy.allow_binary_labels:
             over_interpreted = True
             safety_flags.append("OVER_INTERPRETATION_DETECTED")
             reasons.append(
@@ -431,11 +452,63 @@ def create_permissive_governor(**policy_overrides: Any) -> WatermarkProvenanceGo
 
 def validate_watermark_provenance_signals(signals: WatermarkProvenanceSignals) -> List[str]:
     issues: List[str] = []
+    if not isinstance(signals, WatermarkProvenanceSignals):
+        return ["signals must be a WatermarkProvenanceSignals instance"]
+    if not isinstance(signals.control_domain, WatermarkProvenanceControlDomain):
+        issues.append("control_domain must be a WatermarkProvenanceControlDomain")
+    if not isinstance(signals.proposed_action, WatermarkProvenanceControlAction):
+        issues.append("proposed_action must be a WatermarkProvenanceControlAction")
     if not isinstance(signals.watermark_signals, list):
         issues.append("watermark_signals must be a list")
-    for idx, sig in enumerate(signals.watermark_signals or []):
-        if not (0.0 <= sig.raw_score <= 1.0):
+        watermark_signals = []
+    else:
+        watermark_signals = signals.watermark_signals
+    if len(watermark_signals) > 10000:
+        issues.append("watermark_signals exceeds maximum size 10000")
+    for idx, sig in enumerate(watermark_signals[:10000]):
+        if not isinstance(sig, WatermarkSignalData):
+            issues.append(f"watermark_signals[{idx}] must be WatermarkSignalData")
+            continue
+        if not isinstance(sig.detector_name, str) or not sig.detector_name.strip():
+            issues.append(f"watermark_signals[{idx}].detector_name must be non-empty")
+        if not isinstance(sig.raw_score, (int, float)) or isinstance(sig.raw_score, bool) or not math.isfinite(sig.raw_score) or not (0.0 <= sig.raw_score <= 1.0):
             issues.append(f"watermark_signals[{idx}].raw_score must be between 0.0 and 1.0")
-        if not (0.0 <= sig.confidence <= 1.0):
+        if not isinstance(sig.confidence, (int, float)) or isinstance(sig.confidence, bool) or not math.isfinite(sig.confidence) or not (0.0 <= sig.confidence <= 1.0):
             issues.append(f"watermark_signals[{idx}].confidence must be between 0.0 and 1.0")
+        if not isinstance(sig.presence_detected, bool):
+            issues.append(f"watermark_signals[{idx}].presence_detected must be boolean")
+        if not isinstance(sig.details, dict):
+            issues.append(f"watermark_signals[{idx}].details must be a mapping")
+    if not isinstance(signals.custody_chain, list):
+        issues.append("custody_chain must be a list")
+        custody_chain = []
+    else:
+        custody_chain = signals.custody_chain
+    if len(custody_chain) > 10000:
+        issues.append("custody_chain exceeds maximum size 10000")
+    seen_ids = set()
+    previous_timestamp = -math.inf
+    for idx, node in enumerate(custody_chain[:10000]):
+        if not isinstance(node, ProvenanceEventNode):
+            issues.append(f"custody_chain[{idx}] must be ProvenanceEventNode")
+            continue
+        if not all(isinstance(value, str) and value.strip() for value in (node.event_id, node.stage, node.actor, node.action)):
+            issues.append(f"custody_chain[{idx}] identifiers and descriptors must be non-empty")
+        if node.event_id in seen_ids:
+            issues.append(f"custody_chain[{idx}].event_id must be unique")
+        seen_ids.add(node.event_id)
+        if not isinstance(node.timestamp, (int, float)) or isinstance(node.timestamp, bool) or not math.isfinite(node.timestamp) or node.timestamp < 0:
+            issues.append(f"custody_chain[{idx}].timestamp must be a finite non-negative number")
+        elif node.timestamp < previous_timestamp:
+            issues.append("custody_chain timestamps must be ordered")
+        else:
+            previous_timestamp = node.timestamp
+        if not isinstance(node.metadata, dict):
+            issues.append(f"custody_chain[{idx}].metadata must be a mapping")
+    if not isinstance(signals.suspected_disruptions, list) or not all(isinstance(v, str) for v in signals.suspected_disruptions):
+        issues.append("suspected_disruptions must be a list of strings")
+    if not isinstance(signals.workflow_context, dict):
+        issues.append("workflow_context must be a mapping")
+    if not isinstance(signals.context_type, str) or not signals.context_type.strip():
+        issues.append("context_type must be non-empty")
     return issues
