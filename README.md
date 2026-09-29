@@ -3,7 +3,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
-[![Python](https://img.shields.io/badge/python-3.8%2B-blue.svg)](https://www.python.org/)
+[![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
 [![Version](https://img.shields.io/badge/version-9.1.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
@@ -78,7 +78,7 @@ It sits *between* model output and system action and answers a single question:
 AILEE does **not** replace models.  
 AILEE **governs them**.
 
-It transforms uncertain, noisy, or distributed AI outputs into **deterministic, auditable, and safe final decisions**.
+It transforms uncertain, noisy, or distributed AI outputs into **deterministic, auditable, and safe decision semantics**.
 
 ---
 
@@ -102,6 +102,32 @@ No guesswork. No hidden overrides.
 ---
 
 ## Core Architecture
+
+This is the high-level trust path: AILEE sits between model or system output and
+system action, and determines whether an output is trustworthy enough to act on.
+
+```mermaid
+flowchart TD
+    A[Model / System Output] --> B[Hard Safety Envelope]
+    B --> C[Trust Scoring]
+    B -->|Violation| F[Fallback]
+    C -->|ACCEPTED| E[Consensus]
+    C -->|BORDERLINE| D[GRACE Layer]
+    C -->|OUTRIGHT_REJECTED| F
+    D -->|PASS| E
+    D -->|FAIL| F
+    E -->|PASS / acceptable evidence| G[Trusted Output]
+    E -->|FAIL| F
+    F --> H[Stable historical / fallback value]
+    H --> I[Final Output]
+    G --> I
+    I --> J[Audit Metadata]
+    I --> K[Decision Trace]
+```
+
+The Mermaid view is intentionally conceptual. The original engineering diagram
+below preserves the detailed layer and routing notation, including the numbered
+stages.
 
 ```
                            1.
@@ -154,7 +180,11 @@ No guesswork. No hidden overrides.
                     └────────────────────────┘
 ```
 
-Each layer is **bounded**, **deterministic**, and **auditable**.
+Each layer is **bounded**, **deterministic in its governing decision semantics**,
+and **auditable**. Given identical inputs, configuration, and relevant system
+state, the governing decision logic is deterministic. Operational metadata such
+as timestamps, generated identifiers, and runtime identifiers may vary unless
+the caller supplies or controls them.
 
 For architectural theory and system-level rationale, see [docs/whitepaper/](docs/whitepaper/).
 
@@ -171,9 +201,37 @@ The Rust implementation provides:
 - **Memory safety** without garbage collection
 - **Async-first design** for high-performance distributed systems
 - **Type-safe trust scoring** with compile-time guarantees
-- **No runtime dependencies** for offline-capable deployment
+- **No required external service** for offline-capable deployment
 
 ### Architecture Overview
+
+AILEE is a multi-runtime project. The runtimes share architectural concepts, but
+their capabilities and APIs are not asserted to be identical:
+
+```mermaid
+flowchart TD
+    A[External Models / Applications] --> P[Python AILEE]
+    A --> T[TypeScript AILEE]
+    A --> R[Rust Core]
+
+    S[Shared architectural concepts:<br/>bounded trust, mediation, consensus,<br/>fallback stability, auditability]
+    S -. informs .-> P
+    S -. informs .-> T
+    S -. informs .-> R
+
+    P --> PC[Trust pipeline:<br/>safety and threshold validation,<br/>GRACE, consensus, fallback,<br/>audit metadata and domain governance]
+    T --> TC[Runtime-specific trust core,<br/>governance domains, adapters,<br/>and dashboard integration]
+    R --> RC[Generative trust engine:<br/>trust scoring, consensus,<br/>cryptographic lineage]
+
+    PC --> O[Governed / trusted outputs]
+    TC --> O
+    RC --> O
+```
+
+This diagram describes responsibilities, not line-for-line parity. In particular,
+the Rust Core provides trust scoring, consensus, and cryptographic lineage for
+generative outputs; it is not a replacement for every Python pipeline stage or
+domain-governance capability.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -286,17 +344,15 @@ let result = GenerationResult {
 
 ### Documentation & Examples
 
-- **Full Documentation**: See [RUST_README.md](RUST_README.md)
+- **Full Documentation**: See [docs/RUST_README.md](docs/RUST_README.md)
 - **Quick Start Guide**: See [QUICKSTART.md](QUICKSTART.md)
 - **Complete Example**: `cargo run --example complete_workflow`
-- **Implementation Summary**: See [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md)
+- **Implementation Summary**: See [docs/RUST_IMPLEMENTATION_SUMMARY.md](docs/RUST_IMPLEMENTATION_SUMMARY.md)
 
 ### Quality Metrics
 
-✅ **32/32 tests passing** (unit + integration)  
-✅ **Zero clippy warnings** (strict mode)  
-✅ **Zero security vulnerabilities** (CodeQL)  
-✅ **1,630 lines** of production Rust code  
+✅ **Unit and integration tests included**
+✅ **Rustfmt and Clippy checks supported**
 ✅ **Fully async** with tokio runtime  
 ✅ **Minimal dependencies** (tokio, serde, sha2, async-trait, thiserror)
 
@@ -610,13 +666,17 @@ AILEE is **governance logic**.
 ## Guarantees
 
 AILEE guarantees:
-- ✅ Deterministic outcomes
+- ✅ Deterministic governing decisions for identical inputs, configuration, and relevant state
 - ✅ Explainable decisions
 - ✅ No silent overrides
 - ✅ No unsafe escalation
 - ✅ Full auditability
 
 If the system acts, you can explain **why**.
+
+Timestamps, generated decision IDs, and other operational metadata are not part
+of this semantic determinism guarantee unless they are supplied or controlled by
+the caller.
 
 ---
 
@@ -1078,8 +1138,8 @@ AI control of high-value, heat-generating hardware.
 **Observe → Advisory → Supervised → Autonomous**  
 *(History-aware warm-up; autonomous action requires demonstrated stability, consensus, and earned confidence)*
 
-> See [CRYPTO_MINING.md](CRYPTO_MINING.md) for full domain rationale and architecture,  
-> and [BENCHMARKS.md](BENCHMARKS.md) for simulated performance and governance findings.
+> See [CRYPTO_MINING.md](ailee/domains/crypto_mining/CRYPTO_MINING.md) for full domain rationale and architecture,<br>
+> and [BENCHMARKS.md](ailee/domains/crypto_mining/BENCHMARKS.md) for simulated performance and governance findings.
 
 ---
 
@@ -1392,11 +1452,10 @@ It makes them **responsible**.
 
 - **[GRACE Layer Specification](docs/GRACE_LAYER.md)** — Adaptive mediation for borderline decisions
 - **[Audit Schema](docs/AUDIT_SCHEMA.md)** — Full traceability and explainability
-- **[Crypto Mining Domain Guide](CRYPTO_MINING.md)** — Domain rationale, architecture, and usage for mining operations
-- **[Benchmarks](BENCHMARKS.md)** — Simulated performance and governance findings for the crypto mining domain
+- **[Crypto Mining Domain Guide](ailee/domains/crypto_mining/CRYPTO_MINING.md)** — Domain rationale, architecture, and usage for mining operations
+- **[Crypto Mining Benchmarks](ailee/domains/crypto_mining/BENCHMARKS.md)** — Simulated performance and governance findings for the crypto mining domain
 - **[Full White Paper](https://www.linkedin.com/pulse/navigating-nonlinear-ailees-framework-adaptive-resilient-feeney-bbkfe)** — Complete framework documentation
 - **[Substack Article](https://substack.com/home/post/p-165731733)** — Additional insights
-- **[API Reference](docs/API.md)** — Complete API documentation
 
 ---
 
@@ -1449,7 +1508,7 @@ We welcome contributions that:
 - Provide real-world examples
 
 **Before contributing:**
-1. Read [CONTRIBUTING.md](CONTRIBUTING.md)
+1. Review the architecture and testing guidance in this README
 2. Check existing [Issues](https://github.com/dfeen87/ailee-trust-layer/issues)
 3. Open a [Discussion](https://github.com/dfeen87/ailee-trust-layer/discussions) for major changes
 

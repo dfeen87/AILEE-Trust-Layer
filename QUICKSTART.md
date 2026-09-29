@@ -192,7 +192,7 @@ if result.metadata.reason.contains("Degraded") {
 **Want deterministic results?**
 - Use `DeterminismLevel::Full`
 - Ensure models are deterministic
-- Same inputs = same hash
+- Reuse the same inputs and execution metadata when comparing lineage hashes
 
 ## Documentation
 
@@ -203,7 +203,7 @@ cargo doc --open
 
 ## Support & Licensing
 
-- **Documentation**: See `RUST_README.md` for full documentation.
+- **Documentation**: See `docs/RUST_README.md` for full documentation.
 - **Examples**: Check `examples/` for more patterns.
 - **Tests**: Run `cargo test` to see test examples.
 

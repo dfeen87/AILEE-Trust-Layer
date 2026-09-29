@@ -14,7 +14,7 @@ Versions follow semantic versioning:
 MAJOR.MINOR.PATCH
 ```
 
-Example: `4.7.0`
+Example: `9.1.0`
 
 ---
 
@@ -35,7 +35,7 @@ This includes:
 
 ---
 
-## Minor Versions (2.X.0)
+## Minor Versions (X.Y.0)
 
 Minor versions introduce **additive, backward-compatible improvements**.
 
@@ -49,11 +49,12 @@ This may include:
 
 Minor releases will **never alter existing behavior**.
 
-**All v4.7.0 code runs identically on v4.7.0+**
+Compatibility commitments apply within a supported major release; consult the
+changelog for the scope of each release.
 
 ---
 
-## Patch Versions (2.0.X)
+## Patch Versions (X.Y.Z)
 
 Patch versions are reserved for:
 - Bug fixes that restore intended behavior
@@ -62,13 +63,15 @@ Patch versions are reserved for:
 - Internal refactoring with no behavioral change
 - Security patches
 
-Patch releases will **not change outputs for identical inputs**.
+Patch releases will **not change governing decision semantics for identical
+inputs, configuration, and relevant state**. Non-semantic operational metadata
+may still vary unless supplied or controlled by the caller.
 
 ---
 
-## Stability Guarantees (v2.x)
+## Stability Guarantees (Supported Major Releases)
 
-Within the v2 series, AILEE Trust Layer guarantees:
+Within a supported major series, AILEE Trust Layer guarantees:
 
 ✅ **Stable public APIs** — No function signature changes  
 ✅ **Stable trust semantics** — Identical inputs = identical trust decisions  
@@ -76,7 +79,8 @@ Within the v2 series, AILEE Trust Layer guarantees:
 ✅ **No silent changes** — All changes documented in changelog  
 ✅ **No forced migrations** — Upgrades are opt-in and safe  
 
-Users can upgrade within v2.x with confidence.
+Users can upgrade within a supported major series with confidence, subject to
+documented deprecations and release notes.
 
 ---
 
@@ -117,9 +121,9 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 ## Version History & Changelog
 
-### v4.7.0 (December 17, 2025) — Major Release
+### v4.7.0 (December 17, 2025) — Historical Release
 
-**Type:** Major (Breaking Changes)
+**Type:** Minor (Additive Changes)
 
 **New Features:**
 - ✅ 17 domain-optimized configuration presets
@@ -139,11 +143,11 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 **Migration Required:** No
 
-**Backward Compatibility:** Not guaranteed — see migration guidance
+**Backward Compatibility:** Preserved for the documented public interfaces
 
 ---
 
-### v4.7.0 (Initial Release)
+### Initial Stable Release
 
 **Type:** Major (Initial Stable Release)
 
@@ -169,7 +173,7 @@ AILEE Trust Layer prioritizes **predictability over velocity**.
 
 ## Upcoming Releases
 
-### v4.7.0 (Planned)
+### Future Releases (Unscheduled)
 
 **Tentative Features:**
 - Streaming support for real-time pipelines
@@ -206,10 +210,9 @@ Security patches will be:
 - Announced via GitHub Security Advisories
 - Documented with CVE numbers when applicable
 
-**Current security support:**
-- v2.x: Full support
-- v1.x: Security support only
-- v0.x: No longer supported (if any existed)
+**Current security support:** refer to the latest release notes and GitHub
+Security Advisories for supported release lines. This document does not assign
+support windows that are not otherwise published by the project.
 
 ---
 
@@ -217,10 +220,8 @@ Security patches will be:
 
 | Version | Status | Support End Date |
 |---------|--------|------------------|
-| v2.0.x | **Current** | TBD |
-| v1.1.x | Supported | Until v4.7.0 + 2 years |
-| v1.0.x | Supported | Until v4.7.0 + 6 months |
-| v0.x | Not applicable | N/A |
+| v9.x | **Current** | Not published |
+| Earlier releases | See release notes | Not published |
 
 ---
 
@@ -231,7 +232,8 @@ Community contributions follow the same versioning rules:
 - Bug fixes → Patch release
 - Breaking changes → Require maintainer approval and major version planning
 
-All contributions must maintain backward compatibility within v2.x.
+All contributions must maintain backward compatibility within the current major
+release unless a breaking release is explicitly planned.
 
 ---
 
@@ -241,7 +243,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "4.7.0"
+print(ailee.__version__)  # "9.1.0"
 print(ailee.get_info())   # Full package info
 ```
 
@@ -255,8 +257,8 @@ pip show ailee-trust-layer
 
 ## Summary
 
-- **v2.x is stable** and safe for production
-- **Breaking changes require v4.7.0**
+- **v9.x is the current major release line**
+- **Breaking changes require a new major version**
 - **Additive improvements** remain backward-compatible
 - **Documentation and clarity** are first-class concerns
 - **Security patches** are prioritized and immediate
@@ -270,11 +272,11 @@ pip show ailee-trust-layer
 For version-specific questions or concerns:
 - Open a [GitHub Discussion](https://github.com/dfeen87/ailee-trust-layer/discussions)
 - Check [Release Notes](https://github.com/dfeen87/ailee-trust-layer/releases)
-- Review [Migration Guides](docs/MIGRATION.md) (if applicable)
+- Review migration guidance in the release notes when applicable
 
 ---
 
 **AILEE Trust Layer**  
 *Trust is a contract, not a promise.*
 
-Last Updated: December 17, 2025
+Last Updated: September 29, 2026

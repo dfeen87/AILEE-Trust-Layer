@@ -17,6 +17,11 @@ This document defines the **audit schema** used by the AILEE Trust Pipeline to e
 Every pipeline execution produces a **DecisionResult** object that can be logged,
 stored, or transmitted without loss of meaning.
 
+The decision fields and routing are deterministic given identical inputs,
+configuration, and relevant pipeline state. The serialized object need not be
+bit-for-bit identical across runs: operational metadata such as a timestamp or a
+caller-generated request ID may vary unless supplied or controlled by the caller.
+
 ---
 
 ## DecisionResult (Top-Level Object)
@@ -238,7 +243,7 @@ Internal pipeline state summary:
 The schema guarantees:
 - No silent overrides
 - No hidden state transitions
-- Deterministic replay
+- Deterministic replay of governing decisions when inputs, configuration, and relevant state are reproduced
 - Human-readable explanations
 
 This enables:

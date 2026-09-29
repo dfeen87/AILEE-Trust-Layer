@@ -22,7 +22,51 @@ Specification documents for the GRACE Layer, Audit Schema, Versioning Policy,
 AI Integration Guide, and Rust implementation details.
 
 ### Tests (`tests/`)
-Unit and integration test suite (currently empty — see Roadmap).
+Unit, integration, domain, and runtime-specific tests are distributed across the
+repository. The `tests/` tree includes Python domain and pipeline suites, Rust
+integration tests, and native C++ coverage; Rust modules also contain unit tests,
+while the TypeScript package has its own Vitest suites.
+
+## Trust Decision State and Routing
+
+The following diagram describes the principal routes in the Python trust
+pipeline. Consensus and GRACE are configurable: a disabled or evidence-limited
+stage is represented by `SKIPPED`, while a borderline decision with GRACE
+disabled follows the fallback route.
+
+```mermaid
+flowchart TD
+    A[Model / System Output] --> B{Within hard envelope?}
+    B -->|No: hard envelope violation| F[Fallback]
+    B -->|Yes| C{Safety classification}
+
+    C -->|ACCEPTED| D{Consensus enabled?}
+    D -->|No: SKIPPED| T[Trusted Output]
+    D -->|Yes| E{Consensus result}
+    E -->|PASS| T
+    E -->|SKIPPED| T
+    E -->|FAIL| F
+
+    C -->|BORDERLINE| G{GRACE enabled?}
+    G -->|No: SKIPPED| F
+    G -->|Yes| H{GRACE result}
+    H -->|FAIL| F
+    H -->|PASS| I{Consensus enabled?}
+    I -->|No: SKIPPED| T
+    I -->|Yes| J{Consensus result}
+    J -->|PASS| T
+    J -->|SKIPPED| T
+    J -->|FAIL| F
+
+    C -->|OUTRIGHT_REJECTED| F
+    F --> S[Bounded / stable fallback value]
+    S --> O[Final Output]
+    T --> O
+```
+
+Here, a consensus `SKIPPED` result can mean that consensus was enabled but could
+not be evaluated with the available peer evidence. The output remains auditable
+through explicit status, reasons, and metadata.
 
 ## Separation of Concerns
 
@@ -30,3 +74,9 @@ The core `ailee/` package is **independently installable**. The deployable web
 application lives in `ailee/web/`, while static assets and platform configuration
 remain at the repository root. The deployment application imports the core
 package as a consumer.
+
+The Python pipeline's governing decision logic is deterministic given identical
+inputs, configuration, and relevant per-instance history. That guarantee applies
+to decision semantics; operational metadata such as a default current timestamp
+or a generated identifier can vary between executions unless the caller supplies
+or controls it.
