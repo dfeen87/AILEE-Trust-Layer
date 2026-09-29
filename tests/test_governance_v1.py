@@ -258,13 +258,13 @@ def test_compartment_scoped_registries_v9():
     dec, entry = reg.evaluate_and_log(inp, attributable_to="test_user")
 
     assert dec.compartment == "safety"
-    assert entry.metadata["version"] == "9.1.0"
+    assert entry.metadata["version"] == "9.1.1"
     assert entry.metadata["attributable_to"] == "test_user"
     assert store.verify_integrity("safety") is True
 
 
 def test_top_level_ailee_governance_v9_exports():
-    assert ailee.__version__ == "9.1.0"
+    assert ailee.__version__ == "9.1.1"
     assert callable(ailee.evaluate_safety)
     assert callable(ailee.evaluate_grace)
     assert callable(ailee.evaluate_consensus)

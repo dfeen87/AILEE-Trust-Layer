@@ -14,7 +14,7 @@ Versions follow semantic versioning:
 MAJOR.MINOR.PATCH
 ```
 
-Example: `9.1.0`
+Example: `9.1.1`
 
 ---
 
@@ -243,7 +243,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "9.1.0"
+print(ailee.__version__)  # "9.1.1"
 print(ailee.get_info())   # Full package info
 ```
 

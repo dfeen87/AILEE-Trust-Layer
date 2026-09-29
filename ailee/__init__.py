@@ -1,7 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 """
-AILEE Trust Layer v9.1.0
+AILEE Trust Layer v9.1.1
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -427,7 +427,7 @@ except ImportError:
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "9.1.0"
+__version__ = "9.1.1"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
@@ -859,7 +859,7 @@ from .ailee_client import AileeClient
 __all__.append("AileeClient")
 
 # =============================================================================
-# Governance Architecture v9.1.0
+# Governance Architecture v9.1.1
 # =============================================================================
 from . import governance_v1
 
