@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const LIGHT_TRANSITION_PRESETS = {
   PHOTONIC_INTEGRITY: {
@@ -37,8 +37,8 @@ export class LightTransitionHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const power = Number(snapshot.readings.opticalPowerDbm ?? -5.0);
-    const ber = Number(snapshot.readings.bitErrorRate ?? 1e-6);
+    const power = finiteSensorReading(snapshot, "opticalPowerDbm");
+    const ber = finiteSensorReading(snapshot, "bitErrorRate");
     const rawConf = Math.max(0, Math.min(1, -Math.log10(ber + 1e-12) / 12.0));
 
     return this.pipeline.process(power, rawConf, [], trustContext);

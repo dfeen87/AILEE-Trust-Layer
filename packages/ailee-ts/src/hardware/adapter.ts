@@ -31,3 +31,15 @@ export interface ProtocolBridge {
   sendTelemetry(topicOrAddress: string, payload: unknown): Promise<void>;
   onTelemetry(callback: (topicOrAddress: string, payload: unknown) => void): void;
 }
+
+/** Read an untrusted numeric sensor field without JavaScript coercion. */
+export function finiteSensorReading(snapshot: SensorSnapshot, key: string): number {
+  const value = snapshot?.readings?.[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : Number.NaN;
+}
+
+/** Read an untrusted boolean sensor field without treating truthy values as true. */
+export function booleanSensorReading(snapshot: SensorSnapshot, key: string): boolean | undefined {
+  const value = snapshot?.readings?.[key];
+  return typeof value === "boolean" ? value : undefined;
+}

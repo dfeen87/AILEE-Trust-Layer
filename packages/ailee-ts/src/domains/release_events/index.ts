@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const RELEASE_EVENTS_PRESETS = {
   CANARY_ROLLOUT: {
@@ -37,8 +37,8 @@ export class ReleaseEventsHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const rolloutTarget = Number(snapshot.readings.targetRolloutPercent ?? 0.0);
-    const errorRate = Number(snapshot.readings.errorRatePercent ?? 0.0);
+    const rolloutTarget = finiteSensorReading(snapshot, "targetRolloutPercent");
+    const errorRate = finiteSensorReading(snapshot, "errorRatePercent");
     const rawConf = Math.max(0, 1.0 - errorRate * 10.0);
 
     return this.pipeline.process(rolloutTarget, rawConf, [], trustContext);

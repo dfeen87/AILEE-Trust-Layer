@@ -1,14 +1,25 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 
-import ctypes
 import pytest
+import ctypes
 from ailee.domains.video_temporal_provenance import (
     VideoTemporalConfig,
     VideoTemporalPolicy,
     VideoTemporalGovernor,
     FrameSignal,
 )
+from ailee.domains.video_temporal_provenance.ffi import TemporalIntegrityMetricsCTypes, TPEFFIWrapper
+
+
+def test_ctypes_metrics_layout_and_native_alignment():
+    assert ctypes.sizeof(TemporalIntegrityMetricsCTypes) == 64
+    assert TemporalIntegrityMetricsCTypes.total_frames.offset == 28
+    assert TemporalIntegrityMetricsCTypes.safety_status.offset == 44
+    metrics, storage = TPEFFIWrapper._new_aligned_metrics()
+    assert storage is not None
+    assert ctypes.addressof(metrics) % 64 == 0
+
 
 def test_video_temporal_governor_clean_sequence():
     gov = VideoTemporalGovernor()

@@ -1,10 +1,12 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
+import math
+
+
 class AileeCRISPRTrustLayer:
     """
-    A standalone, production-ready Python module acting as a strict safety
-    and verification filter for genetic sequences (specifically CRISPR gRNA)
-    before they are passed to downstream computational simulations.
+    A standalone reference safety and verification filter for genetic
+    sequences (specifically CRISPR gRNA) before downstream simulations.
     """
 
     # Mock database of hazardous sequences for Gate 3.1
@@ -23,7 +25,14 @@ class AileeCRISPRTrustLayer:
             trust_threshold (float): The minimum trust score required to pass
                                      the Grace Layer (distal tolerance check).
         """
-        self.trust_threshold = trust_threshold
+        if (
+            isinstance(trust_threshold, bool)
+            or not isinstance(trust_threshold, (int, float))
+            or not math.isfinite(trust_threshold)
+            or not 0.0 <= trust_threshold <= 100.0
+        ):
+            raise ValueError("trust_threshold must be a finite number between 0 and 100")
+        self.trust_threshold = float(trust_threshold)
 
     def evaluate_sequence(self, grna: str, target_dna: str) -> dict:
         """
@@ -41,8 +50,16 @@ class AileeCRISPRTrustLayer:
         Returns:
             dict: The standardized output schema detailing the status and trust score.
         """
+        if not isinstance(grna, str) or not isinstance(target_dna, str):
+            return self._rejected("Failure: gRNA and target DNA must be strings.", "")
+
         grna = grna.upper()
         target_dna = target_dna.upper()
+        if not grna or not target_dna or set(grna) - set("ACGT") or set(target_dna) - set("ACGT"):
+            return self._rejected(
+                "Failure: gRNA and target DNA must contain only A, C, G, and T bases.",
+                grna,
+            )
 
         # Gate 3.1 (External Prior Art Sync)
         for haz_seq in self.HAZARDOUS_SEQUENCES:
@@ -151,6 +168,17 @@ class AileeCRISPRTrustLayer:
             "consensus_route": "Grace Layer -> Cleared",
             "sequence_analyzed": grna,
             "log": f"Sequence accepted. Seed match confirmed. Distal mismatches: {mismatches}. Final trust score: {trust_score}."
+        }
+
+    @staticmethod
+    def _rejected(log: str, sequence: str) -> dict:
+        return {
+            "status": "REJECTED",
+            "is_safe_to_execute": False,
+            "trust_score": 0.0,
+            "consensus_route": "Input Validation -> Outright Rejected",
+            "sequence_analyzed": sequence,
+            "log": log,
         }
 
 if __name__ == "__main__":

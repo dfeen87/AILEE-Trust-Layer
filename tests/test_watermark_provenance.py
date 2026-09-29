@@ -228,3 +228,14 @@ def test_duplicate_custody_ids_and_invalid_policy_are_rejected():
     assert "event_id must be unique" in ";".join(validate_watermark_provenance_signals(signals))
     with pytest.raises(ValueError):
         WatermarkProvenanceGovernor(WatermarkProvenancePolicy(max_history_size=0))
+
+
+def test_policy_evidence_limit_cannot_exceed_validator_safety_cap():
+    with pytest.raises(ValueError, match="between 1 and 10000"):
+        WatermarkProvenanceGovernor(WatermarkProvenancePolicy(max_evidence_items=10001))
+
+
+def test_wrong_signal_object_fails_before_attribute_access():
+    governor = WatermarkProvenanceGovernor()
+    with pytest.raises(TypeError, match="WatermarkProvenanceSignals"):
+        governor.evaluate(None)

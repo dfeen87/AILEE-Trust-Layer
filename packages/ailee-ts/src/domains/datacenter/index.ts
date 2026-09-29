@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const DATACENTER_PRESETS = {
   PUE_OPTIMIZED: {
@@ -37,7 +37,7 @@ export class DatacenterHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const inletTemp = Number(snapshot.readings.rackInletTempC ?? 24.0);
+    const inletTemp = finiteSensorReading(snapshot, "rackInletTempC");
     return this.pipeline.process(inletTemp, snapshot.quality, [], trustContext);
   }
 

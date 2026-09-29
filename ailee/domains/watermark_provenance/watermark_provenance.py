@@ -167,8 +167,8 @@ class WatermarkProvenanceGovernor:
             raise ValueError("max_history_size must be a positive integer")
         if not isinstance(self.policy.max_event_history_size, int) or self.policy.max_event_history_size < 1:
             raise ValueError("max_event_history_size must be a positive integer")
-        if not isinstance(self.policy.max_evidence_items, int) or self.policy.max_evidence_items < 1:
-            raise ValueError("max_evidence_items must be a positive integer")
+        if not isinstance(self.policy.max_evidence_items, int) or not 1 <= self.policy.max_evidence_items <= 10000:
+            raise ValueError("max_evidence_items must be an integer between 1 and 10000")
         if not isinstance(self.policy.min_trust_for_action, WatermarkProvenanceTrustLevel):
             raise ValueError("min_trust_for_action must be a WatermarkProvenanceTrustLevel")
         if not isinstance(self.policy.high_stakes_contexts, set) or not all(isinstance(v, str) for v in self.policy.high_stakes_contexts):
@@ -180,6 +180,8 @@ class WatermarkProvenanceGovernor:
 
     def evaluate(self, signals: WatermarkProvenanceSignals) -> WatermarkProvenanceDecision:
         ts = time.time()
+        if not isinstance(signals, WatermarkProvenanceSignals):
+            raise TypeError("signals must be a WatermarkProvenanceSignals instance")
         decision_id = hashlib.sha256(f"{ts}{signals.control_domain}{signals.context_type}".encode()).hexdigest()[:16]
         reasons: List[str] = []
         safety_flags: List[str] = []

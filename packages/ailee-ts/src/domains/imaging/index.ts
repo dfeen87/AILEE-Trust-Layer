@@ -3,7 +3,7 @@
 
 import { AileeTrustPipeline } from "../../core/pipeline.js";
 import { DecisionResult } from "../../core/types.js";
-import { ActuatorCommand, DomainHardwareAdapter, SensorSnapshot } from "../../hardware/adapter.js";
+import { ActuatorCommand, DomainHardwareAdapter, finiteSensorReading, SensorSnapshot } from "../../hardware/adapter.js";
 
 export const IMAGING_PRESETS = {
   DOSE_SAFETY: {
@@ -37,8 +37,8 @@ export class ImagingHardwareAdapter implements DomainHardwareAdapter {
   }
 
   public async evaluateState(snapshot: SensorSnapshot, trustContext?: Record<string, unknown>): Promise<DecisionResult> {
-    const rawVal = Number(snapshot.readings.photonCount ?? 10000);
-    const conf = Number(snapshot.readings.reconstructionConfidence ?? 0.8);
+    const rawVal = finiteSensorReading(snapshot, "photonCount");
+    const conf = finiteSensorReading(snapshot, "reconstructionConfidence");
 
     return this.pipeline.process(rawVal, conf, [], trustContext);
   }
