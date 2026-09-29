@@ -5,6 +5,21 @@ import { describe, expect, it } from "vitest";
 import { AileeTrustPipeline, ConsensusStrategy } from "../src/core/index.js";
 
 describe("Core AILEE Trust Pipeline", () => {
+  it("fails closed before scoring malformed runtime inputs", () => {
+    const pipeline = new AileeTrustPipeline({ defaultFallbackValue: 0, hardMin: 0, hardMax: 100 });
+    for (const confidence of [Number.NaN, Number.POSITIVE_INFINITY, -0.1, 1.1]) {
+      const result = pipeline.process(90, confidence);
+      expect(result.safetyStatus).toBe("OUTRIGHT_REJECTED");
+      expect(result.usedFallback).toBe(true);
+      expect(result.trustScore.aggregateScore).toBe(0);
+    }
+    expect(pipeline.process(90, 0.9, [Number.NaN]).safetyStatus).toBe("OUTRIGHT_REJECTED");
+  });
+
+  it("rejects contradictory runtime configuration", () => {
+    expect(() => new AileeTrustPipeline({ borderlineLow: 0.95, borderlineHigh: 0.5 })).toThrow(RangeError);
+    expect(() => new AileeTrustPipeline({ historyCapacity: 0 })).toThrow(RangeError);
+  });
   it("accepts high confidence signals", () => {
     const pipeline = new AileeTrustPipeline({
       borderlineLow: 0.7,

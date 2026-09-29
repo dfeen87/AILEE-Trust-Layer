@@ -92,8 +92,8 @@ impl Lineage {
         let mut hasher = Sha256::new();
 
         // Hash the request in canonical form
-        let request_json = serde_json::to_string(request)
-            .unwrap_or_else(|e| format!("__serialization_error:{e}"));
+        let request_json =
+            serde_json::to_string(request).unwrap_or_else(|e| format!("__serialization_error:{e}"));
         hasher.update(request_json.as_bytes());
 
         // Hash outputs in sorted order for determinism

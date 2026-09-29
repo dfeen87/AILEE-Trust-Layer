@@ -93,7 +93,17 @@ impl VideoTemporalGovernor {
     }
 
     pub fn ingest_frame(&mut self, signal: &FrameSignal) -> bool {
-        if self.handle.is_null() {
+        if self.handle.is_null()
+            || !signal.timestamp_sec.is_finite()
+            || signal.timestamp_sec < 0.0
+            || !signal.raw_trust.is_finite()
+            || !(0.0..=100.0).contains(&signal.raw_trust)
+            || !signal.hash_delta.is_finite()
+            || !signal.dx.is_finite()
+            || !signal.dy.is_finite()
+            || !signal.flow_consistency.is_finite()
+            || !(0.0..=1.0).contains(&signal.flow_consistency)
+        {
             return false;
         }
         let res = unsafe {
@@ -170,18 +180,18 @@ impl VideoTemporalGovernor {
         }
 
         TemporalIntegrityMetrics {
-            overall_trust_score: 100.0,
-            mean_frame_trust: 100.0,
-            transition_integrity_avg: 100.0,
-            scene_boundary_trust_avg: 100.0,
-            temporal_continuity_score: 100.0,
-            optical_flow_stability: 100.0,
-            rhythm_stability: 100.0,
+            overall_trust_score: 0.0,
+            mean_frame_trust: 0.0,
+            transition_integrity_avg: 0.0,
+            scene_boundary_trust_avg: 0.0,
+            temporal_continuity_score: 0.0,
+            optical_flow_stability: 0.0,
+            rhythm_stability: 0.0,
             total_frames: 0,
             total_transitions: 0,
             total_scene_boundaries: 0,
             anomaly_count: 0,
-            safety_status: "ACCEPTED".to_string(),
+            safety_status: "OUTRIGHT_REJECTED".to_string(),
         }
     }
 }
@@ -193,6 +203,3 @@ impl Drop for VideoTemporalGovernor {
         }
     }
 }
-
-unsafe impl Send for VideoTemporalGovernor {}
-unsafe impl Sync for VideoTemporalGovernor {}

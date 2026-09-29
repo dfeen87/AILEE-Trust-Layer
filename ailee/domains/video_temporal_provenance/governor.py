@@ -39,8 +39,9 @@ class VideoTemporalGovernor:
 
     def evaluate_sequence(self, frames: List[FrameSignal]) -> VideoGovernorDecision:
         self.wrapper.reset()
+        rejected_frames = 0
         for f in frames:
-            self.wrapper.ingest_frame(
+            if not isinstance(f, FrameSignal) or not self.wrapper.ingest_frame(
                 f.frame_index,
                 f.timestamp_sec,
                 f.raw_trust,
@@ -48,14 +49,18 @@ class VideoTemporalGovernor:
                 f.dx,
                 f.dy,
                 f.flow_consistency
-            )
+            ):
+                rejected_frames += 1
 
         metrics = self.wrapper.evaluate()
 
         status = metrics.safety_status
         reason = "Sequence evaluated successfully."
 
-        if metrics.overall_trust_score < self.config.min_trust_threshold:
+        if rejected_frames:
+            status = "OUTRIGHT_REJECTED"
+            reason = f"Rejected {rejected_frames} invalid or out-of-order frame signal(s)."
+        elif metrics.overall_trust_score < self.config.min_trust_threshold:
             status = "OUTRIGHT_REJECTED"
             reason = f"Overall trust {metrics.overall_trust_score:.1f} below minimum threshold {self.config.min_trust_threshold:.1f}."
         elif metrics.anomaly_count > self.config.max_allowed_anomalies:

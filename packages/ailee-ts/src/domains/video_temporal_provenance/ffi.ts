@@ -34,6 +34,17 @@ export class TPEFFIBridge {
   }
 
   public ingestFrame(signal: FrameSignal): boolean {
+    if (
+      signal === null || typeof signal !== "object" ||
+      !Number.isSafeInteger(signal.frameIndex) || signal.frameIndex < 0 ||
+      ![signal.timestampSec, signal.rawTrust, signal.hashDelta, signal.dx, signal.dy, signal.flowConsistency].every(Number.isFinite) ||
+      signal.timestampSec < 0 || signal.rawTrust < 0 || signal.rawTrust > 100 ||
+      signal.flowConsistency < 0 || signal.flowConsistency > 1 ||
+      (this.frames.length > 0 && signal.frameIndex <= this.frames[this.frames.length - 1].frameIndex) ||
+      (this.frames.length > 0 && signal.timestampSec <= this.frames[this.frames.length - 1].timestampSec)
+    ) {
+      return false;
+    }
     this.frames.push(signal);
     return true;
   }
@@ -58,17 +69,19 @@ export class TPEFFIBridge {
 
     let sumTrust = 0;
     let anomalyCount = 0;
+    let sceneBoundaryCount = 0;
 
     for (const f of this.frames) {
       sumTrust += f.rawTrust;
-      if (f.flowConsistency < 0.3 || Math.abs(f.hashDelta) > 0.7) {
+      if (f.flowConsistency < 0.35 || f.rawTrust < 50 || Math.abs(f.hashDelta) > 0.75) {
         anomalyCount++;
       }
+      if (Math.abs(f.hashDelta) > 0.35) sceneBoundaryCount++;
     }
 
     const meanFrameTrust = sumTrust / this.frames.length;
     const transitionIntegrityAvg = Math.max(0, 100.0 - anomalyCount * 15.0);
-    const sceneBoundaryTrustAvg = 90.0;
+    const sceneBoundaryTrustAvg = sceneBoundaryCount > 0 ? 90.0 : 100.0;
     const temporalContinuityScore = Math.max(0, 100.0 - anomalyCount * 10.0);
     const opticalFlowStability = 85.0;
     const rhythmStability = 95.0;
@@ -99,7 +112,7 @@ export class TPEFFIBridge {
       rhythmStability,
       totalFrames: this.frames.length,
       totalTransitions: Math.max(0, this.frames.length - 1),
-      totalSceneBoundaries: anomalyCount,
+      totalSceneBoundaries: sceneBoundaryCount,
       anomalyCount,
       safetyStatus,
     };

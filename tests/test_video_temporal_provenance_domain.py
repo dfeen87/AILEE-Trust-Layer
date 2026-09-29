@@ -1,6 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 
+import ctypes
 import pytest
 from ailee.domains.video_temporal_provenance import (
     VideoTemporalConfig,
@@ -58,3 +59,34 @@ def test_video_temporal_governor_synthetic_anomaly():
     decision = gov.evaluate_sequence(frames)
     assert decision.anomaly_count > 0
     assert decision.safety_status in ["PARTIALLY_TRUSTED", "OUTRIGHT_REJECTED"]
+
+
+@pytest.mark.parametrize("field,value", [
+    ("raw_trust", float("nan")),
+    ("raw_trust", float("inf")),
+    ("flow_consistency", -0.1),
+    ("timestamp_sec", -1.0),
+])
+def test_invalid_frames_fail_closed(field, value):
+    gov = VideoTemporalGovernor()
+    values = dict(frame_index=0, timestamp_sec=0.0, raw_trust=95.0, hash_delta=0.02,
+                  dx=1.0, dy=0.5, flow_consistency=0.95)
+    values[field] = value
+    decision = gov.evaluate_sequence([FrameSignal(**values)])
+    assert decision.safety_status == "OUTRIGHT_REJECTED"
+    assert decision.overall_trust_score == 0.0
+    assert "invalid" in decision.reason
+
+
+def test_out_of_order_frames_fail_closed():
+    gov = VideoTemporalGovernor()
+    frames = [
+        FrameSignal(1, 1.0, 95.0, 0.02, 1.0, 0.5, 0.95),
+        FrameSignal(1, 2.0, 95.0, 0.02, 1.0, 0.5, 0.95),
+    ]
+    assert gov.evaluate_sequence(frames).safety_status == "OUTRIGHT_REJECTED"
+
+
+def test_native_metrics_ctypes_matches_64_byte_abi():
+    from ailee.domains.video_temporal_provenance.ffi import TemporalIntegrityMetricsCTypes
+    assert ctypes.sizeof(TemporalIntegrityMetricsCTypes) == 64

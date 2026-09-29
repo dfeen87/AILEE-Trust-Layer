@@ -2,6 +2,7 @@
 //! Licensed under the MIT License.
 
 import { describe, expect, it } from "vitest";
+import { VideoTemporalGovernor } from "../src/domains/video_temporal_provenance/index.js";
 import {
   AuditoryHardwareAdapter,
   AutomotiveHardwareAdapter,
@@ -23,6 +24,17 @@ import {
 } from "../src/domains/index.js";
 
 describe("17 Hardware Domain Adapters", () => {
+  it("video temporal provenance rejects malformed and out-of-order frames", () => {
+    const governor = new VideoTemporalGovernor();
+    expect(governor.evaluateSequence([{
+      frameIndex: 0, timestampSec: 0, rawTrust: Number.NaN, hashDelta: 0,
+      dx: 0, dy: 0, flowConsistency: 1,
+    }]).safetyStatus).toBe("OUTRIGHT_REJECTED");
+    expect(governor.evaluateSequence([
+      { frameIndex: 1, timestampSec: 1, rawTrust: 95, hashDelta: 0, dx: 0, dy: 0, flowConsistency: 1 },
+      { frameIndex: 1, timestampSec: 2, rawTrust: 95, hashDelta: 0, dx: 0, dy: 0, flowConsistency: 1 },
+    ]).safetyStatus).toBe("OUTRIGHT_REJECTED");
+  });
   it("executes all 17 domain adapters successfully", async () => {
     const adapters = [
       new AuditoryHardwareAdapter(),
