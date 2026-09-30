@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -137,21 +138,51 @@ def _valid_identifier(value: object) -> bool:
     return isinstance(value, str) and _IDENTIFIER.fullmatch(value) is not None
 
 
+def _canonical_decision_value(value: object) -> object:
+    """Return a deterministic JSON-safe representation without granting validity."""
+    if value is None or type(value) in (str, bool, int):
+        return value
+    if type(value) is float:
+        if math.isfinite(value):
+            return value
+        return {
+            "unsupported_float": (
+                "nan"
+                if math.isnan(value)
+                else "positive_infinity" if value > 0 else "negative_infinity"
+            )
+        }
+    if isinstance(value, datetime):
+        return {"datetime": datetime.isoformat(value)}
+    value_type = type(value)
+    module = type.__getattribute__(value_type, "__module__")
+    qualname = type.__getattribute__(value_type, "__qualname__")
+    if type(module) is not str or type(qualname) is not str:
+        return {"unsupported_type": "unknown"}
+    return {"unsupported_type": f"{module}.{qualname}"}
+
+
 def _decision_id(contract: object, request: object, reason: LicenseReason) -> str:
     evaluated_at = getattr(request, "evaluated_at", None)
     payload = {
-        "asset_id": getattr(request, "asset_id", None),
-        "capability": getattr(request, "capability", None),
-        "customer_id": getattr(request, "customer_id", None),
-        "evaluated_at": (
-            evaluated_at.isoformat()
-            if isinstance(evaluated_at, datetime)
-            else repr(evaluated_at)
+        "asset_id": _canonical_decision_value(getattr(request, "asset_id", None)),
+        "capability": _canonical_decision_value(
+            getattr(request, "capability", None)
         ),
-        "evidence_id": getattr(getattr(request, "evidence", None), "evidence_id", None),
-        "license_id": getattr(contract, "license_id", None),
-        "reason": reason.value,
-        "request_id": getattr(request, "request_id", None),
+        "customer_id": _canonical_decision_value(
+            getattr(request, "customer_id", None)
+        ),
+        "evaluated_at": _canonical_decision_value(evaluated_at),
+        "evidence_id": _canonical_decision_value(
+            getattr(getattr(request, "evidence", None), "evidence_id", None)
+        ),
+        "license_id": _canonical_decision_value(
+            getattr(contract, "license_id", None)
+        ),
+        "reason": _canonical_decision_value(reason.value),
+        "request_id": _canonical_decision_value(
+            getattr(request, "request_id", None)
+        ),
     }
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(encoded).hexdigest()

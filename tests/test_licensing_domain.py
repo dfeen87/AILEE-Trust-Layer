@@ -162,3 +162,41 @@ def test_untyped_malformed_inputs_return_auditable_denial(
     assert decision.reason is LicenseReason.INSUFFICIENT_EVIDENCE
     assert decision.audit.reason_codes == (LicenseReason.INSUFFICIENT_EVIDENCE.value,)
     assert decision.decision_id
+
+
+@pytest.mark.parametrize(
+    "target",
+    (
+        "request_id",
+        "asset_id",
+        "capability",
+        "customer_id",
+        "evidence_id",
+        "license_id",
+    ),
+)
+def test_non_serializable_identity_values_produce_deterministic_denials(
+    contract, auth_request, target
+):
+    def malformed_inputs():
+        malformed_contract = contract
+        malformed_request = auth_request
+        if target == "evidence_id":
+            malformed_request = replace(
+                auth_request,
+                evidence=replace(auth_request.evidence, evidence_id=object()),
+            )
+        elif target == "license_id":
+            malformed_contract = replace(contract, license_id=object())
+        else:
+            malformed_request = replace(auth_request, **{target: object()})
+        return malformed_contract, malformed_request
+
+    first = LicenseGovernor().authorize(*malformed_inputs())
+    second = LicenseGovernor().authorize(*malformed_inputs())
+
+    assert first.result == "DENIED"
+    assert not first.authorized
+    assert first.reason is LicenseReason.INSUFFICIENT_EVIDENCE
+    assert first.decision_id
+    assert first.decision_id == second.decision_id
