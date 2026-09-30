@@ -26,6 +26,7 @@ def auth_request():
     evidence = IntegrityEvidence(
         "credential-1", "signed_license", CredentialStatus.VALID,
         "issuer-1", "license-1", "machine-a", NOW - timedelta(minutes=1),
+        customer_id="customer-1",
     )
     return AuthorizationRequest(
         "request-1", "customer-1", "machine-a", "advanced_analytics", NOW, evidence,
@@ -65,8 +66,8 @@ def test_license_failure_reasons_are_explicit(contract, auth_request, contract_c
     ("evidence", "reason"),
     [
         (None, LicenseReason.INSUFFICIENT_EVIDENCE),
-        (replace(IntegrityEvidence("e", "type", CredentialStatus.VALID, "issuer-1", "license-1", "machine-a", NOW), status=CredentialStatus.INVALID), LicenseReason.INVALID_CREDENTIAL),
-        (replace(IntegrityEvidence("e", "type", CredentialStatus.VALID, "issuer-1", "license-1", "machine-a", NOW), status=CredentialStatus.UNVERIFIED), LicenseReason.INSUFFICIENT_EVIDENCE),
+        (replace(IntegrityEvidence("e", "type", CredentialStatus.VALID, "issuer-1", "license-1", "machine-a", NOW, customer_id="customer-1"), status=CredentialStatus.INVALID), LicenseReason.INVALID_CREDENTIAL),
+        (replace(IntegrityEvidence("e", "type", CredentialStatus.VALID, "issuer-1", "license-1", "machine-a", NOW, customer_id="customer-1"), status=CredentialStatus.UNVERIFIED), LicenseReason.INSUFFICIENT_EVIDENCE),
     ],
 )
 def test_invalid_or_missing_credentials_fail_closed(contract, auth_request, evidence, reason):

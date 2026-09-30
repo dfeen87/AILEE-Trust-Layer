@@ -2,14 +2,14 @@
 
 from .industrial import (
     EventLedger, IndustrialAuditEvidence, IndustrialEvent, MaterialObservation,
-    ProcessInterval, ProcessState, ReadOnlyTelemetryAdapter, TelemetryObservation,
+    ProcessInterval, ProcessState, ProcessTransitionPolicy, ReadOnlyTelemetryAdapter, TelemetryObservation,
     TelemetryValidator, TelemetryValidity, ThroughputGovernor, ThroughputReason,
     ThroughputResult,
 )
 
 __all__ = [
     "EventLedger", "IndustrialAuditEvidence", "IndustrialEvent", "MaterialObservation",
-    "ProcessInterval", "ProcessState", "ReadOnlyTelemetryAdapter", "TelemetryObservation",
+    "ProcessInterval", "ProcessState", "ProcessTransitionPolicy", "ReadOnlyTelemetryAdapter", "TelemetryObservation",
     "TelemetryValidator", "TelemetryValidity", "ThroughputGovernor", "ThroughputReason",
     "ThroughputResult",
 ]
