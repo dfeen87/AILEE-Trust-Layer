@@ -12,7 +12,6 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Mapping, Optional, Protocol, Tuple
 
-
 SCHEMA_VERSION = "1.0"
 _IDENTIFIER = re.compile(r"^[a-z0-9](?:[a-z0-9._-]{0,126}[a-z0-9])?$")
 
@@ -106,7 +105,7 @@ class LicenseAuditEvidence:
     asset_id: str
     capability: str
     issuer: str
-    evaluated_at: datetime
+    evaluated_at: Optional[datetime]
     credential_evidence_id: Optional[str]
     checks_performed: Tuple[str, ...]
     reason_codes: Tuple[str, ...]
@@ -138,16 +137,21 @@ def _valid_identifier(value: object) -> bool:
     return isinstance(value, str) and _IDENTIFIER.fullmatch(value) is not None
 
 
-def _decision_id(contract: LicenseContract, request: AuthorizationRequest, reason: LicenseReason) -> str:
+def _decision_id(contract: object, request: object, reason: LicenseReason) -> str:
+    evaluated_at = getattr(request, "evaluated_at", None)
     payload = {
-        "asset_id": request.asset_id,
-        "capability": request.capability,
-        "customer_id": request.customer_id,
-        "evaluated_at": request.evaluated_at.isoformat() if isinstance(request.evaluated_at, datetime) else repr(request.evaluated_at),
-        "evidence_id": getattr(request.evidence, "evidence_id", None),
-        "license_id": contract.license_id,
+        "asset_id": getattr(request, "asset_id", None),
+        "capability": getattr(request, "capability", None),
+        "customer_id": getattr(request, "customer_id", None),
+        "evaluated_at": (
+            evaluated_at.isoformat()
+            if isinstance(evaluated_at, datetime)
+            else repr(evaluated_at)
+        ),
+        "evidence_id": getattr(getattr(request, "evidence", None), "evidence_id", None),
+        "license_id": getattr(contract, "license_id", None),
         "reason": reason.value,
-        "request_id": request.request_id,
+        "request_id": getattr(request, "request_id", None),
     }
     encoded = json.dumps(payload, sort_keys=True, separators=(",", ":")).encode()
     return hashlib.sha256(encoded).hexdigest()
@@ -157,28 +161,39 @@ class LicenseGovernor:
     """Evaluate a license contract in a fixed, documented fail-closed order."""
 
     CHECKS = (
-        "required_fields", "credential", "customer_binding", "asset_binding",
-        "credential_binding", "validity_window", "entitlement",
+        "required_fields",
+        "credential",
+        "customer_binding",
+        "asset_binding",
+        "credential_binding",
+        "validity_window",
+        "entitlement",
     )
 
-    def __init__(self, verifier: Optional[CredentialVerifier] = None, replay_guard=None):
+    def __init__(
+        self, verifier: Optional[CredentialVerifier] = None, replay_guard=None
+    ):
         self._verifier = verifier or EvidenceStatusVerifier()
         self._replay_guard = replay_guard
 
-    def authorize(self, contract: LicenseContract, request: AuthorizationRequest) -> AuthorizationDecision:
+    def authorize(
+        self, contract: LicenseContract, request: AuthorizationRequest
+    ) -> AuthorizationDecision:
         try:
             reason = self._reason(contract, request)
         except (AttributeError, TypeError, ValueError):
             reason = LicenseReason.INSUFFICIENT_EVIDENCE
         audit = LicenseAuditEvidence(
-            request_id=request.request_id,
-            license_id=contract.license_id,
-            customer_id=request.customer_id,
-            asset_id=request.asset_id,
-            capability=request.capability,
-            issuer=contract.issuer,
-            evaluated_at=request.evaluated_at,
-            credential_evidence_id=getattr(request.evidence, "evidence_id", None),
+            request_id=getattr(request, "request_id", ""),
+            license_id=getattr(contract, "license_id", ""),
+            customer_id=getattr(request, "customer_id", ""),
+            asset_id=getattr(request, "asset_id", ""),
+            capability=getattr(request, "capability", ""),
+            issuer=getattr(contract, "issuer", ""),
+            evaluated_at=getattr(request, "evaluated_at", None),
+            credential_evidence_id=getattr(
+                getattr(request, "evidence", None), "evidence_id", None
+            ),
             checks_performed=self.CHECKS,
             reason_codes=(reason.value,),
         )
@@ -189,24 +204,48 @@ class LicenseGovernor:
             audit=audit,
         )
 
-    def _reason(self, contract: LicenseContract, request: AuthorizationRequest) -> LicenseReason:
-        if not isinstance(contract, LicenseContract) or not isinstance(request, AuthorizationRequest):
+    def _reason(
+        self, contract: LicenseContract, request: AuthorizationRequest
+    ) -> LicenseReason:
+        if not isinstance(contract, LicenseContract) or not isinstance(
+            request, AuthorizationRequest
+        ):
             return LicenseReason.INSUFFICIENT_EVIDENCE
-        if contract.schema_version != SCHEMA_VERSION or request.schema_version != SCHEMA_VERSION:
+        if (
+            contract.schema_version != SCHEMA_VERSION
+            or request.schema_version != SCHEMA_VERSION
+        ):
             return LicenseReason.UNSUPPORTED_SCHEMA
         required = (
-            contract.license_id, contract.customer_id, contract.issuer,
-            request.request_id, request.customer_id, request.asset_id, request.capability,
+            contract.license_id,
+            contract.customer_id,
+            contract.issuer,
+            request.request_id,
+            request.customer_id,
+            request.asset_id,
+            request.capability,
         )
-        start, end, now = _utc(contract.valid_from), _utc(contract.valid_until), _utc(request.evaluated_at)
+        start, end, now = (
+            _utc(contract.valid_from),
+            _utc(contract.valid_until),
+            _utc(request.evaluated_at),
+        )
         if not all(isinstance(value, str) and value.strip() for value in required):
             return LicenseReason.INSUFFICIENT_EVIDENCE
         identities = required + tuple(contract.asset_ids) + tuple(contract.entitlements)
         if not all(_valid_identifier(value) for value in identities):
             return LicenseReason.MALFORMED_IDENTIFIER
-        if len(set(contract.asset_ids)) != len(contract.asset_ids) or len(set(contract.entitlements)) != len(contract.entitlements):
+        if len(set(contract.asset_ids)) != len(contract.asset_ids) or len(
+            set(contract.entitlements)
+        ) != len(contract.entitlements):
             return LicenseReason.INVALID_CONTRACT
-        if not contract.asset_ids or not contract.entitlements or start is None or end is None or now is None:
+        if (
+            not contract.asset_ids
+            or not contract.entitlements
+            or start is None
+            or end is None
+            or now is None
+        ):
             return LicenseReason.INSUFFICIENT_EVIDENCE
         if start >= end:
             return LicenseReason.INVALID_CONTRACT
@@ -214,7 +253,9 @@ class LicenseGovernor:
             credential_status = self._verifier.verify(request.evidence)
         except Exception:
             return LicenseReason.VERIFICATION_UNAVAILABLE
-        if credential_status is None or not isinstance(credential_status, CredentialStatus):
+        if credential_status is None or not isinstance(
+            credential_status, CredentialStatus
+        ):
             return LicenseReason.VERIFICATION_UNAVAILABLE
         if credential_status in (CredentialStatus.MISSING, CredentialStatus.UNVERIFIED):
             return LicenseReason.INSUFFICIENT_EVIDENCE
@@ -225,19 +266,35 @@ class LicenseGovernor:
             return LicenseReason.INSUFFICIENT_EVIDENCE
         if evidence.schema_version != SCHEMA_VERSION:
             return LicenseReason.UNSUPPORTED_SCHEMA
-        verified_at = _utc(evidence.verified_at) if evidence.verified_at is not None else None
-        if not all(_valid_identifier(value) for value in (
-            evidence.evidence_id, evidence.credential_type, evidence.issuer,
-            evidence.license_id, evidence.asset_id, evidence.customer_id,
-        )) or verified_at is None:
+        verified_at = (
+            _utc(evidence.verified_at) if evidence.verified_at is not None else None
+        )
+        if (
+            not all(
+                _valid_identifier(value)
+                for value in (
+                    evidence.evidence_id,
+                    evidence.credential_type,
+                    evidence.issuer,
+                    evidence.license_id,
+                    evidence.asset_id,
+                    evidence.customer_id,
+                )
+            )
+            or verified_at is None
+        ):
             return LicenseReason.INSUFFICIENT_EVIDENCE
         if request.customer_id != contract.customer_id:
             return LicenseReason.CUSTOMER_MISMATCH
         if request.asset_id not in contract.asset_ids:
             return LicenseReason.ASSET_MISMATCH
-        if (evidence.license_id != contract.license_id or evidence.asset_id != request.asset_id
-                or evidence.customer_id != request.customer_id or evidence.issuer != contract.issuer
-                or verified_at > now):
+        if (
+            evidence.license_id != contract.license_id
+            or evidence.asset_id != request.asset_id
+            or evidence.customer_id != request.customer_id
+            or evidence.issuer != contract.issuer
+            or verified_at > now
+        ):
             return LicenseReason.INVALID_CREDENTIAL
         if now < start:
             return LicenseReason.NOT_YET_VALID
