@@ -23,7 +23,7 @@ def fixtures():
     )
     evidence = IntegrityEvidence(
         "evidence-1", "signed", CredentialStatus.VALID, "issuer-1",
-        "license-1", "machine-a", NOW,
+        "license-1", "machine-a", NOW, customer_id="customer-1",
     )
     request = AuthorizationRequest(
         "request-1", "customer-1", "machine-a", "advanced_analytics", NOW, evidence,

@@ -58,7 +58,10 @@ def test_running_interval_produces_quantity_over_productive_time():
     ],
 )
 def test_nonproductive_intervals_are_excluded(state, reason, validity):
-    result = ThroughputGovernor().evaluate(interval(start_state=state, end_state=state), NOW)
+    observation = state_observation(value=state.value)
+    result = ThroughputGovernor().evaluate(
+        interval(start_state=state, end_state=state, state_observations=(observation,)), NOW
+    )
     assert not result.available
     assert result.reason is reason
     assert result.telemetry_validity is validity
