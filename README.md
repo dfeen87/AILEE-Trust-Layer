@@ -265,8 +265,11 @@ process-state governance → validated productive time → trusted throughput �
 audit evidence**. The event ledger is a separate output that provides
 deterministic chronology; it does not infer root cause and is neither a
 throughput input nor part of `IndustrialAuditEvidence`. Consumers that need a
-combined audit view must correlate ledger events with throughput audit records
-externally, using their machine identities and timestamps.
+combined audit view must retain the original `ProcessInterval`, join each
+throughput audit record to it by `interval_id`, and then correlate ledger events
+whose `machine_id` matches and whose occurrence timestamp falls within that
+interval's `start` and `end`. The audit record's `evaluated_at` is the evaluation
+time, not an interval boundary, and must not be used for this correlation.
 
 Raw telemetry is evidence, not automatically trusted truth. AILEE validates
 identity, source and schema constraints, timestamps, freshness, process state,
