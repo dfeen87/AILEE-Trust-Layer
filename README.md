@@ -261,9 +261,12 @@ flowchart TD
 Industrial Process Trust is a vendor-neutral, supervisory/read-only governance
 path for machine telemetry and derived analytics. Its conceptual chain is
 **machine or PLC → external read-only adapter → telemetry evidence →
-process-state governance → event/alarm ledger → validated productive time →
-trusted throughput → audit evidence**. The event ledger provides deterministic
-chronology; it does not infer root cause and is not itself a throughput input.
+process-state governance → validated productive time → trusted throughput →
+audit evidence**. The event ledger is a separate output that provides
+deterministic chronology; it does not infer root cause and is neither a
+throughput input nor part of `IndustrialAuditEvidence`. Consumers that need a
+combined audit view must correlate ledger events with throughput audit records
+externally, using their machine identities and timestamps.
 
 Raw telemetry is evidence, not automatically trusted truth. AILEE validates
 identity, source and schema constraints, timestamps, freshness, process state,
@@ -285,7 +288,6 @@ flowchart TD
     MV -->|Valid| TT[Trusted throughput]
     TT --> AU[Industrial audit evidence]
     X --> AU
-    EL --> AU
 ```
 
 Conceptually, for an accepted interval:
