@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-9.1.1-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-9.3.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -12,6 +12,11 @@
 - [What This Is](#what-this-is)
 - [Why This Exists](#why-this-exists)
 - [Core Architecture](#core-architecture)
+- [v9.3 Dual-Domain Governance](#v93-dual-domain-governance)
+  - [Licensing Trust](#licensing-trust)
+  - [Industrial Process Trust](#industrial-process-trust)
+  - [Independent, Orthogonal Trust](#independent-orthogonal-trust)
+  - [Safety and Scope Boundary](#safety-and-scope-boundary)
 - [Rust Core Implementation](#rust-core-implementation-new)
 - [The Mathematics of Trust](#the-mathematics-of-trust)
 - [Quick Start](#quick-start)
@@ -187,6 +192,151 @@ as timestamps, generated identifiers, and runtime identifiers may vary unless
 the caller supplies or controls them.
 
 For architectural theory and system-level rationale, see [docs/whitepaper/](docs/whitepaper/).
+
+---
+
+## v9.3 Dual-Domain Governance
+
+Version 9.3 extends AILEE with two distinct, evidence-based governance domains:
+**Licensing Trust** decides whether a customer and asset may use a protected
+capability, while **Industrial Process Trust** decides whether machine evidence
+supports trusted process analytics. Both produce deterministic decisions,
+machine-readable reasons, and audit evidence for the same inputs and dependency
+state. They retain separate semantics and are never reduced to one aggregate
+trust score.
+
+```mermaid
+flowchart TD
+    A[AILEE Trust Layer<br/>Evidence-based governance]
+    A --> L[Licensing Trust]
+    A --> I[Industrial Process Trust]
+    L --> LI[Customer, asset, and credential evidence]
+    LI --> LA[Authorization validation]
+    LA --> LE[Entitlement decision]
+    LE --> LQ[Licensing audit evidence]
+    I --> IT[Telemetry and material evidence]
+    IT --> IP[Process-state validation]
+    IP --> IA[Trusted analytics availability]
+    IA --> IQ[Industrial audit evidence]
+    LQ -. separate decisions .- IQ
+```
+
+### Licensing Trust
+
+Licensing Trust governs whether a customer, system, or asset is authorized to
+use a particular licensed capability. The conceptual chain is **customer →
+license → credential evidence → asset binding → entitlements → requested
+capability → authorization decision → audit evidence**. Merely presenting a
+license is not authorization.
+
+The fail-closed governor validates the contract and request, upstream credential
+status and evidence bindings, customer and asset bindings, the half-open
+validity window, and exact entitlement membership. Protected commercial
+capabilities are authorized only after every required check passes. Both
+authorization and denial carry an explicit machine-readable reason, a
+deterministic decision identifier, and provenance-oriented audit evidence. The
+default verifier consumes an upstream credential status; cryptographic
+signature validation and key management must be supplied by an integration and
+are not claims of the built-in verifier.
+
+```mermaid
+flowchart TD
+    R[Requested capability] --> C{Contract and request<br/>well formed?}
+    C -->|No| D[Denied<br/>explicit reason and audit evidence]
+    C -->|Yes| V{Credential status and<br/>integrity evidence valid?}
+    V -->|No| D
+    V -->|Yes| U{Customer binding valid?}
+    U -->|No| D
+    U -->|Yes| A{Asset and evidence<br/>bindings valid?}
+    A -->|No| D
+    A -->|Yes| W{Validity window active?}
+    W -->|No| D
+    W -->|Yes| E{Exact entitlement present?}
+    E -->|No| D
+    E -->|Yes| G[Authorized<br/>decision and audit evidence]
+```
+
+### Industrial Process Trust
+
+Industrial Process Trust is a vendor-neutral, supervisory/read-only governance
+path for machine telemetry and derived analytics. Its conceptual chain is
+**machine or PLC → external read-only adapter → telemetry evidence →
+process-state governance → event/alarm ledger → validated productive time →
+trusted throughput → audit evidence**. The event ledger provides deterministic
+chronology; it does not infer root cause and is not itself a throughput input.
+
+Raw telemetry is evidence, not automatically trusted truth. AILEE validates
+identity, source and schema constraints, timestamps, freshness, process state,
+machine binding, material observations, and other configured policy conditions
+before making analytics available. Machine settings such as RPM do not, by
+themselves, establish physical material throughput.
+
+```mermaid
+flowchart TD
+    M[Machine / PLC] -->|Observation flow only| B[READ-ONLY acquisition boundary]
+    B --> T[Telemetry and material evidence]
+    T --> TV[Telemetry validation]
+    TV --> PS[Process-state validation]
+    T --> EL[Event / alarm ledger<br/>chronology evidence]
+    PS --> PI{Productive interval valid?}
+    PI -->|No: invalid or insufficient| X[Trusted analytics unavailable<br/>explicit reason]
+    PI -->|Yes| MV[Material delta validation]
+    MV -->|Invalid or missing| X
+    MV -->|Valid| TT[Trusted throughput]
+    TT --> AU[Industrial audit evidence]
+    X --> AU
+    EL --> AU
+```
+
+Conceptually, for an accepted interval:
+
+```text
+trusted throughput = validated material quantity change / validated productive time
+```
+
+The implementation reports the rate per hour using validated productive
+seconds. Productive time excludes intervals that do not satisfy the required
+evidence and policy conditions—for example, faulted, non-running, stale, or
+otherwise invalid intervals. Signal/source allowlists, freshness, transitions,
+and related policy choices may be configured for the integrated machine and
+process environment; integrations remain responsible for applying policies not
+coupled directly to the interval governor.
+
+### Independent, Orthogonal Trust
+
+Authorization trust and process-evidence trust are independent. A valid license
+does not make telemetry valid, and valid telemetry does not grant an
+entitlement. The composed service permits protected trusted analytics only when
+authorization succeeds **and** trusted throughput is available, while retaining
+both decisions and their reasons separately.
+
+```mermaid
+flowchart LR
+    EV[Entitled<br/>Valid evidence] --> EVR[Protected trusted analytics<br/>may execute]
+    NV[Not entitled<br/>Valid evidence] --> NVR[Capability denied<br/>Process evidence remains valid]
+    EI[Entitled<br/>Invalid evidence] --> EIR[Authorization may be valid<br/>Trusted analytics unavailable]
+    NI[Not entitled<br/>Invalid evidence] --> NIR[Capability denied<br/>Evidence independently invalid]
+```
+
+> **VALID LICENSE ≠ VALID TELEMETRY. VALID TELEMETRY ≠ ENTITLEMENT.**
+
+### Safety and Scope Boundary
+
+> **The Industrial Process Trust Domain is supervisory/read-only.** AILEE v9.3
+> does not replace PLC safety logic or emergency-stop systems; bypass interlocks
+> or machine guards; command industrial hardware through this domain; suppress
+> native machine alarms; or constitute machine-safety or regulatory
+> certification. A commercial licensing failure is independent of native
+> machine safety behavior.
+
+For the complete model and its evidence boundaries, see:
+
+- **[Domain Governance](DOMAIN_GOVERNANCE.md)** — authoritative architecture,
+  invariants, trust boundaries, evidence semantics, domain behavior, and
+  limitations.
+- **[Simulation and Validation](SIMULATION_AND_VALIDATION.md)** — executed
+  scenarios, cross-domain simulations, adversarial validation, observed
+  outcomes, reproducibility information, and known limitations.
 
 ---
 
@@ -1450,6 +1600,8 @@ It makes them **responsible**.
 
 ## Documentation
 
+- **[v9.3 Domain Governance](DOMAIN_GOVERNANCE.md)** — Architecture, invariants, trust boundaries, evidence semantics, behavior, and limitations for the dual domains
+- **[v9.3 Simulation and Validation](SIMULATION_AND_VALIDATION.md)** — Executed scenarios, adversarial and cross-domain validation, reproducibility, and known limitations
 - **[GRACE Layer Specification](docs/GRACE_LAYER.md)** — Adaptive mediation for borderline decisions
 - **[Audit Schema](docs/AUDIT_SCHEMA.md)** — Full traceability and explainability
 - **[Crypto Mining Domain Guide](ailee/domains/crypto_mining/CRYPTO_MINING.md)** — Domain rationale, architecture, and usage for mining operations
@@ -1461,18 +1613,22 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v9.1.1 (Production/Stable)
+### Current: v9.3.0
 
-AILEE Trust Layer **v9.1.1** is a fully governed, cryptographically anchored subsystem with enterprise features:
+AILEE Trust Layer **v9.3.0** adds validated licensing and supervisory/read-only
+industrial-process governance while retaining the established trust pipeline and
+enterprise features:
 
-✅ 18 domain governance layers
-✅ 17 domain-optimized presets
-✅ Advanced peer adapters for multi-model systems  
-✅ Real-time monitoring & alerting  
-✅ Comprehensive audit trails  
-✅ Deterministic replay for testing  
+- ✅ Independent licensing authorization and industrial evidence decisions
+- ✅ Fail-closed protected-capability governance
+- ✅ Validated productive-time and material-evidence throughput semantics
+- ✅ 17 domain-optimized presets
+- ✅ Advanced peer adapters for multi-model systems
+- ✅ Real-time monitoring & alerting
+- ✅ Comprehensive audit trails
+- ✅ Deterministic replay for testing
 
-### Future Considerations (v9.1.1+)
+### Future Considerations (v9.3.0+)
 
 Future versions may add:
 - Streaming support for real-time pipelines
@@ -1562,7 +1718,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {9.1.1},
+  version = {9.3.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1607,7 +1763,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v9.1.1**
+**AILEE Trust Layer v9.3.0**
 *Adaptive Integrity for Intelligent Systems*
 
 Built with discipline. Deployed with confidence.
