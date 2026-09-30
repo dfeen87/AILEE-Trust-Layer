@@ -1,7 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 """
-AILEE Trust Layer v9.2.0
+AILEE Trust Layer v9.3.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -424,10 +424,22 @@ try:
 except ImportError:
     _HAS_VIDEO_TEMPORAL_PROVENANCE_DOMAIN = False
 
+try:
+    from .domains.licensing import LicenseGovernor
+    _HAS_LICENSING_DOMAIN = True
+except ImportError:
+    _HAS_LICENSING_DOMAIN = False
+
+try:
+    from .domains.industrial import ThroughputGovernor
+    _HAS_INDUSTRIAL_DOMAIN = True
+except ImportError:
+    _HAS_INDUSTRIAL_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "9.2.0"
+__version__ = "9.3.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
@@ -729,6 +741,10 @@ if _HAS_LIGHT_TRANSITION_DOMAIN:
         "validate_light_transition_signals",
         "validate_signals",
     ])
+if _HAS_LICENSING_DOMAIN:
+    __all__.append("LicenseGovernor")
+if _HAS_INDUSTRIAL_DOMAIN:
+    __all__.append("ThroughputGovernor")
 
 # =============================================================================
 # Convenience
@@ -787,6 +803,8 @@ def get_available_domains():
         "light_transition": _HAS_LIGHT_TRANSITION_DOMAIN,
         "watermark_provenance": _HAS_WATERMARK_PROVENANCE_DOMAIN,
         "video_temporal_provenance": _HAS_VIDEO_TEMPORAL_PROVENANCE_DOMAIN,
+        "licensing": _HAS_LICENSING_DOMAIN,
+        "industrial": _HAS_INDUSTRIAL_DOMAIN,
     }
 
 
