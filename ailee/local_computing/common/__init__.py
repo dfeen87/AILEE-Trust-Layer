@@ -18,7 +18,12 @@ from .models import (
     TrustState,
 )
 from .policy import DeterministicPolicyEngine, Policy
-from .service import LocalComputingTrust, PlatformAdapter, UnavailablePlatformAdapter
+from .service import (
+    LocalComputingTrust,
+    PlatformAdapter,
+    UnavailablePlatformAdapter,
+    native_platform_adapter,
+)
 
 __all__ = [
     "AuditEvent",
@@ -41,4 +46,5 @@ __all__ = [
     "ResourceTarget",
     "TrustState",
     "UnavailablePlatformAdapter",
+    "native_platform_adapter",
 ]

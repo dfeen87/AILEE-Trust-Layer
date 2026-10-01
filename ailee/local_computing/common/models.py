@@ -73,6 +73,12 @@ class ResourceTarget:
 
     classification: str
     identifier: str
+    arguments: Tuple[str, ...] = ()
+    attributes: Tuple[Tuple[str, str], ...] = ()
+
+    def attribute(self, name: str) -> Optional[str]:
+        """Return a request-local native option without copying it to audit."""
+        return next((value for key, value in self.attributes if key == name), None)
 
 
 @dataclass(frozen=True)
@@ -99,6 +105,8 @@ class CapabilityRequest:
         if self.trust_state is TrustState.INVALID:
             return LocalComputingError.INVALID_TRUST_STATE
         if not self.target.classification.strip() or not self.target.identifier.strip():
+            return LocalComputingError.INVALID_TARGET
+        if any(not key.strip() for key, _ in self.target.attributes):
             return LocalComputingError.INVALID_TARGET
         return None
 
@@ -146,6 +154,8 @@ class AuditEvent:
     policy_decision: str
     platform_capability: str
     enforcement_status: str
+    platform_limitations: Tuple[str, ...] = ()
+    enforcement_detail: str = ""
     correlation_id: Optional[str] = None
     error: Optional[str] = None
 
@@ -174,6 +184,8 @@ class AuditEvent:
             policy_decision=outcome.decision.value,
             platform_capability=platform.support.value,
             enforcement_status=enforcement.status.value,
+            platform_limitations=platform.limitations,
+            enforcement_detail=enforcement.detail,
             correlation_id=request.context.correlation_id,
             error=error.value if error else None,
         )
