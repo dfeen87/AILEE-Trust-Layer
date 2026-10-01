@@ -6,6 +6,17 @@
 The installable Python package containing the core trust pipeline, optional modules,
 domain governance layers, and backend abstractions.
 
+### Local Computing foundation (`ailee/local_computing/`)
+Domain-independent governance for consequential operating-system actions. The
+`common/` package owns immutable requests, deterministic policy, capability,
+enforcement, audit, and failure contracts. The `linux/`, `windows/`, and
+`macos/` packages implement distinct user-space adapters selected only for the
+running OS. They use the hosting process's authority and do not install kernel
+code, intercept unrelated computation, create an AILEE agent framework, or
+require any application domain. Policy decision, platform capability,
+enforcement result, operation completion, and audit delivery remain separate
+evidence dimensions.
+
 ### Rust Core (`src/`, `Cargo.toml`)
 Production-grade Rust implementation providing generative AI trust scoring,
 consensus engines, and cryptographic lineage verification.
@@ -74,6 +85,12 @@ The core `ailee/` package is **independently installable**. The deployable web
 application lives in `ailee/web/`, while static assets and platform configuration
 remain at the repository root. The deployment application imports the core
 package as a consumer.
+
+Local Computing is likewise standalone and composable: consumers submit an
+explicit `CapabilityRequest` to `LocalComputingTrust`; domain packages are not
+imported by that path. **AILEE governs agency, not computation.** The OS kernel
+and its native permissions remain authoritative below AILEE's user-space
+decision and adapter boundary.
 
 The Python pipeline's governing decision logic is deterministic given identical
 inputs, configuration, and relevant per-instance history. That guarantee applies

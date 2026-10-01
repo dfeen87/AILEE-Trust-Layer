@@ -162,6 +162,56 @@ def test_platform_dispatch_matches_runtime():
         assert isinstance(selected, MacOSPlatformAdapter)
 
 
+@pytest.mark.skipif(
+    sys.platform not in {"win32", "darwin"},
+    reason="Windows/macOS native integration test",
+)
+def test_windows_and_macos_native_file_process_network_and_identity(tmp_path):
+    """Exercise real native calls on their host; never simulate foreign calls."""
+    adapter = native_platform_adapter()
+    platform_name = "windows" if sys.platform == "win32" else "macos"
+    path = tmp_path / "native-governed.txt"
+    path.write_text("local", encoding="utf-8")
+
+    read = service(Capability.FILESYSTEM_READ, adapter).govern(
+        req(Capability.FILESYSTEM_READ, path, platform=platform_name)
+    )
+    process = service(Capability.SUBPROCESS_CREATE, adapter).govern(
+        req(
+            Capability.SUBPROCESS_CREATE,
+            sys.executable,
+            arguments=("-c", "raise SystemExit(0)"),
+            platform=platform_name,
+        )
+    )
+
+    listener = socket.socket()
+    listener.bind(("127.0.0.1", 0))
+    listener.listen(1)
+    accepted = []
+    thread = threading.Thread(
+        target=lambda: accepted.append(listener.accept()[0]), daemon=True
+    )
+    thread.start()
+    network = service(Capability.NETWORK_CONNECT, adapter).govern(
+        req(
+            Capability.NETWORK_CONNECT,
+            "127.0.0.1",
+            attributes=(("port", str(listener.getsockname()[1])),),
+            platform=platform_name,
+        )
+    )
+    thread.join(timeout=2)
+    for connection in accepted:
+        connection.close()
+    listener.close()
+
+    assert read.enforcement.status is EnforcementStatus.COMPLETED
+    assert process.enforcement.status is EnforcementStatus.COMPLETED
+    assert network.enforcement.status is EnforcementStatus.COMPLETED
+    assert adapter.identity()["available"] is True
+
+
 def test_foreign_platforms_import_and_report_unavailable_on_current_host():
     adapters = [
         (WindowsPlatformAdapter(), "windows"),

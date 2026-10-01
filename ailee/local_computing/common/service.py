@@ -80,6 +80,12 @@ class LocalComputingTrust:
     def govern(self, request: CapabilityRequest) -> GovernanceResult:
         try:
             capability = self._platform.capability(request.capability)
+            if (
+                not isinstance(capability, PlatformCapability)
+                or not isinstance(capability.capability, Capability)
+                or not isinstance(capability.support, CapabilitySupport)
+            ):
+                raise TypeError("invalid platform capability result")
         except Exception:
             capability = PlatformCapability(
                 request.capability, CapabilitySupport.UNAVAILABLE
@@ -107,6 +113,8 @@ class LocalComputingTrust:
                     error=LocalComputingError.ENFORCEMENT_FAILURE,
                     detail="platform adapter raised during enforcement",
                 )
+            else:
+                enforcement = self._validated_enforcement(enforcement)
         audit = AuditEvent.create(
             request,
             outcome,
@@ -130,4 +138,52 @@ class LocalComputingTrust:
             audit,
             audited,
             error,
+        )
+
+    @staticmethod
+    def _validated_enforcement(result: object) -> EnforcementResult:
+        """Fail closed when an adapter returns a contradictory result.
+
+        Platform adapters are an integration boundary, so their return values
+        cannot be trusted merely because policy evaluation authorized an
+        attempt.  In particular, completion is evidence only when all three
+        execution flags and the status agree and no error is present.
+        """
+        if not isinstance(result, EnforcementResult):
+            return EnforcementResult(
+                EnforcementStatus.FAILED,
+                attempted=True,
+                error=LocalComputingError.UNEXPECTED_RESULT,
+                detail="platform adapter returned an invalid result type",
+            )
+
+        valid = {
+            EnforcementStatus.NOT_ATTEMPTED: (
+                not result.attempted and not result.enforced and not result.completed
+            ),
+            EnforcementStatus.ENFORCED: (
+                result.attempted and result.enforced and not result.completed
+            ),
+            EnforcementStatus.COMPLETED: (
+                result.attempted
+                and result.enforced
+                and result.completed
+                and result.error is None
+            ),
+            EnforcementStatus.PARTIAL: (
+                result.attempted
+                and not result.completed
+                and result.error is LocalComputingError.PARTIAL_EXECUTION
+            ),
+            EnforcementStatus.FAILED: (
+                not result.completed and result.error is not None
+            ),
+        }
+        if valid.get(result.status, False):
+            return result
+        return EnforcementResult(
+            EnforcementStatus.FAILED,
+            attempted=bool(result.attempted),
+            error=LocalComputingError.UNEXPECTED_RESULT,
+            detail="platform adapter returned contradictory enforcement evidence",
         )
