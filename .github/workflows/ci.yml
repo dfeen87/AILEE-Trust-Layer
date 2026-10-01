@@ -109,7 +109,7 @@ jobs:
           python -m venv /tmp/ailee-wheel-smoke
           /tmp/ailee-wheel-smoke/bin/python -m pip install dist/*.whl
           cd /tmp
-          /tmp/ailee-wheel-smoke/bin/python -c "import ailee; assert ailee.__version__ == '9.3.0'"
+          /tmp/ailee-wheel-smoke/bin/python -c "import ailee; assert ailee.__version__ == '9.4.0'"
 
   governance-v930:
     name: v9.3 governance validation

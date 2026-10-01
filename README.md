@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-9.3.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-9.4.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -1621,12 +1621,15 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v9.3.0
+### Current: v9.4.0
 
-AILEE Trust Layer **v9.3.0** adds validated licensing and supervisory/read-only
-industrial-process governance while retaining the established trust pipeline and
-enterprise features:
+AILEE Trust Layer **v9.4.0** establishes the domain-independent Local Computing
+trust foundation while retaining the validated v9.3 licensing and
+supervisory/read-only industrial-process governance:
 
+- ✅ [Local Computing common trust architecture](docs/LOCAL_COMPUTING.md)
+- ✅ Deterministic policy, trust degradation, capability, enforcement, and audit contracts
+- ✅ Explicit Linux, Windows, and macOS integration locations (native work deferred)
 - ✅ Independent licensing authorization and industrial evidence decisions
 - ✅ Fail-closed protected-capability governance
 - ✅ Validated productive-time and material-evidence throughput semantics
@@ -1636,7 +1639,7 @@ enterprise features:
 - ✅ Comprehensive audit trails
 - ✅ Deterministic replay for testing
 
-### Future Considerations (v9.3.0+)
+### Future Considerations (v9.4.0+)
 
 Future versions may add:
 - Streaming support for real-time pipelines
@@ -1726,7 +1729,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {9.3.0},
+  version = {9.4.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1771,7 +1774,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v9.3.0**
+**AILEE Trust Layer v9.4.0**
 *Adaptive Integrity Layer for AI Decision Systems*
 
 Built with discipline. Deployed with confidence.
