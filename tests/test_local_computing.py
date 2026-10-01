@@ -228,6 +228,54 @@ def test_platform_failures_are_explicit_and_never_allow():
     assert enforcement.error is LocalComputingError.ENFORCEMENT_FAILURE
 
 
+@pytest.mark.parametrize(
+    "capability_result",
+    [None, "SUPPORTED", PlatformCapability(Capability.FILESYSTEM_READ, "SUPPORTED")],
+)
+def test_invalid_platform_capability_results_fail_closed(capability_result):
+    class InvalidCapabilityAdapter(ContractTestAdapter):
+        def capability(self, requested):
+            return capability_result
+
+    result = service(InvalidCapabilityAdapter()).govern(request())
+    assert result.policy.decision is PolicyDecision.DENY
+    assert result.platform_capability.support is CapabilitySupport.UNAVAILABLE
+    assert result.enforcement.status is EnforcementStatus.NOT_ATTEMPTED
+    assert result.error is LocalComputingError.PLATFORM_INTEGRATION_FAILURE
+
+
+@pytest.mark.parametrize(
+    "adapter_result",
+    [
+        None,
+        EnforcementResult(EnforcementStatus.COMPLETED),
+        EnforcementResult(
+            EnforcementStatus.COMPLETED,
+            attempted=True,
+            enforced=True,
+            completed=True,
+            error=LocalComputingError.ENFORCEMENT_FAILURE,
+        ),
+        EnforcementResult(
+            EnforcementStatus.PARTIAL,
+            attempted=True,
+            completed=True,
+            error=LocalComputingError.PARTIAL_EXECUTION,
+        ),
+    ],
+)
+def test_unexpected_platform_results_fail_closed(adapter_result):
+    class UnexpectedResultAdapter(ContractTestAdapter):
+        def enforce(self, request, constraints):
+            return adapter_result
+
+    result = service(UnexpectedResultAdapter()).govern(request())
+    assert result.policy.decision is PolicyDecision.ALLOW
+    assert result.enforcement.status is EnforcementStatus.FAILED
+    assert result.enforcement.completed is False
+    assert result.error is LocalComputingError.UNEXPECTED_RESULT
+
+
 def test_policy_configuration_validation_rejects_unknown_principal_rules():
     malformed = Policy("bad", frozenset({"known"}), {"unknown": frozenset()}, {}, {})
     with pytest.raises(ValueError, match="unknown principals"):

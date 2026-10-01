@@ -84,6 +84,32 @@ jobs:
       - name: Run complete Python test suite
         run: python -m pytest tests -v
 
+  local-computing-native:
+    name: Local Computing native (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install project and test dependencies
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run common and native Local Computing tests
+        run: >-
+          python -m pytest -v
+          tests/test_local_computing.py
+          tests/test_local_computing_platforms.py
+
   python-packaging:
     name: Python packaging
     runs-on: ubuntu-latest

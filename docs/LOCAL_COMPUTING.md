@@ -75,10 +75,14 @@ credential-sensitive operations are `UNAVAILABLE`.
 
 Malformed parameters, missing resources, permission failures, nonzero child
 exit, timeout after child creation, platform mismatch, unavailable capability,
-and unexpected OS errors are explicit results. They never become `ALLOW` or a
-successful enforcement claim. A timeout is `PARTIAL`; observation-only and
-unavailable mechanisms are not attempted. Policy denial always precedes OS
-execution. The `read-only` constraint blocks mutating adapter actions.
+and unexpected OS or adapter results are explicit results. A policy decision
+may remain `ALLOW` or `RESTRICT` while enforcement separately fails, but these
+conditions never become a successful enforcement or completion claim. A
+timeout is `PARTIAL`; observation-only and unavailable mechanisms are not
+attempted. Policy denial always precedes OS execution. The `read-only`
+constraint blocks mutating adapter actions. Contradictory adapter status,
+attempt, enforcement, completion, and error fields are normalized to a failed
+`UNEXPECTED_RESULT` rather than trusted.
 
 ## Local networking only
 
@@ -91,8 +95,8 @@ cloud control plane.
 ## Verification scope
 
 The test suite runs real temporary-file, child-process, loopback TCP, identity,
-and audit integration paths only on Linux when hosted on Linux. All platform
-modules are parsed/imported on the current host. Windows and macOS discovery
-logic is simulated for truth-table tests, but their native runtime calls are
-not claimed as executed outside those operating systems. Runtime CI on each
-native OS remains necessary for release validation.
+and audit integration paths on the hosting platform. CI has a dedicated
+Ubuntu, Windows, and macOS matrix for those focused tests. All platform modules
+are also parsed/imported on the current host, and foreign discovery logic is
+simulated only for truth-table tests. A local run is evidence solely for its
+host OS; native CI evidence must be read from the corresponding matrix job.
