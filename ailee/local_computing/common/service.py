@@ -43,6 +43,25 @@ class UnavailablePlatformAdapter:
         return EnforcementResult.not_attempted("native platform adapter is unavailable")
 
 
+def native_platform_adapter() -> PlatformAdapter:
+    """Select only the adapter for the running OS; unknown OSes fail closed."""
+    import sys
+
+    if sys.platform.startswith("linux"):
+        from ..linux import LinuxPlatformAdapter
+
+        return LinuxPlatformAdapter()
+    if sys.platform == "win32":
+        from ..windows import WindowsPlatformAdapter
+
+        return WindowsPlatformAdapter()
+    if sys.platform == "darwin":
+        from ..macos import MacOSPlatformAdapter
+
+        return MacOSPlatformAdapter()
+    return UnavailablePlatformAdapter()
+
+
 class LocalComputingTrust:
     """Standalone public API governing requests submitted through this boundary."""
 

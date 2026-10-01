@@ -1,48 +1,98 @@
-# AILEE v9.4 Local Computing Foundation
+# AILEE v9.4 Local Computing
 
 ## Authority boundary
 
 AILEE governs agency, not computation. Local Computing evaluates consequential
 actions that an external principal, agentic system, tool, or automation submits
-through the public `ailee.local_computing` boundary. The host operating system
-provides computation and remains authoritative. AILEE does not claim to observe
-or intercept arbitrary third-party processes.
+through `ailee.local_computing`. The host OS remains authoritative. These
+adapters neither intercept unrelated processes nor constitute a sandbox,
+endpoint firewall, antivirus, kernel module, driver, or kernel extension.
 
-The common lifecycle is **request → observe → normalize → contextualize → trust
-evaluation → policy decision → platform enforcement → result → audit**. Prompt
-1.1 implements the typed common contract and deterministic policy portion of
-that lifecycle. It does not install kernel modules, drivers, kernel extensions,
-patches, undocumented hooks, or replacement OS behavior.
+The lifecycle is **request → trust/policy decision → native adapter → result →
+audit**. Policy authorization, advertised platform capability, and successful
+OS execution are deliberately separate facts. Native adapter selection is by
+`native_platform_adapter()` and unknown platforms retain the fail-closed
+unavailable adapter.
 
-## Package layout
+## Request data and evidence
 
-- `ailee/local_computing/common/` contains platform-neutral requests, policy,
-  capability reporting, enforcement results, errors, audits, and orchestration.
-- `ailee/local_computing/linux/`, `windows/`, and `macos/` are explicit native
-  integration locations. They contain no native enforcement in Prompt 1.1.
-- `ailee.local_computing.LocalComputingTrust` is the public integration boundary;
-  domains must not depend on common implementation internals.
+`ResourceTarget.identifier` is the native path, executable, PID, or network
+host. `arguments` is an immutable direct process argument vector. `attributes`
+is an immutable set of native options (for example `content`, `port`, `timeout`,
+`signal`, or Windows `exit_code`). Integrators must treat all three as sensitive.
+They are used for the request but omitted from `AuditEvent`.
 
-## Safety semantics
+Audit evidence records the classified target, policy state, capability support,
+platform limitations, enforcement state, sanitized result detail, correlation
+ID, and typed error. It does not record file content, argv, paths, hosts, ports,
+credentials, stdout, or stderr.
 
-Policy decisions (`ALLOW`, `DENY`, `RESTRICT`), reported platform capability,
-and enforcement results are separate values. The default platform adapter
-reports `UNAVAILABLE`; therefore a valid policy cannot be mistaken for native
-enforcement. Unknown principals, invalid trust, malformed targets, unavailable
-capabilities, and missing rules fail closed.
+## Linux
 
-Trust states are ordered and deterministic. Degradation can only move from
-`TRUSTED` to `DEGRADED` to `UNTRUSTED`; it cannot increase authority. Platform
-support is reported as `SUPPORTED`, `SUPPORTED_WITH_LIMITATIONS`,
-`OBSERVABLE_ONLY`, or `UNAVAILABLE`.
+`LinuxPlatformAdapter` discovers PID, real/effective UID and GID, supplementary
+groups, root status, and kernel release. It implements file read/write/delete,
+directory traversal, read access to a protected resource under caller
+credentials, direct argv subprocess execution, signal-based process control,
+and outbound TCP connection attempts using supported Python/POSIX facilities.
 
-Audit events retain classified evidence, identifiers needed for correlation,
-and explicit policy/capability/enforcement states. They intentionally omit the
-target identifier and request payload so credentials, secrets, file contents,
-and authentication tokens are not copied into common audit evidence.
+Those operations are `SUPPORTED_WITH_LIMITATIONS`: Linux permissions remain
+authoritative; paths and symlinks are not containment; children inherit the
+host process security context; signals are permission checked by the kernel;
+and DNS/routing remain external. Resource and hardware requests are
+`OBSERVABLE_ONLY`. Privilege elevation and credential-sensitive operations are
+`UNAVAILABLE`. No namespaces, seccomp policy, cgroups, LSM rules, capabilities,
+or kernel hooks are installed.
 
-## Deferred work
+## Windows
 
-Linux, Windows, and macOS adapters are intentionally deferred to Prompt 1.2.
-The test adapter verifies only the public common contract and is not evidence of
-native OS interception or enforcement.
+`WindowsPlatformAdapter` is import-safe on other systems and activates only on
+Win32. It queries whether the current process token can be opened, uses native
+Windows path semantics and ACL checks through file APIs, direct argument-vector
+process creation, `OpenProcess`/`TerminateProcess` with closed handles for
+process control, and Winsock-backed TCP connections.
+
+These paths are `SUPPORTED_WITH_LIMITATIONS`: the current token, ACLs, sharing
+modes, reparse points, protected-process rules, Windows Firewall, and OS policy
+remain authoritative. The adapter does not create a restricted token, Job
+Object sandbox, AppContainer, WFP filter, or driver. Privilege/resource/hardware
+context is `OBSERVABLE_ONLY`; credential-sensitive operations are `UNAVAILABLE`.
+
+## macOS
+
+`MacOSPlatformAdapter` discovers Darwin PID, UID/GID, supplementary groups,
+root status, and release. It implements file operations under host permissions,
+direct argv child creation, signal delivery, and outbound TCP connections.
+
+These paths are `SUPPORTED_WITH_LIMITATIONS`: POSIX modes, ACLs, sandbox
+entitlements, code signing, Transparency Consent and Control (TCC), System
+Integrity Protection (SIP), and protected-process checks remain authoritative.
+The adapter cannot bypass or grant those controls. It installs no Endpoint
+Security client, Network Extension, kernel extension, or deprecated kernel
+hook. Privilege/resource/hardware context is `OBSERVABLE_ONLY`;
+credential-sensitive operations are `UNAVAILABLE`.
+
+## Failure semantics
+
+Malformed parameters, missing resources, permission failures, nonzero child
+exit, timeout after child creation, platform mismatch, unavailable capability,
+and unexpected OS errors are explicit results. They never become `ALLOW` or a
+successful enforcement claim. A timeout is `PARTIAL`; observation-only and
+unavailable mechanisms are not attempted. Policy denial always precedes OS
+execution. The `read-only` constraint blocks mutating adapter actions.
+
+## Local networking only
+
+Networking is a local outbound TCP action: policy evaluates a host/port request,
+the current host's adapter asks its OS to connect, records success/failure, and
+closes the socket. This is not host-to-host AILEE communication. There is no
+mesh, federation, consensus, cluster orchestration, remote trust exchange, or
+cloud control plane.
+
+## Verification scope
+
+The test suite runs real temporary-file, child-process, loopback TCP, identity,
+and audit integration paths only on Linux when hosted on Linux. All platform
+modules are parsed/imported on the current host. Windows and macOS discovery
+logic is simulated for truth-table tests, but their native runtime calls are
+not claimed as executed outside those operating systems. Runtime CI on each
+native OS remains necessary for release validation.
