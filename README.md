@@ -336,10 +336,10 @@ flowchart LR
 
 For the complete model and its evidence boundaries, see:
 
-- **[Domain Governance](DOMAIN_GOVERNANCE.md)** — authoritative architecture,
+- **[Domain Governance](docs/DOMAIN_GOVERNANCE.md)** — authoritative architecture,
   invariants, trust boundaries, evidence semantics, domain behavior, and
   limitations.
-- **[Simulation and Validation](SIMULATION_AND_VALIDATION.md)** — executed
+- **[Simulation and Validation](docs/SIMULATION_AND_VALIDATION.md)** — executed
   scenarios, cross-domain simulations, adversarial validation, observed
   outcomes, reproducibility information, and known limitations.
 
@@ -1605,8 +1605,8 @@ It makes them **responsible**.
 
 ## Documentation
 
-- **[v9.3 Domain Governance](DOMAIN_GOVERNANCE.md)** — Architecture, invariants, trust boundaries, evidence semantics, behavior, and limitations for the dual domains
-- **[v9.3 Simulation and Validation](SIMULATION_AND_VALIDATION.md)** — Executed scenarios, adversarial and cross-domain validation, reproducibility, and known limitations
+- **[v9.3 Domain Governance](docs/DOMAIN_GOVERNANCE.md)** — Architecture, invariants, trust boundaries, evidence semantics, behavior, and limitations for the dual domains
+- **[v9.3 Simulation and Validation](docs/SIMULATION_AND_VALIDATION.md)** — Executed scenarios, adversarial and cross-domain validation, reproducibility, and known limitations
 - **[GRACE Layer Specification](docs/GRACE_LAYER.md)** — Adaptive mediation for borderline decisions
 - **[Audit Schema](docs/AUDIT_SCHEMA.md)** — Full traceability and explainability
 - **[Crypto Mining Domain Guide](ailee/domains/crypto_mining/CRYPTO_MINING.md)** — Domain rationale, architecture, and usage for mining operations
