@@ -1,3 +1,12 @@
+# Changelog
+
+### **v9.4.0 — Local Computing Foundation**
+
+- Established Local Computing as a foundational, domain-independent package.
+- Added deterministic common trust, policy, capability, enforcement, error, and audit contracts.
+- Added explicit Linux, Windows, and macOS integration locations while deferring native enforcement to v9.4 Prompt 1.2.
+- Aligned active Python, Rust, TypeScript, CMake, package, and CI release metadata to 9.4.0.
+
 ### **v9.1.1 — Version Alignment**
 
 **Type:** Patch (Bug fixes & maintenance)
