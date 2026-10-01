@@ -4,31 +4,228 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build-test:
+  python-quality:
+    name: Python quality
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - name: Checkout repository
+      - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            setup.py
 
-      - name: Install dependencies
+      - name: Install project and quality tools
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install -e ".[dev]"
+
+      - name: Verify dependency integrity
+        run: python -m pip check
+
+      - name: Compile Python sources and tests
+        run: python -m compileall -q ailee tests
+
+      # The repository-wide Black and mypy debt is recorded in
+      # SIMULATION_AND_VALIDATION.md. The clean v9.3 trust domains have an
+      # established zero-error mypy baseline and are enforced here.
+      - name: Type-check v9.3 trust domains
+        run: >-
+          python -m mypy --follow-imports=skip
+          ailee/domains/licensing/licensing.py
+          ailee/domains/industrial/industrial.py
+          ailee/domains/dual_domain.py
+
+  python-tests:
+    name: Python tests (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.9", "3.10", "3.11"]
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            setup.py
+
+      - name: Install project and test dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+          python -m pip install -e ".[dev]"
+
+      - name: Verify dependency integrity
+        run: python -m pip check
+
+      - name: Run complete Python test suite
+        run: python -m pytest tests -v
+
+  python-packaging:
+    name: Python packaging
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: setup.py
+
+      - name: Build distributions
+        run: |
+          python -m pip install --upgrade pip build
+          python -m build
+
+      - name: Install wheel in a clean environment
+        run: |
+          python -m venv /tmp/ailee-wheel-smoke
+          /tmp/ailee-wheel-smoke/bin/python -m pip install dist/*.whl
+          cd /tmp
+          /tmp/ailee-wheel-smoke/bin/python -c "import ailee; assert ailee.__version__ == '9.3.0'"
+
+  governance-v930:
+    name: v9.3 governance validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: setup.py
+
+      - name: Install project and test dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
 
-      - name: Build (byte-compile)
+      - name: Require governance validation suites
         run: |
-          python -m compileall -q .
+          test -f tests/test_licensing_domain.py
+          test -f tests/test_industrial_domain.py
+          test -f tests/test_dual_domain.py
+          test -f tests/test_dual_domain_adversarial.py
+          test -f tests/test_v930_final_validation.py
 
-      - name: Run unit tests
-        run: |
-          if [ -d tests ]; then
-            python -m pytest tests/ -v
-          else
-            echo "No tests/ directory found; skipping pytest."
-          fi
+      - name: Run licensing, industrial, composition, adversarial, and final validation
+        run: >-
+          python -m pytest -q
+          tests/test_licensing_domain.py
+          tests/test_industrial_domain.py
+          tests/test_dual_domain.py
+          tests/test_dual_domain_adversarial.py
+          tests/test_v930_final_validation.py
+
+  rust:
+    name: Rust validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up stable Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt
+
+      - name: Cache Cargo data
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+
+      - name: Check all targets
+        run: cargo check --all-targets --locked
+
+      - name: Build all targets
+        run: cargo build --all-targets --locked
+
+      - name: Test all targets
+        run: cargo test --all-targets --locked
+
+  typescript:
+    name: TypeScript validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: packages/ailee-ts
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 24
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: packages/ailee-ts/package-lock.json
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Build package
+        run: npm run build
+
+      - name: Run tests
+        run: npm test
+
+  cpp:
+    name: C++ validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
+
+      - name: Build C++ targets
+        run: cmake --build build --config Release --parallel 2
+
+      - name: Run CTest suite
+        run: ctest --test-dir build --build-config Release --output-on-failure
