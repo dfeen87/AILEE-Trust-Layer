@@ -158,6 +158,36 @@ def test_sample_times_must_strictly_increase(second_time):
         compute_delta_v(params(), series)
 
 
+@pytest.mark.parametrize(
+    "parameter_changes",
+    [
+        {"specific_impulse": 10**4000},
+        {"efficiency": 10**4000},
+        {"alpha": 10**4000},
+        {"initial_velocity": 10**4000},
+    ],
+)
+def test_parameter_float_conversion_overflow_raises_math_numerical_error(
+    parameter_changes,
+):
+    with pytest.raises(MathNumericalError, match="overflow"):
+        compute_delta_v(params(**parameter_changes), samples())
+
+
+@pytest.mark.parametrize("field", ["time", "input_power", "workload", "velocity", "mass"])
+def test_sample_float_conversion_overflow_raises_math_numerical_error(field):
+    bad_values = {"time": 0.0, "input_power": 1.0, "workload": 0.0, "velocity": 1.0, "mass": 1.0}
+    bad_values[field] = 10**4000
+    overflow_sample = DeltaVSample(**bad_values)
+    with pytest.raises(MathNumericalError, match="overflow"):
+        compute_delta_v(params(), (overflow_sample, DeltaVSample(1, 1, 0, 1, 1)))
+
+
+def test_integrator_float_conversion_overflow_raises_math_numerical_error():
+    with pytest.raises(MathNumericalError, match="overflow"):
+        trapezoidal_integral(((10**4000, 1.0), (10**4001, 2.0)))
+
+
 def test_exponential_overflow_is_explicit():
     with pytest.raises(MathNumericalError, match="overflow"):
         compute_delta_v(params(alpha=400.0, initial_velocity=1.0), samples())
