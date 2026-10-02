@@ -85,6 +85,7 @@ class LinuxPlatformAdapter:
                 (
                     "direct argv execution without a shell",
                     "child inherits caller OS security context",
+                    "executable identity and descendants are not transitively bound",
                 ),
             )
         if requested in _NET:
@@ -94,6 +95,7 @@ class LinuxPlatformAdapter:
                 (
                     "TCP connect only",
                     "DNS and routing remain OS-authoritative",
+                    "resolved address is not pinned during policy evaluation",
                     "no traffic interception",
                 ),
             )
@@ -104,6 +106,7 @@ class LinuxPlatformAdapter:
                 (
                     "signal delivery only",
                     "kernel permission checks remain authoritative",
+                    "PID identity is not pinned against reuse",
                 ),
             )
         if requested in {Capability.RESOURCE_ALLOCATE, Capability.HARDWARE_REQUEST}:
