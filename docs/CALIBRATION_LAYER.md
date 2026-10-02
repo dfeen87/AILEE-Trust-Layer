@@ -2,16 +2,16 @@
 
 ## Purpose and compatibility
 
-The V8.1 Calibration Layer is an **opt-in, deterministic refinement** for confidence values supplied to the existing Brooks V8 trust pipeline. It is deliberately a wrapper: it does not change V8 telemetry scoring, guard decisions, consensus engine behavior, fallback selection, or hard bounds. With its default `enabled: false` configuration, the Brooks domain supplies precisely the V8 baseline confidence to `AileeTrustPipeline`.
+The V8.1 Calibration Layer is an **opt-in, deterministic refinement** for confidence values supplied to the existing Air Flow V8 trust pipeline. It is deliberately a wrapper: it does not change V8 telemetry scoring, guard decisions, consensus engine behavior, fallback selection, or hard bounds. With its default `enabled: false` configuration, the Air Flow Domain supplies precisely the V8 baseline confidence to `AileeTrustPipeline`.
 
-When enabled, calibration runs after the Brooks rule checks produce baseline snapshot confidence and before the unchanged trust pipeline evaluates that confidence. Invalid calibration inputs always retain the V8 baseline; they never create a permissive result.
+When enabled, calibration runs after the Air Flow rule checks produce baseline snapshot confidence and before the unchanged trust pipeline evaluates that confidence. Invalid calibration inputs always retain the V8 baseline; they never create a permissive result.
 
 ## Configuration and metadata
 
-Pass calibration configuration as the fifth `BrooksDomain` constructor argument. All score-like values are normalized to `[0, 1]`; invalid configuration fails safe.
+Pass calibration configuration as the fifth `AirFlowDomain` constructor argument. All score-like values are normalized to `[0, 1]`; invalid configuration fails safe.
 
 ```ts
-const domain = new BrooksDomain("mfc_line_a", undefined, undefined, 1000, {
+const domain = new AirFlowDomain("mfc_line_a", undefined, undefined, 1000, {
   enabled: true,
   acceptanceThreshold: 0.95,
   uncertaintyBand: 0.05,
@@ -35,7 +35,7 @@ await domain.evaluateState(snapshot, {
 - `acceptanceThreshold` is the threshold calibration may reach, not exceed.
 - `uncertaintyBand` defines `[acceptanceThreshold - uncertaintyBand, acceptanceThreshold)`.
 - `graceMargin` is capped by `maxGraceMargin` and by the distance to the acceptance threshold.
-- `peerConsensus` must meet both the configured agreement and peer-count requirements. The Brooks V8 pipeline has no peer values of its own, so this is an explicit external signal rather than a replacement for V8 consensus.
+- `peerConsensus` must meet both the configured agreement and peer-count requirements. The Air Flow V8 pipeline has no peer values of its own, so this is an explicit external signal rather than a replacement for V8 consensus.
 
 ## Decision behavior and audit data
 

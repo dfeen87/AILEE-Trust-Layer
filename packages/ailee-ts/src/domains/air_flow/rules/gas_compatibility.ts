@@ -2,13 +2,13 @@
 //! Licensed under the MIT License.
 
 import { isHazardousGas, lookupGas } from "../models/gas_database.js";
-import { BrooksSafetyPolicy, DEFAULT_BROOKS_POLICY } from "../types/policy.js";
+import { AirFlowSafetyPolicy, DEFAULT_AIR_FLOW_POLICY } from "../types/policy.js";
 import { RuleCheckResult } from "./flow_bounds.js";
 
 export class GasSafetyGuard {
-  private policy: BrooksSafetyPolicy;
+  private policy: AirFlowSafetyPolicy;
 
-  constructor(policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY) {
+  constructor(policy: AirFlowSafetyPolicy = DEFAULT_AIR_FLOW_POLICY) {
     this.policy = policy;
   }
 

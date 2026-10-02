@@ -2,6 +2,9 @@
 
 ### **v9.4.0 — Local Computing Foundation**
 
+- Renamed the public TypeScript Brooks Domain API and package tree to the vendor-neutral Air Flow Domain (`AirFlowDomain`, `AirFlowHardwareAdapter`, `AirFlowSafetyPolicy`, `DEFAULT_AIR_FLOW_POLICY`, and `AIR_FLOW_PRESETS`), without retaining legacy aliases or changing safety semantics.
+- Converted the model-specific manifest identity into an explicitly repository-defined Reference Mass Flow Controller profile; its deterministic wire layout is preserved and is not presented as a universal MFC standard.
+- Fixed the shared policy-constraint validator to reject whitespace-only restrictions during policy-engine construction and retained the same validation contract for fail-closed service-side outcomes.
 - Established Local Computing as a foundational, domain-independent package.
 - Added deterministic common trust, policy, capability, enforcement, error, and audit contracts.
 - Added explicit Linux, Windows, and macOS integration locations, followed by the v9.4 user-space native adapter implementations.

@@ -1,8 +1,8 @@
-# Brooks Domain Benchmark & Real-Time Compliance Report
+# Air Flow Domain Benchmark & Real-Time Compliance Report
 
 ## 1) Performance Objectives & Constraints
 
-The Brooks safety loop is designed for deterministic real-time physical gating.
+The Air Flow safety loop is designed for deterministic real-time physical gating.
 
 - **Execution Budget:** sub-2ms total latency from raw frame ingest to safety decision.
 - **Zero Allocation Policy (hot path):** zero heap allocations during frame decode and per-rule numeric guard checks, minimizing GC jitter risk.
@@ -36,7 +36,7 @@ The Brooks safety loop is designed for deterministic real-time physical gating.
 
 | Parser Path | Target Throughput (ops/sec) | Actual Throughput (ops/sec) | Target ns/op | Actual ns/op | Compliance |
 |---|---:|---:|---:|---:|---|
-| SLA5800 CIP frame extract (24B) | >= 1,500,000 | 2,560,000 | <= 667 | 391 | ✅ |
+| reference MFC CIP frame extract (24B) | >= 1,500,000 | 2,560,000 | <= 667 | 391 | ✅ |
 | EtherCAT PDO frame extract (24B) | >= 1,500,000 | 2,710,000 | <= 667 | 369 | ✅ |
 
 ## 3.2 Rule Engine Latency Breakdown
@@ -84,17 +84,17 @@ From repository root:
 ```bash
 cd /home/runner/work/AILEE-Trust-Layer/AILEE-Trust-Layer/packages/ailee-ts
 pnpm install
-pnpm run benchmark:brooks
+pnpm run benchmark:air-flow
 ```
 
 Alternative workspace form:
 
 ```bash
-pnpm --dir /home/runner/work/AILEE-Trust-Layer/AILEE-Trust-Layer/packages/ailee-ts run benchmark:brooks
+pnpm --dir /home/runner/work/AILEE-Trust-Layer/AILEE-Trust-Layer/packages/ailee-ts run benchmark:air-flow
 ```
 
 If you need high-detail timing export in CI:
 
 ```bash
-pnpm --dir /home/runner/work/AILEE-Trust-Layer/AILEE-Trust-Layer/packages/ailee-ts run benchmark:brooks -- --json --out ./benchmarks/brooks-latest.json
+pnpm --dir /home/runner/work/AILEE-Trust-Layer/AILEE-Trust-Layer/packages/ailee-ts run benchmark:air-flow -- --json --out ./benchmarks/air-flow-latest.json
 ```

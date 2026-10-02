@@ -15,7 +15,7 @@ import { RampRateGuard, ZeroDriftGuard } from "./rules/flow_bounds.js";
 import { GasSafetyGuard } from "./rules/gas_compatibility.js";
 import { PressureDeltaGuard, PressureGuard } from "./rules/pressure_guard.js";
 import { ActuationCommand, validateActuationCommand } from "./types/commands.js";
-import { BrooksSafetyPolicy, DEFAULT_BROOKS_POLICY } from "./types/policy.js";
+import { AirFlowSafetyPolicy, DEFAULT_AIR_FLOW_POLICY } from "./types/policy.js";
 import {
   MFCDeviceTelemetry,
   PressureControllerTelemetry,
@@ -38,7 +38,7 @@ export * from "./rules/gas_compatibility.js";
 export * from "./adapters/ethernet_ip.js";
 export * from "./adapters/ethercat.js";
 
-export const BROOKS_PRESETS: Record<string, AileeConfig> = {
+export const AIR_FLOW_PRESETS: Record<string, AileeConfig> = {
   STRICT_PHYSICAL: {
     borderlineLow: 0.8,
     borderlineHigh: 0.95,
@@ -51,11 +51,11 @@ export const BROOKS_PRESETS: Record<string, AileeConfig> = {
   },
 };
 
-export class BrooksHardwareAdapter implements DomainHardwareAdapter {
-  public domainName = "brooks";
+export class AirFlowHardwareAdapter implements DomainHardwareAdapter {
+  public domainName = "air_flow";
   private pipeline: AileeTrustPipeline;
   private calibrationLayer: CalibrationLayer;
-  private policy: BrooksSafetyPolicy;
+  private policy: AirFlowSafetyPolicy;
   public stateMachine: DeviceStateMachine;
   public heartbeatTimeoutMs: number = 1000; // 1000ms maximum telemetry staleness window
 
@@ -71,9 +71,9 @@ export class BrooksHardwareAdapter implements DomainHardwareAdapter {
   public lastPredictiveScoreByte: number = 0;
 
   constructor(
-    deviceId = "mfc_brooks_sla5800",
-    policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY,
-    aileeConfig: AileeConfig = BROOKS_PRESETS.STRICT_PHYSICAL,
+    deviceId = "mfc_air_flow_reference",
+    policy: AirFlowSafetyPolicy = DEFAULT_AIR_FLOW_POLICY,
+    aileeConfig: AileeConfig = AIR_FLOW_PRESETS.STRICT_PHYSICAL,
     heartbeatTimeoutMs = 1000,
     calibrationConfig: Partial<CalibrationConfig> = {}
   ) {
@@ -316,4 +316,4 @@ const fallbackAction = isHazardous && this.policy.strictHazardousMode ? "VALVE_C
   }
 }
 
-export { BrooksHardwareAdapter as BrooksDomain };
+export { AirFlowHardwareAdapter as AirFlowDomain };

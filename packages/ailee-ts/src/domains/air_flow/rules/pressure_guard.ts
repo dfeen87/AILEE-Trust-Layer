@@ -1,13 +1,13 @@
 //! Copyright (c) Don Michael Feeney Jr.
 //! Licensed under the MIT License.
 
-import { BrooksSafetyPolicy, DEFAULT_BROOKS_POLICY } from "../types/policy.js";
+import { AirFlowSafetyPolicy, DEFAULT_AIR_FLOW_POLICY } from "../types/policy.js";
 import { RuleCheckResult } from "./flow_bounds.js";
 
 export class PressureGuard {
-  private policy: BrooksSafetyPolicy;
+  private policy: AirFlowSafetyPolicy;
 
-  constructor(policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY) {
+  constructor(policy: AirFlowSafetyPolicy = DEFAULT_AIR_FLOW_POLICY) {
     this.policy = policy;
   }
 
@@ -39,9 +39,9 @@ export class PressureGuard {
 }
 
 export class PressureDeltaGuard {
-  private policy: BrooksSafetyPolicy;
+  private policy: AirFlowSafetyPolicy;
 
-  constructor(policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY) {
+  constructor(policy: AirFlowSafetyPolicy = DEFAULT_AIR_FLOW_POLICY) {
     this.policy = policy;
   }
 

@@ -4,17 +4,17 @@
 import { describe, expect, it } from "vitest";
 import { EtherCATAdapter } from "../adapters/ethercat.js";
 import { EtherNetIPAdapter } from "../adapters/ethernet_ip.js";
-import manifestJson from "../configs/sla5800_manifest.json" assert { type: "json" };
-import { BrooksDomain } from "../index.js";
+import manifestJson from "../configs/reference_mfc_manifest.json" assert { type: "json" };
+import { AirFlowDomain } from "../index.js";
 import { PredictiveStabilityLayer } from "../models/predictive_stability.js";
 import { RollingTelemetryWindow, SelfTuningCalibrationModule } from "../models/telemetry_window.js";
 import { RampRateGuard, ZeroDriftGuard } from "../rules/flow_bounds.js";
 import { GasSafetyGuard } from "../rules/gas_compatibility.js";
 import { PressureDeltaGuard, PressureGuard } from "../rules/pressure_guard.js";
-import { DEFAULT_BROOKS_POLICY } from "../types/policy.js";
+import { DEFAULT_AIR_FLOW_POLICY } from "../types/policy.js";
 import { MFCDeviceTelemetry } from "../types/telemetry.js";
 
-describe("Brooks Adaptive Calibration & Predictive Stability Suite", () => {
+describe("Air Flow Adaptive Calibration & Predictive Stability Suite", () => {
   describe("RollingTelemetryWindow", () => {
     it("returns invalid stats for sparse window (< 5 samples)", () => {
       const window = new RollingTelemetryWindow(20);
@@ -143,8 +143,8 @@ describe("Brooks Adaptive Calibration & Predictive Stability Suite", () => {
 
   describe("Predictive Physical Guard Tightening", () => {
     it("tightens RampRateGuard and ZeroDriftGuard limits with tightening factor", () => {
-      const rampGuard = new RampRateGuard(DEFAULT_BROOKS_POLICY);
-      const zeroGuard = new ZeroDriftGuard(DEFAULT_BROOKS_POLICY);
+      const rampGuard = new RampRateGuard(DEFAULT_AIR_FLOW_POLICY);
+      const zeroGuard = new ZeroDriftGuard(DEFAULT_AIR_FLOW_POLICY);
 
       // Normal factor 1.0 allows 15% jump
       expect(rampGuard.evaluate(0, 15, 100, 100, 1.0).passed).toBe(true);
@@ -164,9 +164,9 @@ describe("Brooks Adaptive Calibration & Predictive Stability Suite", () => {
     });
 
     it("tightens PressureGuard, PressureDeltaGuard, and GasSafetyGuard limits", () => {
-      const pGuard = new PressureGuard(DEFAULT_BROOKS_POLICY);
-      const deltaGuard = new PressureDeltaGuard(DEFAULT_BROOKS_POLICY);
-      const gasGuard = new GasSafetyGuard(DEFAULT_BROOKS_POLICY);
+      const pGuard = new PressureGuard(DEFAULT_AIR_FLOW_POLICY);
+      const deltaGuard = new PressureDeltaGuard(DEFAULT_AIR_FLOW_POLICY);
+      const gasGuard = new GasSafetyGuard(DEFAULT_AIR_FLOW_POLICY);
 
       // 100 PSI safe under 150 PSI limit
       expect(pGuard.evaluateContainment(100, false, 1.0).passed).toBe(true);
@@ -229,9 +229,9 @@ describe("Brooks Adaptive Calibration & Predictive Stability Suite", () => {
     });
   });
 
-  describe("BrooksHardwareAdapter Hardening & Pre-emptive Triggers", () => {
+  describe("AirFlowHardwareAdapter Hardening & Pre-emptive Triggers", () => {
     it("reverts to static v8.2 behavior and emits SELF_TUNING_DEGRADED on sparse telemetry", async () => {
-      const domain = new BrooksDomain("mfc_hardening_test");
+      const domain = new AirFlowDomain("mfc_hardening_test");
       const snapshot = await domain.readSensors();
 
       // First evaluation with empty telemetry window (<5 samples)
@@ -243,7 +243,7 @@ describe("Brooks Adaptive Calibration & Predictive Stability Suite", () => {
     });
 
     it("pre-emptively triggers valve protection on HAZARDOUS_SOON state with high risk score", async () => {
-      const domain = new BrooksDomain("mfc_predictive_hazard_line");
+      const domain = new AirFlowDomain("mfc_predictive_hazard_line");
       domain.stateMachine.activeGasId = 28; // Silane (Hazardous)
       const now = Date.now();
 

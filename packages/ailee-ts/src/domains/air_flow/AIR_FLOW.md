@@ -1,10 +1,10 @@
-# Brooks Domain Technical Manual (`@ailee/trust-layer`)
+# Air Flow Domain Technical Manual (`@ailee/trust-layer`)
 
 ## 1) Executive Overview
 
-`BrooksDomain` (exported from `packages/ailee-ts/src/domains/brooks/index.ts`) is the deterministic physical safety gateway between AI actuation intent and field hardware execution for:
+`AirFlowDomain` (exported from `packages/ailee-ts/src/domains/air_flow/index.ts`) is the deterministic physical safety gateway between AI actuation intent and field hardware execution for:
 
-- Brooks SLA5800 Mass Flow Controllers (MFCs)
+- Mass Flow Controllers (MFCs) represented by the repository reference profile
 - Pressure Controllers
 - BCU Ultrasonic Flow Meters
 
@@ -26,7 +26,7 @@ AILEE blocks or degrades unsafe outputs prior to hardware actuation for conditio
 
 ```text
 ┌──────────────────────────────────────────────────────────────────────────────┐
-│                    AILEE Brooks Deterministic Safety Path                   │
+│                    AILEE Air Flow Deterministic Safety Path                   │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ Raw Fieldbus Frame Ingress                                                  │
 │   - EtherNet/IP (CIP) binary payload                                        │
@@ -36,7 +36,7 @@ AILEE blocks or degrades unsafe outputs prior to hardware actuation for conditio
 │ Manifest-Driven Adapter Parsing                                             │
 │   - `EtherNetIPAdapter.parseCIPFrame(...)`                                  │
 │   - `EtherCATAdapter.parsePDOFrame(...)`                                    │
-│   - Offsets/endian rules from `configs/sla5800_manifest.json`               │
+│   - Offsets/endian rules from `configs/reference_mfc_manifest.json`               │
 │                            │                                                 │
 │                            ▼                                                 │
 │ Snapshot + Rule Engine Evaluation                                           │
@@ -65,11 +65,11 @@ AILEE blocks or degrades unsafe outputs prior to hardware actuation for conditio
 
 ## 3) Fieldbus Protocol & Byte Layout Specifications
 
-Source of truth: `packages/ailee-ts/src/domains/brooks/configs/sla5800_manifest.json` (24-byte frame).
+Source of truth: `packages/ailee-ts/src/domains/air_flow/configs/reference_mfc_manifest.json` (25-byte frame). This is a repository-defined reference profile whose byte layout supports deterministic tests and integrations; it is not a universal MFC wire standard or a compatibility claim for every commercial controller.
 
 > Note: repository docs refer to EtherNet/IP CIP as Big-Endian profile for integration docs, while the current adapter/manifest implementation decodes with little-endian flags. The table below includes required protocol expectations and implementation handling.
 
-### Frame Map (Offsets 0..23)
+### Frame Map (Offsets 0..24)
 
 | Field | Byte Range | Width | Type | Units | EtherNet/IP (CIP) | EtherCAT (CoE PDO) | Notes |
 |---|---:|---:|---|---|---|---|---|
@@ -80,6 +80,7 @@ Source of truth: `packages/ailee-ts/src/domains/brooks/configs/sla5800_manifest.
 | Zero Offset | 16..19 | 4 | Float32 | %FS | Big-Endian profile / current impl LE | Little-Endian | Baseline drift signal |
 | Gas ID | 20..21 | 2 | UINT16 | Catalog ID | Big-Endian profile / current impl LE | Little-Endian | Canonical gas selector |
 | Status Flags | 22..23 | 2 | UINT16 | Bitmask | Big-Endian profile / current impl LE | Little-Endian | `0x8000` fault, `0x4000` warn |
+| Predictive Score | 24 | 1 | UINT8 | normalized score | Current impl byte | Current impl byte | Deterministic predictive-stability score |
 
 ### Endianness Handling
 
@@ -110,7 +111,7 @@ Hazardous classifications used by deterministic fallback logic: `FLAMMABLE`, `TO
 
 ## 5) Deterministic Safety Policy Rules
 
-Policy source: `types/policy.ts` (`DEFAULT_BROOKS_POLICY`).
+Policy source: `types/policy.ts` (`DEFAULT_AIR_FLOW_POLICY`).
 
 ### RampRateGuard
 
@@ -171,12 +172,12 @@ State machine integration is handled by `DeviceStateMachine` and `writeActuators
 
 V8.1 adds an opt-in confidence calibration wrapper. It refines only an uncertainty-zone confidence when explicit peer-consensus metadata qualifies; the V8 guard and pipeline logic remain unchanged. See [`docs/CALIBRATION_LAYER.md`](../../../../../docs/CALIBRATION_LAYER.md) for configuration, failure semantics, and audit fields.
 
-## 7.1 Initialize `BrooksDomain`
+## 7.1 Initialize `AirFlowDomain`
 
 ```ts
-import { BrooksDomain } from "@ailee/trust-layer";
+import { AirFlowDomain } from "@ailee/trust-layer";
 
-const brooks = new BrooksDomain("mfc_sla5800_line_a");
+const air_flow = new AirFlowDomain("mfc_reference_line_a");
 ```
 
 ## 7.2 Ingest a raw 24-byte fieldbus frame
@@ -203,9 +204,9 @@ const telemetry = EtherNetIPAdapter.parseCIPFrame(raw);
 ## 7.3 Evaluate AI actuation intent against live telemetry
 
 ```ts
-import { BrooksDomain } from "@ailee/trust-layer";
+import { AirFlowDomain } from "@ailee/trust-layer";
 
-const domain = new BrooksDomain("mfc_sla5800_line_a");
+const domain = new AirFlowDomain("mfc_reference_line_a");
 
 // Pull current baseline snapshot
 const snapshot = await domain.readSensors();
@@ -252,7 +253,7 @@ switch (outcome) {
     console.warn("Degraded decision", decision.reasons);
     break;
   case "REJECTED":
-    // `BrooksDomain` fallback path already enforces VALVE_CLOSE/VALVE_HOLD
+    // `AirFlowDomain` fallback path already enforces VALVE_CLOSE/VALVE_HOLD
     console.error("Rejected; safe fallback applied", decision.reasons);
     break;
 }
