@@ -21,7 +21,10 @@ class MathNumericalError(MathEngineError):
 def finite_number(value: object, name: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise MathValidationError(f"{name} must be a real number, not bool")
-    number = float(value)
+    try:
+        number = float(value)
+    except OverflowError as exc:
+        raise MathNumericalError(f"{name} float conversion overflow") from exc
     if not math.isfinite(number):
         raise MathValidationError(f"{name} must be finite")
     return number
