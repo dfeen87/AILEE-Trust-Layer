@@ -9,6 +9,9 @@
 - Completed user-space native adapters for governed filesystem, subprocess, process-control, and outbound TCP actions, with OS-specific capability limits.
 - Added fail-closed validation for contradictory platform results and native Linux, Windows, and macOS CI coverage.
 - Bounded in-memory request-ID replay retention without eviction, fail-closed policy-result validation, canonicalized restrictions, and tightened audit-identifier validation.
+- Completed final acceptance documentation with separate Linux, Windows, and macOS operating manuals, deterministic scenario reconciliation, and an evidence matrix that does not treat simulation or configured CI as native verification.
+- Final local verification exercised Linux filesystem, direct-child, identity, loopback TCP, replay, adversarial, audit, and failure paths; Windows/macOS native and GitHub CI status remain explicitly unverified where run evidence was unavailable.
+- Documented user-space path/executable races, DNS binding and routing limits, PID lifecycle, host permission requirements, non-durable replay state, and observable-only/unavailable capabilities as release limitations.
 
 ### **v9.1.1 — Version Alignment**
 
