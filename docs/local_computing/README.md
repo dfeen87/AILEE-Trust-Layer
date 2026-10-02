@@ -71,9 +71,14 @@ The service validates and snapshots a request before policy or adapter use.
 Request IDs are atomically reserved before policy evaluation, are single-use
 for the service lifetime, and cannot be mutated into a second operation.
 Concurrent duplicates execute at most once. The bounded in-memory registry
-fails closed at capacity; it is not durable across restart. Restrictions are
-deduplicated and sorted when policy is constructed, giving equivalent policy
-configuration a canonical constraint tuple.
+holds 100,000 IDs by default and fails closed with an explicit capacity error;
+it never evicts an ID to permit replay and is not durable across restart.
+Restrictions are deduplicated and sorted when policy is constructed, giving
+equivalent policy configuration a canonical constraint tuple. A policy may
+configure at most 256 unique constraints per capability. Each constraint must
+be a non-empty string of at most 1,024 characters without ASCII control
+characters or DEL; invalid configuration is rejected when the policy engine is
+constructed.
 
 ## Audit and sensitive data
 
@@ -85,6 +90,9 @@ host/port, credentials, stdout, and stderr. A failed sink returns
 `AUDIT_FAILURE`, `audited=False`; it neither upgrades nor erases enforcement.
 
 ## Example
+
+This Linux example uses a Linux path; choose an operator-approved native path
+and matching `ExecutionContext.platform` on Windows or macOS.
 
 ```python
 from ailee.local_computing import *
@@ -114,4 +122,3 @@ access control, guarantee rollback, mediate all computation, inspect traffic,
 pin DNS, provide distributed trust, or claim that an allowed operation
 completed. See [Linux](LINUX.md), [Windows](WINDOWS.md), [macOS](MACOS.md), and
 the [final evidence report](EVIDENCE.md).
-

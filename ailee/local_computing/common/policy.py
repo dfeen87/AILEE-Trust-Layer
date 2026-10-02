@@ -14,6 +14,29 @@ from .models import (
     TrustState,
 )
 
+MAX_POLICY_CONSTRAINTS = 256
+MAX_POLICY_CONSTRAINT_LENGTH = 1024
+
+
+def valid_policy_constraints(values: object, *, canonical_count: bool = False) -> bool:
+    """Validate the constraint contract shared by configuration and outcomes.
+
+    Policy configuration is counted after deterministic deduplication, while an
+    emitted outcome is already expected to be within the bounded tuple size.
+    """
+    if type(values) is not tuple:
+        return False
+    if any(
+        type(value) is not str
+        or not value
+        or len(value) > MAX_POLICY_CONSTRAINT_LENGTH
+        or any(ord(character) < 32 or ord(character) == 127 for character in value)
+        for value in values
+    ):
+        return False
+    count = len(set(values)) if canonical_count else len(values)
+    return count <= MAX_POLICY_CONSTRAINTS
+
 
 @dataclass(frozen=True)
 class Policy:
@@ -69,8 +92,7 @@ class Policy:
             raise ValueError("a capability cannot be both allowed and restricted")
         if any(
             type(capability) is not Capability
-            or type(values) is not tuple
-            or any(type(value) is not str or not value.strip() for value in values)
+            or not valid_policy_constraints(values, canonical_count=True)
             for capability, values in self.restrictions.items()
         ):
             raise ValueError("policy restrictions are malformed")

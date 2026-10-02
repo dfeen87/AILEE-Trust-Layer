@@ -22,7 +22,7 @@ from .models import (
     ResourceTarget,
     ExecutionContext,
 )
-from .policy import DeterministicPolicyEngine
+from .policy import DeterministicPolicyEngine, valid_policy_constraints
 
 
 class PlatformAdapter(Protocol):
@@ -246,16 +246,7 @@ class LocalComputingTrust:
             and type(outcome.decision) is PolicyDecision
             and type(outcome.policy_id) is str
             and outcome.policy_id == self._policy_engine.policy_id
-            and type(outcome.constraints) is tuple
-            and len(outcome.constraints) <= 256
-            and all(
-                type(item) is str
-                and 0 < len(item) <= 1024
-                and not any(
-                    ord(character) < 32 or ord(character) == 127 for character in item
-                )
-                for item in outcome.constraints
-            )
+            and valid_policy_constraints(outcome.constraints)
             and (outcome.error is None or type(outcome.error) is LocalComputingError)
             and not (
                 outcome.decision in {PolicyDecision.ALLOW, PolicyDecision.RESTRICT}

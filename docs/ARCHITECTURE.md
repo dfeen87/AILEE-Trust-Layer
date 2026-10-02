@@ -113,7 +113,10 @@ own host and only requests submitted through the public boundary; Local
 Computing requires no AILEE-native agent and establishes no cross-machine
 federation. Platform capability, policy authorization, enforcement, operation
 completion, and audit success are separate evidence claims. The final operator
-manuals and acceptance matrix are under `docs/local_computing/`.
+manuals and acceptance matrix are in the [Local Computing operator
+manual](local_computing/README.md), with the [Linux](local_computing/LINUX.md),
+[Windows](local_computing/WINDOWS.md), [macOS](local_computing/MACOS.md), and
+[acceptance evidence](local_computing/EVIDENCE.md) documents alongside it.
 
 The Python pipeline's governing decision logic is deterministic given identical
 inputs, configuration, and relevant per-instance history. That guarantee applies
