@@ -2,6 +2,14 @@
 
 ### **v9.4.0 — Local Computing Foundation**
 
+#### BONUS — Executable Δv Mathematical Engine
+
+- Added the propulsion-derived `ailee-delta-v/v1` reference implementation,
+  immutable typed inputs/results, and deterministic composite trapezoidal integration.
+- Added explicit validation and numerical-overflow failures without heavy numerical dependencies.
+- Added compact workflow evidence integration that does not control trust or Local Computing authorization.
+- Added analytic, regression, integration, mutation-safety, and workflow-independence tests plus an illustrative propulsion example.
+
 - Renamed the public TypeScript Brooks Domain API and package tree to the vendor-neutral Air Flow Domain (`AirFlowDomain`, `AirFlowHardwareAdapter`, `AirFlowSafetyPolicy`, `DEFAULT_AIR_FLOW_POLICY`, and `AIR_FLOW_PRESETS`), without retaining legacy aliases or changing safety semantics.
 - Converted the model-specific manifest identity into an explicitly repository-defined Reference Mass Flow Controller profile; its deterministic wire layout is preserved and is not presented as a universal MFC standard.
 - Fixed the shared policy-constraint validator to reject whitespace-only restrictions during policy-engine construction and retained the same validation contract for fail-closed service-side outcomes.

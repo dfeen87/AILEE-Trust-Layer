@@ -382,6 +382,13 @@ This principle is captured by the governing equation:
 Δv = Iₛₚ · η · e⁻ᵅᵛ₀² ∫₀ᵗᶠ [Pᵢₙₚᵤᵗ(t) · e⁻ᵅʷ⁽ᵗ⁾² · e²ᵅᵛ₀ · v(t)] / M(t) dt
 ```
 
+AILEE v9.4 now provides a deterministic reference implementation in
+[`ailee.math_engine`](docs/MATHEMATICAL_ENGINE.md), using validated sampled
+time-series inputs and composite trapezoidal integration. Its exact numerator
+interpretation is `exp(2 * alpha * v0) * v(t)`. Δv is exposed to normal
+workflows as mathematical evidence; it is not, by itself, an authorization
+decision and does not alter Local Computing enforcement semantics.
+
 ### Interpretation (System-Level)
 
 | Variable | Meaning |
