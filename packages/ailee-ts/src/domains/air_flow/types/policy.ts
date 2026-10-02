@@ -16,7 +16,7 @@ export interface PressureConfig {
   maxDifferentialPressurePsi: number; // Max allowed pressure differential e.g., 50 PSI across valve
 }
 
-export interface BrooksSafetyPolicy {
+export interface AirFlowSafetyPolicy {
   rampRate: RampRateConfig;
   zeroDrift: ZeroDriftConfig;
   pressure: PressureConfig;
@@ -24,7 +24,7 @@ export interface BrooksSafetyPolicy {
   strictHazardousMode: boolean; // Immediately trigger VALVE_CLOSE on any hazardous breach
 }
 
-export const DEFAULT_BROOKS_POLICY: BrooksSafetyPolicy = {
+export const DEFAULT_AIR_FLOW_POLICY: AirFlowSafetyPolicy = {
   rampRate: {
     maxPercentJumpPer100ms: 20.0,
     timeWindowMs: 100,

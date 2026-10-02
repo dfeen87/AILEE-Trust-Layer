@@ -28,7 +28,7 @@ def valid_policy_constraints(values: object, *, canonical_count: bool = False) -
         return False
     if any(
         type(value) is not str
-        or not value
+        or not value.strip()
         or len(value) > MAX_POLICY_CONSTRAINT_LENGTH
         or any(ord(character) < 32 or ord(character) == 127 for character in value)
         for value in values

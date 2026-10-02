@@ -1,7 +1,7 @@
 //! Copyright (c) Don Michael Feeney Jr.
 //! Licensed under the MIT License.
 
-import manifestJson from "../configs/sla5800_manifest.json" assert { type: "json" };
+import manifestJson from "../configs/reference_mfc_manifest.json" assert { type: "json" };
 import { canonicalizeGasId } from "../models/gas_database.js";
 import { DeviceStatus, MFCDeviceTelemetry, validateMFCTelemetry } from "../types/telemetry.js";
 

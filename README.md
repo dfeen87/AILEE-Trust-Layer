@@ -38,7 +38,7 @@
   - [Autonomous & Automotive Systems](#-autonomous--automotive-systems)
   - [Power Grid & Energy Systems](#-power-grid--energy-systems)
   - [Data Center Operations](#-data-center-operations)
-  - [Brooks Instrument Physical Domain](#-brooks-instrument-physical-domain)
+  - [Air Flow Domain](#-air-flow-domain)
   - [Topology Systems](#-topology-systems)
   - [Imaging Systems](#-imaging-systems)
   - [Robotics Systems](#-robotics-systems)
@@ -982,25 +982,23 @@ AILEE provides deterministic governance for AI-driven data center automation.
 
 ---
 
-### 🧪 Brooks Instrument Physical Domain
+### 🧪 Air Flow Domain
 
-> Brooks Instrument was not acknoledged prior to the v8 and v8.1 releases. This was indpendent coding to show appreciation for what they do.
-
-AILEE v8.3 introduces adaptive calibration behavior and predictive stability scoring to the Brooks physical domain.
+AILEE v8.3 introduces adaptive calibration behavior and predictive stability scoring to the Air Flow Domain.
 The trust pipeline now anticipates degraded or hazardous states before they occur, tightening guard behavior and improving safety determinism. All adaptive logic is strictly hardened and reverts to static v8.2 behavior when telemetry is malformed or insufficient.
 
-AILEE provides deterministic safety bounds enforcement, telemetry ingestion, and fieldbus payload parsing for **Brooks Instrument physical hardware** (Mass Flow Controllers like the SLA5800 series, Pressure Controllers, and Ultrasonic Flow Meters) in semiconductor fabrication and chemical process control lines.
+AILEE provides deterministic physical governance, safety-bounds enforcement, telemetry ingestion, and fieldbus payload parsing for **precision air and process-gas flow systems** such as mass-flow, pressure, and ultrasonic-flow controllers in semiconductor fabrication and chemical process control lines. The included byte layout is a repository reference profile, not a claim of universal compatibility with commercial controllers.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│             Brooks Instrument Physical Domain               │
+│                      Air Flow Domain                      │
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  Fieldbus Data (EtherNet/IP CIP / EtherCAT PDO)             │
 │                         │                                   │
 │                         ▼                                   │
 │            Hardware Offset Manifests                        │
-│          (sla5800_manifest.json / gas_db.json)              │
+│       (reference_mfc_manifest.json / gas_db.json)         │
 │                         │                                   │
 │                         ▼                                   │
 │              Pure TS Zero-Allocation                        │
@@ -1025,7 +1023,7 @@ AILEE provides deterministic safety bounds enforcement, telemetry ingestion, and
 
 #### High-Impact Physical Safety Features
 - 🛡️ **Zero-Dependency Pure TS Execution**: Sub-2ms synchronous evaluation loops operating with zero external runtime dependencies.
-- 📡 **Manifest-Driven Fieldbus Adapters**: Byte buffer parsers for Big-Endian EtherNet/IP CIP (`adapters/ethernet_ip.ts`) and Little-Endian EtherCAT PDO (`adapters/ethercat.ts`), configured dynamically via `configs/sla5800_manifest.json`.
+- 📡 **Manifest-Driven Fieldbus Adapters**: Byte buffer parsers for EtherNet/IP CIP (`adapters/ethernet_ip.ts`) and EtherCAT PDO (`adapters/ethercat.ts`), configured via the repository-defined `configs/reference_mfc_manifest.json` reference layout.
 - ⚗️ **8-Gas Process Database**: Pre-populated catalog (`models/gas_database.ts` backed by `configs/gas_db.json`) covering $N_2$, Air, Argon, $H_2$, $NH_3$, $O_2$, $SiH_4$, and $Cl_2$ with Gas Correction Factors (GCF), safety classifications (`INERT`, `FLAMMABLE`, `TOXIC`, `CORROSIVE`, `OXIDIZER`, `PYROPHORIC`), max flow ceilings, and mandatory purge-on-switch flags.
 - ⚡ **Physical Guard Rules**:
   - `RampRateGuard`: Prevents thermal shock or pressure spikes by capping setpoint changes (e.g., max 20% FS per 100ms).

@@ -3,7 +3,7 @@
 
 export * from "./auditory/index.js";
 export * from "./automotive/index.js";
-export * from "./brooks/index.js";
+export * from "./air_flow/index.js";
 export * from "./crispr/index.js";
 export * from "./cross_ecosystem/index.js";
 export * from "./crypto_mining/index.js";

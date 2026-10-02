@@ -1,7 +1,7 @@
 //! Copyright (c) Don Michael Feeney Jr.
 //! Licensed under the MIT License.
 
-import { BrooksSafetyPolicy, DEFAULT_BROOKS_POLICY } from "../types/policy.js";
+import { AirFlowSafetyPolicy, DEFAULT_AIR_FLOW_POLICY } from "../types/policy.js";
 
 export interface RuleCheckResult {
   passed: boolean;
@@ -12,9 +12,9 @@ export interface RuleCheckResult {
 }
 
 export class RampRateGuard {
-  private policy: BrooksSafetyPolicy;
+  private policy: AirFlowSafetyPolicy;
 
-  constructor(policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY) {
+  constructor(policy: AirFlowSafetyPolicy = DEFAULT_AIR_FLOW_POLICY) {
     this.policy = policy;
   }
 
@@ -58,9 +58,9 @@ export class RampRateGuard {
 }
 
 export class ZeroDriftGuard {
-  private policy: BrooksSafetyPolicy;
+  private policy: AirFlowSafetyPolicy;
 
-  constructor(policy: BrooksSafetyPolicy = DEFAULT_BROOKS_POLICY) {
+  constructor(policy: AirFlowSafetyPolicy = DEFAULT_AIR_FLOW_POLICY) {
     this.policy = policy;
   }
 

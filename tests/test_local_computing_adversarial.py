@@ -300,6 +300,22 @@ def test_policy_constraint_length_boundary_is_validated_during_construction():
         DeterministicPolicyEngine(restricted_policy(("x" * 1025,)))
 
 
+@pytest.mark.parametrize("constraint", ["", " ", "   ", "\t", "\n"])
+def test_policy_rejects_blank_constraints_during_construction(constraint):
+    with pytest.raises(ValueError, match="restrictions are malformed"):
+        DeterministicPolicyEngine(restricted_policy((constraint,)))
+
+
+@pytest.mark.parametrize("constraint", ["read-only", " read-only "])
+def test_policy_preserves_nonblank_constraint_content(constraint):
+    engine = DeterministicPolicyEngine(restricted_policy((constraint,)))
+    outcome = engine.evaluate(
+        request(),
+        PlatformCapability(Capability.SUBPROCESS_CREATE, CapabilitySupport.SUPPORTED),
+    )
+    assert outcome.constraints == (constraint,)
+
+
 @pytest.mark.parametrize("control", ["line\nbreak", "delete\x7fcharacter"])
 def test_policy_rejects_constraint_controls_during_construction(control):
     with pytest.raises(ValueError, match="restrictions are malformed"):
@@ -319,13 +335,18 @@ def test_policy_counts_canonical_unique_constraints_and_sorts_them():
 
 @pytest.mark.parametrize(
     "constraints",
-    [("x" * 1025,), ("control\ncharacter",), tuple(str(i) for i in range(257))],
+    [
+        ("x" * 1025,),
+        ("control\ncharacter",),
+        ("   ",),
+        tuple(str(i) for i in range(257)),
+    ],
 )
 def test_nonconforming_policy_outcome_still_fails_closed(constraints):
     adapter = HostileAdapter()
     trust = service(adapter)
     trust._policy_engine.evaluate = lambda request, platform: PolicyOutcome(
-        PolicyDecision.ALLOW, trust._policy_engine.policy_id, constraints
+        PolicyDecision.RESTRICT, trust._policy_engine.policy_id, constraints
     )
 
     governed = trust.govern(request(request_id=f"hostile-{len(constraints)}"))
