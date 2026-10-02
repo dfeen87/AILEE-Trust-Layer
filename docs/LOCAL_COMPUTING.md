@@ -30,10 +30,17 @@ credentials, stdout, or stderr.
 Requests are validated and snapshotted before policy evaluation. Request IDs
 are single-use within a `LocalComputingTrust` instance and are atomically
 reserved before evaluation, so replay and concurrent duplicate submission fail
-closed. Duplicate attributes, unknown attributes, NUL/control characters at
-native string boundaries, oversized argv/options, invalid ports, and invalid
-timeouts are rejected before adapter discovery. Policy construction rejects
-malformed capabilities and conflicting allow/restrict rules.
+closed. Retention lasts for the instance lifetime (not across process restart)
+and is bounded by `max_request_ids` (100,000 by default). When that bound is
+reached, new IDs fail closed rather than evicting replay evidence; callers must
+rotate the service instance only at an intentional replay-boundary reset.
+Invalid requests are rejected before reservation because they cannot authorize
+or execute an action. Duplicate/unknown attributes, NUL in native path or argv
+values, control characters in audit identifiers, oversized request data,
+invalid ports, and invalid timeouts are rejected before adapter discovery.
+Legitimate Unicode and non-NUL characters in native arguments remain valid.
+Policy construction rejects malformed capabilities and conflicting
+allow/restrict rules, and canonicalizes duplicate/reordered constraints.
 
 ## Linux
 
@@ -96,7 +103,12 @@ Adapter capability evidence must identify the requested capability and contain
 well-formed support and limitation fields. Enforcement evidence must be an
 exact contract object with typed booleans/enums, bounded detail, and a
 non-contradictory status/error combination. Audit construction or sink failure
-is reported as `AUDIT_FAILURE`; it never changes native failure into success.
+is reported as `AUDIT_FAILURE`; it never changes native failure into success or
+rewrites a completed native side effect as unexecuted. The returned enforcement
+evidence remains available when audit creation fails, while `audit` is absent
+and `audited` is false; sink failure retains the constructed event but marks it
+unpersisted. Rollback is not claimed. Policy exceptions or malformed policy
+outcomes fail closed and consume the already-reserved request ID.
 
 ## Local networking only
 

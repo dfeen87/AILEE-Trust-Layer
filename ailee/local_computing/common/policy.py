@@ -27,11 +27,21 @@ class Policy:
         if (
             type(self.policy_id) is not str
             or not self.policy_id.strip()
+            or len(self.policy_id) > 256
+            or any(
+                ord(character) < 32 or ord(character) == 127
+                for character in self.policy_id
+            )
             or not self.known_principals
         ):
             raise ValueError("policy_id and known_principals are required")
         if any(
-            type(principal) is not str or not principal.strip()
+            type(principal) is not str
+            or not principal.strip()
+            or len(principal) > 256
+            or any(
+                ord(character) < 32 or ord(character) == 127 for character in principal
+            )
             for principal in self.known_principals
         ):
             raise ValueError("principal identifiers cannot be empty")
@@ -79,8 +89,15 @@ class DeterministicPolicyEngine:
             frozenset(policy.known_principals),
             {key: frozenset(value) for key, value in policy.allowed.items()},
             {key: frozenset(value) for key, value in policy.restricted.items()},
-            {key: tuple(value) for key, value in policy.restrictions.items()},
+            {
+                key: tuple(sorted(set(value)))
+                for key, value in policy.restrictions.items()
+            },
         )
+
+    @property
+    def policy_id(self) -> str:
+        return self._policy.policy_id
 
     def evaluate(
         self, request: CapabilityRequest, platform: PlatformCapability

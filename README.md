@@ -1629,7 +1629,7 @@ supervisory/read-only industrial-process governance:
 
 - ✅ [Local Computing common trust architecture](docs/LOCAL_COMPUTING.md)
 - ✅ Deterministic policy, trust degradation, capability, enforcement, and audit contracts
-- ✅ Explicit Linux, Windows, and macOS integration locations (native work deferred)
+- ✅ User-space Linux, Windows, and macOS adapters with explicit native limitations
 - ✅ Independent licensing authorization and industrial evidence decisions
 - ✅ Fail-closed protected-capability governance
 - ✅ Validated productive-time and material-evidence throughput semantics

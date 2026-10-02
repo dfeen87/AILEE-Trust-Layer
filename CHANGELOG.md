@@ -4,10 +4,11 @@
 
 - Established Local Computing as a foundational, domain-independent package.
 - Added deterministic common trust, policy, capability, enforcement, error, and audit contracts.
-- Added explicit Linux, Windows, and macOS integration locations while deferring native enforcement to v9.4 Prompt 1.2.
+- Added explicit Linux, Windows, and macOS integration locations, followed by the v9.4 user-space native adapter implementations.
 - Aligned active Python, Rust, TypeScript, CMake, package, and CI release metadata to 9.4.0.
 - Completed user-space native adapters for governed filesystem, subprocess, process-control, and outbound TCP actions, with OS-specific capability limits.
 - Added fail-closed validation for contradictory platform results and native Linux, Windows, and macOS CI coverage.
+- Bounded in-memory request-ID replay retention without eviction, fail-closed policy-result validation, canonicalized restrictions, and tightened audit-identifier validation.
 
 ### **v9.1.1 — Version Alignment**
 

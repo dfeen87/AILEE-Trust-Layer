@@ -132,6 +132,42 @@ def test_concurrent_duplicate_request_id_executes_once():
     )
 
 
+def test_request_id_retention_is_bounded_without_evicting_replay_evidence():
+    adapter = HostileAdapter()
+    policy = Policy(
+        "bounded-replay",
+        frozenset({"known"}),
+        {"known": frozenset({Capability.SUBPROCESS_CREATE})},
+        {},
+        {},
+    )
+    trust = LocalComputingTrust(
+        DeterministicPolicyEngine(policy), adapter, max_request_ids=1
+    )
+
+    first = trust.govern(request(request_id="first"))
+    exhausted = trust.govern(request(request_id="second"))
+    replay = trust.govern(request(request_id="first"))
+
+    assert first.enforcement.completed
+    assert exhausted.error is LocalComputingError.REQUEST_ID_CAPACITY_EXCEEDED
+    assert exhausted.enforcement.attempted is False
+    assert replay.error is LocalComputingError.REPLAYED_REQUEST
+    assert adapter.calls == 1
+
+
+@pytest.mark.parametrize("max_request_ids", [0, -1, True, 1.5])
+def test_request_id_capacity_requires_a_positive_exact_integer(max_request_ids):
+    with pytest.raises(ValueError):
+        LocalComputingTrust(
+            DeterministicPolicyEngine(
+                Policy("capacity", frozenset({"known"}), {}, {}, {})
+            ),
+            HostileAdapter(),
+            max_request_ids=max_request_ids,
+        )
+
+
 @pytest.mark.parametrize(
     "target",
     [
@@ -149,6 +185,19 @@ def test_hostile_arguments_and_attributes_never_reach_adapter(target):
     assert governed.policy.decision is PolicyDecision.DENY
     assert governed.error is LocalComputingError.INVALID_TARGET
     assert adapter.calls == 0
+
+
+def test_security_metadata_rejects_controls_but_posix_argv_is_not_over_rejected():
+    adapter = HostileAdapter()
+    controlled_id = service(adapter).govern(request(request_id="line\nbreak"))
+    assert controlled_id.error is LocalComputingError.MALFORMED_REQUEST
+    assert adapter.calls == 0
+
+    legitimate_argument = service(adapter).govern(
+        request(target=ResourceTarget("tool", "/bin/true", ("line\nbreak",)))
+    )
+    assert legitimate_argument.enforcement.completed
+    assert adapter.observed[-1].target.arguments == ("line\nbreak",)
 
 
 def test_audit_construction_failure_is_explicit_and_does_not_change_completion():
@@ -181,6 +230,38 @@ def test_policy_rejects_conflicting_and_malformed_rules():
                 {},
             )
         )
+
+
+def test_policy_failure_and_malformed_policy_evidence_fail_closed_and_stay_reserved():
+    adapter = HostileAdapter()
+    trust = service(adapter)
+    trust._policy_engine.evaluate = lambda request, platform: (_ for _ in ()).throw(
+        RuntimeError("policy unavailable")
+    )
+
+    failed = trust.govern(request(request_id="policy-failure"))
+    replay = trust.govern(request(request_id="policy-failure"))
+
+    assert failed.policy.decision is PolicyDecision.DENY
+    assert failed.error is LocalComputingError.POLICY_EVALUATION_FAILURE
+    assert failed.enforcement.attempted is False
+    assert replay.error is LocalComputingError.REPLAYED_REQUEST
+    assert adapter.calls == 0
+
+
+def test_policy_constraints_are_canonicalized_for_equivalent_configuration():
+    configured = Policy(
+        "canonical",
+        frozenset({"known"}),
+        {},
+        {"known": frozenset({Capability.SUBPROCESS_CREATE})},
+        {Capability.SUBPROCESS_CREATE: ("z-limit", "a-limit", "z-limit")},
+    )
+    outcome = DeterministicPolicyEngine(configured).evaluate(
+        request(),
+        PlatformCapability(Capability.SUBPROCESS_CREATE, CapabilitySupport.SUPPORTED),
+    )
+    assert outcome.constraints == ("a-limit", "z-limit")
 
 
 def test_nonpositive_pid_cannot_gain_posix_process_group_semantics():
