@@ -1,5 +1,10 @@
 # AILEE v9.4 Local Computing
 
+> Final operator documentation is organized in
+> [`docs/local_computing/`](local_computing/README.md), including platform
+> manuals and the v9.4.0 acceptance evidence matrix. This overview remains the
+> compact implementation reference.
+
 ## Authority boundary
 
 AILEE governs agency, not computation. Local Computing evaluates consequential

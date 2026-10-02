@@ -92,6 +92,29 @@ imported by that path. **AILEE governs agency, not computation.** The OS kernel
 and its native permissions remain authoritative below AILEE's user-space
 decision and adapter boundary.
 
+The v9.4.0 placement is explicitly:
+
+```text
+User / Applications
+        ↓
+Agentic AI / Tools / Automation
+        ↓
+AILEE Local Computing Trust Governance
+        ↓
+Supported OS Interfaces
+        ↓
+OS / Kernel
+        ↓
+Hardware
+```
+
+AILEE is kernel-aware, not kernel-invasive. Each installation governs only its
+own host and only requests submitted through the public boundary; Local
+Computing requires no AILEE-native agent and establishes no cross-machine
+federation. Platform capability, policy authorization, enforcement, operation
+completion, and audit success are separate evidence claims. The final operator
+manuals and acceptance matrix are under `docs/local_computing/`.
+
 The Python pipeline's governing decision logic is deterministic given identical
 inputs, configuration, and relevant per-instance history. That guarantee applies
 to decision semantics; operational metadata such as a default current timestamp

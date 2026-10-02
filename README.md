@@ -1627,6 +1627,10 @@ AILEE Trust Layer **v9.4.0** establishes the domain-independent Local Computing
 trust foundation while retaining the validated v9.3 licensing and
 supervisory/read-only industrial-process governance:
 
+See the [Local Computing operator manual](docs/local_computing/README.md) and
+[final release evidence](docs/local_computing/EVIDENCE.md) for evidence-bounded
+Linux, Windows, and macOS behavior.
+
 - ✅ [Local Computing common trust architecture](docs/LOCAL_COMPUTING.md)
 - ✅ Deterministic policy, trust degradation, capability, enforcement, and audit contracts
 - ✅ User-space Linux, Windows, and macOS adapters with explicit native limitations
