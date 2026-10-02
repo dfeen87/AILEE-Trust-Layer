@@ -54,6 +54,7 @@
   - [Memory Management Systems](#-memory-management-systems)
   - [Watermark-Provenance-Governance](#-watermark-provenance-governance)
   - [Video Temporal Provenance Engine](#-video-temporal-provenance-engine)
+- [AILEE Local Computing](#ailee-local-computing)
 - [Design Philosophy](#design-philosophy)
 - [Documentation](#documentation)
 - [Status & Roadmap](#status--roadmap)
@@ -689,6 +690,7 @@ the caller.
 ailee-trust-layer/
 ├── ailee/                         # Core Python Trust Library & Governance Framework
 │   ├── domains/                   # 18 Domain Governance Modules (Automotive, Datacenter, Memory, Video, etc.)
+│   ├── local_computing/           # Foundational common, Linux, Windows, and macOS trust governance
 │   ├── governance_v1/             # Microservice Governance Engine & ALCOA Hash-Chained Ledger
 │   └── optional/                  # Presets, Adapters, Monitors, Serialization, Replay, AI Integrations
 ├── include/                       # C++ Engine Headers (Video Temporal Provenance Engine C ABI)
@@ -1590,6 +1592,70 @@ AILEE provides real-time, zero-allocation temporal provenance verification for v
 - Allocator-free, 64-byte aligned data structures optimized for SIMD and low-latency frame ingestion.
 - C ABI export layer for native host integration across polyglot runtimes.
 - Pure Python fallback signal evaluator when native shared libraries are absent.
+
+---
+
+## AILEE Local Computing
+
+AILEE v9.4.0 introduces Local Computing as foundational trust governance, not
+as another application domain. Its governing principle is:
+
+> **AILEE governs agency, not computation.**
+
+Applications deliberately submit consequential agent-initiated filesystem,
+subprocess/process, process-control, outbound-network, and other supported
+local-resource requests through the Local Computing boundary. AILEE does not
+intercept every process or operating-system event.
+
+```text
+User / Applications
+        ↓
+Agentic AI / Tools / Automation
+        ↓
+AILEE Local Computing Trust Governance
+        ↓
+Supported OS Interfaces
+        ↓
+OS / Kernel
+        ↓
+Hardware
+```
+
+AILEE remains above the kernel and uses supported user-space OS mechanisms.
+Explicit Linux, Windows, and macOS adapters report each capability as
+`SUPPORTED`, `SUPPORTED_WITH_LIMITATIONS`, `OBSERVABLE_ONLY`, or `UNAVAILABLE`;
+the current manuals classify native action paths as
+`SUPPORTED_WITH_LIMITATIONS`, never unconditional support. Implementation,
+simulation, native-runtime evidence, and CI verification are recorded
+separately.
+
+The lifecycle preserves distinct evidence at every stage:
+
+```text
+REQUEST → VALIDATE / SNAPSHOT → TRUST + POLICY EVALUATION
+        → PLATFORM CAPABILITY → NATIVE ENFORCEMENT → RESULT → AUDIT
+```
+
+A policy decision is not a platform capability, an enforcement result is not
+an audit result, and audit failure cannot undo an already-completed native side
+effect. The boundary uses deterministic policy, fail-closed malformed-input
+handling, canonical request snapshots, single-use in-memory request-ID
+reservations, strict native-boundary and adapter-evidence validation, truthful
+audit state, and explicit platform limitations.
+
+Because this is user-space governance, host permissions remain authoritative.
+Path and executable replacement races, PID reuse, DNS/routing changes, actions
+outside the boundary, non-durable replay state, and lack of audit rollback
+remain documented limitations rather than hidden guarantees.
+
+**Documentation**
+
+- [Local Computing overview](docs/LOCAL_COMPUTING.md)
+- [Operator manual](docs/local_computing/README.md)
+- [Linux guide](docs/local_computing/LINUX.md)
+- [Windows guide](docs/local_computing/WINDOWS.md)
+- [macOS guide](docs/local_computing/MACOS.md)
+- [Architecture](docs/ARCHITECTURE.md) and [v9.4.0 evidence](docs/local_computing/EVIDENCE.md)
 
 ---
 

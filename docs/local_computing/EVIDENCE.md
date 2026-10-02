@@ -12,7 +12,8 @@ remains below and authoritative; there are no required native agents, kernel
 components, remote federation, or cross-host trust. The final manuals are
 `README.md`, `LINUX.md`, `WINDOWS.md`, and `MACOS.md` in this directory. This
 acceptance pass also updated the repository architecture and release notes. No
-runtime defect was discovered and no production code was changed.
+platform-adapter defect was discovered. Prompt 3C corrected a common policy
+configuration validation mismatch before final acceptance.
 
 ## 2. Trust, policy, replay, enforcement, and audit
 
@@ -27,7 +28,10 @@ Requests are snapshotted, then valid IDs are atomically and permanently
 reserved within that service instance before evaluation. Replay, mutation, and
 concurrent duplicate tests confirm at-most-once adapter entry. Capacity
 exhaustion fails closed rather than evicting IDs. Constraint tuples are
-canonicalized. Retention is bounded and in-memory, not restart-durable.
+canonicalized. Policy construction applies the same non-empty, control-free,
+1,024-character constraint contract as service-side outcome validation and
+limits the canonical unique set to 256 entries. Retention is bounded and
+in-memory, not restart-durable.
 
 Platform support, policy decision, enforcement attempt, enforcement truth,
 operation completion, and audit persistence remain distinct fields.
@@ -84,10 +88,10 @@ are `OBSERVABLE_ONLY`. Remaining unimplemented sensitive capabilities are
 
 ## 5. Validation totals and builds
 
-* Full Python suite: **320 passed, 1 skipped, 142 warnings**. The skip was the
+* Full Python suite: **329 passed, 1 skipped, 142 warnings**. The skip was the
   Windows/macOS-native test on Linux. Warnings are pre-existing pytest warnings
   for test functions returning values rather than asserting.
-* Focused Local Computing suites: **50 passed, 1 skipped**.
+* Focused Local Computing suites: **59 passed, 1 skipped**.
 * Python byte compilation and API-visible `9.4.0` check: passed.
 * Rust formatting/check/test: passed; **32 tests passed** (25 unit + 7
   integration), with the example target containing zero tests.
@@ -113,10 +117,15 @@ GitHub CI evidence.
 
 ## 7. Bugs, downgrades, limitations, and readiness
 
-No reproducible Prompt 3B runtime defect was found; therefore no speculative
-repair or regression test was added. Capability truth was already downgraded to
-`SUPPORTED_WITH_LIMITATIONS`, `OBSERVABLE_ONLY`, or `UNAVAILABLE`; no further
-downgrade was required.
+Prompt 3C reproduced a configuration-boundary defect: `Policy.validate()`
+accepted restrictions that a matching `PolicyOutcome` validator later
+rejected. The shared constraint contract now rejects invalid configuration
+during `DeterministicPolicyEngine` construction, counts canonical unique
+entries, and retains service validation as defense-in-depth. Boundary,
+canonicalization, matching-outcome, and hostile-outcome regressions passed.
+Capability truth was already bounded by `SUPPORTED_WITH_LIMITATIONS`,
+`OBSERVABLE_ONLY`, or `UNAVAILABLE`; no further platform downgrade was
+required.
 
 Remaining boundaries include user-space pathname/executable TOCTOU, symlink or
 reparse-point changes, DNS/policy non-binding and routing changes, PID reuse,
@@ -133,4 +142,3 @@ file, direct-child, identity, and loopback paths passed in this Linux
 environment. Windows and macOS implementations are import/unit-simulation
 verified here but require successful native runs before native-runtime or CI
 verification can be claimed.
-

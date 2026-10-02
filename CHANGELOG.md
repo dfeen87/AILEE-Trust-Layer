@@ -12,6 +12,8 @@
 - Completed final acceptance documentation with separate Linux, Windows, and macOS operating manuals, deterministic scenario reconciliation, and an evidence matrix that does not treat simulation or configured CI as native verification.
 - Final local verification exercised Linux filesystem, direct-child, identity, loopback TCP, replay, adversarial, audit, and failure paths; Windows/macOS native and GitHub CI status remain explicitly unverified where run evidence was unavailable.
 - Documented user-space path/executable races, DNS binding and routing limits, PID lifecycle, host permission requirements, non-durable replay state, and observable-only/unavailable capabilities as release limitations.
+- Corrected policy construction to reject outcome-incompatible constraints at configuration time while retaining fail-closed service validation; the 256-entry limit applies to canonical unique constraints and each constraint is bounded to 1,024 control-free characters.
+- Integrated Local Computing into the root README immediately after the domain use cases and hardened cross-links, platform-evidence language, replay semantics, and user-space limitations across the v9.4 manuals.
 
 ### **v9.1.1 — Version Alignment**
 

@@ -45,7 +45,11 @@ values, control characters in audit identifiers, oversized request data,
 invalid ports, and invalid timeouts are rejected before adapter discovery.
 Legitimate Unicode and non-NUL characters in native arguments remain valid.
 Policy construction rejects malformed capabilities and conflicting
-allow/restrict rules, and canonicalizes duplicate/reordered constraints.
+allow/restrict rules. It rejects empty constraints, ASCII controls/DEL,
+constraints longer than 1,024 characters, and more than 256 unique constraints
+per capability. Duplicate/reordered constraints are canonicalized into a
+deterministically sorted tuple; the unique canonical count, not the raw count,
+is bounded.
 
 ## Linux
 

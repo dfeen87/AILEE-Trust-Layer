@@ -17,6 +17,7 @@ from ailee.local_computing import (
     PlatformCapability,
     Policy,
     PolicyDecision,
+    PolicyOutcome,
     Principal,
     ResourceTarget,
     TrustState,
@@ -262,6 +263,77 @@ def test_policy_constraints_are_canonicalized_for_equivalent_configuration():
         PlatformCapability(Capability.SUBPROCESS_CREATE, CapabilitySupport.SUPPORTED),
     )
     assert outcome.constraints == ("a-limit", "z-limit")
+
+
+def restricted_policy(constraints):
+    return Policy(
+        "constraint-contract",
+        frozenset({"known"}),
+        {},
+        {"known": frozenset({Capability.SUBPROCESS_CREATE})},
+        {Capability.SUBPROCESS_CREATE: constraints},
+    )
+
+
+def test_policy_accepts_exactly_256_unique_constraints_and_matching_outcome():
+    constraints = tuple(f"constraint-{index:03d}" for index in range(256))
+    engine = DeterministicPolicyEngine(restricted_policy(constraints))
+    trust = LocalComputingTrust(engine, HostileAdapter())
+
+    governed = trust.govern(request(request_id="valid-constraint-boundary"))
+
+    assert governed.policy.decision is PolicyDecision.RESTRICT
+    assert governed.policy.constraints == constraints
+    assert governed.error is None
+    assert governed.enforcement.completed
+
+
+def test_policy_rejects_257_unique_constraints_during_construction():
+    constraints = tuple(f"constraint-{index:03d}" for index in range(257))
+    with pytest.raises(ValueError, match="restrictions are malformed"):
+        DeterministicPolicyEngine(restricted_policy(constraints))
+
+
+def test_policy_constraint_length_boundary_is_validated_during_construction():
+    DeterministicPolicyEngine(restricted_policy(("x" * 1024,)))
+    with pytest.raises(ValueError, match="restrictions are malformed"):
+        DeterministicPolicyEngine(restricted_policy(("x" * 1025,)))
+
+
+@pytest.mark.parametrize("control", ["line\nbreak", "delete\x7fcharacter"])
+def test_policy_rejects_constraint_controls_during_construction(control):
+    with pytest.raises(ValueError, match="restrictions are malformed"):
+        DeterministicPolicyEngine(restricted_policy((control,)))
+
+
+def test_policy_counts_canonical_unique_constraints_and_sorts_them():
+    raw = tuple(reversed(tuple(f"constraint-{index:03d}" for index in range(200))))
+    engine = DeterministicPolicyEngine(restricted_policy(raw + raw[:100]))
+    outcome = engine.evaluate(
+        request(),
+        PlatformCapability(Capability.SUBPROCESS_CREATE, CapabilitySupport.SUPPORTED),
+    )
+    assert outcome.constraints == tuple(sorted(set(raw)))
+    assert len(outcome.constraints) == 200
+
+
+@pytest.mark.parametrize(
+    "constraints",
+    [("x" * 1025,), ("control\ncharacter",), tuple(str(i) for i in range(257))],
+)
+def test_nonconforming_policy_outcome_still_fails_closed(constraints):
+    adapter = HostileAdapter()
+    trust = service(adapter)
+    trust._policy_engine.evaluate = lambda request, platform: PolicyOutcome(
+        PolicyDecision.ALLOW, trust._policy_engine.policy_id, constraints
+    )
+
+    governed = trust.govern(request(request_id=f"hostile-{len(constraints)}"))
+
+    assert governed.policy.decision is PolicyDecision.DENY
+    assert governed.error is LocalComputingError.POLICY_EVALUATION_FAILURE
+    assert not governed.enforcement.attempted
+    assert adapter.calls == 0
 
 
 def test_nonpositive_pid_cannot_gain_posix_process_group_semantics():
