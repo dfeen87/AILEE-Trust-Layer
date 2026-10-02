@@ -6,6 +6,14 @@
 > AILEE Trust Layer. It is not required to use or implement the software.
 > Readers interested in practical usage should refer to the README.
 
+> **v9.4 implementation note:** The documented Δv equation now has a
+> deterministic executable reference implementation in `ailee.math_engine`
+> with formula identifier `ailee-delta-v/v1`. Its unambiguous numerator uses
+> `exp(2 * alpha * v0) * v(t)`, not `exp(2 * alpha * v0 * v(t))`. The output is
+> mathematical evidence rather than an authorization decision; implementation
+> does not establish physical propulsion validation. See the
+> [Mathematical Engine reference](../MATHEMATICAL_ENGINE.md).
+
 June 11, 2025
 
 ---
@@ -644,4 +652,3 @@ The fundamental AILEE optimization equation is expressed as:
 ```
 
 This equation encapsulates the complex, nonlinear relationships that govern AI system performance, enabling precise quantification of optimization gains in dynamic, resource-constrained environments.
-
