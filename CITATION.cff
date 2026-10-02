@@ -1,0 +1,48 @@
+cff-version: 1.2.0
+message: "If you use AILEE Trust Layer in research, engineering, or published work, please cite it using the metadata below."
+
+title: "AILEE Trust Layer"
+type: software
+
+authors:
+  - family-names: "Feeney"
+    given-names: "Don Michael"
+    name-suffix: "Jr."
+
+version: "9.4.0"
+
+repository-code: "https://github.com/dfeen87/AILEE-Trust-Layer"
+
+license: "MIT"
+
+abstract: >
+  AILEE Trust Layer is deterministic trust-governance middleware for AI systems
+  and agentic workflows. It provides confidence-based evaluation, contextual
+  grace, peer consensus, fail-safe fallback, policy enforcement, auditable
+  decision paths, Local Computing governance, and deterministic mathematical
+  evidence for consequential AI-assisted operations.
+
+keywords:
+  - artificial intelligence
+  - AI safety
+  - AI governance
+  - trust layer
+  - deterministic systems
+  - agentic AI
+  - local computing
+  - fail-closed systems
+  - auditability
+  - safety-critical AI
+  - consensus
+  - trust governance
+
+preferred-citation:
+  type: software
+  authors:
+    - family-names: "Feeney"
+      given-names: "Don Michael"
+      name-suffix: "Jr."
+  title: "AILEE Trust Layer"
+  version: "9.4.0"
+  year: 2026
+  repository-code: "https://github.com/dfeen87/AILEE-Trust-Layer"
