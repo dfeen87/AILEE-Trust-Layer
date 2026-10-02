@@ -80,12 +80,16 @@ class LocalComputingTrust:
         platform: PlatformAdapter | None = None,
         audit_sink: Callable[[AuditEvent], None] | None = None,
         clock: Callable[[], datetime] | None = None,
+        max_request_ids: int = 100_000,
     ):
+        if type(max_request_ids) is not int or max_request_ids <= 0:
+            raise ValueError("max_request_ids must be a positive integer")
         self._policy_engine = policy_engine
         self._platform = platform or UnavailablePlatformAdapter()
         self._audit_sink = audit_sink
         self._clock = clock
         self._request_ids: set[str] = set()
+        self._max_request_ids = max_request_ids
         self._request_lock = threading.Lock()
 
     def govern(self, request: CapabilityRequest) -> GovernanceResult:
@@ -139,7 +143,11 @@ class LocalComputingTrust:
         # both authorize and execute. IDs are deliberately single-use.
         with self._request_lock:
             replayed = request.request_id in self._request_ids
-            self._request_ids.add(request.request_id)
+            capacity_exceeded = (
+                not replayed and len(self._request_ids) >= self._max_request_ids
+            )
+            if not capacity_exceeded:
+                self._request_ids.add(request.request_id)
         if replayed:
             capability = PlatformCapability(
                 request.capability,
@@ -156,6 +164,25 @@ class LocalComputingTrust:
                 outcome,
                 capability,
                 EnforcementResult.not_attempted("duplicate request identifier"),
+            )
+        if capacity_exceeded:
+            capability = PlatformCapability(
+                request.capability,
+                CapabilitySupport.UNAVAILABLE,
+                ("request identifier reservation capacity is exhausted",),
+            )
+            outcome = PolicyOutcome(
+                PolicyDecision.DENY,
+                "local-computing/request-id-capacity-denial",
+                error=LocalComputingError.REQUEST_ID_CAPACITY_EXCEEDED,
+            )
+            return self._finish(
+                request,
+                outcome,
+                capability,
+                EnforcementResult.not_attempted(
+                    "request identifier could not be reserved"
+                ),
             )
 
         try:
@@ -183,7 +210,16 @@ class LocalComputingTrust:
                 error=LocalComputingError.PLATFORM_INTEGRATION_FAILURE,
             )
         else:
-            outcome = self._policy_engine.evaluate(request, capability)
+            try:
+                outcome = self._policy_engine.evaluate(request, capability)
+                if not self._valid_policy_outcome(outcome):
+                    raise TypeError("invalid policy outcome")
+            except Exception:
+                outcome = PolicyOutcome(
+                    PolicyDecision.DENY,
+                    "local-computing/policy-evaluation-failure",
+                    error=LocalComputingError.POLICY_EVALUATION_FAILURE,
+                )
         if outcome.decision is PolicyDecision.DENY:
             enforcement = EnforcementResult.not_attempted("policy denied the request")
         elif capability.support is CapabilitySupport.OBSERVABLE_ONLY:
@@ -203,6 +239,29 @@ class LocalComputingTrust:
             else:
                 enforcement = self._validated_enforcement(enforcement)
         return self._finish(request, outcome, capability, enforcement)
+
+    def _valid_policy_outcome(self, outcome: object) -> bool:
+        return bool(
+            type(outcome) is PolicyOutcome
+            and type(outcome.decision) is PolicyDecision
+            and type(outcome.policy_id) is str
+            and outcome.policy_id == self._policy_engine.policy_id
+            and type(outcome.constraints) is tuple
+            and len(outcome.constraints) <= 256
+            and all(
+                type(item) is str
+                and 0 < len(item) <= 1024
+                and not any(
+                    ord(character) < 32 or ord(character) == 127 for character in item
+                )
+                for item in outcome.constraints
+            )
+            and (outcome.error is None or type(outcome.error) is LocalComputingError)
+            and not (
+                outcome.decision in {PolicyDecision.ALLOW, PolicyDecision.RESTRICT}
+                and outcome.error is not None
+            )
+        )
 
     def _finish(self, request, outcome, capability, enforcement) -> GovernanceResult:
         try:

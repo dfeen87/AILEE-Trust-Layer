@@ -108,6 +108,7 @@ jobs:
         run: >-
           python -m pytest -v
           tests/test_local_computing.py
+          tests/test_local_computing_adversarial.py
           tests/test_local_computing_platforms.py
 
   python-packaging:

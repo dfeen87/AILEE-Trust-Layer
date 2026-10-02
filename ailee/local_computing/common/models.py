@@ -122,7 +122,25 @@ class CapabilityRequest:
             and type(self.context.correlation_id) is not str
         ):
             return LocalComputingError.MALFORMED_REQUEST
-        if not self.request_id.strip() or not self.context.platform.strip():
+        if (
+            not self.request_id.strip()
+            or not self.context.platform.strip()
+            or any(
+                _has_forbidden_control(value)
+                for value in (
+                    self.request_id,
+                    self.principal.principal_id,
+                    self.principal.kind,
+                    self.context.platform,
+                    self.context.privilege_scope,
+                    self.target.classification,
+                )
+            )
+            or (
+                self.context.correlation_id is not None
+                and _has_forbidden_control(self.context.correlation_id)
+            )
+        ):
             return LocalComputingError.MALFORMED_REQUEST
         if not self.principal.principal_id.strip():
             return LocalComputingError.UNKNOWN_PRINCIPAL
@@ -130,20 +148,27 @@ class CapabilityRequest:
             return LocalComputingError.INVALID_TRUST_STATE
         if not self.target.classification.strip() or not self.target.identifier.strip():
             return LocalComputingError.INVALID_TARGET
-        if _has_forbidden_control(self.target.identifier):
+        if _has_nul(self.target.identifier):
             return LocalComputingError.INVALID_TARGET
         if (
             type(self.target.arguments) is not tuple
             or type(self.target.attributes) is not tuple
         ):
             return LocalComputingError.INVALID_TARGET
-        if len(self.request_id) > 256 or len(self.target.identifier) > 32768:
+        if (
+            len(self.request_id) > 256
+            or len(self.principal.principal_id) > 256
+            or len(self.principal.kind) > 128
+            or len(self.context.platform) > 128
+            or len(self.context.privilege_scope) > 128
+            or len(self.context.correlation_id or "") > 256
+            or len(self.target.classification) > 256
+            or len(self.target.identifier) > 32768
+        ):
             return LocalComputingError.MALFORMED_REQUEST
         if (
             any(
-                type(argument) is not str
-                or len(argument) > 32768
-                or _has_forbidden_control(argument)
+                type(argument) is not str or len(argument) > 32768 or _has_nul(argument)
                 for argument in self.target.arguments
             )
             or len(self.target.arguments) > 256
@@ -211,10 +236,10 @@ class CapabilityRequest:
                 # POSIX gives zero and negative PIDs process-group semantics.
                 return LocalComputingError.INVALID_TARGET
             for name in ("signal", "exit_code"):
-                value = self.target.attribute(name)
-                if value is not None:
+                option_value = self.target.attribute(name)
+                if option_value is not None:
                     try:
-                        numeric = int(value)
+                        numeric = int(option_value)
                     except ValueError:
                         return LocalComputingError.INVALID_TARGET
                     if numeric < 0 or numeric > 0xFFFFFFFF:
@@ -223,8 +248,13 @@ class CapabilityRequest:
 
 
 def _has_forbidden_control(value: str) -> bool:
-    """Reject NUL/C0 controls at native string boundaries."""
+    """Reject control characters in identifiers copied into audit evidence."""
     return any(ord(character) < 32 or ord(character) == 127 for character in value)
+
+
+def _has_nul(value: str) -> bool:
+    """Reject the terminator forbidden by native path and argv APIs."""
+    return "\0" in value
 
 
 @dataclass(frozen=True)
