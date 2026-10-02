@@ -24,15 +24,46 @@ class Policy:
     restrictions: Mapping[Capability, Tuple[str, ...]]
 
     def validate(self) -> None:
-        if not self.policy_id.strip() or not self.known_principals:
+        if (
+            type(self.policy_id) is not str
+            or not self.policy_id.strip()
+            or not self.known_principals
+        ):
             raise ValueError("policy_id and known_principals are required")
-        if any(not principal.strip() for principal in self.known_principals):
+        if any(
+            type(principal) is not str or not principal.strip()
+            for principal in self.known_principals
+        ):
             raise ValueError("principal identifiers cannot be empty")
         unknown = (set(self.allowed) | set(self.restricted)) - set(
             self.known_principals
         )
         if unknown:
             raise ValueError("policy rules reference unknown principals")
+        for rules in (self.allowed, self.restricted):
+            if any(
+                type(principal) is not str
+                or any(
+                    type(capability) is not Capability for capability in capabilities
+                )
+                for principal, capabilities in rules.items()
+            ):
+                raise ValueError("policy rules contain malformed capabilities")
+        conflicts = {
+            principal
+            for principal in self.known_principals
+            if set(self.allowed.get(principal, ()))
+            & set(self.restricted.get(principal, ()))
+        }
+        if conflicts:
+            raise ValueError("a capability cannot be both allowed and restricted")
+        if any(
+            type(capability) is not Capability
+            or type(values) is not tuple
+            or any(type(value) is not str or not value.strip() for value in values)
+            for capability, values in self.restrictions.items()
+        ):
+            raise ValueError("policy restrictions are malformed")
 
     @classmethod
     def deny_by_default(cls, known_principals: FrozenSet[str]) -> "Policy":

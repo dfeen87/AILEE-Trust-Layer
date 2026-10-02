@@ -27,6 +27,14 @@ platform limitations, enforcement state, sanitized result detail, correlation
 ID, and typed error. It does not record file content, argv, paths, hosts, ports,
 credentials, stdout, or stderr.
 
+Requests are validated and snapshotted before policy evaluation. Request IDs
+are single-use within a `LocalComputingTrust` instance and are atomically
+reserved before evaluation, so replay and concurrent duplicate submission fail
+closed. Duplicate attributes, unknown attributes, NUL/control characters at
+native string boundaries, oversized argv/options, invalid ports, and invalid
+timeouts are rejected before adapter discovery. Policy construction rejects
+malformed capabilities and conflicting allow/restrict rules.
+
 ## Linux
 
 `LinuxPlatformAdapter` discovers PID, real/effective UID and GID, supplementary
@@ -84,6 +92,12 @@ constraint blocks mutating adapter actions. Contradictory adapter status,
 attempt, enforcement, completion, and error fields are normalized to a failed
 `UNEXPECTED_RESULT` rather than trusted.
 
+Adapter capability evidence must identify the requested capability and contain
+well-formed support and limitation fields. Enforcement evidence must be an
+exact contract object with typed booleans/enums, bounded detail, and a
+non-contradictory status/error combination. Audit construction or sink failure
+is reported as `AUDIT_FAILURE`; it never changes native failure into success.
+
 ## Local networking only
 
 Networking is a local outbound TCP action: policy evaluates a host/port request,
@@ -91,6 +105,16 @@ the current host's adapter asks its OS to connect, records success/failure, and
 closes the socket. This is not host-to-host AILEE communication. There is no
 mesh, federation, consensus, cluster orchestration, remote trust exchange, or
 cloud control plane.
+
+## Remaining user-space race boundaries
+
+Pathnames may be replaced (including by symlink, mount, junction, or reparse
+point changes) between policy evaluation and native use. Hostname resolution
+and routing may change before a connection. POSIX process control identifies a
+target by PID, which can be reused; Windows obtains a process handle only at
+enforcement time. Executables can be replaced before process creation, and
+child behavior is not transitively governed. The adapters report these as
+limitations and do not claim atomic identity binding or sandbox containment.
 
 ## Verification scope
 

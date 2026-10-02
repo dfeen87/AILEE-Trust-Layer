@@ -89,6 +89,7 @@ class WindowsPlatformAdapter:
                     "CreateProcess semantics via direct argument vector",
                     "child inherits the current security token",
                     "not a Job Object sandbox",
+                    "executable identity and descendants are not transitively bound",
                 ),
             )
         if requested is Capability.PROCESS_CONTROL:
@@ -98,6 +99,7 @@ class WindowsPlatformAdapter:
                 (
                     "TerminateProcess only",
                     "target ACL and protected-process rules remain authoritative",
+                    "process identity is acquired only at enforcement time",
                 ),
             )
         if requested in _NET:
@@ -107,6 +109,7 @@ class WindowsPlatformAdapter:
                 (
                     "TCP connect through Winsock only",
                     "Windows Firewall remains authoritative",
+                    "resolved address is not pinned during policy evaluation",
                     "no traffic interception",
                 ),
             )

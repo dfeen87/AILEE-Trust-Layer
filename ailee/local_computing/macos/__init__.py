@@ -81,6 +81,7 @@ class MacOSPlatformAdapter:
                     "posix_spawn/fork implementation selected by Python",
                     "direct argv without shell",
                     "code signing and sandbox rules remain authoritative",
+                    "executable identity and descendants are not transitively bound",
                 ),
             )
         if requested is Capability.PROCESS_CONTROL:
@@ -90,6 +91,7 @@ class MacOSPlatformAdapter:
                 (
                     "signal delivery only",
                     "Darwin permission and protected-process checks remain authoritative",
+                    "PID identity is not pinned against reuse",
                 ),
             )
         if requested in _NET:
@@ -99,6 +101,7 @@ class MacOSPlatformAdapter:
                 (
                     "TCP connect only",
                     "sandbox and Network Extension policy remain authoritative",
+                    "resolved address is not pinned during policy evaluation",
                     "no Network Extension or traffic interception",
                 ),
             )
