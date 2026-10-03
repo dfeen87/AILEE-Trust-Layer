@@ -1,5 +1,35 @@
 # Changelog
 
+### **v10.0.0 — BEDROCK Engineering Baseline**
+
+**Type:** Major (strict-SemVer behavioral contract hardening)
+
+- Preserved the layered trust pipeline, multi-runtime structure, Local
+  Computing boundary, domain governors, and public method signatures.
+- Made the Python pipeline's numeric contract explicit: configuration rejects
+  non-finite, contradictory, out-of-domain, and invalid cardinality values.
+- Made malformed runtime numbers fail before state mutation, preventing NaN or
+  infinity from entering confidence calculations, fallback history, or audit
+  metadata.
+- Made Rust trust scores and confidence/threshold builders fail closed for
+  non-finite inputs, and made result threshold checks reject invalid domains.
+- Canonicalized Rust lineage across map insertion orders, sorted exposed
+  summaries, and expanded the verification hash to cover output execution and
+  model metadata.
+- Added regression coverage for numeric boundaries, mutation atomicity,
+  non-finite Rust evidence, canonical lineage, and metadata tampering.
+- Ensured C++ assertions remain enabled in the Release test target, enforced a
+  warning-free Rust Clippy baseline, and added a cross-runtime
+  version-consistency release gate.
+- Updated active Python, Rust, TypeScript, CMake, citation, documentation, and
+  CI metadata to `10.0.0`; historical release evidence remains unchanged.
+
+Compatibility note: method signatures and sound inputs remain compatible, but
+previously accepted malformed configuration/runtime numbers are now rejected.
+Rust lineage hashes intentionally change because they now use a canonical,
+complete evidence representation. These behavioral changes warrant the major
+increment under the repository's strict Semantic Versioning policy.
+
 ### **v9.4.0 — Local Computing Foundation**
 
 #### BONUS — Executable Δv Mathematical Engine

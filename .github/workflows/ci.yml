@@ -136,7 +136,7 @@ jobs:
           python -m venv /tmp/ailee-wheel-smoke
           /tmp/ailee-wheel-smoke/bin/python -m pip install dist/*.whl
           cd /tmp
-          /tmp/ailee-wheel-smoke/bin/python -c "import ailee; assert ailee.__version__ == '9.4.0'"
+          /tmp/ailee-wheel-smoke/bin/python -c "import ailee; assert ailee.__version__ == '10.0.0'"
 
   governance-v930:
     name: v9.3 governance validation
@@ -200,6 +200,9 @@ jobs:
 
       - name: Check formatting
         run: cargo fmt --all -- --check
+
+      - name: Lint all targets
+        run: cargo clippy --all-targets --all-features --locked -- -D warnings
 
       - name: Check all targets
         run: cargo check --all-targets --locked

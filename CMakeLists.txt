@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 cmake_minimum_required(VERSION 3.14)
-project(ailee_video_temporal_provenance VERSION 9.4.0 LANGUAGES CXX)
+project(ailee_video_temporal_provenance VERSION 10.0.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -30,6 +30,14 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/test_ailee_video_temporal_provenanc
         tests/test_ailee_video_temporal_provenance.cpp
     )
     target_link_libraries(test_ailee_video_temporal_provenance PRIVATE ailee_video_temporal_provenance)
+    # The test program uses the C assertion facility. Release builds normally
+    # define NDEBUG, which would silently turn the registered suite into a
+    # smoke-only executable, so explicitly retain assertions for this target.
+    if(MSVC)
+        target_compile_options(test_ailee_video_temporal_provenance PRIVATE /UNDEBUG)
+    else()
+        target_compile_options(test_ailee_video_temporal_provenance PRIVATE -UNDEBUG)
+    endif()
     add_test(NAME TestAileeVideoTemporalProvenance COMMAND test_ailee_video_temporal_provenance)
 endif()
 

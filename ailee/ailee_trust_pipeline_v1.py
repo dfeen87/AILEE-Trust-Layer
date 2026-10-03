@@ -47,6 +47,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 import statistics
 import time
+import math
 
 
 # -----------------------------
@@ -136,20 +137,83 @@ class AileeConfig:
                 f"Invalid fallback_mode '{self.fallback_mode}'. "
                 f"Must be one of: {sorted(_VALID_FALLBACK_MODES)}"
             )
-        if self.accept_threshold < 0.0 or self.accept_threshold > 1.0:
-            raise ValueError("accept_threshold must be in [0.0, 1.0]")
+        unit_interval_fields = (
+            "accept_threshold",
+            "borderline_low",
+            "borderline_high",
+            "w_stability",
+            "w_agreement",
+            "w_likelihood",
+            "grace_min_peer_agreement_ratio",
+            "consensus_pass_ratio",
+        )
+        for name in unit_interval_fields:
+            value = _finite_float(getattr(self, name), name)
+            if not 0.0 <= value <= 1.0:
+                raise ValueError(f"{name} must be in [0.0, 1.0]")
         if self.borderline_low > self.borderline_high:
             raise ValueError("borderline_low must be <= borderline_high")
-        if not (0.0 <= self.w_stability <= 1.0 and 0.0 <= self.w_agreement <= 1.0 and 0.0 <= self.w_likelihood <= 1.0):
-            raise ValueError("Confidence weights must be in [0.0, 1.0]")
         weight_sum = self.w_stability + self.w_agreement + self.w_likelihood
         if abs(weight_sum - 1.0) > 0.01:
             raise ValueError(f"Confidence weights must sum to ~1.0 (got {weight_sum:.3f})")
+        for name in ("history_window", "forecast_window", "consensus_quorum"):
+            value = getattr(self, name)
+            if type(value) is not int or value <= 0:
+                raise ValueError(f"{name} must be a positive integer")
+        if _finite_float(self.grace_max_abs_z, "grace_max_abs_z") <= 0.0:
+            raise ValueError("grace_max_abs_z must be > 0.0")
+        for name in (
+            "grace_forecast_epsilon",
+            "grace_peer_delta",
+            "consensus_delta",
+        ):
+            if _finite_float(getattr(self, name), name) < 0.0:
+                raise ValueError(f"{name} must be >= 0.0")
+        if self.agreement_delta is not None and _finite_float(
+            self.agreement_delta, "agreement_delta"
+        ) < 0.0:
+            raise ValueError("agreement_delta must be >= 0.0")
+        for name in (
+            "fallback_clamp_min",
+            "fallback_clamp_max",
+            "hard_min",
+            "hard_max",
+        ):
+            value = getattr(self, name)
+            if value is not None:
+                _finite_float(value, name)
+        if (
+            self.hard_min is not None
+            and self.hard_max is not None
+            and self.hard_min > self.hard_max
+        ):
+            raise ValueError("hard_min must be <= hard_max")
+        if (
+            self.fallback_clamp_min is not None
+            and self.fallback_clamp_max is not None
+            and self.fallback_clamp_min > self.fallback_clamp_max
+        ):
+            raise ValueError("fallback_clamp_min must be <= fallback_clamp_max")
+        for name in ("enable_grace", "enable_consensus", "enable_audit_metadata"):
+            if type(getattr(self, name)) is not bool:
+                raise TypeError(f"{name} must be a bool")
 
 
 # -----------------------------
 # Helpers
 # -----------------------------
+
+def _finite_float(value: object, name: str) -> float:
+    """Convert a numeric boundary value without admitting bool/NaN/infinity."""
+    if isinstance(value, bool):
+        raise TypeError(f"{name} must be a finite real number")
+    try:
+        number = float(value)
+    except (TypeError, ValueError, OverflowError) as exc:
+        raise TypeError(f"{name} must be a finite real number") from exc
+    if not math.isfinite(number):
+        raise ValueError(f"{name} must be finite")
+    return number
 
 def _clamp(x: float, lo: Optional[float], hi: Optional[float]) -> float:
     if lo is not None and x < lo:
@@ -217,8 +281,21 @@ class AileeTrustPipeline:
         timestamp: Optional[float] = None,
         context: Optional[Dict[str, Any]] = None,
     ) -> DecisionResult:
-        ts = float(timestamp if timestamp is not None else time.time())
-        peers = list(peer_values) if peer_values is not None else []
+        # Validate and snapshot every untrusted numeric input before reading or
+        # mutating pipeline state. This keeps malformed calls atomic and keeps
+        # NaN/infinity out of confidence, consensus, history, and audit data.
+        raw_value = _finite_float(raw_value, "raw_value")
+        if raw_confidence is not None:
+            raw_confidence = _finite_float(raw_confidence, "raw_confidence")
+        ts = _finite_float(
+            timestamp if timestamp is not None else time.time(), "timestamp"
+        )
+        peers = [
+            _finite_float(value, f"peer_values[{index}]")
+            for index, value in enumerate(
+                peer_values if peer_values is not None else ()
+            )
+        ]
         ctx = dict(context or {})
         history_cache: Dict[int, List[float]] = {}
 

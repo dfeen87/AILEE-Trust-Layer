@@ -84,7 +84,7 @@ def final_approval(
     metadata = ALCOAMetadata(
         attributable_to="approval_gate_engine",
         system_id="global_governance_ledger",
-        version="9.4.0",
+        version="10.0.0",
     )
 
     write_ledger_entry(
