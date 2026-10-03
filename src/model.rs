@@ -65,7 +65,11 @@ impl ModelOutput {
 
     /// Set the model confidence
     pub fn with_confidence(mut self, confidence: f64) -> Self {
-        self.model_confidence = Some(confidence.clamp(0.0, 1.0));
+        self.model_confidence = Some(if confidence.is_finite() {
+            confidence.clamp(0.0, 1.0)
+        } else {
+            0.0
+        });
         self
     }
 
@@ -195,6 +199,9 @@ mod tests {
         assert_eq!(output.model_confidence, Some(1.0));
 
         let output = ModelOutput::new("test").with_confidence(-0.5);
+        assert_eq!(output.model_confidence, Some(0.0));
+
+        let output = ModelOutput::new("test").with_confidence(f64::NAN);
         assert_eq!(output.model_confidence, Some(0.0));
     }
 }

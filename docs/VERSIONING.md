@@ -220,7 +220,8 @@ support windows that are not otherwise published by the project.
 
 | Version | Status | Support End Date |
 |---------|--------|------------------|
-| v9.x | **Current** | Not published |
+| v10.x | **Current** | Not published |
+| v9.x | Previous major line | Not published |
 | Earlier releases | See release notes | Not published |
 
 ---
@@ -243,7 +244,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "9.1.1"
+print(ailee.__version__)  # "10.0.0"
 print(ailee.get_info())   # Full package info
 ```
 
@@ -257,7 +258,7 @@ pip show ailee-trust-layer
 
 ## Summary
 
-- **v9.x is the current major release line**
+- **v10.x is the current major release line**
 - **Breaking changes require a new major version**
 - **Additive improvements** remain backward-compatible
 - **Documentation and clarity** are first-class concerns

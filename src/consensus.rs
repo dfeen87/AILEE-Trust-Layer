@@ -126,7 +126,11 @@ impl ConsensusEngine {
 
     /// Set trust threshold
     pub fn with_trust_threshold(mut self, threshold: f64) -> Self {
-        self.trust_threshold = threshold.clamp(0.0, 1.0);
+        self.trust_threshold = if threshold.is_finite() {
+            threshold.clamp(0.0, 1.0)
+        } else {
+            1.0
+        };
         self
     }
 

@@ -58,14 +58,16 @@ impl Lineage {
             .unwrap_or_default()
             .as_secs();
 
-        let contributing_models: Vec<String> = outputs.keys().cloned().collect();
+        let mut contributing_models: Vec<String> = outputs.keys().cloned().collect();
+        contributing_models.sort();
 
         let request_summary = RequestSummary::from_request(request);
 
-        let outputs_summary: Vec<OutputSummary> = outputs
+        let mut outputs_summary: Vec<OutputSummary> = outputs
             .iter()
             .map(|(model_id, output)| OutputSummary::from_output(model_id, output))
             .collect();
+        outputs_summary.sort_by(|left, right| left.model_id.cmp(&right.model_id));
 
         let verification_hash = Self::compute_hash(request, outputs, final_output);
 
@@ -91,9 +93,20 @@ impl Lineage {
     ) -> String {
         let mut hasher = Sha256::new();
 
-        // Hash the request in canonical form
-        let request_json =
-            serde_json::to_string(request).unwrap_or_else(|e| format!("__serialization_error:{e}"));
+        // Hash caller-owned maps as sorted tuples rather than relying on
+        // HashMap iteration order. Include the complete output evidence so a
+        // metadata-only change cannot verify against an older lineage.
+        let mut request_context: Vec<_> = request.context.iter().collect();
+        request_context.sort_by_key(|(key, _)| *key);
+        let request_json = serde_json::to_string(&(
+            &request.prompt,
+            &request.task_type,
+            request.trust_threshold,
+            &request.execution_mode,
+            &request.determinism_level,
+            request_context,
+        ))
+        .unwrap_or_else(|e| format!("__serialization_error:{e}"));
         hasher.update(request_json.as_bytes());
 
         // Hash outputs in sorted order for determinism
@@ -101,11 +114,18 @@ impl Lineage {
         sorted_outputs.sort_by_key(|(model_id, _)| *model_id);
 
         for (model_id, output) in sorted_outputs {
-            hasher.update(model_id.as_bytes());
-            hasher.update(output.text.as_bytes());
-            if let Some(conf) = output.model_confidence {
-                hasher.update(conf.to_string().as_bytes());
-            }
+            let mut metadata: Vec<_> = output.metadata.iter().collect();
+            metadata.sort_by_key(|(key, _)| *key);
+            let output_json = serde_json::to_string(&(
+                model_id,
+                &output.text,
+                output.model_confidence,
+                output.token_count,
+                output.latency_ms,
+                metadata,
+            ))
+            .unwrap_or_else(|e| format!("__serialization_error:{e}"));
+            hasher.update(output_json.as_bytes());
         }
 
         // Hash the final output
@@ -260,6 +280,50 @@ mod tests {
         let hash2 = Lineage::compute_hash(&request, &outputs, "final");
 
         assert_eq!(hash1, hash2);
+    }
+
+    #[test]
+    fn test_hash_and_summaries_ignore_map_insertion_order() {
+        let request = GenerationRequest::new("test", TaskType::Code)
+            .with_context("z", "last")
+            .with_context("a", "first");
+        let reverse_request = GenerationRequest::new("test", TaskType::Code)
+            .with_context("a", "first")
+            .with_context("z", "last");
+
+        let mut outputs = HashMap::new();
+        outputs.insert("z-model".to_string(), ModelOutput::new("z"));
+        outputs.insert("a-model".to_string(), ModelOutput::new("a"));
+        let mut reverse_outputs = HashMap::new();
+        reverse_outputs.insert("a-model".to_string(), ModelOutput::new("a"));
+        reverse_outputs.insert("z-model".to_string(), ModelOutput::new("z"));
+
+        assert_eq!(
+            Lineage::compute_hash(&request, &outputs, "final"),
+            Lineage::compute_hash(&reverse_request, &reverse_outputs, "final")
+        );
+        let lineage = Lineage::build(&request, &outputs, "final");
+        assert_eq!(lineage.contributing_models, vec!["a-model", "z-model"]);
+        assert_eq!(lineage.outputs_summary[0].model_id, "a-model");
+    }
+
+    #[test]
+    fn test_hash_covers_output_metadata() {
+        let request = GenerationRequest::new("test", TaskType::Chat);
+        let mut first = HashMap::new();
+        first.insert(
+            "model".to_string(),
+            ModelOutput::new("answer").with_latency(1),
+        );
+        let mut changed = HashMap::new();
+        changed.insert(
+            "model".to_string(),
+            ModelOutput::new("answer").with_latency(2),
+        );
+        assert_ne!(
+            Lineage::compute_hash(&request, &first, "answer"),
+            Lineage::compute_hash(&request, &changed, "answer")
+        );
     }
 
     #[test]

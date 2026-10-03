@@ -79,7 +79,11 @@ impl GenerationRequest {
 
     /// Set the trust threshold
     pub fn with_trust_threshold(mut self, threshold: f64) -> Self {
-        self.trust_threshold = threshold.clamp(0.0, 1.0);
+        self.trust_threshold = if threshold.is_finite() {
+            threshold.clamp(0.0, 1.0)
+        } else {
+            1.0
+        };
         self
     }
 
@@ -124,7 +128,10 @@ pub struct GenerationResult {
 impl GenerationResult {
     /// Check if the result meets the trust threshold
     pub fn meets_threshold(&self, threshold: f64) -> bool {
-        self.aggregate_trust_score >= threshold
+        self.aggregate_trust_score.is_finite()
+            && threshold.is_finite()
+            && (0.0..=1.0).contains(&threshold)
+            && self.aggregate_trust_score >= threshold
     }
 
     /// Get the trust score for a specific model
@@ -160,6 +167,9 @@ mod tests {
 
         let request = GenerationRequest::new("test", TaskType::Code).with_trust_threshold(-0.5);
         assert_eq!(request.trust_threshold, 0.0);
+
+        let request = GenerationRequest::new("test", TaskType::Code).with_trust_threshold(f64::NAN);
+        assert_eq!(request.trust_threshold, 1.0);
     }
 
     #[test]
@@ -174,5 +184,7 @@ mod tests {
 
         assert!(result.meets_threshold(0.8));
         assert!(!result.meets_threshold(0.9));
+        assert!(!result.meets_threshold(f64::NAN));
+        assert!(!result.meets_threshold(-0.1));
     }
 }

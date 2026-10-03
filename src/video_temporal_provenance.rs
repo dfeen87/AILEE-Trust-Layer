@@ -196,6 +196,12 @@ impl VideoTemporalGovernor {
     }
 }
 
+impl Default for VideoTemporalGovernor {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl Drop for VideoTemporalGovernor {
     fn drop(&mut self) {
         if !self.handle.is_null() {

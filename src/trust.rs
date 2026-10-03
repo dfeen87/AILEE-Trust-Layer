@@ -32,10 +32,19 @@ pub struct TrustScore {
 impl TrustScore {
     /// Create a new trust score with all dimensions
     pub fn new(confidence: f64, safety: f64, consistency: f64, determinism: f64) -> Self {
-        let confidence = confidence.clamp(0.0, 1.0);
-        let safety = safety.clamp(0.0, 1.0);
-        let consistency = consistency.clamp(0.0, 1.0);
-        let determinism = determinism.clamp(0.0, 1.0);
+        // Non-finite evidence is never a usable trust signal. Rust's `clamp`
+        // preserves NaN, so normalize it explicitly to the fail-closed score.
+        let bounded = |value: f64| {
+            if value.is_finite() {
+                value.clamp(0.0, 1.0)
+            } else {
+                0.0
+            }
+        };
+        let confidence = bounded(confidence);
+        let safety = bounded(safety);
+        let consistency = bounded(consistency);
+        let determinism = bounded(determinism);
         let aggregate = Self::compute_aggregate(confidence, safety, consistency, determinism);
         Self {
             confidence_score: confidence,
@@ -313,6 +322,16 @@ fn levenshtein_distance(s1: &str, s2: &str) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn non_finite_dimensions_fail_closed() {
+        let score = TrustScore::new(f64::NAN, f64::INFINITY, f64::NEG_INFINITY, 1.0);
+        assert_eq!(score.confidence_score, 0.0);
+        assert_eq!(score.safety_score, 0.0);
+        assert_eq!(score.consistency_score, 0.0);
+        assert!(score.aggregate_score.is_finite());
+        assert_eq!(score.aggregate_score, 0.15);
+    }
 
     #[test]
     fn test_trust_score_creation() {
