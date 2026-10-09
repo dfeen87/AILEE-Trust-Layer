@@ -1,5 +1,31 @@
 # Changelog
 
+### **v10.0.2 — Fallback Integrity and Numeric Safety**
+
+**Type:** Patch (restores finite fallback output and authoritative hard bounds)
+
+- Reject disjoint fallback clamps and hard envelopes; revalidate mutable fallback
+  mode and bound configuration before processing.
+- Apply fallback policy clamps before hard bounds in one shared fallback path.
+  Guard final output and commit so non-finite or out-of-envelope values cannot
+  enter trusted history.
+- Preserve ordinary mean/median arithmetic while using stable midpoint arithmetic
+  and exact standard-library mean accumulation for finite extreme histories.
+  Empty-history midpoint and last-known-good policies remain intact.
+- Fail before state mutation if selected fallback evidence or pipeline-generated
+  numeric audit evidence is non-finite. Caller context remains application-owned
+  metadata.
+- Add 85 focused regression cases covering all fallback routes and modes,
+  positive/negative extremes, clamping policies, audit evidence, and atomic failure;
+  align active release metadata to `10.0.2` while preserving historical records.
+
+Public signatures, governing routing, intentional consensus `SKIPPED` behavior,
+and governed fallback-history updates are unchanged. Inconsistent configurations
+and overflowing calculations are corrected under existing safety contracts;
+extreme arithmetic in earlier layers can still fail without committing state.
+See the [fallback integrity report](docs/FALLBACK_INTEGRITY_V10_0_2.md) for actual
+verification outcomes, compatibility rationale, and remaining limits.
+
 ### **v10.0.1 — Post-BEDROCK Governance and Consensus Corrections**
 
 **Type:** Patch (restores required evidence and configured quorum enforcement)

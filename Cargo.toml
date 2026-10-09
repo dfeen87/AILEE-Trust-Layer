@@ -1,6 +1,6 @@
 [package]
 name = "ailee_trust_core"
-version = "10.0.1"
+version = "10.0.2"
 edition = "2021"
 authors = ["Don Michael Feeney Jr."]
 license = "MIT"
