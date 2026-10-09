@@ -9,7 +9,7 @@ authors:
     given-names: "Don Michael"
     name-suffix: "Jr."
 
-version: "10.0.0"
+version: "10.0.1"
 
 repository-code: "https://github.com/dfeen87/AILEE-Trust-Layer"
 
@@ -43,7 +43,7 @@ preferred-citation:
       given-names: "Don Michael"
       name-suffix: "Jr."
   title: "AILEE Trust Layer"
-  version: "10.0.0"
+  version: "10.0.1"
   year: 2026
   repository-code: "https://github.com/dfeen87/AILEE-Trust-Layer"
   DOI: https://doi.org/10.5281/zenodo.23093176

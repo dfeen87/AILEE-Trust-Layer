@@ -45,10 +45,40 @@ Usage (minimal):
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from decimal import Decimal
 from enum import IntEnum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from numbers import Rational, Real
+from typing import Any, Dict, List, Optional, Set, Tuple, TypeVar
 import time
 import hashlib
+import math
+
+
+_Number = TypeVar("_Number")
+
+
+def _finite_number(value: _Number, name: str) -> _Number:
+    """Validate numeric evidence without rounding supported arithmetic types."""
+    if isinstance(value, bool) or not isinstance(value, (Real, Decimal)):
+        raise TypeError(f"{name} must be a finite real number")
+    if isinstance(value, Decimal):
+        finite = value.is_finite()
+    elif isinstance(value, Rational):
+        # Integers and fractions are exact finite numbers; float conversion
+        # would impose an unrelated precision/range limit on valid evidence.
+        finite = True
+    else:
+        finite = math.isfinite(value)
+    if not finite:
+        raise ValueError(f"{name} must be finite")
+    return value
+
+
+def _nonnegative_integer(value: object, name: str) -> None:
+    if type(value) is not int:
+        raise TypeError(f"{name} must be a nonnegative integer")
+    if value < 0:
+        raise ValueError(f"{name} must be a nonnegative integer")
 
 
 # -----------------------------
@@ -233,6 +263,7 @@ class GovernanceGovernor:
     
     def __init__(self, config: GovernanceConfig):
         self.cfg = config
+        self._validate_numeric_configuration()
         self.decision_history: List[GovernanceDecision] = []
         self.revoked_sources: Set[str] = set()
         self.known_delegations: Dict[str, List[str]] = {}  # source -> [delegated_to]
@@ -240,6 +271,17 @@ class GovernanceGovernor:
     # -------------------------
     # Public API
     # -------------------------
+
+    def _validate_numeric_configuration(self) -> None:
+        window = _finite_number(
+            self.cfg.default_validity_window_seconds, "default_validity_window_seconds"
+        )
+        grace = _finite_number(self.cfg.grace_period_seconds, "grace_period_seconds")
+        if window <= 0:
+            raise ValueError("default_validity_window_seconds must be positive")
+        if grace < 0:
+            raise ValueError("grace_period_seconds must be nonnegative")
+        _nonnegative_integer(self.cfg.max_delegation_depth, "max_delegation_depth")
     
     def evaluate(
         self,
@@ -261,7 +303,24 @@ class GovernanceGovernor:
         """
         Evaluate a governance signal and return authorization decision.
         """
-        ts = timestamp if timestamp is not None else time.time()
+        # Validate before constructing a decision or touching any history.
+        # Configuration is mutable, so recheck its numeric authorization domains.
+        self._validate_numeric_configuration()
+        ts = _finite_number(
+            timestamp if timestamp is not None else time.time(), "timestamp"
+        )
+        valid_from = (
+            _finite_number(valid_from, "valid_from") if valid_from is not None else None
+        )
+        valid_until = (
+            _finite_number(valid_until, "valid_until") if valid_until is not None else None
+        )
+        issued_at = (
+            _finite_number(issued_at, "issued_at") if issued_at is not None else None
+        )
+        if valid_from is not None and valid_until is not None and valid_from > valid_until:
+            raise ValueError("valid_from must be <= valid_until")
+        _nonnegative_integer(delegation_depth, "delegation_depth")
         ctx = dict(context or {})
         
         signal = GovernanceSignal(
@@ -360,7 +419,10 @@ class GovernanceGovernor:
         # Layer 2: Scope Validation
         scope_status = self._validate_scope(signal, reasons, constraints, metadata)
         
-        if self.cfg.enforce_scope_boundaries and scope_status == ScopeStatus.OUT_OF_SCOPE:
+        if self.cfg.enforce_scope_boundaries and scope_status in {
+            ScopeStatus.OUT_OF_SCOPE,
+            ScopeStatus.SCOPE_UNKNOWN,
+        }:
             decision = self._make_decision(
                 authorized_level=GovernanceTrustLevel.NO_TRUST,
                 authority_status=authority_status,
@@ -635,18 +697,20 @@ class GovernanceGovernor:
         # If no bounds specified, apply default validity window
         if signal.valid_from is None and signal.valid_until is None:
             # Use issued_at or current timestamp as start
-            start = signal.issued_at if signal.issued_at else ts
+            start = signal.issued_at if signal.issued_at is not None else ts
             signal.valid_from = start
-            signal.valid_until = start + self.cfg.default_validity_window_seconds
+            signal.valid_until = _finite_number(
+                start + self.cfg.default_validity_window_seconds, "default valid_until"
+            )
             reasons.append(f"Applied default validity window: {self.cfg.default_validity_window_seconds}s.")
         
         # Check not-yet-valid
-        if signal.valid_from and ts < (signal.valid_from - self.cfg.grace_period_seconds):
+        if signal.valid_from is not None and ts < (signal.valid_from - self.cfg.grace_period_seconds):
             reasons.append(f"Signal not yet valid (valid_from={signal.valid_from}, current={ts}).")
             return TemporalStatus.NOT_YET_VALID
         
         # Check expiration
-        if signal.valid_until and ts > (signal.valid_until + self.cfg.grace_period_seconds):
+        if signal.valid_until is not None and ts > (signal.valid_until + self.cfg.grace_period_seconds):
             reasons.append(f"Signal expired (valid_until={signal.valid_until}, current={ts}).")
             return TemporalStatus.EXPIRED
         
@@ -658,7 +722,7 @@ class GovernanceGovernor:
                 "valid_until": signal.valid_until,
                 "issued_at": signal.issued_at,
                 "timestamp": ts,
-                "remaining_validity_seconds": (signal.valid_until - ts) if signal.valid_until else None,
+                "remaining_validity_seconds": (signal.valid_until - ts) if signal.valid_until is not None else None,
             }
         
         return TemporalStatus.VALID
