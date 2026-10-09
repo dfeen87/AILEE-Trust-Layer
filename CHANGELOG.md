@@ -1,5 +1,32 @@
 # Changelog
 
+### **v10.0.1 — Post-BEDROCK Governance and Consensus Corrections**
+
+**Type:** Patch (restores required evidence and configured quorum enforcement)
+
+- Reject malformed temporal and delegation numbers before governance decisions
+  or history updates; revalidate the mutable numeric policy configuration.
+- Evaluate zero-valued validity bounds and issuance times, reject contradictory
+  bounds, and fail before commit if a default expiry overflows.
+- Preserve exact finite numeric evidence, including integer precision and audit
+  identity, while retaining the existing clock-grace and delegation policies.
+- Deny unknown jurisdiction evidence while scope enforcement is enabled;
+  explicit optional-jurisdiction and disabled-enforcement policies retain their
+  behavior.
+- Enforce Rust's configured minimum count of threshold-eligible model outputs.
+  Under-quorum results retain degraded output selection and trust scores while
+  truthfully reporting that consensus was not achieved.
+- Add adversarial, state-preservation, precision, and quorum-boundary regression
+  tests; align active release metadata to `10.0.1` without altering historical
+  BEDROCK evidence or the native Local Computing CI matrix.
+
+Public signatures, valid governing policies, Python consensus `SKIPPED`,
+governed fallback-history updates, and Rust degraded-result semantics remain
+intact. These corrections restore intended behavior rather than defining new
+trust or authorization semantics. See the
+[post-BEDROCK review](docs/POST_BEDROCK_V10_0_1.md) for evidence and remaining
+risks; this patch does not claim that all reviewed weaknesses were corrected.
+
 ### **v10.0.0 — BEDROCK Engineering Baseline**
 
 **Type:** Major (strict-SemVer behavioral contract hardening)

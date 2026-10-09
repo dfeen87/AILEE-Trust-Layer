@@ -123,3 +123,26 @@ inputs, configuration, and relevant per-instance history. That guarantee applies
 to decision semantics; operational metadata such as a default current timestamp
 or a generated identifier can vary between executions unless the caller supplies
 or controls it.
+
+## Governance evidence and Rust consensus corrections (v10.0.1)
+
+The governance domain validates temporal numbers and delegation cardinality
+before creating a decision or updating history. It preserves exact numeric
+values and treats zero time bounds as evidence. Invalid numeric policy settings
+are rejected at governor construction and rechecked before evaluation because
+configuration remains mutable. When scope enforcement is enabled, unknown
+jurisdiction evidence produces `NO_TRUST` and `actionable=False`; an explicitly
+optional jurisdiction or disabled enforcement retains its existing policy.
+Denial can short-circuit later stages, so downstream validation should not be
+inferred solely from a default status in the denied decision.
+
+Rust consensus requires at least the configured minimum number of outputs that
+meet its trust threshold before reporting achieved consensus. Insufficient
+evidence still returns the documented degraded best-available result, with
+`consensus_achieved=false` and a reason identifying the quorum shortfall. A high
+degraded score is neither achieved consensus nor governance authorization.
+
+The [post-BEDROCK review](POST_BEDROCK_V10_0_1.md) records the verified corrections
+and unresolved risks. The core Python pipeline, TypeScript domain contracts,
+Local Computing platform limitations, and mathematical-evidence boundary were
+reviewed without changing their governing behavior in this patch.

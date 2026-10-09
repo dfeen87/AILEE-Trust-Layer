@@ -161,6 +161,15 @@ impl ConsensusEngine {
             return self.degraded_consensus(outputs, trust_scores);
         }
 
+        if trusted_outputs.len() < self.min_models {
+            let mut result = self.degraded_consensus(outputs, trust_scores);
+            result.metadata.reason = format!(
+                "Degraded mode: Insufficient trusted models for consensus ({} available, {} required; best available score {:.3}, threshold {:.3})",
+                trusted_outputs.len(), self.min_models, result.trust_score, self.trust_threshold
+            );
+            return result;
+        }
+
         match self.strategy {
             ConsensusStrategy::HighestTrust => {
                 self.highest_trust_consensus(&trusted_outputs, trust_scores)

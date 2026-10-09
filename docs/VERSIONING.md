@@ -244,7 +244,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "10.0.0"
+print(ailee.__version__)  # "10.0.1"
 print(ailee.get_info())   # Full package info
 ```
 
@@ -280,4 +280,4 @@ For version-specific questions or concerns:
 **AILEE Trust Layer**  
 *Trust is a contract, not a promise.*
 
-Last Updated: September 29, 2026
+Last Updated: October 9, 2026

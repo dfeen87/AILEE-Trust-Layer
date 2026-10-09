@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-10.0.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-10.0.1-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -1692,14 +1692,20 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v10.0.0
+### Current: v10.0.1
 
-AILEE Trust Layer **v10.0.0** establishes a hardened engineering baseline over
+AILEE Trust Layer **v10.0.1** adds focused governance and consensus corrections
+to the v10.0.0 BEDROCK baseline over
 the domain-independent Local Computing trust foundation while retaining the
 validated v9.3 licensing and supervisory/read-only industrial-process
 governance. The architecture is unchanged; numeric input domains, failure
 atomicity, deterministic Rust lineage, and release-build test enforcement are
-now explicit contracts. See the [BEDROCK v10 release report](docs/BEDROCK_V10.md).
+now explicit contracts. Strict governance rejects unknown jurisdiction evidence,
+validates temporal and delegation numeric domains before history mutation, and
+Rust consensus honors its configured trusted-model quorum. See the historical
+[BEDROCK v10 release report](docs/BEDROCK_V10.md) and the
+[post-BEDROCK review](docs/POST_BEDROCK_V10_0_1.md) for verified behavior and
+remaining risks.
 
 See the [Local Computing operator manual](docs/local_computing/README.md) and
 [final release evidence](docs/local_computing/EVIDENCE.md) for evidence-bounded
@@ -1717,7 +1723,7 @@ Linux, Windows, and macOS behavior.
 - ✅ Comprehensive audit trails
 - ✅ Deterministic replay for testing
 
-### Future Considerations (v10.0.0+)
+### Future Considerations (v10.x)
 
 Future versions may add:
 - Streaming support for real-time pipelines
@@ -1807,7 +1813,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {10.0.0},
+  version = {10.0.1},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1852,7 +1858,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v10.0.0**
+**AILEE Trust Layer v10.0.1**
 *Adaptive Integrity Layer for AI Decision Systems*
 
 Built with discipline. Deployed with confidence.
