@@ -47,8 +47,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import IntEnum
+from fractions import Fraction
 from numbers import Rational, Real
-from typing import Any, Dict, List, Optional, Set, Tuple, TypeVar
+from typing import Any, Dict, List, Optional, Set, Tuple, TypeVar, Union
 import time
 import hashlib
 import math
@@ -57,8 +58,8 @@ import math
 _Number = TypeVar("_Number")
 
 
-def _finite_number(value: _Number, name: str) -> _Number:
-    """Validate numeric evidence without rounding supported arithmetic types."""
+def _exact_number(value: object, name: str) -> Fraction:
+    """Encode finite evidence exactly, including the actual binary float value."""
     if isinstance(value, bool) or not isinstance(value, (Real, Decimal)):
         raise TypeError(f"{name} must be a finite real number")
     if isinstance(value, Decimal):
@@ -71,7 +72,46 @@ def _finite_number(value: _Number, name: str) -> _Number:
         finite = math.isfinite(value)
     if not finite:
         raise ValueError(f"{name} must be finite")
+    try:
+        encoded = Fraction(value)
+        # Fraction's single-argument Rational path trusts the advertised ratio.
+        # Validate and normalize its components before any governing comparison.
+        return Fraction(encoded.numerator, encoded.denominator)
+    except (TypeError, ValueError, OverflowError, ZeroDivisionError) as exc:
+        raise TypeError(f"{name} must support exact temporal arithmetic") from exc
+
+
+def _finite_number(value: _Number, name: str) -> _Number:
+    """Validate exact arithmetic support while preserving original audit evidence."""
+    _exact_number(value, name)
     return value
+
+
+def _temporal_offset(
+    left: object, right: object, name: str, *, subtract: bool = False
+) -> Union[int, float, Fraction]:
+    """Compute in one exact domain; never round a governing time boundary.
+
+    Retain native int/float audit values only when they encode the exact result.
+    A float-only operation must still fail closed on float-range overflow;
+    exact integer, Decimal and Fraction evidence has no float-range restriction.
+    """
+    first = _exact_number(left, name)
+    second = _exact_number(right, name)
+    result = first - second if subtract else first + second
+    if isinstance(left, int) and isinstance(right, int) and result.denominator == 1:
+        return result.numerator
+    if isinstance(left, (int, float)) and isinstance(right, (int, float)):
+        try:
+            candidate = float(result)
+        except OverflowError:
+            candidate = math.inf
+        if not math.isfinite(candidate):
+            if isinstance(left, float) and isinstance(right, float):
+                raise ValueError(f"{name} must be finite")
+        elif Fraction(candidate) == result:
+            return candidate
+    return result
 
 
 def _nonnegative_integer(value: object, name: str) -> None:
@@ -273,10 +313,10 @@ class GovernanceGovernor:
     # -------------------------
 
     def _validate_numeric_configuration(self) -> None:
-        window = _finite_number(
+        window = _exact_number(
             self.cfg.default_validity_window_seconds, "default_validity_window_seconds"
         )
-        grace = _finite_number(self.cfg.grace_period_seconds, "grace_period_seconds")
+        grace = _exact_number(self.cfg.grace_period_seconds, "grace_period_seconds")
         if window <= 0:
             raise ValueError("default_validity_window_seconds must be positive")
         if grace < 0:
@@ -318,7 +358,11 @@ class GovernanceGovernor:
         issued_at = (
             _finite_number(issued_at, "issued_at") if issued_at is not None else None
         )
-        if valid_from is not None and valid_until is not None and valid_from > valid_until:
+        if (
+            valid_from is not None
+            and valid_until is not None
+            and _exact_number(valid_from, "valid_from") > _exact_number(valid_until, "valid_until")
+        ):
             raise ValueError("valid_from must be <= valid_until")
         _nonnegative_integer(delegation_depth, "delegation_depth")
         ctx = dict(context or {})
@@ -699,18 +743,36 @@ class GovernanceGovernor:
             # Use issued_at or current timestamp as start
             start = signal.issued_at if signal.issued_at is not None else ts
             signal.valid_from = start
-            signal.valid_until = _finite_number(
-                start + self.cfg.default_validity_window_seconds, "default valid_until"
+            signal.valid_until = _temporal_offset(
+                start, self.cfg.default_validity_window_seconds, "default valid_until"
             )
             reasons.append(f"Applied default validity window: {self.cfg.default_validity_window_seconds}s.")
+
+        # Normalize operands only for calculation. Supplied evidence remains
+        # untouched in the decision ID, timestamp and temporal audit metadata.
+        exact_ts = _exact_number(ts, "timestamp")
+        earliest = (
+            _temporal_offset(
+                signal.valid_from, self.cfg.grace_period_seconds,
+                "valid_from grace boundary", subtract=True,
+            )
+            if signal.valid_from is not None else None
+        )
+        latest = (
+            _temporal_offset(
+                signal.valid_until, self.cfg.grace_period_seconds,
+                "valid_until grace boundary",
+            )
+            if signal.valid_until is not None else None
+        )
         
         # Check not-yet-valid
-        if signal.valid_from is not None and ts < (signal.valid_from - self.cfg.grace_period_seconds):
+        if earliest is not None and exact_ts < _exact_number(earliest, "valid_from grace boundary"):
             reasons.append(f"Signal not yet valid (valid_from={signal.valid_from}, current={ts}).")
             return TemporalStatus.NOT_YET_VALID
         
         # Check expiration
-        if signal.valid_until is not None and ts > (signal.valid_until + self.cfg.grace_period_seconds):
+        if latest is not None and exact_ts > _exact_number(latest, "valid_until grace boundary"):
             reasons.append(f"Signal expired (valid_until={signal.valid_until}, current={ts}).")
             return TemporalStatus.EXPIRED
         
@@ -722,7 +784,9 @@ class GovernanceGovernor:
                 "valid_until": signal.valid_until,
                 "issued_at": signal.issued_at,
                 "timestamp": ts,
-                "remaining_validity_seconds": (signal.valid_until - ts) if signal.valid_until is not None else None,
+                "remaining_validity_seconds": _temporal_offset(
+                    signal.valid_until, ts, "remaining_validity_seconds", subtract=True
+                ) if signal.valid_until is not None else None,
             }
         
         return TemporalStatus.VALID
