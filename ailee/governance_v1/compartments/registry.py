@@ -88,7 +88,7 @@ class CompartmentRegistry:
         meta = ALCOAMetadata(
             attributable_to=attributable_to,
             system_id=f"{self.compartment}_compartment_registry",
-            version="10.0.1",
+            version="10.0.2",
             is_original=True,
             validation_status="VALID",
             legible_format="json_v1",

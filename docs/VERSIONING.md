@@ -67,6 +67,15 @@ Patch releases will **not change governing decision semantics for identical
 inputs, configuration, and relevant state**. Non-semantic operational metadata
 may still vary unless supplied or controlled by the caller.
 
+The v10.0.2 fallback correction is a patch because finite trusted output and
+authoritative hard bounds were already required contracts. Disjoint fallback
+and hard-bound policies are rejected explicitly, while legitimate fallback
+policies and ordinary calculations retain their behavior. Stable arithmetic
+corrects overflow cases; invalid output or derived numeric audit evidence fails
+before state commit. This does not change safety/GRACE/consensus routing,
+intentional `SKIPPED` acceptance, or governed fallback-history updates. See the
+[v10.0.2 evidence](FALLBACK_INTEGRITY_V10_0_2.md).
+
 ---
 
 ## Stability Guarantees (Supported Major Releases)
@@ -244,7 +253,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "10.0.1"
+print(ailee.__version__)  # "10.0.2"
 print(ailee.get_info())   # Full package info
 ```
 

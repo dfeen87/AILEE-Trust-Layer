@@ -146,3 +146,21 @@ The [post-BEDROCK review](POST_BEDROCK_V10_0_1.md) records the verified correcti
 and unresolved risks. The core Python pipeline, TypeScript domain contracts,
 Local Computing platform limitations, and mathematical-evidence boundary were
 reviewed without changing their governing behavior in this patch.
+
+## Python fallback integrity (v10.0.2)
+
+Every completed Python fallback validates its numeric evidence, computes a finite
+candidate, applies fallback clamps, and applies the hard safety envelope last.
+Disjoint clamp and hard-bound configurations are invalid; mutable fallback mode
+and bound configuration is rechecked before processing. Wider overlapping ranges
+remain valid. Stable median/midpoint and mean operations address intermediate
+overflow without replacing existing fallback policies.
+
+Final output and history commit enforce finite, bounded values. Pipeline-generated
+numeric audit evidence must be finite; caller context retains its existing role
+as arbitrary application metadata. A failed operation changes neither history,
+last-known-good value, nor last result. Ordinary fallback output still enters the
+trusted history and does not replace an accepted last-known-good value. Routing
+and intentional consensus `SKIPPED` acceptance are unchanged. The
+[fallback integrity report](FALLBACK_INTEGRITY_V10_0_2.md) records the verified
+scope and the earlier-layer arithmetic failures that remain fail-closed.

@@ -1,7 +1,7 @@
 //! Copyright (c) Don Michael Feeney Jr.
 //! Licensed under the MIT License.
 
-export const VERSION = "10.0.1";
+export const VERSION = "10.0.2";
 
 export * from "./core/index.js";
 export * from "./hardware/index.js";

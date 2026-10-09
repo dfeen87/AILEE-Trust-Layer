@@ -131,12 +131,7 @@ class AileeConfig:
     enable_audit_metadata: bool = True
 
     def __post_init__(self):
-        _VALID_FALLBACK_MODES = frozenset({"median", "mean", "last_good"})
-        if self.fallback_mode not in _VALID_FALLBACK_MODES:
-            raise ValueError(
-                f"Invalid fallback_mode '{self.fallback_mode}'. "
-                f"Must be one of: {sorted(_VALID_FALLBACK_MODES)}"
-            )
+        self._validate_fallback_config()
         unit_interval_fields = (
             "accept_threshold",
             "borderline_low",
@@ -173,6 +168,18 @@ class AileeConfig:
             self.agreement_delta, "agreement_delta"
         ) < 0.0:
             raise ValueError("agreement_delta must be >= 0.0")
+        for name in ("enable_grace", "enable_consensus", "enable_audit_metadata"):
+            if type(getattr(self, name)) is not bool:
+                raise TypeError(f"{name} must be a bool")
+
+    def _validate_fallback_config(self) -> None:
+        # Configuration remains mutable; process rechecks this safety boundary.
+        valid_modes = frozenset({"median", "mean", "last_good"})
+        if self.fallback_mode not in valid_modes:
+            raise ValueError(
+                f"Invalid fallback_mode '{self.fallback_mode}'. "
+                f"Must be one of: {sorted(valid_modes)}"
+            )
         for name in (
             "fallback_clamp_min",
             "fallback_clamp_max",
@@ -194,9 +201,16 @@ class AileeConfig:
             and self.fallback_clamp_min > self.fallback_clamp_max
         ):
             raise ValueError("fallback_clamp_min must be <= fallback_clamp_max")
-        for name in ("enable_grace", "enable_consensus", "enable_audit_metadata"):
-            if type(getattr(self, name)) is not bool:
-                raise TypeError(f"{name} must be a bool")
+        if (
+            self.fallback_clamp_min is not None
+            and self.hard_max is not None
+            and self.fallback_clamp_min > self.hard_max
+        ) or (
+            self.fallback_clamp_max is not None
+            and self.hard_min is not None
+            and self.fallback_clamp_max < self.hard_min
+        ):
+            raise ValueError("fallback clamps must overlap the hard safety envelope")
 
 
 # -----------------------------
@@ -221,6 +235,25 @@ def _clamp(x: float, lo: Optional[float], hi: Optional[float]) -> float:
     if hi is not None and x > hi:
         return hi
     return x
+
+
+def _safe_midpoint(left: float, right: float) -> float:
+    total = left + right
+    if math.isfinite(total):
+        return total / 2.0
+    # Finite endpoints can overflow in their sum while the midpoint is finite.
+    return left / 2.0 + right / 2.0
+
+
+def _validate_audit_numbers(value: Any, name: str) -> None:
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        _finite_float(value, name)
+    elif isinstance(value, dict):
+        for key, child in value.items():
+            _validate_audit_numbers(child, f"{name}.{key}")
+    elif isinstance(value, (list, tuple)):
+        for index, child in enumerate(value):
+            _validate_audit_numbers(child, f"{name}[{index}]")
 
 
 def _safe_stdev(values: Sequence[float]) -> float:
@@ -297,6 +330,7 @@ class AileeTrustPipeline:
             )
         ]
         ctx = dict(context or {})
+        self.cfg._validate_fallback_config()
         history_cache: Dict[int, List[float]] = {}
 
         reasons: List[str] = []
@@ -306,9 +340,7 @@ class AileeTrustPipeline:
         if not self._within_hard_bounds(raw_value):
             reasons.append("Hard envelope violation: raw_value outside [hard_min, hard_max].")
             value = self._fallback_value(history_cache)
-            value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
-            value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
-            result = DecisionResult(
+            result = self._final_result(
                 value=value,
                 safety_status=SafetyStatus.OUTRIGHT_REJECTED,
                 grace_status=GraceStatus.SKIPPED,
@@ -316,7 +348,10 @@ class AileeTrustPipeline:
                 used_fallback=True,
                 confidence_score=0.0,
                 reasons=reasons,
-                metadata=self._finalize_meta(meta, raw_value, raw_confidence, peers),
+                meta=meta,
+                raw_value=raw_value,
+                raw_confidence=raw_confidence,
+                peers=peers,
             )
             self._commit_result(ts, result, accepted=False)
             return result
@@ -353,8 +388,6 @@ class AileeTrustPipeline:
                 # consensus fail -> fallback
                 reasons.append("Consensus FAIL after ACCEPTED -> fallback.")
                 value = self._fallback_value(history_cache)
-                value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
-                value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
                 result = self._final_result(value, safety_status, grace_status, consensus_status,
                                             used_fallback=True, confidence_score=confidence_score,
                                             reasons=reasons, meta=meta,
@@ -398,8 +431,6 @@ class AileeTrustPipeline:
                         return result
                     reasons.append("Consensus FAIL after GRACE PASS -> fallback.")
                     value = self._fallback_value(history_cache)
-                    value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
-                    value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
                     result = self._final_result(value, safety_status, grace_status, consensus_status,
                                                 used_fallback=True, confidence_score=confidence_score,
                                                 reasons=reasons, meta=meta,
@@ -419,8 +450,6 @@ class AileeTrustPipeline:
             # Grace FAIL -> fallback
             reasons.append("Grace FAIL -> fallback.")
             value = self._fallback_value(history_cache)
-            value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
-            value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
             result = self._final_result(value, safety_status, grace_status, consensus_status,
                                         used_fallback=True, confidence_score=confidence_score,
                                         reasons=reasons, meta=meta,
@@ -431,8 +460,6 @@ class AileeTrustPipeline:
         # OUTRIGHT REJECTED or borderline with grace disabled -> fallback
         reasons.append(f"Safety status {safety_status.value} -> fallback.")
         value = self._fallback_value(history_cache)
-        value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
-        value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
         result = self._final_result(value, safety_status, grace_status, consensus_status,
                                     used_fallback=True, confidence_score=confidence_score,
                                     reasons=reasons, meta=meta,
@@ -683,23 +710,51 @@ class AileeTrustPipeline:
         hist_vals = self._history_values(self.cfg.history_window, history_cache)
 
         if self.cfg.fallback_mode == "last_good" and self.last_good_value is not None:
-            return float(self.last_good_value)
-
-        if not hist_vals:
+            value = _finite_float(self.last_good_value, "last_good_value")
+        elif not hist_vals:
             if self.cfg.hard_min is not None and self.cfg.hard_max is not None:
-                return float((self.cfg.hard_min + self.cfg.hard_max) / 2.0)
-            if self.cfg.hard_min is not None:
-                return float(self.cfg.hard_min)
-            if self.cfg.hard_max is not None:
-                return float(self.cfg.hard_max)
-            # No history and no bounds: safest is 0.0 (caller can set clamps/hard bounds for domain)
-            return 0.0
+                value = _safe_midpoint(
+                    _finite_float(self.cfg.hard_min, "hard_min"),
+                    _finite_float(self.cfg.hard_max, "hard_max"),
+                )
+            elif self.cfg.hard_min is not None:
+                value = self.cfg.hard_min
+            elif self.cfg.hard_max is not None:
+                value = self.cfg.hard_max
+            else:
+                value = 0.0
+        else:
+            hist_vals = [
+                _finite_float(value, f"fallback history[{index}]")
+                for index, value in enumerate(hist_vals)
+            ]
+            if self.cfg.fallback_mode == "mean":
+                try:
+                    value = statistics.fmean(hist_vals)
+                except OverflowError:
+                    # Exact standard-library accumulation avoids intermediate
+                    # overflow and retains cancellation across finite extremes.
+                    value = statistics.mean(hist_vals)
+            else:
+                # last_good without an accepted value retains median policy.
+                ordered = sorted(hist_vals)
+                middle = len(ordered) // 2
+                value = ordered[middle] if len(ordered) % 2 else _safe_midpoint(
+                    ordered[middle - 1], ordered[middle]
+                )
 
-        if self.cfg.fallback_mode == "mean":
-            return float(statistics.fmean(hist_vals))
+        # Reject invalid calculations before clamping can conceal them. Hard
+        # bounds are authoritative after legitimate fallback-policy clamps.
+        value = _finite_float(value, "fallback value")
+        value = _clamp(value, self.cfg.fallback_clamp_min, self.cfg.fallback_clamp_max)
+        value = _clamp(value, self.cfg.hard_min, self.cfg.hard_max)
+        return self._validate_result_value(value)
 
-        # Default: median is robust against outliers
-        return float(statistics.median(hist_vals))
+    def _validate_result_value(self, value: float) -> float:
+        value = _finite_float(value, "result value")
+        if not self._within_hard_bounds(value):
+            raise ValueError("result value must be within the hard safety envelope")
+        return value
 
     # -------------------------
     # Commit / Metadata
@@ -719,6 +774,8 @@ class AileeTrustPipeline:
         raw_confidence: Optional[float],
         peers: Sequence[float],
     ) -> DecisionResult:
+        value = self._validate_result_value(value)
+        confidence_score = _finite_float(confidence_score, "confidence_score")
         md = self._finalize_meta(meta, raw_value, raw_confidence, peers)
         return DecisionResult(
             value=value,
@@ -751,17 +808,23 @@ class AileeTrustPipeline:
             "history_len": len(self.history),
             "last_good_value": self.last_good_value,
         }
+        # Context belongs to the caller and may contain arbitrary application
+        # metadata. Every numeric field produced by the pipeline must be finite.
+        for name, value in meta.items():
+            if name != "context":
+                _validate_audit_numbers(value, f"metadata.{name}")
         return meta
 
     def _commit_result(self, ts: float, result: DecisionResult, accepted: bool) -> None:
+        value = self._validate_result_value(result.value)
         # Store final result and update history with the chosen value (not raw_value),
         # because downstream systems should learn from the trusted stream.
         self.last_result = result
-        self.history.append((ts, float(result.value)))
+        self.history.append((ts, value))
         self.history = _rolling(self.history, self.cfg.history_window * 4)  # keep a longer internal buffer
 
         if accepted and not result.used_fallback:
-            self.last_good_value = float(result.value)
+            self.last_good_value = value
 
     # -------------------------
     # Convenience: diagnostics
