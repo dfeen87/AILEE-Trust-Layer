@@ -436,6 +436,25 @@ try:
 except ImportError:
     _HAS_INDUSTRIAL_DOMAIN = False
 
+try:
+    from .domains.cybersecurity import (
+        CybersecurityGovernor,
+        CybersecurityAuthorizationRequest,
+        CybersecurityDecision,
+        DecisionOutcome,
+        CybersecurityReason,
+        ActionTier,
+        PublisherProvenanceEvidence,
+        ProvenanceStatus,
+        PolicyIdentifier,
+        AdvisorySignal,
+        UntrustedContentContext,
+        create_cybersecurity_governor,
+    )
+    _HAS_CYBERSECURITY_DOMAIN = True
+except ImportError:
+    _HAS_CYBERSECURITY_DOMAIN = False
+
 # =============================================================================
 # Metadata
 # =============================================================================
@@ -745,6 +764,21 @@ if _HAS_LICENSING_DOMAIN:
     __all__.append("LicenseGovernor")
 if _HAS_INDUSTRIAL_DOMAIN:
     __all__.append("ThroughputGovernor")
+if _HAS_CYBERSECURITY_DOMAIN:
+    __all__.extend([
+        "CybersecurityGovernor",
+        "CybersecurityAuthorizationRequest",
+        "CybersecurityDecision",
+        "DecisionOutcome",
+        "CybersecurityReason",
+        "ActionTier",
+        "PublisherProvenanceEvidence",
+        "ProvenanceStatus",
+        "PolicyIdentifier",
+        "AdvisorySignal",
+        "UntrustedContentContext",
+        "create_cybersecurity_governor",
+    ])
 
 # =============================================================================
 # Convenience
@@ -805,6 +839,7 @@ def get_available_domains():
         "video_temporal_provenance": _HAS_VIDEO_TEMPORAL_PROVENANCE_DOMAIN,
         "licensing": _HAS_LICENSING_DOMAIN,
         "industrial": _HAS_INDUSTRIAL_DOMAIN,
+        "cybersecurity": _HAS_CYBERSECURITY_DOMAIN,
     }
 
 
