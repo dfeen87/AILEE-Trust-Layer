@@ -184,3 +184,8 @@ Intentional/state-dependent boundaries:
 **FUTURE / OUT OF SCOPE:** machine control, PLC writes, interlock control, native safety replacement, automatic remediation, signature algorithms, license issuance, network services, persistent ledgers, distributed replay protection, interval construction, overlap aggregation, unit conversion, counter-reset inference, causal/root-cause analysis, audit-sink delivery, production deployment validation, certification, and regulatory approval.
 
 Known implementation limits include: default credential status is trusted from upstream rather than cryptographically proven; state-transition policy is not automatically coupled to throughput; freshness applies to state observations but material observations have chronology rather than a separate max-age threshold; exact material sampling at interval endpoints is not required; overlap handling is per-caller; mappings are not deep immutable; and industrial exceptions from injected components are not normalized by the composition service.
+
+## 9. Cybersecurity Domain (Link Provenance and Injection Governance)
+
+For deterministic governance of external URLs, software-download recommendations, publisher provenance, deceptive link labels, and agent actions influenced by untrusted external content, refer to the dedicated specification in [`docs/CYBERSECURITY_DOMAIN.md`](CYBERSECURITY_DOMAIN.md).
+
