@@ -32,6 +32,6 @@ def test_active_release_metadata_is_consistent():
     assert _text("CITATION.cff").count(f'version: "{EXPECTED_VERSION}"') == 2
     assert f"Current: v{EXPECTED_VERSION}" in _text("README.md")
     assert re.search(
-        rf"assert ailee\.__version__ == ['\"](?:{re.escape(EXPECTED_VERSION)}|10\.0\.2)['\"]",
+        rf"assert ailee\.__version__ == ['\"]{re.escape(EXPECTED_VERSION)}['\"]",
         _text(".github/workflows/ci.yml"),
     )
