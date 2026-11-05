@@ -1,7 +1,7 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
 """
-AILEE Trust Layer v10.0.2
+AILEE Trust Layer v10.1.0
 Adaptive Integrity Layer for AI Decision Systems
 
 A production-ready trust middleware for AI systems that transforms
@@ -438,6 +438,7 @@ except ImportError:
 
 try:
     from .domains.cybersecurity import (
+        ActionMandate,
         CybersecurityGovernor,
         CybersecurityAuthorizationRequest,
         CybersecurityDecision,
@@ -458,7 +459,7 @@ except ImportError:
 # =============================================================================
 # Metadata
 # =============================================================================
-__version__ = "10.0.2"
+__version__ = "10.1.0"
 __author__ = "Don Michael Feeney Jr."
 __license__ = "MIT"
 __status__ = "Production/Stable"
@@ -766,6 +767,7 @@ if _HAS_INDUSTRIAL_DOMAIN:
     __all__.append("ThroughputGovernor")
 if _HAS_CYBERSECURITY_DOMAIN:
     __all__.extend([
+        "ActionMandate",
         "CybersecurityGovernor",
         "CybersecurityAuthorizationRequest",
         "CybersecurityDecision",

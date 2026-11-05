@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-10.0.2-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-10.1.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -1692,16 +1692,11 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v10.0.2
+### Current: v10.1.0
 
-AILEE Trust Layer **v10.0.2** hardens the Python trust pipeline's fallback
-integrity on the v10.0.1 BEDROCK baseline. Hard safety bounds remain the final
-constraint for every fallback, and extreme finite histories and hard-bound
-midpoints produce finite output or fail before state mutation. Safety, GRACE,
-consensus routing, intentional `SKIPPED` behavior, and governed fallback-history
-updates retain their contracts. See the
-[fallback integrity report](docs/FALLBACK_INTEGRITY_V10_0_2.md) for corrections,
-regression evidence, compatibility, and remaining risks.
+AILEE Trust Layer **v10.1.0** introduces the Cybersecurity Trust Domain,
+providing deterministic, fail-closed link integrity, publisher provenance
+verification, prompt injection advisory detection, and tiered agent action authorization.
 
 The historical [BEDROCK v10 release report](docs/BEDROCK_V10.md) and
 [post-BEDROCK review](docs/POST_BEDROCK_V10_0_1.md) retain the evidence for their
@@ -1813,7 +1808,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {10.0.2},
+  version = {10.1.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1858,7 +1853,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v10.0.2**
+**AILEE Trust Layer v10.1.0**
 *Adaptive Integrity Layer for AI Decision Systems*
 
 Built with discipline. Deployed with confidence.
