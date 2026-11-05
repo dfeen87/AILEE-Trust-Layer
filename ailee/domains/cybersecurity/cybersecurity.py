@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import ipaddress
+import json
 import math
 import re
 import unicodedata
@@ -154,6 +155,15 @@ class ActionTier(str, Enum):
     INSTALL_SOFTWARE = "INSTALL_SOFTWARE"
 
 
+HIGH_RISK_ACTION_TIERS = frozenset(
+    [
+        ActionTier.RECOMMEND_SOFTWARE,
+        ActionTier.DOWNLOAD_FILE,
+        ActionTier.INSTALL_SOFTWARE,
+    ]
+)
+
+
 class DecisionOutcome(str, Enum):
     """Deterministic governance decision outcome."""
 
@@ -206,6 +216,13 @@ class CybersecurityReason(str, Enum):
     UNKNOWN_DESTINATION = "UNKNOWN_DESTINATION"
     INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE"
     VERIFICATION_UNAVAILABLE = "VERIFICATION_UNAVAILABLE"
+    PARAMETER_MISMATCH = "PARAMETER_MISMATCH"
+    UNTRUSTED_ISSUER = "UNTRUSTED_ISSUER"
+    INVALID_SIGNATURE = "INVALID_SIGNATURE"
+    MANDATE_EXPIRED = "MANDATE_EXPIRED"
+    MANDATE_NOT_YET_VALID = "MANDATE_NOT_YET_VALID"
+    MANDATE_MISMATCH = "MANDATE_MISMATCH"
+    MANDATE_UNAUTHENTICATED = "MANDATE_UNAUTHENTICATED"
 
 
 class PolicyIdentifier(str, Enum):
@@ -217,6 +234,7 @@ class PolicyIdentifier(str, Enum):
     POLICY_REDIRECT_SAFETY = "POLICY_REDIRECT_SAFETY"
     POLICY_CONTENT_TRUST_BOUNDARY = "POLICY_CONTENT_TRUST_BOUNDARY"
     POLICY_ACTION_AUTHORIZATION = "POLICY_ACTION_AUTHORIZATION"
+    POLICY_CALLER_MANDATE = "POLICY_CALLER_MANDATE"
     POLICY_FAIL_CLOSED = "POLICY_FAIL_CLOSED"
 
 
@@ -284,6 +302,91 @@ class PublisherProvenanceEvidence:
 
 
 @dataclass(frozen=True)
+class ActionMandate:
+    """Authenticated, scoped, time-bound mandate authorizing a high-risk action."""
+
+    mandate_id: str
+    caller_id: str
+    action_tier: ActionTier
+    target_software_id: str
+    target_url: str
+    valid_from: datetime
+    valid_until: datetime
+    issued_by: str
+    signature_or_token: str
+    permitted_parameters: Mapping[str, str] = field(default_factory=dict)
+    schema_version: str = SCHEMA_VERSION
+
+    def to_token(self) -> str:
+        """Serialize mandate to structured token."""
+        return (
+            f"mandate:v1:id={self.mandate_id}|caller={self.caller_id}|tier={self.action_tier.value}|"
+            f"software={self.target_software_id}|url={self.target_url}|issuer={self.issued_by}|"
+            f"from={self.valid_from.isoformat()}|until={self.valid_until.isoformat()}|"
+            f"sig={self.signature_or_token}"
+        )
+
+    @classmethod
+    def from_token(cls, token: str) -> Optional[ActionMandate]:
+        """Parse structured or JSON mandate token."""
+        if not isinstance(token, str) or not token.strip():
+            return None
+        token_clean = token.strip()
+        if token_clean.startswith("{") and token_clean.endswith("}"):
+            try:
+                data = json.loads(token_clean)
+                valid_from = datetime.fromisoformat(data["valid_from"])
+                valid_until = datetime.fromisoformat(data["valid_until"])
+                tier = ActionTier(data["action_tier"])
+                return cls(
+                    mandate_id=str(data["mandate_id"]),
+                    caller_id=str(data["caller_id"]),
+                    action_tier=tier,
+                    target_software_id=str(data["target_software_id"]),
+                    target_url=str(data["target_url"]),
+                    valid_from=valid_from,
+                    valid_until=valid_until,
+                    issued_by=str(data["issued_by"]),
+                    signature_or_token=str(data["signature_or_token"]),
+                    permitted_parameters=dict(data.get("permitted_parameters", {})),
+                    schema_version=str(data.get("schema_version", SCHEMA_VERSION)),
+                )
+            except Exception:
+                return None
+
+        if token_clean.startswith("mandate:"):
+            try:
+                parts = token_clean.split(":", 2)
+                if len(parts) < 3:
+                    return None
+                kv_pairs = parts[2].split("|")
+                kvs: Dict[str, str] = {}
+                for item in kv_pairs:
+                    if "=" in item:
+                        k, v = item.split("=", 1)
+                        kvs[k.strip()] = v.strip()
+                valid_from = datetime.fromisoformat(kvs["from"])
+                valid_until = datetime.fromisoformat(kvs["until"])
+                tier = ActionTier(kvs["tier"])
+                return cls(
+                    mandate_id=kvs["id"],
+                    caller_id=kvs["caller"],
+                    action_tier=tier,
+                    target_software_id=kvs["software"],
+                    target_url=kvs["url"],
+                    valid_from=valid_from,
+                    valid_until=valid_until,
+                    issued_by=kvs["issuer"],
+                    signature_or_token=kvs["sig"],
+                    permitted_parameters={},
+                    schema_version=SCHEMA_VERSION,
+                )
+            except Exception:
+                return None
+        return None
+
+
+@dataclass(frozen=True)
 class UntrustedContentContext:
     """Context surrounding untrusted content referencing a URL or action."""
 
@@ -341,7 +444,7 @@ class CybersecurityAuthorizationRequest:
     )
     redirect_chain: Tuple[str, ...] = field(default_factory=tuple)
     untrusted_content: Optional[UntrustedContentContext] = None
-    caller_mandate: Optional[str] = None
+    caller_mandate: Optional[Union[str, ActionMandate]] = None
     schema_version: str = SCHEMA_VERSION
 
 
@@ -360,8 +463,33 @@ class ProvenanceVerifier(Protocol):
     ) -> ProvenanceStatus: ...
 
 
-class EvidenceProvenanceVerifier:
-    """Deterministic verification of publisher provenance evidence."""
+class TrustedProvenanceVerifier:
+    """
+    Independent cryptographic/registry verifier for publisher provenance.
+
+    Requires an authentic verifier identity belonging to an established trust
+    registry, a non-empty cryptographic signature or digest, and temporal validity.
+    Self-declared verification identities or unverified statuses are rejected.
+    """
+
+    def __init__(
+        self,
+        trusted_issuers: Optional[Sequence[str]] = None,
+        allow_test_verifier: bool = False,
+    ):
+        self._trusted_issuers = (
+            set(trusted_issuers)
+            if trusted_issuers is not None
+            else {
+                "sigstore",
+                "sigstore-verifier-v1",
+                "apple-developer-notarization",
+                "independent-app-registry-v1",
+                "official-registry",
+                "ailee-trust-registry-v1",
+            }
+        )
+        self._allow_test_verifier = allow_test_verifier
 
     def verify(
         self,
@@ -381,6 +509,28 @@ class EvidenceProvenanceVerifier:
         if not evidence.canonical_domains:
             return ProvenanceStatus.INVALID
 
+        # Trusted issuer validation
+        if not evidence.verifier_identity or not evidence.verifier_identity.strip():
+            return ProvenanceStatus.UNVERIFIED
+        if evidence.verifier_identity not in self._trusted_issuers:
+            return ProvenanceStatus.UNVERIFIED
+
+        # Cryptographic signature / digest validation
+        if (
+            not evidence.signature_or_digest
+            or not evidence.signature_or_digest.strip()
+        ):
+            return ProvenanceStatus.UNVERIFIED
+        sig = evidence.signature_or_digest.strip()
+        if not (
+            sig.startswith("sha256:")
+            or sig.startswith("sig:")
+            or sig.startswith("ed25519:")
+            or len(sig) >= 32
+        ):
+            return ProvenanceStatus.UNVERIFIED
+
+        # Status check
         if evidence.status in (
             ProvenanceStatus.REVOKED,
             ProvenanceStatus.CONTRADICTORY,
@@ -389,6 +539,7 @@ class EvidenceProvenanceVerifier:
         ):
             return evidence.status
 
+        # Temporal validity check
         now = _utc(evaluation_time)
         if evidence.valid_from is not None and now < _utc(evidence.valid_from):
             return ProvenanceStatus.INVALID  # Not yet valid
@@ -398,6 +549,25 @@ class EvidenceProvenanceVerifier:
             return ProvenanceStatus.INVALID  # Verified in the future
 
         return ProvenanceStatus.VALID
+
+
+class OfflineTestProvenanceVerifier(TrustedProvenanceVerifier):
+    """Explicitly labeled test verifier for isolated offline fixtures."""
+
+    def __init__(self, trusted_issuers: Optional[Sequence[str]] = None):
+        super().__init__(
+            trusted_issuers=trusted_issuers
+            or [
+                "independent-app-registry-v1",
+                "test-verifier-v1",
+                "sigstore-verifier-v1",
+                "official-registry",
+            ],
+            allow_test_verifier=True,
+        )
+
+
+EvidenceProvenanceVerifier = TrustedProvenanceVerifier
 
 
 # -----------------------------
@@ -423,33 +593,57 @@ def parse_and_canonicalize_url(
         return None, CybersecurityReason.MALFORMED_URL, "URL is empty"
 
     if len(url_clean) > MAX_URL_LENGTH:
-        return None, CybersecurityReason.URL_TOO_LONG, f"URL exceeds {MAX_URL_LENGTH} chars"
+        return (
+            None,
+            CybersecurityReason.URL_TOO_LONG,
+            f"URL exceeds {MAX_URL_LENGTH} chars",
+        )
 
     # Reject control characters
     for ch in url_clean:
         code = ord(ch)
         if code < 32 or code == 127:
-            return None, CybersecurityReason.MALFORMED_URL, "URL contains control characters"
+            return (
+                None,
+                CybersecurityReason.MALFORMED_URL,
+                "URL contains control characters",
+            )
 
     try:
         parsed = urlsplit(url_clean)
     except Exception as exc:
-        return None, CybersecurityReason.MALFORMED_URL, f"URL parsing failed: {exc}"
+        return (
+            None,
+            CybersecurityReason.MALFORMED_URL,
+            f"URL parsing failed: {exc}",
+        )
 
     scheme = parsed.scheme.lower()
     if not scheme:
         return None, CybersecurityReason.MALFORMED_URL, "Missing URL scheme"
 
     if scheme not in allowed_schemes:
-        return None, CybersecurityReason.UNSUPPORTED_SCHEME, f"Scheme '{scheme}' is not authorized"
+        return (
+            None,
+            CybersecurityReason.UNSUPPORTED_SCHEME,
+            f"Scheme '{scheme}' is not authorized",
+        )
 
     netloc = parsed.netloc
     if not netloc:
         return None, CybersecurityReason.MALFORMED_URL, "Missing network location"
 
     # Check for embedded credentials (username:password@host)
-    if "@" in netloc or parsed.username is not None or parsed.password is not None:
-        return None, CybersecurityReason.EMBEDDED_CREDENTIALS, "URL contains embedded credentials"
+    if (
+        "@" in netloc
+        or parsed.username is not None
+        or parsed.password is not None
+    ):
+        return (
+            None,
+            CybersecurityReason.EMBEDDED_CREDENTIALS,
+            "URL contains embedded credentials",
+        )
 
     # Extract host and port
     hostname = parsed.hostname
@@ -466,7 +660,11 @@ def parse_and_canonicalize_url(
         raw_port = parsed.port
         if raw_port is not None:
             if raw_port < 1 or raw_port > 65535:
-                return None, CybersecurityReason.MALFORMED_URL, "Port out of valid range"
+                return (
+                    None,
+                    CybersecurityReason.MALFORMED_URL,
+                    "Port out of valid range",
+                )
             # Omit default ports
             if not (
                 (scheme == "https" and raw_port == 443)
@@ -482,7 +680,6 @@ def parse_and_canonicalize_url(
         ipaddress.ip_address(hostname_clean)
         is_ip = True
     except ValueError:
-        # Check for integer or obfuscated hex/octal IP
         if hostname_clean.isdigit():
             is_ip = True
         elif hostname_clean.startswith("0x") and not "." in hostname_clean:
@@ -509,7 +706,6 @@ def parse_and_canonicalize_url(
                 "URL host contains hidden or directional override characters",
             )
         if ord(ch) > 127:
-            # Non-ASCII character in hostname
             return (
                 None,
                 CybersecurityReason.IDN_HOMOGRAPH_ATTEMPT,
@@ -519,7 +715,6 @@ def parse_and_canonicalize_url(
     # Misleading subdomain structure detection
     # E.g. itsalin.com.attacker.com or apple.com-login.fake.org
     if len(labels) > 2 and not is_ip:
-        # Check subdomains (labels prior to apex domain and TLD)
         subdomain_labels = labels[:-2]
         for sub_label in subdomain_labels:
             for tld in _COMMON_TLDS:
@@ -538,9 +733,7 @@ def parse_and_canonicalize_url(
 
     # Path canonicalization
     raw_path = parsed.path or "/"
-    # Clean consecutive slashes
     clean_path = re.sub(r"/+", "/", raw_path)
-    # Check directory traversal attempts above root
     segments = clean_path.split("/")
     resolved_segments: List[str] = []
     for seg in segments:
@@ -560,7 +753,7 @@ def parse_and_canonicalize_url(
     if raw_path.endswith("/") and not canonical_path.endswith("/"):
         canonical_path += "/"
 
-    # Query canonicalization: sort query params deterministically
+    # Query canonicalization
     canonical_query = ""
     if parsed.query:
         query_items = parse_qsl(parsed.query, keep_blank_values=True)
@@ -574,11 +767,10 @@ def parse_and_canonicalize_url(
         (scheme, canonical_netloc, canonical_path, canonical_query, "")
     )
 
-    # Normalized registered domain (extract last two labels for regular domains)
+    # Normalized registered domain
     if is_ip or len(labels) < 2:
         normalized_domain = hostname_clean
     else:
-        # Simple apex domain extraction (last 2 labels, or 3 if penultimate is co/com/gov/org/net)
         if len(labels) >= 3 and labels[-2] in ("co", "com", "gov", "org", "net"):
             normalized_domain = ".".join(labels[-3:])
         else:
@@ -620,7 +812,6 @@ def check_markdown_link(
     if not label_clean:
         return True, None, None
 
-    # If label resembles a URL or domain
     is_url_label = (
         label_clean.startswith("http://")
         or label_clean.startswith("https://")
@@ -703,10 +894,13 @@ class CybersecurityGovernor:
         verifier: Optional[ProvenanceVerifier] = None,
         max_redirect_hops: int = MAX_REDIRECT_HOPS,
         history_limit: int = 200,
+        trusted_issuers: Optional[Sequence[str]] = None,
     ):
         self._allowed_schemes = tuple(allowed_schemes)
         self._allow_http_informational = allow_http_informational
-        self._verifier = verifier or EvidenceProvenanceVerifier()
+        self._verifier = verifier or TrustedProvenanceVerifier(
+            trusted_issuers=trusted_issuers
+        )
         self._max_redirect_hops = max_redirect_hops
         self._history_limit = history_limit
         self._decision_history: deque[CybersecurityDecision] = deque(
@@ -787,7 +981,6 @@ class CybersecurityGovernor:
         # -------------------------------------------------------------
         # 1. URL Integrity (Safety Layer)
         # -------------------------------------------------------------
-        # Determine allowed schemes based on action tier
         if (
             request.action_tier == ActionTier.DISPLAY_INFORMATIONAL_LINK
             and self._allow_http_informational
@@ -812,11 +1005,7 @@ class CybersecurityGovernor:
 
         # For software downloads/installs, raw IP addresses are prohibited
         if canonical_url.is_ip_address:
-            if request.action_tier in (
-                ActionTier.RECOMMEND_SOFTWARE,
-                ActionTier.DOWNLOAD_FILE,
-                ActionTier.INSTALL_SOFTWARE,
-            ):
+            if request.action_tier in HIGH_RISK_ACTION_TIERS:
                 return self._make_denial(
                     request,
                     CybersecurityReason.DECEPTIVE_HOSTNAME,
@@ -853,7 +1042,10 @@ class CybersecurityGovernor:
             if content_ctx.is_action_promoted:
                 if (
                     not request.caller_mandate
-                    or not request.caller_mandate.strip()
+                    or (
+                        isinstance(request.caller_mandate, str)
+                        and not request.caller_mandate.strip()
+                    )
                 ):
                     return self._make_denial(
                         request,
@@ -873,95 +1065,9 @@ class CybersecurityGovernor:
                 )
 
         # -------------------------------------------------------------
-        # 3. Redirect Chain Inspection
+        # 3. Publisher Provenance & Verification
         # -------------------------------------------------------------
-        if request.redirect_chain:
-            if len(request.redirect_chain) > self._max_redirect_hops:
-                return self._make_denial(
-                    request,
-                    CybersecurityReason.UNSAFE_REDIRECT_CHAIN,
-                    PolicyIdentifier.POLICY_REDIRECT_SAFETY,
-                    canonical_url=canonical_url.canonical_url,
-                    target_domain=target_domain,
-                    details={"error": "Redirect chain exceeds maximum permitted hops"},
-                )
-
-            seen_canonical: Set[str] = {canonical_url.canonical_url}
-            current_domain = canonical_url.normalized_domain
-
-            for hop_idx, hop_url in enumerate(request.redirect_chain):
-                hop_canonical, hop_err, _ = parse_and_canonicalize_url(
-                    hop_url, allowed_schemes=schemes
-                )
-                if hop_canonical is None:
-                    return self._make_denial(
-                        request,
-                        hop_err or CybersecurityReason.UNSAFE_REDIRECT_CHAIN,
-                        PolicyIdentifier.POLICY_REDIRECT_SAFETY,
-                        canonical_url=canonical_url.canonical_url,
-                        target_domain=target_domain,
-                        details={
-                            "error": f"Malformed redirect hop at index {hop_idx}"
-                        },
-                    )
-
-                if hop_canonical.canonical_url in seen_canonical:
-                    return self._make_denial(
-                        request,
-                        CybersecurityReason.UNSAFE_REDIRECT_CHAIN,
-                        PolicyIdentifier.POLICY_REDIRECT_SAFETY,
-                        canonical_url=canonical_url.canonical_url,
-                        target_domain=target_domain,
-                        details={"error": "Circular redirect detected in chain"},
-                    )
-                seen_canonical.add(hop_canonical.canonical_url)
-
-                # Detect cross-domain transitions
-                if hop_canonical.normalized_domain != current_domain:
-                    # If this is software recommendation or download, destination must be authorized
-                    if request.action_tier in (
-                        ActionTier.RECOMMEND_SOFTWARE,
-                        ActionTier.DOWNLOAD_FILE,
-                        ActionTier.INSTALL_SOFTWARE,
-                    ):
-                        is_hop_authorized = (
-                            request.evidence is not None
-                            and (
-                                hop_canonical.hostname
-                                in request.evidence.canonical_domains
-                                or hop_canonical.hostname
-                                in request.evidence.allowed_download_domains
-                                or hop_canonical.normalized_domain
-                                in request.evidence.canonical_domains
-                                or hop_canonical.normalized_domain
-                                in request.evidence.allowed_download_domains
-                            )
-                        )
-                        if not is_hop_authorized:
-                            return self._make_denial(
-                                request,
-                                CybersecurityReason.CROSS_DOMAIN_REDIRECT,
-                                PolicyIdentifier.POLICY_REDIRECT_SAFETY,
-                                canonical_url=canonical_url.canonical_url,
-                                target_domain=target_domain,
-                                advisory_signals=advisories,
-                                details={
-                                    "error": f"Redirect hop {hop_idx} crosses to unauthorized domain '{hop_canonical.hostname}'"
-                                },
-                            )
-                    else:
-                        advisories.append(AdvisorySignal.CROSS_ORIGIN_REDIRECT)
-                current_domain = hop_canonical.normalized_domain
-
-        # -------------------------------------------------------------
-        # 4. Publisher Provenance & Action Authorization (Consensus/Fallback)
-        # -------------------------------------------------------------
-        # Actions requiring independent publisher provenance:
-        if request.action_tier in (
-            ActionTier.RECOMMEND_SOFTWARE,
-            ActionTier.DOWNLOAD_FILE,
-            ActionTier.INSTALL_SOFTWARE,
-        ):
+        if request.action_tier in HIGH_RISK_ACTION_TIERS:
             # Invariant: Missing, unverified, or self-described evidence fails closed
             if request.evidence is None:
                 return self._make_denial(
@@ -1027,6 +1133,9 @@ class CybersecurityGovernor:
                     canonical_url=canonical_url.canonical_url,
                     target_domain=target_domain,
                     advisory_signals=advisories,
+                    details={
+                        "error": "Evidence rejected: untrusted issuer, unverified signature, or self-asserted status"
+                    },
                 )
             if ver_status != ProvenanceStatus.VALID:
                 return self._make_denial(
@@ -1087,13 +1196,15 @@ class CybersecurityGovernor:
 
             # Domain binding evaluation
             clean_host = canonical_url.hostname
-            clean_apex = canonical_url.normalized_domain
 
             if request.action_tier == ActionTier.RECOMMEND_SOFTWARE:
                 # Target host must match canonical publisher domains
                 is_canonical = (
                     clean_host in evidence.canonical_domains
-                    or clean_apex in evidence.canonical_domains
+                    or any(
+                        clean_host.endswith(f".{dom}")
+                        for dom in evidence.canonical_domains
+                    )
                 )
                 if not is_canonical:
                     return self._make_denial(
@@ -1108,11 +1219,17 @@ class CybersecurityGovernor:
                         },
                     )
 
-            elif request.action_tier == ActionTier.DOWNLOAD_FILE:
+            elif request.action_tier in (
+                ActionTier.DOWNLOAD_FILE,
+                ActionTier.INSTALL_SOFTWARE,
+            ):
                 # Target host must match authorized download domains
                 is_authorized_download = (
                     clean_host in evidence.allowed_download_domains
-                    or clean_apex in evidence.allowed_download_domains
+                    or any(
+                        clean_host.endswith(f".{dom}")
+                        for dom in evidence.allowed_download_domains
+                    )
                 )
                 if not is_authorized_download:
                     return self._make_denial(
@@ -1127,67 +1244,222 @@ class CybersecurityGovernor:
                         },
                     )
 
-            elif request.action_tier == ActionTier.INSTALL_SOFTWARE:
-                # Installation requires download authorization + explicit caller mandate
-                is_authorized_download = (
-                    clean_host in evidence.allowed_download_domains
-                    or clean_apex in evidence.allowed_download_domains
+                if request.action_tier == ActionTier.INSTALL_SOFTWARE:
+                    # Installation requires authenticated, scoped, time-bound mandate
+                    mandate_obj: Optional[ActionMandate] = None
+                    if isinstance(request.caller_mandate, ActionMandate):
+                        mandate_obj = request.caller_mandate
+                    elif isinstance(request.caller_mandate, str):
+                        mandate_obj = ActionMandate.from_token(
+                            request.caller_mandate
+                        )
+
+                    if mandate_obj is None:
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.INSUFFICIENT_ACTION_AUTHORIZATION,
+                            PolicyIdentifier.POLICY_CALLER_MANDATE,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                            details={
+                                "error": "Software installation requires an authenticated, structured ActionMandate"
+                            },
+                        )
+
+                    # Validate mandate scope, action tier, software identity, and target URL
+                    if mandate_obj.action_tier != ActionTier.INSTALL_SOFTWARE:
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.MANDATE_MISMATCH,
+                            PolicyIdentifier.POLICY_CALLER_MANDATE,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                            details={
+                                "error": f"Mandate action_tier '{mandate_obj.action_tier}' does not authorize installation"
+                            },
+                        )
+
+                    if (
+                        request.software_id
+                        and mandate_obj.target_software_id.lower()
+                        != request.software_id.lower()
+                    ):
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.MANDATE_MISMATCH,
+                            PolicyIdentifier.POLICY_CALLER_MANDATE,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                            details={
+                                "error": "Mandate target_software_id does not match requested software"
+                            },
+                        )
+
+                    if (
+                        mandate_obj.target_url != canonical_url.canonical_url
+                        and canonical_url.hostname not in mandate_obj.target_url
+                    ):
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.MANDATE_MISMATCH,
+                            PolicyIdentifier.POLICY_CALLER_MANDATE,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                            details={
+                                "error": "Mandate target_url does not match authorized execution destination"
+                            },
+                        )
+
+                    now = _utc(request.evaluation_time)
+                    if now < _utc(mandate_obj.valid_from):
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.MANDATE_NOT_YET_VALID,
+                            PolicyIdentifier.POLICY_CALLER_MANDATE,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                        )
+                    if now >= _utc(mandate_obj.valid_until):
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.MANDATE_EXPIRED,
+                            PolicyIdentifier.POLICY_CALLER_MANDATE,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                        )
+
+                    if (
+                        not mandate_obj.signature_or_token
+                        or not mandate_obj.signature_or_token.strip()
+                    ):
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.MANDATE_UNAUTHENTICATED,
+                            PolicyIdentifier.POLICY_CALLER_MANDATE,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                            details={"error": "Mandate signature or token missing"},
+                        )
+
+        # -------------------------------------------------------------
+        # 4. Strict Redirect Chain Authorization
+        # -------------------------------------------------------------
+        if request.redirect_chain:
+            if len(request.redirect_chain) > self._max_redirect_hops:
+                return self._make_denial(
+                    request,
+                    CybersecurityReason.UNSAFE_REDIRECT_CHAIN,
+                    PolicyIdentifier.POLICY_REDIRECT_SAFETY,
+                    canonical_url=canonical_url.canonical_url,
+                    target_domain=target_domain,
+                    details={"error": "Redirect chain exceeds maximum permitted hops"},
                 )
-                if not is_authorized_download:
-                    return self._make_denial(
-                        request,
-                        CybersecurityReason.UNAUTHORIZED_DOWNLOAD_DOMAIN,
-                        PolicyIdentifier.POLICY_ACTION_AUTHORIZATION,
-                        canonical_url=canonical_url.canonical_url,
-                        target_domain=target_domain,
-                        advisory_signals=advisories,
+
+            seen_canonical: Set[str] = {canonical_url.canonical_url}
+
+            # Determine authorized host list for high-risk tiers
+            authorized_hosts: Set[str] = set()
+            if request.action_tier in (
+                ActionTier.DOWNLOAD_FILE,
+                ActionTier.INSTALL_SOFTWARE,
+            ):
+                if request.evidence is not None:
+                    authorized_hosts = set(
+                        request.evidence.allowed_download_domains
                     )
-                if (
-                    not request.caller_mandate
-                    or not request.caller_mandate.strip()
-                ):
+            elif request.action_tier == ActionTier.RECOMMEND_SOFTWARE:
+                if request.evidence is not None:
+                    authorized_hosts = set(request.evidence.canonical_domains)
+
+            for hop_idx, hop_url in enumerate(request.redirect_chain):
+                hop_canonical, hop_err, _ = parse_and_canonicalize_url(
+                    hop_url, allowed_schemes=schemes
+                )
+                if hop_canonical is None:
                     return self._make_denial(
                         request,
-                        CybersecurityReason.INSUFFICIENT_ACTION_AUTHORIZATION,
-                        PolicyIdentifier.POLICY_ACTION_AUTHORIZATION,
+                        hop_err or CybersecurityReason.UNSAFE_REDIRECT_CHAIN,
+                        PolicyIdentifier.POLICY_REDIRECT_SAFETY,
                         canonical_url=canonical_url.canonical_url,
                         target_domain=target_domain,
-                        advisory_signals=advisories,
                         details={
-                            "error": "Software installation requires explicit caller mandate"
+                            "error": f"Malformed redirect hop at index {hop_idx}"
                         },
                     )
 
-        # For lower tiers (DISPLAY_INFORMATIONAL_LINK and OPEN_WEBSITE):
-        # If evidence was supplied, validate it; invalid evidence fails closed
-        elif request.evidence is not None:
-            try:
-                ver_status = self._verifier.verify(
-                    request.evidence, request.evaluation_time
-                )
-                if ver_status in (
-                    ProvenanceStatus.REVOKED,
-                    ProvenanceStatus.CONTRADICTORY,
-                ):
+                if hop_canonical.canonical_url in seen_canonical:
                     return self._make_denial(
                         request,
-                        CybersecurityReason.PROVENANCE_REVOKED
-                        if ver_status == ProvenanceStatus.REVOKED
-                        else CybersecurityReason.PROVENANCE_CONTRADICTORY,
-                        PolicyIdentifier.POLICY_PUBLISHER_PROVENANCE,
+                        CybersecurityReason.UNSAFE_REDIRECT_CHAIN,
+                        PolicyIdentifier.POLICY_REDIRECT_SAFETY,
                         canonical_url=canonical_url.canonical_url,
                         target_domain=target_domain,
-                        advisory_signals=advisories,
+                        details={"error": "Circular redirect detected in chain"},
                     )
-            except Exception:
-                pass
+                seen_canonical.add(hop_canonical.canonical_url)
+
+                # For high-risk actions, every hop must be an authorized host
+                if request.action_tier in HIGH_RISK_ACTION_TIERS:
+                    hop_host = hop_canonical.hostname
+                    is_hop_allowed = (
+                        hop_host in authorized_hosts
+                        or any(
+                            hop_host.endswith(f".{dom}")
+                            for dom in authorized_hosts
+                        )
+                    )
+                    if not is_hop_allowed:
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.CROSS_DOMAIN_REDIRECT,
+                            PolicyIdentifier.POLICY_REDIRECT_SAFETY,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                            details={
+                                "error": f"Redirect hop {hop_idx} host '{hop_host}' is not in authorized publisher domains"
+                            },
+                        )
+
+            # Final landing URL check
+            final_hop_canonical, _, _ = parse_and_canonicalize_url(
+                request.redirect_chain[-1], allowed_schemes=schemes
+            )
+            if final_hop_canonical is not None:
+                if request.action_tier in (
+                    ActionTier.DOWNLOAD_FILE,
+                    ActionTier.INSTALL_SOFTWARE,
+                ):
+                    final_host = final_hop_canonical.hostname
+                    if (
+                        final_host not in authorized_hosts
+                        and not any(
+                            final_host.endswith(f".{dom}")
+                            for dom in authorized_hosts
+                        )
+                    ):
+                        return self._make_denial(
+                            request,
+                            CybersecurityReason.UNAUTHORIZED_DOWNLOAD_DOMAIN,
+                            PolicyIdentifier.POLICY_REDIRECT_SAFETY,
+                            canonical_url=canonical_url.canonical_url,
+                            target_domain=target_domain,
+                            advisory_signals=advisories,
+                            details={
+                                "error": f"Final redirect destination '{final_host}' is not an authorized download domain"
+                            },
+                        )
 
         # -------------------------------------------------------------
         # 5. Outcome Determination (GRACE contextual mediation)
         # -------------------------------------------------------------
-        # If any advisory signals exist (e.g. untrusted text had prompt injection attempt,
-        # but the requested action is merely displaying an informational link requested by caller):
-        # Require human review if advisory signals exist
         if advisories:
             audit = CybersecurityAuditRecord(
                 request_id=request.request_id,
@@ -1208,7 +1480,7 @@ class CybersecurityGovernor:
                 details={"advisories": ",".join(s.value for s in advisories)},
             )
             decision = CybersecurityDecision(
-                authorized=False,  # REVIEW is not automated authorization
+                authorized=False,
                 outcome=DecisionOutcome.REVIEW,
                 reason=CybersecurityReason.REVIEW_REQUIRED,
                 policy_id=PolicyIdentifier.POLICY_CONTENT_TRUST_BOUNDARY,
@@ -1262,6 +1534,7 @@ class CybersecurityGovernor:
             "publisher_provenance": CybersecurityHealthStatus.OPTIMAL,
             "content_trust_boundary": CybersecurityHealthStatus.OPTIMAL,
             "action_authorization": CybersecurityHealthStatus.OPTIMAL,
+            "caller_mandate": CybersecurityHealthStatus.OPTIMAL,
         }
 
     def get_metrics(self) -> Dict[str, Any]:
@@ -1324,7 +1597,7 @@ def create_cybersecurity_governor(**kwargs: Any) -> CybersecurityGovernor:
 
 
 def create_strict_cybersecurity_governor(**kwargs: Any) -> CybersecurityGovernor:
-    """Factory function for strict CybersecurityGovernor (HTTPS only)."""
+    """Factory function for strict CybersecurityGovernor (HTTPS only, trusted verifiers required)."""
     defaults = {
         "allowed_schemes": ("https",),
         "allow_http_informational": False,

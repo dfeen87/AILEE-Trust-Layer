@@ -8,7 +8,7 @@ import ailee
 
 
 ROOT = Path(__file__).resolve().parents[1]
-EXPECTED_VERSION = "10.0.2"
+EXPECTED_VERSION = "10.1.0"
 
 
 def _text(path: str) -> str:

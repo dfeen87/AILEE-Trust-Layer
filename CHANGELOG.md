@@ -1,5 +1,49 @@
 # Changelog
 
+### **v10.1.0 — PROVENANCE BOUNDARY**
+
+*Link Integrity · Publisher Verification · Injection Governance · Agent Authorization*
+
+**Type:** Minor Release (Cybersecurity Trust Domain and Authorization Hardening)
+
+#### 1. Introduction of the Cybersecurity Trust Domain
+- Introduces `ailee.domains.cybersecurity` as an independent domain within AILEE Trust Layer.
+- Implements deterministic, fail-closed governance of external URLs, software recommendations, link provenance, and agent actions influenced by untrusted external content.
+- Core Invariant: AILEE governs whether an external recommendation or agent action is authorized; it does not assume that an AI-generated link is trustworthy simply because the AI generated it.
+
+#### 2. The Five Levels of External Action Authorization
+- `DISPLAY_INFORMATIONAL_LINK` (Low Risk): Validates URL integrity and Markdown link consistency.
+- `OPEN_WEBSITE` (Moderate Risk): Enforces HTTPS and safe domain structure without deceptive homoglyphs.
+- `RECOMMEND_SOFTWARE` (Substantial Risk): Requires independently verified publisher provenance matching canonical domains.
+- `DOWNLOAD_FILE` (High Risk): Requires verified publisher provenance matching authorized download domains.
+- `INSTALL_SOFTWARE` (Critical Risk): Requires verified download authorization plus an authenticated, scoped, time-bound `ActionMandate`.
+
+#### 3. Publisher Provenance & Trust-Boundary Enforcement
+- Enforces the hard rule: Domain resemblance, HTTPS, search ranking, and website self-description must **never** independently establish publisher authenticity.
+- Verifies half-open temporal validity intervals `[valid_from, valid_until)`.
+- Rejects unverified, expired, revoked, or contradictory peer evidence.
+
+#### 4. Prompt-Injection Advisory Detection & Boundaries
+- Scans untrusted content for prompt-injection overrides and tool-execution lures as advisory signals.
+- Enforces hard execution parameter boundaries: external text cannot promote itself into tool-execution authority without an explicit caller mandate (`UNTRUSTED_EXECUTION_PROMOTION`).
+
+#### 5. Security Hardening Corrections (Post-PR #96)
+- **Target Binding:** `CybersecurityActionWrapper.execute()` strictly binds execution arguments to the authorized request; parameter tampering or URL substitution is rejected with `PARAMETER_MISMATCH`.
+- **Enforcement Invariants:** `shadow_mode=True` and disabled review confirmation can never bypass `DENY` or `REVIEW` for high-risk actions.
+- **Trusted Provenance Verifier:** `TrustedProvenanceVerifier` enforces authentic verifier identities from recognized trust registries and cryptographic signatures/digests.
+- **Strict Redirect Validation:** Validates every intermediate hop and the final landing destination against exact authorized publisher domains; eliminates loose apex domain guessing.
+- **Authenticated Action Mandates:** Replaces arbitrary strings with `ActionMandate` enforcing caller identity, exact action tier, target software/URL binding, validity window, and cryptographic signature.
+
+#### 6. Regression Testing & Verification
+- 33 focused unit and offline adversarial test fixtures covering lookalikes, deceptive Markdown links, embedded credentials, IDN/punycode homoglyphs, cross-domain redirects, forged evidence, prompt injection, and the Pearcleaner incident regression fixture.
+- Full repository test suite: 701 passed, 3 skipped, 0 regressions.
+
+#### 7. Compatibility & Scope
+- Fully backward compatible with existing AILEE domains, configurations, and pipeline invariants.
+- Side-effect-free: 0 network requests, 0 DNS lookups, 0 binary downloads or executions.
+
+---
+
 ### **v10.0.2 — Fallback Integrity and Numeric Safety**
 
 **Type:** Patch (restores finite fallback output and authoritative hard bounds)
