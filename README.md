@@ -1695,8 +1695,10 @@ It makes them **responsible**.
 ### Current: v10.1.0
 
 AILEE Trust Layer **v10.1.0** introduces the Cybersecurity Trust Domain,
-providing deterministic, fail-closed link integrity, publisher provenance
-verification, prompt injection advisory detection, and tiered agent action authorization.
+with link integrity checks, structural publisher-evidence checks, prompt injection
+advisories, and tiered action decisions. A trusted integration must independently
+authenticate publisher evidence, caller identities, and installation mandates
+before consequential use. See the [Cybersecurity Trust Domain limitations](docs/CYBERSECURITY_DOMAIN.md#6-limitations).
 
 The historical [BEDROCK v10 release report](docs/BEDROCK_V10.md) and
 [post-BEDROCK review](docs/POST_BEDROCK_V10_0_1.md) retain the evidence for their

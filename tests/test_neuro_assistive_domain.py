@@ -317,6 +317,29 @@ def test_explain_decision_handles_consent_denial_without_pipeline_result(governo
     assert "Increase trust score" not in explanation
 
 
+@pytest.mark.parametrize("ceiling_source", ["cognitive-state", "policy"])
+def test_explain_decision_does_not_suggest_score_increase_to_remove_ceiling(
+    governor, signals, ceiling_source
+):
+    signals = replace(signals, assistance_trust_score=0.75, interpretation_confidence=0.75)
+    if ceiling_source == "cognitive-state":
+        signals = replace(signals, current_cognitive_state=CognitiveState.UNKNOWN)
+    else:
+        governor = NeuroGovernor(
+            cfg=governor.cfg,
+            policy=NeuroAssistivePolicy(max_assistance_level=AssistanceLevel.NO_ASSISTANCE),
+        )
+    decision = governor.evaluate(signals)
+    assert decision.ailee_result is not None and not decision.ailee_result.used_fallback
+    assert decision.validated_trust_score == 0.75
+    assert not decision.assistance_authorized
+
+    explanation = governor.explain_decision(decision)
+    assert "Validated Trust Score: 0.75 / 1.00" in explanation
+    assert "Increase trust score" not in explanation
+    assert "Review the decision reasons and applicable authority limits." in explanation
+
+
 def test_malformed_state_cannot_commit_pipeline_history(governor, signals):
     with pytest.raises(TypeError, match="current_cognitive_state"):
         governor.evaluate(replace(signals, current_cognitive_state="UNKNOWN"))

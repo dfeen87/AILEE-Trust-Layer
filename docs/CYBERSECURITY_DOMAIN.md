@@ -4,6 +4,8 @@
 
 The **Cybersecurity Trust Domain** (`ailee.domains.cybersecurity`) provides deterministic, side-effect-free governance of external URLs, software-download recommendations, link provenance, and agent actions influenced by untrusted external content.
 
+The default verifier checks publisher evidence fields and reported state. Installation mandate checks cover fields, scope, time, and token presence. Independent authentication of publisher identities, signed evidence, callers, and mandates belongs at a trusted integration boundary.
+
 This domain was motivated by a real-world failure mode where an AI assistant recommended an unverified software distribution website (`pear-cleaner.com` rather than the developer's authentic source `itsalin.com`), leading to an unexpected DMG download and a macOS malware alert.
 
 Status terms used here (following AILEE standard conventions):
@@ -23,10 +25,10 @@ Status terms used here (following AILEE standard conventions):
 | Threat Vector | Description | Attacker Objective | AILEE Defense / Policy |
 | :--- | :--- | :--- | :--- |
 | **Lookalike / Typosquatting Domains** | Domains that visually resemble legitimate software projects (e.g. `pear-cleaner.com` vs `itsalin.com`). | Distribute modified binaries, Trojans, or bundleware under the guise of an authentic project. | `POLICY_PUBLISHER_PROVENANCE`: Requires publisher provenance authenticated by a trusted integration. Invariant: Domain resemblance, HTTPS, search ranking, and website self-description never establish authenticity. |
-| **Execution Target Substitution** | Passing one authorized URL in the request while passing a different malicious URL to the underlying tool. | Confused deputy attack bypassing authorization checks at execution time. | Strict parameter binding in `CybersecurityActionWrapper`: Compares all execution arguments against the authorized target; rejects mismatches with `PARAMETER_MISMATCH`. |
+| **Execution Target Substitution** | Passing one authorized URL in the request while passing a different malicious URL to the underlying tool. | Confused deputy attack bypassing authorization checks at execution time. | `CybersecurityActionWrapper` rejects mismatches in recognized URL arguments with `PARAMETER_MISMATCH`. Integrations must bind all security-relevant execution parameters. |
 | **Shadow Mode / Review Bypass** | Attempting to use `shadow_mode=True` or `require_confirmation_for_review=False` to execute unverified downloads or installs. | Execute unauthorized high-risk side effects under observation or permissive settings. | Hard enforcement invariant: `shadow_mode` and disabled review confirmation can never bypass `DENY` or `REVIEW` for high-risk actions. |
 | **Forged / Self-Asserted Provenance** | Submitting evidence marked `VALID` without authentic cryptographic signature or from an unknown issuer. | Trick the governor into accepting attacker-fabricated publisher claims. | `TrustedProvenanceVerifier` checks issuer labels, signature-field format, evidence state, and validity windows. An independent verifier or trusted ingress must authenticate the evidence. |
-| **Cross-Boundary Redirect Chains** | An initial request to an authorized domain that hops through intermediate untrusted hosts to a payload. | Exploit initial domain trust to deliver unverified payloads. | `POLICY_REDIRECT_SAFETY`: Independently validates every single intermediate hop and final destination against exact authorized publisher hosts. |
+| **Cross-Boundary Redirect Chains** | An initial request to an authorized domain that hops through intermediate untrusted hosts to a payload. | Exploit initial domain trust to deliver unverified payloads. | `POLICY_REDIRECT_SAFETY` checks supplied hops against exact authorized publisher hosts. The integration supplies the chain. |
 | **Unauthenticated Installation Requests** | Submitting arbitrary strings or tokens to authorize local binary installation. | Elevate agent privileges to execute local software installations without user authority. | `POLICY_CALLER_MANDATE`: The built-in check validates mandate fields, scope, time, and token presence. Integrations must independently authenticate the mandate and bind it to the actual caller and exact target before execution. |
 | **Deceptive Markdown Links** | Markdown link syntax where the visible anchor label is a URL differing from the href destination. | Trick users or automated reviewers into clicking an unverified destination. | `POLICY_LINK_CONSISTENCY`: Compares parsed hostnames between anchor label and href destination; fails closed with `DECEPTIVE_LINK_LABEL`. |
 | **Embedded URL Credentials** | URLs containing userinfo in authority/netloc (e.g. `https://user:password@target.com/`). | Phishing, credential leakage, or abusing HTTP authentication semantics. | `POLICY_URL_INTEGRITY`: Strict parsing identifies credentials in netloc and fails closed with `EMBEDDED_CREDENTIALS`. |
@@ -57,7 +59,7 @@ External URL / Action Request + Untrusted Content + Provenance Evidence
                                  |
                                  v
                  [ Provenance & Consensus Layer ]
-                 - Validate independent PublisherProvenanceEvidence
+                 - Check supplied PublisherProvenanceEvidence
                  - Validate half-open validity window [valid_from, valid_until)
                  - Match software_id and canonical/download domains
                  - Multi-source peer consensus (contradiction rejection)
@@ -66,9 +68,9 @@ External URL / Action Request + Untrusted Content + Provenance Evidence
                  [ Tiered Action Authorization Layer ]
                  - DISPLAY_INFORMATIONAL_LINK -> Clean URL
                  - OPEN_WEBSITE -> HTTPS + clean host
-                 - RECOMMEND_SOFTWARE -> Verified canonical domain
-                 - DOWNLOAD_FILE -> Verified download domain
-                 - INSTALL_SOFTWARE -> Verified domain + explicit caller mandate
+                 - RECOMMEND_SOFTWARE -> Evidence + canonical domain match
+                 - DOWNLOAD_FILE -> Evidence + download domain match
+                 - INSTALL_SOFTWARE -> Download checks + structured mandate
                                  |
                                  v
                        CybersecurityDecision
@@ -83,14 +85,14 @@ The domain categorizes actions into 5 progressively governed risk tiers:
 
 1. `DISPLAY_INFORMATIONAL_LINK` (Low Risk): Presenting an informational reference link to the user. Requires URL integrity and consistent Markdown labels.
 2. `OPEN_WEBSITE` (Moderate Risk): Opening a remote webpage in a browser or web client. Requires HTTPS and safe domain structure.
-3. `RECOMMEND_SOFTWARE` (Substantial Risk): Advising a user to obtain or use a specific software application. **Requires independently established publisher provenance matching the destination domain.**
-4. `DOWNLOAD_FILE` (High Risk): Fetching a binary, package, installer (DMG, PKG, EXE, ZIP). Requires valid publisher provenance and destination domain matching `allowed_download_domains`.
-5. `INSTALL_SOFTWARE` (Critical Risk): Executing an installer or launching downloaded software. Requires download authorization plus an explicit `caller_mandate` granting execution privileges.
+3. `RECOMMEND_SOFTWARE` (Substantial Risk) checks supplied publisher evidence and a matching canonical domain.
+4. `DOWNLOAD_FILE` (High Risk) checks supplied publisher evidence and a destination matching `allowed_download_domains`.
+5. `INSTALL_SOFTWARE` (Critical Risk) adds checks on the structure, scope, time, and token presence of the supplied `caller_mandate`. The integration must authenticate the caller and mandate and bind the mandate to the exact action and destination before execution.
 
 ### 3.2 Decision Outcomes and Stable Reason Codes
 
 Decisions return one of three explicit outcomes:
-- `ALLOW`: All verification invariants and evidence criteria are satisfied.
+- `ALLOW`: The configured policy checks passed. Identity and signature assurance depend on independent authentication at the integration boundary.
 - `REVIEW`: Hard invariants are satisfied, but advisory content signals (e.g. prompt injection phrases in search snippets) require human review before proceeding.
 - `DENY`: Security invariant violated, provenance missing or contradictory, or unauthorized domain.
 
@@ -136,7 +138,6 @@ from ailee.domains.cybersecurity import (
     CybersecurityAuthorizationRequest,
     PublisherProvenanceEvidence,
     ActionTier,
-    ProvenanceStatus,
     DecisionOutcome,
 )
 
@@ -156,49 +157,18 @@ decision = governor.authorize(request)
 assert decision.outcome == DecisionOutcome.DENY
 assert decision.reason.value == "PROVENANCE_MISSING"
 
-# 2. When authentic publisher evidence for Pearcleaner is supplied:
-evidence = PublisherProvenanceEvidence(
-    evidence_id="ev-pearcleaner-2026",
-    software_id="pearcleaner",
-    publisher_id="alin_panaitiu",
-    publisher_name="Alin Panaitiu",
-    canonical_domains=("itsalin.com",),
-    allowed_download_domains=("itsalin.com", "github.com"),
-    status=ProvenanceStatus.VALID,
-    valid_from=now,
-    valid_until=None,
-    verified_at=now,
-    verifier_identity="official-registry",
-)
-
-# Evaluating the lookalike domain against verified evidence:
-decision_lookalike = governor.authorize(
-    CybersecurityAuthorizationRequest(
-        request_id="req-rec-2",
-        action_tier=ActionTier.RECOMMEND_SOFTWARE,
-        url="https://pear-cleaner.com/",
-        software_id="pearcleaner",
-        evaluation_time=now,
-        evidence=evidence,
+# 2. Pass evidence that a trusted integration has already authenticated.
+def evaluate_with_publisher_evidence(url: str, evidence: PublisherProvenanceEvidence):
+    return governor.authorize(
+        CybersecurityAuthorizationRequest(
+            request_id="req-rec-2",
+            action_tier=ActionTier.RECOMMEND_SOFTWARE,
+            url=url,
+            software_id="pearcleaner",
+            evaluation_time=datetime.now(timezone.utc),
+            evidence=evidence,
+        )
     )
-)
-# Denied deterministically without falsely labeling the domain malicious:
-assert decision_lookalike.outcome == DecisionOutcome.DENY
-assert decision_lookalike.reason.value == "UNVERIFIED_PUBLISHER_DOMAIN"
-
-# Evaluating the authentic publisher domain:
-decision_official = governor.authorize(
-    CybersecurityAuthorizationRequest(
-        request_id="req-rec-3",
-        action_tier=ActionTier.RECOMMEND_SOFTWARE,
-        url="https://itsalin.com/",
-        software_id="pearcleaner",
-        evaluation_time=now,
-        evidence=evidence,
-    )
-)
-assert decision_official.outcome == DecisionOutcome.ALLOW
-assert decision_official.authorized is True
 ```
 
 ### 4.2 Intercepting Agent Tools with `CybersecurityActionWrapper`

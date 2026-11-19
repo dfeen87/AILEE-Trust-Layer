@@ -2,7 +2,7 @@
 
 ### **v10.1.0 — PROVENANCE BOUNDARY**
 
-*Link Integrity · Publisher Verification · Injection Governance · Agent Authorization*
+*Link Integrity · Publisher Evidence · Injection Governance · Agent Authorization*
 
 **Type:** Minor Release (Cybersecurity Trust Domain and Authorization Hardening)
 
@@ -14,8 +14,8 @@
 #### 2. The Five Levels of External Action Authorization
 - `DISPLAY_INFORMATIONAL_LINK` (Low Risk): Validates URL integrity and Markdown link consistency.
 - `OPEN_WEBSITE` (Moderate Risk): Enforces HTTPS and safe domain structure without deceptive homoglyphs.
-- `RECOMMEND_SOFTWARE` (Substantial Risk): Requires independently verified publisher provenance matching canonical domains.
-- `DOWNLOAD_FILE` (High Risk): Requires verified publisher provenance matching authorized download domains.
+- `RECOMMEND_SOFTWARE` (Substantial Risk): Checks supplied publisher evidence and matches the destination to its canonical domains.
+- `DOWNLOAD_FILE` (High Risk): Checks supplied publisher evidence and matches the destination to its authorized download domains.
 - `INSTALL_SOFTWARE` (Critical Risk): Checks download authorization and a scoped, time-bound `ActionMandate`. Independent mandate authentication is an integration requirement.
 
 #### 3. Publisher Provenance & Trust-Boundary Enforcement
@@ -28,10 +28,10 @@
 - Enforces hard execution parameter boundaries: external text cannot promote itself into tool-execution authority without an explicit caller mandate (`UNTRUSTED_EXECUTION_PROMOTION`).
 
 #### 5. Security Hardening Corrections (Post-PR #96)
-- **Target Binding:** `CybersecurityActionWrapper.execute()` strictly binds execution arguments to the authorized request; parameter tampering or URL substitution is rejected with `PARAMETER_MISMATCH`.
+- **Target Binding:** `CybersecurityActionWrapper.execute()` rejects mismatches in recognized URL arguments. Integrations must bind all security-relevant execution parameters.
 - **Enforcement Invariants:** `shadow_mode=True` and disabled review confirmation can never bypass `DENY` or `REVIEW` for high-risk actions.
 - **Default Provenance Checks:** `TrustedProvenanceVerifier` checks issuer labels, signature or digest format, evidence state, and time. Authenticating signed evidence requires an independent verifier or trusted ingress.
-- **Strict Redirect Validation:** Validates every intermediate hop and the final landing destination against exact authorized publisher domains; eliminates loose apex domain guessing.
+- **Redirect Validation:** Checks supplied redirect hops against exact authorized publisher domains.
 - **Structured Action Mandates:** Checks action scope, target, validity window, and token presence. Caller and signature authentication require an independent trust boundary. See [Cybersecurity Trust Domain](docs/CYBERSECURITY_DOMAIN.md#6-limitations).
 
 #### 6. Regression Testing & Verification

@@ -1113,11 +1113,9 @@ class NeuroGovernor:
         if (
             pipeline_result is not None
             and not pipeline_result.used_fallback
-            and decision.validated_trust_score < 0.80
             and not decision.assistance_authorized
         ):
-            gap = 0.80 - decision.validated_trust_score
-            lines.append(f"• Increase trust score by {gap:.2f} to enable basic assistance")
+            lines.append("• Review the decision reasons and applicable authority limits.")
         
         if decision.safety_flags:
             lines.append("• Address safety concerns:")
