@@ -99,3 +99,11 @@ implemented. Exact-scope coverage is limited to the supplied catalog; a scope
 with more than 32 entries cannot pass this bounded gate. The engine does not
 discover studies, review raw artifacts, infer uncertainty, assess actual method
 reliability or authorize any action.
+
+## Phase 3 — original synthetic engineering cases
+
+See [benchmarks](BENCHMARKS.md) for the finite conformance comparison and
+[corpus provenance](CORPUS_PROVENANCE.md) for the frozen original fixture
+identities and limits. The gate matched 40/40 manually assigned engineering
+outcome/reason labels, not scientific classifications. No real scientific data,
+animal replacement claim, performance validation or prototype reproduction.
