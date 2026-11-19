@@ -15,9 +15,10 @@ from .contracts import (
     ReviewStatus,
     Scope,
 )
+from .governor import Decision, EvidenceGovernor
 
 __all__ = [
     "SCHEMA_VERSION", "CatalogEntry", "CatalogRef", "ContractError",
     "EvidenceCatalog", "EvidenceRecord", "EvidenceRequest", "Observation",
-    "Outcome", "Reason", "ReviewPolicy", "ReviewStatus", "Scope",
+    "Outcome", "Reason", "ReviewPolicy", "ReviewStatus", "Scope", "Decision", "EvidenceGovernor",
 ]

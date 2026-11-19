@@ -11,3 +11,17 @@
   existing-domain edits in this phase.
 - Local verification, Python 3.11.14: `python -m pytest -q tests/test_opennam_contracts.py`
   — 37 passed. Contract conformance only; not scientific validation.
+
+## Phase 2 — deterministic evidence metadata governor
+
+- Implemented the opt-in governor with independent immutable copied snapshots,
+  nested exact-type revalidation, explicit clock, exact-scope catalog coverage,
+  metadata digest binding, QC/reporting/applicability, chronology, conflicting
+  or inconclusive categorical tokens, duplicate artifacts and distinct-group
+  checks. No raw biological data, model, quantitative inference or integration.
+- Stable reason codes, canonical audit fingerprints of the policy/catalog and
+  only fully bound synthetic request, and a minimized detached audit projection.
+- Local verification, Python 3.11.14: `python -m pytest -q
+  tests/test_opennam_contracts.py tests/test_opennam_governor.py` — 74 passed.
+  This demonstrates engineered behavior on original fixtures, not scientific
+  validity, actual source independence, toxicological interpretation or safety.

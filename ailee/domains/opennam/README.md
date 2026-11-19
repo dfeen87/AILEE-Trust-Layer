@@ -58,3 +58,44 @@ the independently selected catalog must be accounted for: omitting a reviewed
 record must not turn a conflicting result into a ready one. Coverage is bounded
 to that supplied catalog, not proof of completeness of literature or evidence.
 Phase 1 defines contracts only, not a gate.
+
+## Phase 2 — deterministic metadata governor
+
+`EvidenceGovernor(policy=..., catalog=...).evaluate(request,
+evaluation_time=...)` accepts a typed request, strict dict or bounded JSON
+bytes. No default policy, catalog, evaluation time or permissive fallback.
+The harness must separately establish trusted snapshots; the constructor
+validates and copies nested records, and evaluation revalidates exact typed
+structures including nested fields. There is no isolation from arbitrary
+code execution inside the same Python process.
+
+The gate has fixed precedence: configuration and time, request structure,
+catalog/scope compatibility, nonempty full exact-scope roster coverage,
+metadata binding, timestamp and reviewed quality prerequisites, then
+categorical agreement, unique artifact digests and minimum distinct declared
+source groups. The timestamps must satisfy `observed <= reviewed <= evaluation`
+and age `<= max_age_days` (inclusive). Bad/unknown reporting, either control,
+or applicability abstains. An abstract inconclusive result or a mixture of
+positive and negative abstract tokens in the exact scope also abstains. This
+is not an assay interpreter or a hazard classification. Mixed scope is never
+compared as contradiction; even exact scope does not establish actual
+comparability. One artifact copied under multiple IDs disqualifies the set;
+multiple records from the same declared source group count only once. Group
+identity is a reviewed catalog annotation, not proof of independence.
+
+`INVALID` indicates malformed request/configuration or unavailable clock;
+`ABSTAIN` indicates a structurally valid request blocked by evidence criteria;
+`REVIEW_READY` with `METADATA_COMPLETE` indicates only that these configured
+synthetic metadata checks passed. The output has stable controlled reasons,
+explicit UTC time and canonical policy/catalog SHA-256 fingerprints. Once the
+entire exact roster is bound, it also contains the normalized synthetic request
+digest; malformed, unbound and partial requests never receive that digest.
+Digests identify chosen snapshot content (including catalog annotations) and
+bound metadata, not authentication; the harness must control provenance and
+versioning. Digests are not encryption or a substitute for privacy controls.
+The minimized `decision.audit` projection includes those fields only, no IDs,
+raw request content, observation tokens or individual artifact digests. No audit persistence is
+implemented. Exact-scope coverage is limited to the supplied catalog; a scope
+with more than 32 entries cannot pass this bounded gate. The engine does not
+discover studies, review raw artifacts, infer uncertainty, assess actual method
+reliability or authorize any action.
