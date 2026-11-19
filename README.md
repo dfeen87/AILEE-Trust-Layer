@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-10.1.1-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-10.2.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -1692,13 +1692,18 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v10.1.1 (unreleased release candidate)
+### Current: v10.2.0 (unreleased release candidate)
 
-AILEE Trust Layer **v10.1.1** is a stabilization patch for cybersecurity denial
-handling, FEEN numerical validation, Neuro-assistive authorization and
-explainability, and provider diagnostics. This source version is not yet a
-published release. See the [Phase 0.5 audit disposition](docs/PHASE_0_5_AUDIT_DISPOSITION.md)
-for corrected behavior and remaining limits.
+AILEE Trust Layer **v10.2.0** is an unreleased minor-version candidate incorporating
+an opt-in **experimental Health Safety Domain** and the earlier v10.1.1
+stabilization work. The new governor and benchmarks apply to synthetic
+research fixtures only; they do **not** establish clinical safety, medical
+accuracy, independent efficacy, or production readiness. See the
+[Health Safety research record](ailee/domains/health_safety/README.md),
+[synthetic benchmark results](ailee/domains/health_safety/BENCHMARK_RESULTS.md),
+and [Phase 0.5 audit disposition](docs/PHASE_0_5_AUDIT_DISPOSITION.md)
+for engineering evidence and remaining limitations. This source version
+has not been published or tagged.
 
 Version **v10.1.0** introduced the Cybersecurity Trust Domain with link integrity
 checks, structural publisher-evidence checks, prompt-injection advisories, and
@@ -1816,7 +1821,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {10.1.1},
+  version = {10.2.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1861,7 +1866,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v10.1.1**
+**AILEE Trust Layer v10.2.0**
 *Adaptive Integrity Layer for AI Decision Systems*
 
 Built with discipline. Deployed with confidence.

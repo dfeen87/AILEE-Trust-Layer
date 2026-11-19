@@ -1,5 +1,22 @@
 # Changelog
 
+### **v10.2.0 — EXPERIMENTAL HEALTH SAFETY RESEARCH** (unreleased candidate; draft PR #99)
+
+*Design down. Prove up. Govern the answer. Preserve the help.*
+
+**Type:** Minor, additive and opt-in. Version alignment in a separate release-preparation commit; not merged, tagged, or published.
+
+- **New experimental domain:** `ailee.domains.health_safety` implements deterministic, fail-closed governance over a bounded, synthetic research catalog. It is opt-in and does not change the default AILEE pipeline or existing domain contracts.
+- **Four-phase engineering:** Frozen contracts, Python governor, independent defensive conformance fixtures, and offline reproducibility records. The Phase 3 governor and expected classifications remain frozen at `92379d20205c72a5dd6cc5638d3650e3db036d48`.
+- **Measured synthetic conformance:** 49 development and 62 Phase 3 cases evaluated with 100% agreement against provisional engineering labels; observed false allows 0/45 and 0/44, false blocks 0/4 and 0/18. These are finite **engineering-label** observations, not clinical or independent effectiveness estimates.
+- **Research artifacts:** See `ailee/domains/health_safety/` for threat model, corpus provenance, methodology, measured results, and limitations; see `scripts/health_safety_benchmark.py` for a deterministic offline runner.
+- **Verified Phase 4 CI:** Commit `22c9f6f1a1ee36af981d6207bcdf456dcbd83ffe` passed push and draft-PR workflows (12/12 jobs each; hosted Python 3.9, 3.10 and 3.11 reported 1,017 passed and one pre-existing skip each). This evidence predates the distinct version-alignment commit, which requires its own CI validation.
+- **Active version metadata:** Align Python, Rust, C++, TypeScript, package locks, citation, runtime governance version labels, version tests, documentation and CI wheel assertions to `10.2.0`. Preserve prior release history and experimental benchmark inputs unchanged.
+
+**Limitations:** No real patient records, clinical reasoning, medical safety certification, external health integration, independent adjudication/holdout, authenticated production ingress, real release consumer, or proven clinical efficacy. Corpus licensing and independent provenance review remain open. Keep PR #99 draft pending independent engineering audit; no merge, deployment, or release tag.
+
+---
+
 ### **v10.1.1 — TRUST CONSISTENCY** (unreleased; hosted verification pending)
 
 *Deterministic Governance · Fail-Closed Decisions · Backend Parity · Transparent Fallback*
