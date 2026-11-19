@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 """Focused unit and integration tests for the Cybersecurity Trust Domain."""
 
+from dataclasses import replace
 from datetime import datetime, timedelta, timezone
 import pytest
 
@@ -115,6 +116,47 @@ def test_governor_evaluates_informational_link_cleanly():
     assert decision.reason == CybersecurityReason.AUTHORIZED
     assert decision.policy_id == PolicyIdentifier.POLICY_ACTION_AUTHORIZATION
     assert decision.canonical_url == "https://docs.python.org/3/library/urllib.parse.html"
+
+
+@pytest.mark.parametrize(
+    "evaluation_time",
+    [None, EVAL_TIME.isoformat(), datetime.min.replace(tzinfo=timezone(timedelta(hours=1)))],
+    ids=["missing", "string", "utc-overflow"],
+)
+def test_invalid_evaluation_time_produces_audited_denial(evaluation_time):
+    governor = create_cybersecurity_governor()
+    request = CybersecurityAuthorizationRequest(
+        request_id="req-invalid-time",
+        action_tier=ActionTier.DISPLAY_INFORMATIONAL_LINK,
+        url="https://example.com/docs",
+        evaluation_time=evaluation_time,
+    )
+
+    decision = governor.authorize(request)
+
+    assert decision.authorized is False
+    assert decision.outcome is DecisionOutcome.DENY
+    assert decision.reason is CybersecurityReason.INSUFFICIENT_EVIDENCE
+    assert decision.policy_id is PolicyIdentifier.POLICY_FAIL_CLOSED
+    assert decision.audit.timestamp is None
+    assert decision.audit.details["error"] == "Missing or invalid evaluation_time"
+    assert get_events(governor) == [decision.audit]
+
+
+@pytest.mark.parametrize(
+    "status, expected_status",
+    [
+        (ProvenanceStatus.MISSING, ProvenanceStatus.MISSING),
+        (ProvenanceStatus.EXPIRED, ProvenanceStatus.EXPIRED),
+        (ProvenanceStatus.INVALID, ProvenanceStatus.INVALID),
+        ("unknown-status", ProvenanceStatus.INVALID),
+    ],
+)
+def test_provenance_verifier_preserves_negative_evidence_status(
+    valid_provenance, status, expected_status
+):
+    evidence = replace(valid_provenance, status=status)
+    assert TrustedProvenanceVerifier().verify(evidence, EVAL_TIME) is expected_status
 
 
 def test_software_recommendation_requires_valid_publisher_provenance(valid_provenance):
