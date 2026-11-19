@@ -118,3 +118,23 @@ and [threat model](THREAT_MODEL.md). This is an optional importable domain
 (`ailee.domains.opennam`), not registered with the main AILEE runtime. It is
 not a production release, regulatory tool, validated assay, inference model,
 scientific dataset or authorization token.
+
+## Post-Phase 4 — synthetic adapter foundation and integrity hardening
+
+The separately imported [`ailee.domains.opennam.adapters`](ADAPTERS.md) module
+supports two explicit versioned, metadata-only transports (closed JSON and a
+strict CSV row) under exact fictional method/endpoint/protocol/unit profiles.
+It binds one independently supplied opaque artifact byte string per record to
+the envelope's declared checksum, rejects duplicate artifacts and incomplete
+or mismatched source declarations, and produces only untrusted request metadata
+plus descriptive deterministic receipts. It does not establish scientific
+correspondence, provenance, independence or quality; the unchanged governor
+still requires its independent catalog and policy. This is groundwork for
+future separately reviewed adapter opportunities, not real assay support.
+
+Reproduction manifest revision 2 includes the new adapter source, tests and
+documentation while preserving the original 40-case corpus, labels and full
+observations byte-for-byte and archiving the original manifest. Its parser and
+selected-file hashing have explicit resource limits and reject malformed,
+duplicate, missing or unexpected manifest fields. See [reproduction](REPRODUCIBILITY.md).
+No package version change, production integration or release is implied.

@@ -14,6 +14,9 @@ not biological risk evaluation or a general-purpose security boundary.
 | Duplicated artifact and repeated source-group labels | Duplicates disqualify; group labels count once. Distinct labels are not proof of independence, provenance, or adequate study design. |
 | Input content in decision/audit | Controlled reason codes and explicit time, plus selected snapshot and fully catalog-bound request fingerprints. No raw IDs, observations, artifacts or rejected-input fingerprint; summary can still indicate category and must not be treated as anonymization. |
 | Reproduction artifact or code drift | Checked-in manifest hashes selected source, method, fixture and report files; the runner checks before replay and requires exact frozen output. This is integrity comparison against a known trusted checkout, not signed attestation. |
+| Adapter envelope, mismatched schema/profile, multiple rows or byte inconsistency | Explicit closed allowlist, exact profile and scope declarations, bounded strict JSON/CSV, one packet per record, actual opaque artifact byte digest and duplicate checking. Equal caller-provided hashes and bytes do not prove semantic correspondence, authenticity or source independence. |
+| Self-consistent adapter receipt or substituted transport profile | Receipts are descriptive checksum linkages, never read as governor authority; the host chooses the profile and separately supplies review catalog/policy. No dynamic import or callback selection. |
+| Malformed, duplicate, unexpected or oversized reproduction manifest/selected file | Revision 2 uses bounded exact UTF-8 manifest parsing, closed revision/phase/path sets, strict digest strings and bounded streaming file hashing. Original manifest archived with pinned hash. Whole-checkout replacement is outside scope. |
 
 ## Assumptions and controls outside this package
 

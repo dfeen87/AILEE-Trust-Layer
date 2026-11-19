@@ -1,0 +1,23 @@
+{
+  "format": "opennam-reproduction-v1",
+  "phase3_commit": "fe8418dbb5dce85867a8a536255685bc3ff2914a",
+  "sha256": {
+    "ailee/domains/opennam/BENCHMARKS.md": "f7ce5a2eef2ee5849cbb47a2ab1bb477c0cbdc74be1f657387c798cd7e24632c",
+    "ailee/domains/opennam/CORPUS_PROVENANCE.md": "ae084b2cf9c24ca40b6fa8bef77f543f4ad0c1002d0e239f1a663ed615268d7a",
+    "ailee/domains/opennam/README.md": "96707138d64ad85211880a986d84f0d8b2b38e23f03c913673e785c19f12b315",
+    "ailee/domains/opennam/REPRODUCIBILITY.md": "d8bf66bb7c76c8a05fa900453b5eb278ce2d520575e38fc1e1343187ecca6e14",
+    "ailee/domains/opennam/THREAT_MODEL.md": "2786b115510c79bfdab1c5ae7a1042414e317804e3f531a41dfa502a3971d0ae",
+    "ailee/domains/opennam/__init__.py": "6ca643526de0a8a0dd573e5a8215b4427b6cce982350009b0aaff97f4d1f0f49",
+    "ailee/domains/opennam/contracts.py": "f68bc2be26003adaf523588ae5f0b3e4d58ad34c5f8f0168779b75cb6d738b41",
+    "ailee/domains/opennam/governor.py": "1dc03cc911749a20a3aea3b7098c075ac2a8a2755aa6e02d02316bddfea8ffba",
+    "scripts/opennam_reproduce.py": "78b900a8ee97530004c452b321e306f0b2f695af746fdd20a98a7d9daa186c0a",
+    "tests/fixtures/opennam/cases.json": "244b3102f50e8714d6f07640c68d8a98d1875e8a600dbf245891910a3201f0d2",
+    "tests/fixtures/opennam/expected.json": "8579732148981d64405f9ec6f147133b86ee3f177ba82fd296b86d9885691330",
+    "tests/fixtures/opennam/observed.json": "a07b17b90153e36432f21a44e122cd7225679e68c904a9910fbe97f17b80f2e9",
+    "tests/opennam_evaluation.py": "4879d81ebffa59002c2973aeb45398afb9d3ed570a1b483cb4ad0d1e38fcdc99",
+    "tests/test_opennam_contracts.py": "9688b2829e5dd926c994bc6b15ab8658d5471d495e63dc07bb6616671da20376",
+    "tests/test_opennam_evaluation.py": "e3f136d8a870f606053423240ccbae9564f8a1b648a5ef0de53318dc896095d8",
+    "tests/test_opennam_governor.py": "ede5b4baf974ed3be172bddaa1df9c27d27c07e36e5023e53804d1948fbb076b",
+    "tests/test_opennam_reproducibility.py": "b1e370a2f438be02baba0dc6f64aca77b002eb50723479ad70316f4b6666101d"
+  }
+}
