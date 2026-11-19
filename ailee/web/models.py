@@ -29,21 +29,21 @@ try:
     from openai import OpenAI
     OPENAI_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"OpenAI library not found: {e}")
+    logger.warning("OpenAI library unavailable (%s)", type(e).__name__)
     OPENAI_AVAILABLE = False
 
 try:
     from anthropic import Anthropic
     ANTHROPIC_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"Anthropic library not found: {e}")
+    logger.warning("Anthropic library unavailable (%s)", type(e).__name__)
     ANTHROPIC_AVAILABLE = False
 
 try:
     import google.genai as genai
     GEMINI_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"Google GenAI library not found: {e}")
+    logger.warning("Google GenAI library unavailable (%s)", type(e).__name__)
     GEMINI_AVAILABLE = False
 
 # Log availability status

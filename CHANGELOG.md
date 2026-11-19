@@ -16,7 +16,7 @@
 - `OPEN_WEBSITE` (Moderate Risk): Enforces HTTPS and safe domain structure without deceptive homoglyphs.
 - `RECOMMEND_SOFTWARE` (Substantial Risk): Requires independently verified publisher provenance matching canonical domains.
 - `DOWNLOAD_FILE` (High Risk): Requires verified publisher provenance matching authorized download domains.
-- `INSTALL_SOFTWARE` (Critical Risk): Requires verified download authorization plus an authenticated, scoped, time-bound `ActionMandate`.
+- `INSTALL_SOFTWARE` (Critical Risk): Checks download authorization and a scoped, time-bound `ActionMandate`. Independent mandate authentication is an integration requirement.
 
 #### 3. Publisher Provenance & Trust-Boundary Enforcement
 - Enforces the hard rule: Domain resemblance, HTTPS, search ranking, and website self-description must **never** independently establish publisher authenticity.
@@ -30,9 +30,9 @@
 #### 5. Security Hardening Corrections (Post-PR #96)
 - **Target Binding:** `CybersecurityActionWrapper.execute()` strictly binds execution arguments to the authorized request; parameter tampering or URL substitution is rejected with `PARAMETER_MISMATCH`.
 - **Enforcement Invariants:** `shadow_mode=True` and disabled review confirmation can never bypass `DENY` or `REVIEW` for high-risk actions.
-- **Trusted Provenance Verifier:** `TrustedProvenanceVerifier` enforces authentic verifier identities from recognized trust registries and cryptographic signatures/digests.
+- **Default Provenance Checks:** `TrustedProvenanceVerifier` checks issuer labels, signature or digest format, evidence state, and time. Authenticating signed evidence requires an independent verifier or trusted ingress.
 - **Strict Redirect Validation:** Validates every intermediate hop and the final landing destination against exact authorized publisher domains; eliminates loose apex domain guessing.
-- **Authenticated Action Mandates:** Replaces arbitrary strings with `ActionMandate` enforcing caller identity, exact action tier, target software/URL binding, validity window, and cryptographic signature.
+- **Structured Action Mandates:** Checks action scope, target, validity window, and token presence. Caller and signature authentication require an independent trust boundary. See [Cybersecurity Trust Domain](docs/CYBERSECURITY_DOMAIN.md#6-limitations).
 
 #### 6. Regression Testing & Verification
 - 33 focused unit and offline adversarial test fixtures covering lookalikes, deceptive Markdown links, embedded credentials, IDN/punycode homoglyphs, cross-domain redirects, forged evidence, prompt injection, and the Pearcleaner incident regression fixture.
