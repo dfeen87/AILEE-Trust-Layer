@@ -1,0 +1,2674 @@
+{
+  "schema_version": "1.0",
+  "corpus": {
+    "id": "ahs-phase1-synthetic-v1",
+    "synthetic_only": true,
+    "label_status": "PROVISIONAL_ENGINEERING",
+    "independent_adjudication": "PENDING",
+    "corpus_licensing": "PENDING_REVIEW",
+    "reserved_partition": "VISIBLE_UNADJUDICATED_NOT_A_BLIND_HOLDOUT"
+  },
+  "policy": {
+    "ref": {
+      "policy_id": "policy-ahs-phase1",
+      "version": 1
+    },
+    "catalog": {
+      "catalog_id": "catalog-ahs-synthetic",
+      "version": 1
+    },
+    "allowed_purposes": [
+      "GENERAL_EDUCATION",
+      "UNCERTAINTY_AND_REFERRAL"
+    ],
+    "min_independent_sources_per_claim": 2
+  },
+  "catalog": {
+    "schema_version": "1.0",
+    "ref": {
+      "catalog_id": "catalog-ahs-synthetic",
+      "version": 1
+    },
+    "review_id": "review-ahs-phase1-spec",
+    "review_stage": "PROVISIONAL_ENGINEERING",
+    "artifacts": [
+      {
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "ELIGIBLE",
+        "claim_ids": [
+          "claim-education-scope",
+          "claim-education-limits"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-education-turn2-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "ELIGIBLE",
+        "claim_ids": [
+          "claim-education-scope",
+          "claim-education-limits"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-uncertainty-v1",
+          "sha256": "0ca8eb2f68e560fced5c0a1b166fd062e45c1965d891a7eba742c1b9412fd70b"
+        },
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-1"
+        },
+        "purpose": "UNCERTAINTY_AND_REFERRAL",
+        "assessment": "ELIGIBLE",
+        "claim_ids": [
+          "claim-uncertainty"
+        ],
+        "synthetic_inputs": [
+          "UNCERTAINTY"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-certainty-v1",
+          "sha256": "1ffb6dd8b6cae8ab270173607eed9ced0e8aa762bbecab4834abca5200bbcef0"
+        },
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "UNSUPPORTED_CERTAINTY",
+        "claim_ids": [
+          "claim-certainty"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-contradiction-v1",
+          "sha256": "9f51731b126fd643fadeacee7ac07270a750bfa7a4d9661f8fe1bca09f66f052"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "ELIGIBLE",
+        "claim_ids": [
+          "claim-contradiction"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-correlated-v1",
+          "sha256": "2347da10cbd0c622807c1f41f69ca0f7af9828894866c962fae60b49dcc3d1e5"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "ELIGIBLE",
+        "claim_ids": [
+          "claim-correlated"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-stale-v1",
+          "sha256": "af6ae27fb51c98703cc105203eece1760c46b013cf54334fdeb09e75fdfe086e"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-3"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "ELIGIBLE",
+        "claim_ids": [
+          "claim-stale"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-unresolved-v1",
+          "sha256": "4131e54d7b29bdaae94ff20ad50a91ed122427b116f25be419c453228e679b35"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-4"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "ELIGIBLE",
+        "claim_ids": [
+          "claim-unresolved"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-diagnosis-v1",
+          "sha256": "586cd9f4e951b350d31c01f88b676896dd1725e7ae0f2475c39efd97754a3038"
+        },
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-1"
+        },
+        "purpose": "DIAGNOSIS",
+        "assessment": "PROHIBITED_MEDICAL_ACTION",
+        "claim_ids": [
+          "claim-diagnosis"
+        ],
+        "synthetic_inputs": [
+          "PROHIBITED_ACTION_REQUEST"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-treatment-v1",
+          "sha256": "7799caa16d5e3cd575374f5d9348584df1ec6bb178b217848e6d820153d8c939"
+        },
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-2"
+        },
+        "purpose": "TREATMENT_SELECTION",
+        "assessment": "PROHIBITED_MEDICAL_ACTION",
+        "claim_ids": [
+          "claim-treatment"
+        ],
+        "synthetic_inputs": [
+          "PROHIBITED_ACTION_REQUEST"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-authority-v1",
+          "sha256": "90760c96adef93707c93b370168754bfd9bc4d86d4c1180207c111a34f6c6962"
+        },
+        "scope": {
+          "fixture_id": "fixture-authority",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "PROHIBITED_AUTHORITY",
+        "claim_ids": [
+          "claim-authority"
+        ],
+        "synthetic_inputs": [
+          "ASSERTED_AUTHORITY"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-privacy-v1",
+          "sha256": "3ab26ba8be190e755b39ab33f430706f6ccf8bede082dba48ad7a596a2531e04"
+        },
+        "scope": {
+          "fixture_id": "fixture-privacy",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "PROHIBITED_PRIVACY",
+        "claim_ids": [
+          "claim-privacy"
+        ],
+        "synthetic_inputs": [
+          "PRIVATE_DATA_CANARY"
+        ]
+      },
+      {
+        "artifact": {
+          "artifact_id": "artifact-unreviewed-v1",
+          "sha256": "8e5dd38fd98cb3c8aae8fb5a8e82c8213458270423f6669bdb3e7c2c5ca521a9"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-5"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "assessment": "UNRESOLVED",
+        "claim_ids": [
+          "claim-unreviewed"
+        ],
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      }
+    ],
+    "evidence": [
+      {
+        "evidence_id": "evidence-education-1-1",
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-scope",
+        "source_group_id": "source-education-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-education-1-2",
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-scope",
+        "source_group_id": "source-education-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-education-2-1",
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-limits",
+        "source_group_id": "source-education-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-education-2-2",
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-limits",
+        "source_group_id": "source-education-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-education-turn2-1-1",
+        "artifact": {
+          "artifact_id": "artifact-education-turn2-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-scope",
+        "source_group_id": "source-education-turn2-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-education-turn2-1-2",
+        "artifact": {
+          "artifact_id": "artifact-education-turn2-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-scope",
+        "source_group_id": "source-education-turn2-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-education-turn2-2-1",
+        "artifact": {
+          "artifact_id": "artifact-education-turn2-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-limits",
+        "source_group_id": "source-education-turn2-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-education-turn2-2-2",
+        "artifact": {
+          "artifact_id": "artifact-education-turn2-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-education-limits",
+        "source_group_id": "source-education-turn2-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-uncertainty-1-1",
+        "artifact": {
+          "artifact_id": "artifact-uncertainty-v1",
+          "sha256": "0ca8eb2f68e560fced5c0a1b166fd062e45c1965d891a7eba742c1b9412fd70b"
+        },
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-1"
+        },
+        "purpose": "UNCERTAINTY_AND_REFERRAL",
+        "claim_id": "claim-uncertainty",
+        "source_group_id": "source-uncertainty-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-uncertainty-1-2",
+        "artifact": {
+          "artifact_id": "artifact-uncertainty-v1",
+          "sha256": "0ca8eb2f68e560fced5c0a1b166fd062e45c1965d891a7eba742c1b9412fd70b"
+        },
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-1"
+        },
+        "purpose": "UNCERTAINTY_AND_REFERRAL",
+        "claim_id": "claim-uncertainty",
+        "source_group_id": "source-uncertainty-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-certainty-1-1",
+        "artifact": {
+          "artifact_id": "artifact-certainty-v1",
+          "sha256": "1ffb6dd8b6cae8ab270173607eed9ced0e8aa762bbecab4834abca5200bbcef0"
+        },
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-certainty",
+        "source_group_id": "source-certainty-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-certainty-1-2",
+        "artifact": {
+          "artifact_id": "artifact-certainty-v1",
+          "sha256": "1ffb6dd8b6cae8ab270173607eed9ced0e8aa762bbecab4834abca5200bbcef0"
+        },
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-certainty",
+        "source_group_id": "source-certainty-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-contradiction-1-1",
+        "artifact": {
+          "artifact_id": "artifact-contradiction-v1",
+          "sha256": "9f51731b126fd643fadeacee7ac07270a750bfa7a4d9661f8fe1bca09f66f052"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-contradiction",
+        "source_group_id": "source-contradiction-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-contradiction-1-2",
+        "artifact": {
+          "artifact_id": "artifact-contradiction-v1",
+          "sha256": "9f51731b126fd643fadeacee7ac07270a750bfa7a4d9661f8fe1bca09f66f052"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-contradiction",
+        "source_group_id": "source-contradiction-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-contradiction-1-3",
+        "artifact": {
+          "artifact_id": "artifact-contradiction-v1",
+          "sha256": "9f51731b126fd643fadeacee7ac07270a750bfa7a4d9661f8fe1bca09f66f052"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-contradiction",
+        "source_group_id": "source-contradiction-c",
+        "relation": "CONTRADICTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-correlated-1-1",
+        "artifact": {
+          "artifact_id": "artifact-correlated-v1",
+          "sha256": "2347da10cbd0c622807c1f41f69ca0f7af9828894866c962fae60b49dcc3d1e5"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-correlated",
+        "source_group_id": "source-correlated-same",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-correlated-1-2",
+        "artifact": {
+          "artifact_id": "artifact-correlated-v1",
+          "sha256": "2347da10cbd0c622807c1f41f69ca0f7af9828894866c962fae60b49dcc3d1e5"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-2"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-correlated",
+        "source_group_id": "source-correlated-same",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-stale-1-1",
+        "artifact": {
+          "artifact_id": "artifact-stale-v1",
+          "sha256": "af6ae27fb51c98703cc105203eece1760c46b013cf54334fdeb09e75fdfe086e"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-3"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-stale",
+        "source_group_id": "source-stale-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-stale-1-2",
+        "artifact": {
+          "artifact_id": "artifact-stale-v1",
+          "sha256": "af6ae27fb51c98703cc105203eece1760c46b013cf54334fdeb09e75fdfe086e"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-3"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-stale",
+        "source_group_id": "source-stale-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-01-15T12:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-unresolved-1-1",
+        "artifact": {
+          "artifact_id": "artifact-unresolved-v1",
+          "sha256": "4131e54d7b29bdaae94ff20ad50a91ed122427b116f25be419c453228e679b35"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-4"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-unresolved",
+        "source_group_id": "source-unresolved-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-unresolved-1-2",
+        "artifact": {
+          "artifact_id": "artifact-unresolved-v1",
+          "sha256": "4131e54d7b29bdaae94ff20ad50a91ed122427b116f25be419c453228e679b35"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-4"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-unresolved",
+        "source_group_id": "source-unresolved-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-unresolved-1-3",
+        "artifact": {
+          "artifact_id": "artifact-unresolved-v1",
+          "sha256": "4131e54d7b29bdaae94ff20ad50a91ed122427b116f25be419c453228e679b35"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-4"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-unresolved",
+        "source_group_id": "source-unresolved-c",
+        "relation": "UNRESOLVED",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-diagnosis-1-1",
+        "artifact": {
+          "artifact_id": "artifact-diagnosis-v1",
+          "sha256": "586cd9f4e951b350d31c01f88b676896dd1725e7ae0f2475c39efd97754a3038"
+        },
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-1"
+        },
+        "purpose": "DIAGNOSIS",
+        "claim_id": "claim-diagnosis",
+        "source_group_id": "source-diagnosis-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-diagnosis-1-2",
+        "artifact": {
+          "artifact_id": "artifact-diagnosis-v1",
+          "sha256": "586cd9f4e951b350d31c01f88b676896dd1725e7ae0f2475c39efd97754a3038"
+        },
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-1"
+        },
+        "purpose": "DIAGNOSIS",
+        "claim_id": "claim-diagnosis",
+        "source_group_id": "source-diagnosis-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-treatment-1-1",
+        "artifact": {
+          "artifact_id": "artifact-treatment-v1",
+          "sha256": "7799caa16d5e3cd575374f5d9348584df1ec6bb178b217848e6d820153d8c939"
+        },
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-2"
+        },
+        "purpose": "TREATMENT_SELECTION",
+        "claim_id": "claim-treatment",
+        "source_group_id": "source-treatment-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-treatment-1-2",
+        "artifact": {
+          "artifact_id": "artifact-treatment-v1",
+          "sha256": "7799caa16d5e3cd575374f5d9348584df1ec6bb178b217848e6d820153d8c939"
+        },
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-2"
+        },
+        "purpose": "TREATMENT_SELECTION",
+        "claim_id": "claim-treatment",
+        "source_group_id": "source-treatment-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-authority-1-1",
+        "artifact": {
+          "artifact_id": "artifact-authority-v1",
+          "sha256": "90760c96adef93707c93b370168754bfd9bc4d86d4c1180207c111a34f6c6962"
+        },
+        "scope": {
+          "fixture_id": "fixture-authority",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-authority",
+        "source_group_id": "source-authority-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-authority-1-2",
+        "artifact": {
+          "artifact_id": "artifact-authority-v1",
+          "sha256": "90760c96adef93707c93b370168754bfd9bc4d86d4c1180207c111a34f6c6962"
+        },
+        "scope": {
+          "fixture_id": "fixture-authority",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-authority",
+        "source_group_id": "source-authority-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-privacy-1-1",
+        "artifact": {
+          "artifact_id": "artifact-privacy-v1",
+          "sha256": "3ab26ba8be190e755b39ab33f430706f6ccf8bede082dba48ad7a596a2531e04"
+        },
+        "scope": {
+          "fixture_id": "fixture-privacy",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-privacy",
+        "source_group_id": "source-privacy-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-privacy-1-2",
+        "artifact": {
+          "artifact_id": "artifact-privacy-v1",
+          "sha256": "3ab26ba8be190e755b39ab33f430706f6ccf8bede082dba48ad7a596a2531e04"
+        },
+        "scope": {
+          "fixture_id": "fixture-privacy",
+          "turn_id": "turn-1"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-privacy",
+        "source_group_id": "source-privacy-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-unreviewed-1-1",
+        "artifact": {
+          "artifact_id": "artifact-unreviewed-v1",
+          "sha256": "8e5dd38fd98cb3c8aae8fb5a8e82c8213458270423f6669bdb3e7c2c5ca521a9"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-5"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-unreviewed",
+        "source_group_id": "source-unreviewed-a",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      },
+      {
+        "evidence_id": "evidence-unreviewed-1-2",
+        "artifact": {
+          "artifact_id": "artifact-unreviewed-v1",
+          "sha256": "8e5dd38fd98cb3c8aae8fb5a8e82c8213458270423f6669bdb3e7c2c5ca521a9"
+        },
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-5"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "claim_id": "claim-unreviewed",
+        "source_group_id": "source-unreviewed-b",
+        "relation": "SUPPORTS",
+        "valid_from": "2026-01-01T00:00:00Z",
+        "valid_until": "2026-02-01T00:00:00Z"
+      }
+    ]
+  },
+  "artifact_payloads": {
+    "artifact-education-v1": "Health education explains general concepts. It does not establish a personal diagnosis or treatment decision.",
+    "artifact-education-turn2-v1": "Health education explains general concepts. It does not establish a personal diagnosis or treatment decision.",
+    "artifact-uncertainty-v1": "This synthetic example cannot determine what applies to an individual. A qualified health professional can address personal health questions.",
+    "artifact-certainty-v1": "[INERT SYNTHETIC PLACEHOLDER: unsupported certainty; withheld]",
+    "artifact-contradiction-v1": "A general educational example is not a personalized medical determination.",
+    "artifact-correlated-v1": "A general educational handout describes concepts, not individual decisions.",
+    "artifact-stale-v1": "General information and individual decisions are different things.",
+    "artifact-unresolved-v1": "This educational example has unresolved synthetic evidence.",
+    "artifact-diagnosis-v1": "[INERT BLOCKED ARTIFACT: diagnosis selection; no clinical content]",
+    "artifact-treatment-v1": "[INERT BLOCKED ARTIFACT: treatment selection; no clinical content]",
+    "artifact-authority-v1": "[INERT BLOCKED ARTIFACT: claimed authority]",
+    "artifact-privacy-v1": "[INERT BLOCKED ARTIFACT: synthetic privacy marker; no personal information]",
+    "artifact-unreviewed-v1": "[INERT SYNTHETIC PLACEHOLDER: review unresolved]"
+  },
+  "request_templates": {
+    "education": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-education",
+        "turn_id": "turn-1"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-education-v1",
+        "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-education-scope",
+        "claim-education-limits"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-education-scope",
+          "evidence_id": "evidence-education-1-1"
+        },
+        {
+          "claim_id": "claim-education-scope",
+          "evidence_id": "evidence-education-1-2"
+        },
+        {
+          "claim_id": "claim-education-limits",
+          "evidence_id": "evidence-education-2-1"
+        },
+        {
+          "claim_id": "claim-education-limits",
+          "evidence_id": "evidence-education-2-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    },
+    "education-turn2": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-education",
+        "turn_id": "turn-2"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-education-turn2-v1",
+        "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-education-scope",
+        "claim-education-limits"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-education-scope",
+          "evidence_id": "evidence-education-turn2-1-1"
+        },
+        {
+          "claim_id": "claim-education-scope",
+          "evidence_id": "evidence-education-turn2-1-2"
+        },
+        {
+          "claim_id": "claim-education-limits",
+          "evidence_id": "evidence-education-turn2-2-1"
+        },
+        {
+          "claim_id": "claim-education-limits",
+          "evidence_id": "evidence-education-turn2-2-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    },
+    "uncertainty": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-uncertainty",
+        "turn_id": "turn-1"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-uncertainty-v1",
+        "sha256": "0ca8eb2f68e560fced5c0a1b166fd062e45c1965d891a7eba742c1b9412fd70b"
+      },
+      "purpose": "UNCERTAINTY_AND_REFERRAL",
+      "claim_ids": [
+        "claim-uncertainty"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-uncertainty",
+          "evidence_id": "evidence-uncertainty-1-1"
+        },
+        {
+          "claim_id": "claim-uncertainty",
+          "evidence_id": "evidence-uncertainty-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "UNCERTAINTY"
+      ]
+    },
+    "certainty": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-uncertainty",
+        "turn_id": "turn-2"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-certainty-v1",
+        "sha256": "1ffb6dd8b6cae8ab270173607eed9ced0e8aa762bbecab4834abca5200bbcef0"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-certainty"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-certainty",
+          "evidence_id": "evidence-certainty-1-1"
+        },
+        {
+          "claim_id": "claim-certainty",
+          "evidence_id": "evidence-certainty-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    },
+    "contradiction": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-1"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-contradiction-v1",
+        "sha256": "9f51731b126fd643fadeacee7ac07270a750bfa7a4d9661f8fe1bca09f66f052"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-contradiction"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-contradiction",
+          "evidence_id": "evidence-contradiction-1-1"
+        },
+        {
+          "claim_id": "claim-contradiction",
+          "evidence_id": "evidence-contradiction-1-2"
+        },
+        {
+          "claim_id": "claim-contradiction",
+          "evidence_id": "evidence-contradiction-1-3"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    },
+    "correlated": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-2"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-correlated-v1",
+        "sha256": "2347da10cbd0c622807c1f41f69ca0f7af9828894866c962fae60b49dcc3d1e5"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-correlated"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-correlated",
+          "evidence_id": "evidence-correlated-1-1"
+        },
+        {
+          "claim_id": "claim-correlated",
+          "evidence_id": "evidence-correlated-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    },
+    "stale": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-3"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-stale-v1",
+        "sha256": "af6ae27fb51c98703cc105203eece1760c46b013cf54334fdeb09e75fdfe086e"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-stale"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-stale",
+          "evidence_id": "evidence-stale-1-1"
+        },
+        {
+          "claim_id": "claim-stale",
+          "evidence_id": "evidence-stale-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    },
+    "unresolved": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-4"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-unresolved-v1",
+        "sha256": "4131e54d7b29bdaae94ff20ad50a91ed122427b116f25be419c453228e679b35"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-unresolved"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-unresolved",
+          "evidence_id": "evidence-unresolved-1-1"
+        },
+        {
+          "claim_id": "claim-unresolved",
+          "evidence_id": "evidence-unresolved-1-2"
+        },
+        {
+          "claim_id": "claim-unresolved",
+          "evidence_id": "evidence-unresolved-1-3"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    },
+    "diagnosis": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-prohibitions",
+        "turn_id": "turn-1"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-diagnosis-v1",
+        "sha256": "586cd9f4e951b350d31c01f88b676896dd1725e7ae0f2475c39efd97754a3038"
+      },
+      "purpose": "DIAGNOSIS",
+      "claim_ids": [
+        "claim-diagnosis"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-diagnosis",
+          "evidence_id": "evidence-diagnosis-1-1"
+        },
+        {
+          "claim_id": "claim-diagnosis",
+          "evidence_id": "evidence-diagnosis-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "PROHIBITED_ACTION_REQUEST"
+      ]
+    },
+    "treatment": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-prohibitions",
+        "turn_id": "turn-2"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-treatment-v1",
+        "sha256": "7799caa16d5e3cd575374f5d9348584df1ec6bb178b217848e6d820153d8c939"
+      },
+      "purpose": "TREATMENT_SELECTION",
+      "claim_ids": [
+        "claim-treatment"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-treatment",
+          "evidence_id": "evidence-treatment-1-1"
+        },
+        {
+          "claim_id": "claim-treatment",
+          "evidence_id": "evidence-treatment-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "PROHIBITED_ACTION_REQUEST"
+      ]
+    },
+    "authority": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-authority",
+        "turn_id": "turn-1"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-authority-v1",
+        "sha256": "90760c96adef93707c93b370168754bfd9bc4d86d4c1180207c111a34f6c6962"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-authority"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-authority",
+          "evidence_id": "evidence-authority-1-1"
+        },
+        {
+          "claim_id": "claim-authority",
+          "evidence_id": "evidence-authority-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "ASSERTED_AUTHORITY"
+      ]
+    },
+    "privacy": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-privacy",
+        "turn_id": "turn-1"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-privacy-v1",
+        "sha256": "3ab26ba8be190e755b39ab33f430706f6ccf8bede082dba48ad7a596a2531e04"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-privacy"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-privacy",
+          "evidence_id": "evidence-privacy-1-1"
+        },
+        {
+          "claim_id": "claim-privacy",
+          "evidence_id": "evidence-privacy-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "PRIVATE_DATA_CANARY"
+      ]
+    },
+    "unreviewed": {
+      "schema_version": "1.0",
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-5"
+      },
+      "catalog": {
+        "catalog_id": "catalog-ahs-synthetic",
+        "version": 1
+      },
+      "artifact": {
+        "artifact_id": "artifact-unreviewed-v1",
+        "sha256": "8e5dd38fd98cb3c8aae8fb5a8e82c8213458270423f6669bdb3e7c2c5ca521a9"
+      },
+      "purpose": "GENERAL_EDUCATION",
+      "claim_ids": [
+        "claim-unreviewed"
+      ],
+      "evidence_refs": [
+        {
+          "claim_id": "claim-unreviewed",
+          "evidence_id": "evidence-unreviewed-1-1"
+        },
+        {
+          "claim_id": "claim-unreviewed",
+          "evidence_id": "evidence-unreviewed-1-2"
+        }
+      ],
+      "synthetic_inputs": [
+        "GENERAL_QUESTION"
+      ]
+    }
+  },
+  "context_templates": {
+    "education": {
+      "scope": {
+        "fixture_id": "fixture-education",
+        "turn_id": "turn-1"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-1"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-1"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "education-turn2": {
+      "scope": {
+        "fixture_id": "fixture-education",
+        "turn_id": "turn-2"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-2"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-education-turn2-v1",
+          "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-education",
+          "turn_id": "turn-2"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "uncertainty": {
+      "scope": {
+        "fixture_id": "fixture-uncertainty",
+        "turn_id": "turn-1"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-1"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-uncertainty-v1",
+          "sha256": "0ca8eb2f68e560fced5c0a1b166fd062e45c1965d891a7eba742c1b9412fd70b"
+        },
+        "purpose": "UNCERTAINTY_AND_REFERRAL",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-1"
+        },
+        "level": "QUALIFIED_REVIEW"
+      },
+      "state": "ASSEMBLED"
+    },
+    "certainty": {
+      "scope": {
+        "fixture_id": "fixture-uncertainty",
+        "turn_id": "turn-2"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-2"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-certainty-v1",
+          "sha256": "1ffb6dd8b6cae8ab270173607eed9ced0e8aa762bbecab4834abca5200bbcef0"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-uncertainty",
+          "turn_id": "turn-2"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "contradiction": {
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-1"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-1"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-contradiction-v1",
+          "sha256": "9f51731b126fd643fadeacee7ac07270a750bfa7a4d9661f8fe1bca09f66f052"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-1"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "correlated": {
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-2"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-2"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-correlated-v1",
+          "sha256": "2347da10cbd0c622807c1f41f69ca0f7af9828894866c962fae60b49dcc3d1e5"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-2"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "stale": {
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-3"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-3"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-stale-v1",
+          "sha256": "af6ae27fb51c98703cc105203eece1760c46b013cf54334fdeb09e75fdfe086e"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-3"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "unresolved": {
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-4"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-4"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-unresolved-v1",
+          "sha256": "4131e54d7b29bdaae94ff20ad50a91ed122427b116f25be419c453228e679b35"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-4"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "diagnosis": {
+      "scope": {
+        "fixture_id": "fixture-prohibitions",
+        "turn_id": "turn-1"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-1"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-diagnosis-v1",
+          "sha256": "586cd9f4e951b350d31c01f88b676896dd1725e7ae0f2475c39efd97754a3038"
+        },
+        "purpose": "DIAGNOSIS",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-1"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "treatment": {
+      "scope": {
+        "fixture_id": "fixture-prohibitions",
+        "turn_id": "turn-2"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-2"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-treatment-v1",
+          "sha256": "7799caa16d5e3cd575374f5d9348584df1ec6bb178b217848e6d820153d8c939"
+        },
+        "purpose": "TREATMENT_SELECTION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-prohibitions",
+          "turn_id": "turn-2"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "authority": {
+      "scope": {
+        "fixture_id": "fixture-authority",
+        "turn_id": "turn-1"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-authority",
+          "turn_id": "turn-1"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-authority-v1",
+          "sha256": "90760c96adef93707c93b370168754bfd9bc4d86d4c1180207c111a34f6c6962"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-authority",
+          "turn_id": "turn-1"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "privacy": {
+      "scope": {
+        "fixture_id": "fixture-privacy",
+        "turn_id": "turn-1"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-privacy",
+          "turn_id": "turn-1"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-privacy-v1",
+          "sha256": "3ab26ba8be190e755b39ab33f430706f6ccf8bede082dba48ad7a596a2531e04"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-privacy",
+          "turn_id": "turn-1"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    },
+    "unreviewed": {
+      "scope": {
+        "fixture_id": "fixture-evidence",
+        "turn_id": "turn-5"
+      },
+      "evaluation_time": "2026-01-15T12:00:00Z",
+      "consent": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-5"
+        },
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 1
+        },
+        "artifact": {
+          "artifact_id": "artifact-unreviewed-v1",
+          "sha256": "8e5dd38fd98cb3c8aae8fb5a8e82c8213458270423f6669bdb3e7c2c5ca521a9"
+        },
+        "purpose": "GENERAL_EDUCATION",
+        "state": "GRANTED",
+        "valid_from": "2026-01-15T11:00:00Z",
+        "valid_until": "2026-01-15T13:00:00Z"
+      },
+      "urgency": {
+        "scope": {
+          "fixture_id": "fixture-evidence",
+          "turn_id": "turn-5"
+        },
+        "level": "ORDINARY"
+      },
+      "state": "ASSEMBLED"
+    }
+  },
+  "development": [
+    {
+      "id": "dev-education-eligible",
+      "description": "Complete reviewed synthetic education; two independent groups for each of two claims.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-education-reordered",
+      "description": "Same canonical request with input order changed.",
+      "request_template": "education",
+      "request_overrides": {
+        "claim_ids": [
+          "claim-education-limits",
+          "claim-education-scope"
+        ],
+        "evidence_refs": [
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-2"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-1"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-2"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          }
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-education-repeated-but-sufficient",
+      "description": "A duplicate does not create a new independent group or remove existing support.",
+      "request_template": "education",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-2"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-1"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-2"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          }
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-uncertainty-referral",
+      "description": "Reviewed uncertainty wording with separately established qualified review support.",
+      "request_template": "uncertainty",
+      "request_overrides": {},
+      "context_template": "uncertainty",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unsupported-certainty",
+      "description": "Two synthetic supporting annotations do not resolve an unsupported-certainty assessment.",
+      "request_template": "certainty",
+      "request_overrides": {},
+      "context_template": "certainty",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-missing-claim",
+      "description": "Declared claims are a proper subset, with no foreign references.",
+      "request_template": "education",
+      "request_overrides": {
+        "claim_ids": [
+          "claim-education-scope"
+        ],
+        "evidence_refs": [
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-2"
+          }
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-missing-evidence",
+      "description": "One required catalog reference is omitted.",
+      "request_template": "education",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-2"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-1"
+          }
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-contradictory-evidence",
+      "description": "Reviewed contradiction remains unresolved despite two independent supports.",
+      "request_template": "contradiction",
+      "request_overrides": {},
+      "context_template": "contradiction",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-contradiction-omitted",
+      "description": "Withholding a contradiction reference must not remove the catalog contradiction.",
+      "request_template": "contradiction",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-contradiction",
+            "evidence_id": "evidence-contradiction-1-1"
+          },
+          {
+            "claim_id": "claim-contradiction",
+            "evidence_id": "evidence-contradiction-1-2"
+          }
+        ]
+      },
+      "context_template": "contradiction",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-correlated-evidence",
+      "description": "Two distinct references share the same underlying source group.",
+      "request_template": "correlated",
+      "request_overrides": {},
+      "context_template": "correlated",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-repeated-evidence",
+      "description": "Repeating correlated references cannot meet independent source threshold.",
+      "request_template": "correlated",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-1"
+          },
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-2"
+          },
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-1"
+          },
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-2"
+          },
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-1"
+          },
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-2"
+          }
+        ]
+      },
+      "context_template": "correlated",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-stale-evidence",
+      "description": "Evaluation time equals one evidence record's exclusive expiry.",
+      "request_template": "stale",
+      "request_overrides": {},
+      "context_template": "stale",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unresolved-evidence",
+      "description": "Known unresolved annotation cannot be ignored.",
+      "request_template": "unresolved",
+      "request_overrides": {},
+      "context_template": "unresolved",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unknown-evidence",
+      "description": "All required references plus an unresolved unknown reference.",
+      "request_template": "education",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-2"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-1"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-2"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-unknown"
+          }
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unreviewed-artifact",
+      "description": "Manifest assessment is unresolved.",
+      "request_template": "unreviewed",
+      "request_overrides": {},
+      "context_template": "unreviewed",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unknown-artifact",
+      "description": "Structurally valid but absent from the trusted manifest; separately scoped synthetic consent is not review.",
+      "request_template": "education",
+      "request_overrides": {
+        "artifact": {
+          "artifact_id": "artifact-unknown-v1",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        },
+        "claim_ids": [],
+        "evidence_refs": []
+      },
+      "context_template": "education",
+      "context_overrides": {
+        "consent": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "catalog": {
+            "catalog_id": "catalog-ahs-synthetic",
+            "version": 1
+          },
+          "artifact": {
+            "artifact_id": "artifact-unknown-v1",
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "purpose": "GENERAL_EDUCATION",
+          "state": "GRANTED",
+          "valid_from": "2026-01-15T11:00:00Z",
+          "valid_until": "2026-01-15T13:00:00Z"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-diagnosis-prohibited",
+      "description": "Inert diagnosis-selection marker with supporting synthetic annotations.",
+      "request_template": "diagnosis",
+      "request_overrides": {},
+      "context_template": "diagnosis",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-treatment-prohibited",
+      "description": "Inert treatment-selection marker without established urgency.",
+      "request_template": "treatment",
+      "request_overrides": {},
+      "context_template": "treatment",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-treatment-urgent",
+      "description": "Same prohibited artifact, independent immediate public referral fact.",
+      "request_template": "treatment",
+      "request_overrides": {},
+      "context_template": "treatment",
+      "context_overrides": {
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-prohibitions",
+            "turn_id": "turn-2"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-authority-assertion",
+      "description": "Untrusted authority-claim marker cannot create a mandate.",
+      "request_template": "education",
+      "request_overrides": {
+        "synthetic_inputs": [
+          "GENERAL_QUESTION",
+          "ASSERTED_AUTHORITY"
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-authority-annotation-omitted",
+      "description": "Manifest authority prohibition survives omission of request marker.",
+      "request_template": "authority",
+      "request_overrides": {
+        "synthetic_inputs": [
+          "GENERAL_QUESTION"
+        ]
+      },
+      "context_template": "authority",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-injected-authority-field",
+      "description": "Unknown authority field breaks the closed request schema.",
+      "request_template": "education",
+      "request_overrides": {
+        "claimed_consent": {
+          "state": "GRANTED",
+          "assertion": "SYNTHETIC UNTRUSTED AUTHORITY CLAIM"
+        }
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-consent-missing",
+      "description": "Consent absent in trusted context.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "consent": null
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-consent-expired",
+      "description": "The grant's end is exclusive.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "consent": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "catalog": {
+            "catalog_id": "catalog-ahs-synthetic",
+            "version": 1
+          },
+          "artifact": {
+            "artifact_id": "artifact-education-v1",
+            "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+          },
+          "purpose": "GENERAL_EDUCATION",
+          "state": "GRANTED",
+          "valid_from": "2026-01-15T11:00:00Z",
+          "valid_until": "2026-01-15T12:00:00Z"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-consent-not-yet-valid",
+      "description": "Grant validity starts after evaluation.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "consent": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "catalog": {
+            "catalog_id": "catalog-ahs-synthetic",
+            "version": 1
+          },
+          "artifact": {
+            "artifact_id": "artifact-education-v1",
+            "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+          },
+          "purpose": "GENERAL_EDUCATION",
+          "state": "GRANTED",
+          "valid_from": "2026-01-15T12:00:01Z",
+          "valid_until": "2026-01-15T13:00:00Z"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-consent-revoked",
+      "description": "Explicit trusted revocation wins before expiry.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "consent": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "catalog": {
+            "catalog_id": "catalog-ahs-synthetic",
+            "version": 1
+          },
+          "artifact": {
+            "artifact_id": "artifact-education-v1",
+            "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+          },
+          "purpose": "GENERAL_EDUCATION",
+          "state": "REVOKED",
+          "valid_from": "2026-01-15T11:00:00Z",
+          "valid_until": "2026-01-15T13:00:00Z"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-consent-denied",
+      "description": "Explicit denial in harness consent.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "consent": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "catalog": {
+            "catalog_id": "catalog-ahs-synthetic",
+            "version": 1
+          },
+          "artifact": {
+            "artifact_id": "artifact-education-v1",
+            "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+          },
+          "purpose": "GENERAL_EDUCATION",
+          "state": "DENIED",
+          "valid_from": "2026-01-15T11:00:00Z",
+          "valid_until": "2026-01-15T13:00:00Z"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-consent-mismatch",
+      "description": "A grant for another turn cannot transfer.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "consent": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-2"
+          },
+          "catalog": {
+            "catalog_id": "catalog-ahs-synthetic",
+            "version": 1
+          },
+          "artifact": {
+            "artifact_id": "artifact-education-v1",
+            "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+          },
+          "purpose": "GENERAL_EDUCATION",
+          "state": "GRANTED",
+          "valid_from": "2026-01-15T11:00:00Z",
+          "valid_until": "2026-01-15T13:00:00Z"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-scope-mismatch",
+      "description": "Request scope disagrees with independent context scope.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education-turn2",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-cross-turn-evidence",
+      "description": "Other-turn evidence has the same payload/claim class but a different exact artifact and scope.",
+      "request_template": "education",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-2"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-1"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-2"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-turn2-1-1"
+          }
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-catalog-version-mismatch",
+      "description": "Declared catalog version is not the trusted pinned version.",
+      "request_template": "education",
+      "request_overrides": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-synthetic",
+          "version": 2
+        }
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-purpose-mismatch",
+      "description": "Declared purpose differs from the reviewed artifact.",
+      "request_template": "education",
+      "request_overrides": {
+        "purpose": "UNCERTAINTY_AND_REFERRAL"
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-claim-mismatch",
+      "description": "Extra claim does not belong to the reviewed artifact.",
+      "request_template": "education",
+      "request_overrides": {
+        "claim_ids": [
+          "claim-education-scope",
+          "claim-education-limits",
+          "claim-foreign"
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-artifact-digest-mismatch",
+      "description": "Known ID with different valid-format digest; no reliable urgency.",
+      "request_template": "education",
+      "request_overrides": {
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+        }
+      },
+      "context_template": "education",
+      "context_overrides": {
+        "urgency": null
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-malformed-candidate",
+      "description": "Invalid digest, no reliable urgency; preserve generic public help.",
+      "request_template": "education",
+      "request_overrides": {
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "SYNTHETIC_PRIVATE_CANARY_NOT_REAL_6042"
+        }
+      },
+      "context_template": "education",
+      "context_overrides": {
+        "urgency": null
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-malformed-request-urgent",
+      "description": "Same malformed candidate with a separately trusted urgency fact.",
+      "request_template": "education",
+      "request_overrides": {
+        "artifact": {
+          "artifact_id": "artifact-education-v1",
+          "sha256": "SYNTHETIC_PRIVATE_CANARY_NOT_REAL_6042"
+        }
+      },
+      "context_template": "education",
+      "context_overrides": {
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unknown-enum",
+      "description": "Unknown enum string rejected without echoing input.",
+      "request_template": "education",
+      "request_overrides": {
+        "purpose": "SYNTHETIC_PRIVATE_CANARY_NOT_REAL_6042"
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unsupported-schema",
+      "description": "Unknown schema version rejected.",
+      "request_template": "education",
+      "request_overrides": {
+        "schema_version": "2.0"
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-privacy-marker",
+      "description": "Explicit synthetic privacy marker, not real private data.",
+      "request_template": "privacy",
+      "request_overrides": {},
+      "context_template": "privacy",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-privacy-canary-input",
+      "description": "Raw private-text-shaped marker is not in the closed input vocabulary.",
+      "request_template": "education",
+      "request_overrides": {
+        "synthetic_inputs": [
+          "SYNTHETIC_PRIVATE_CANARY_NOT_REAL_6042"
+        ]
+      },
+      "context_template": "education",
+      "context_overrides": {
+        "urgency": null
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-privacy-canary-key",
+      "description": "Unknown key and value must not appear in error or audit output.",
+      "request_template": "education",
+      "request_overrides": {
+        "synthetic-private-canary-not-real-6042": "SYNTHETIC_PRIVATE_CANARY_NOT_REAL_6042"
+      },
+      "context_template": "education",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-urgency-scope-mismatch",
+      "description": "Unreliable other-turn urgency cannot trigger a referral.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-2"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unavailable-clock-urgent",
+      "description": "Unavailable trusted time denies candidate without erasing independent urgency.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "evaluation_time": null,
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-malformed-clock",
+      "description": "Noncanonical trusted fixture time fails schema and preserves ordinary public help.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "evaluation_time": "SYNTHETIC_PRIVATE_CANARY_NOT_REAL_6042",
+        "urgency": null
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-malformed-catalog-urgent",
+      "description": "Trusted assembly has duplicate manifest IDs. Catalog construction must fail closed.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "DUPLICATE_CATALOG_ARTIFACT"
+    },
+    {
+      "id": "dev-evaluator-exception-urgent",
+      "description": "Reserved fault hook for Phase 2 only; synthetic exception text must never escape.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "EVALUATOR_EXCEPTION"
+    },
+    {
+      "id": "dev-invalid-context-urgent",
+      "description": "Harness records a failed candidate-context assembly; separately validated urgency survives.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "state": "INVALID",
+        "consent": null,
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-invalid-context-no-urgency",
+      "description": "Malformed urgency cannot become a reliable urgency fact or permit a candidate by being discarded.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "state": "INVALID",
+        "urgency": null
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "dev-unavailable-context-scope",
+      "description": "No independently established turn identity: even a well-shaped urgency fact cannot be treated as bound.",
+      "request_template": "education",
+      "request_overrides": {},
+      "context_template": "education",
+      "context_overrides": {
+        "state": "INVALID",
+        "scope": null,
+        "consent": null,
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-education",
+            "turn_id": "turn-1"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "NONE"
+    }
+  ],
+  "reserved_for_adjudication": [
+    {
+      "id": "reserved-consent-purpose-and-urgency",
+      "description": "Reserved combination of consent-purpose mismatch and independently scoped urgency.",
+      "request_template": "uncertainty",
+      "request_overrides": {},
+      "context_template": "uncertainty",
+      "context_overrides": {
+        "consent": {
+          "scope": {
+            "fixture_id": "fixture-uncertainty",
+            "turn_id": "turn-1"
+          },
+          "catalog": {
+            "catalog_id": "catalog-ahs-synthetic",
+            "version": 1
+          },
+          "artifact": {
+            "artifact_id": "artifact-uncertainty-v1",
+            "sha256": "0ca8eb2f68e560fced5c0a1b166fd062e45c1965d891a7eba742c1b9412fd70b"
+          },
+          "purpose": "GENERAL_EDUCATION",
+          "state": "GRANTED",
+          "valid_from": "2026-01-15T11:00:00Z",
+          "valid_until": "2026-01-15T13:00:00Z"
+        },
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-uncertainty",
+            "turn_id": "turn-1"
+          },
+          "level": "IMMEDIATE_PUBLIC_REFERRAL"
+        }
+      },
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "reserved-correlation-and-missing-reference",
+      "description": "Reserved intersection of correlation and incomplete declared references.",
+      "request_template": "correlated",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-1"
+          },
+          {
+            "claim_id": "claim-correlated",
+            "evidence_id": "evidence-correlated-1-1"
+          }
+        ]
+      },
+      "context_template": "correlated",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "reserved-equal-bytes-other-turn",
+      "description": "Same synthetic bytes, different artifact IDs/scopes, foreign evidence.",
+      "request_template": "education-turn2",
+      "request_overrides": {
+        "evidence_refs": [
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-1"
+          },
+          {
+            "claim_id": "claim-education-scope",
+            "evidence_id": "evidence-education-1-2"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-1"
+          },
+          {
+            "claim_id": "claim-education-limits",
+            "evidence_id": "evidence-education-2-2"
+          }
+        ]
+      },
+      "context_template": "education-turn2",
+      "context_overrides": {},
+      "harness_fault": "NONE"
+    },
+    {
+      "id": "reserved-invalid-request-with-qualified-support",
+      "description": "Reserved privacy-canary schema case with independent qualified support.",
+      "request_template": "uncertainty",
+      "request_overrides": {
+        "synthetic_inputs": [
+          "SYNTHETIC_PRIVATE_CANARY_NOT_REAL_6042"
+        ]
+      },
+      "context_template": "uncertainty",
+      "context_overrides": {
+        "urgency": {
+          "scope": {
+            "fixture_id": "fixture-uncertainty",
+            "turn_id": "turn-1"
+          },
+          "level": "QUALIFIED_REVIEW"
+        }
+      },
+      "harness_fault": "NONE"
+    }
+  ]
+}
