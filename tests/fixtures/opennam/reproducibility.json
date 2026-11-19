@@ -1,0 +1,29 @@
+{
+  "format": "opennam-reproduction-v2",
+  "phase3_commit": "fe8418dbb5dce85867a8a536255685bc3ff2914a",
+  "phase4_commit": "f6090ea94d093e08fcfc461501c957280e5cb0a3",
+  "prior_manifest_sha256": "b87a85b86e3556c0117cf242179fb7e21daa5df013879f00764c81c462ce69cc",
+  "sha256": {
+    "ailee/domains/opennam/ADAPTERS.md": "1264d31a98b3e752cba64e006e474ce6c3b1d4a9aa87ec25aaf1bbdc6dcb0c45",
+    "ailee/domains/opennam/BENCHMARKS.md": "f7ce5a2eef2ee5849cbb47a2ab1bb477c0cbdc74be1f657387c798cd7e24632c",
+    "ailee/domains/opennam/CORPUS_PROVENANCE.md": "ae084b2cf9c24ca40b6fa8bef77f543f4ad0c1002d0e239f1a663ed615268d7a",
+    "ailee/domains/opennam/README.md": "b43895cbbfcf5ff2e09e4527f70352d829be9debd379237c9c8dd6982868b236",
+    "ailee/domains/opennam/REPRODUCIBILITY.md": "689d7193e9f675f05dd671cf4c23bfce25fa898f1354771fd4fb9b21fea96c39",
+    "ailee/domains/opennam/THREAT_MODEL.md": "21201aa35b5dafb48278d50a4aa4f84d59c0ed600c51e94a34a36cf644d4d2ed",
+    "ailee/domains/opennam/__init__.py": "6ca643526de0a8a0dd573e5a8215b4427b6cce982350009b0aaff97f4d1f0f49",
+    "ailee/domains/opennam/adapters.py": "9ea9ca2860b115034b71be899ab86ca6593acc9211baf892c42757a3058fcd47",
+    "ailee/domains/opennam/contracts.py": "f68bc2be26003adaf523588ae5f0b3e4d58ad34c5f8f0168779b75cb6d738b41",
+    "ailee/domains/opennam/governor.py": "1dc03cc911749a20a3aea3b7098c075ac2a8a2755aa6e02d02316bddfea8ffba",
+    "scripts/opennam_reproduce.py": "6a4ee3da3a48ef1e5e8631fb9964ef6f652254fbace38a4ee848cb13ed0180ee",
+    "tests/fixtures/opennam/cases.json": "244b3102f50e8714d6f07640c68d8a98d1875e8a600dbf245891910a3201f0d2",
+    "tests/fixtures/opennam/expected.json": "8579732148981d64405f9ec6f147133b86ee3f177ba82fd296b86d9885691330",
+    "tests/fixtures/opennam/observed.json": "a07b17b90153e36432f21a44e122cd7225679e68c904a9910fbe97f17b80f2e9",
+    "tests/fixtures/opennam/reproducibility-v1.json": "b87a85b86e3556c0117cf242179fb7e21daa5df013879f00764c81c462ce69cc",
+    "tests/opennam_evaluation.py": "4879d81ebffa59002c2973aeb45398afb9d3ed570a1b483cb4ad0d1e38fcdc99",
+    "tests/test_opennam_adapters.py": "f4967234548252299cb3381a901e4d5dd0edf05ad02ca9332d925c266fa29031",
+    "tests/test_opennam_contracts.py": "9688b2829e5dd926c994bc6b15ab8658d5471d495e63dc07bb6616671da20376",
+    "tests/test_opennam_evaluation.py": "e3f136d8a870f606053423240ccbae9564f8a1b648a5ef0de53318dc896095d8",
+    "tests/test_opennam_governor.py": "ede5b4baf974ed3be172bddaa1df9c27d27c07e36e5023e53804d1948fbb076b",
+    "tests/test_opennam_reproducibility.py": "923e53e0aae70da369f6757ad5a3f5fe54deb21f87270a9e1796928ef2cb46d9"
+  }
+}

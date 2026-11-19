@@ -1,9 +1,9 @@
 import { describe, it, expect } from 'vitest';
 import { LedgerMirrorClient, VERSION } from '../src/index';
 
-describe('TypeScript Governance Mirror v10.2.0', () => {
+describe('TypeScript Governance Mirror v10.3.0', () => {
   it('should export correct version', () => {
-    expect(VERSION).toBe('10.2.0');
+    expect(VERSION).toBe('10.3.0');
   });
 
   it('should instantiate LedgerMirrorClient with custom baseUrl', () => {
