@@ -54,6 +54,10 @@
   - [Memory Management Systems](#-memory-management-systems)
   - [Watermark-Provenance-Governance](#-watermark-provenance-governance)
   - [Video Temporal Provenance Engine](#-video-temporal-provenance-engine)
+  - [Cybersecurity Trust Domain](#-cybersecurity-trust-domain)
+  - [Health Safety Research Domain](#-health-safety-research-domain)
+  - [OpenNAM Research Domain](#-opennam-research-domain)
+  - [Release Events Domain](#-release-events-domain)
 - [AILEE Local Computing](#ailee-local-computing)
 - [Design Philosophy](#design-philosophy)
 - [Documentation](#documentation)
@@ -1597,6 +1601,97 @@ AILEE provides real-time, zero-allocation temporal provenance verification for v
 - Allocator-free, 64-byte aligned data structures optimized for SIMD and low-latency frame ingestion.
 - C ABI export layer for native host integration across polyglot runtimes.
 - Pure Python fallback signal evaluator when native shared libraries are absent.
+
+---
+
+### 🔐 Cybersecurity Trust Domain
+
+The [Cybersecurity Trust Domain](docs/CYBERSECURITY_DOMAIN.md)
+(`ailee.domains.cybersecurity`) governs external URLs, download and
+installation recommendations, and agent actions influenced by untrusted
+content. It provides explicit decisions and reasons for link and action
+review; the [action wrapper](ailee/domains/cybersecurity/wrapper.py)
+helps enforce the selected decision at the integration boundary.
+
+**Governed Decisions**
+- Canonicalize URLs and evaluate reported publisher-provenance evidence.
+- Screen untrusted-content advisories and supplied redirect chains.
+- Require reviewed action mandates and prevent execution-target substitution
+  or high-risk review bypasses in the covered wrapper paths.
+
+> **Security boundary:** Structural checks do not authenticate publisher
+> identity, signatures, caller mandates, or actual download contents.
+> Trusted integrations must verify independent provenance and enforce actions.
+> This is not a sandbox or malware scanner.
+
+---
+
+### 🩺 Health Safety Research Domain
+
+The opt-in [Health Safety Domain](ailee/domains/health_safety/README.md)
+(`ailee.domains.health_safety`) explores deterministic, fail-closed
+governance of **synthetic candidate-response evidence**. Its bounded
+contracts separate source material, consent, review findings, and candidate
+release decisions rather than treating model confidence as clinical authority.
+
+**Research Capabilities**
+- Produce explicit `ALLOW`, `REVIEW`, or `DENY` dispositions under
+  independently supplied synthetic evidence and policy.
+- Evaluate evidence coverage, contradictions, consent, provenance bindings,
+  and prohibited authority or privacy conditions.
+- Exercise offline adversarial fixtures and reproducibility checks.
+
+> **Research boundary:** This experimental domain does not provide medical
+> advice, diagnostic or treatment decisions, clinical validation, or
+> authorization to act on real patient data. Its test results describe
+> synthetic engineering behavior only.
+
+---
+
+### 🧪 OpenNAM Research Domain
+
+The opt-in [OpenNAM Domain](ailee/domains/opennam/README.md)
+(`ailee.domains.opennam`) explores evidence integrity for research on
+**New Approach Methodologies (NAMs)**. A deterministic governor checks
+synthetic metadata against independently supplied catalogs and policies,
+returning `INVALID`, `ABSTAIN`, or `REVIEW_READY`. Readiness denotes
+metadata completeness for review, never chemical safety.
+
+**Research Capabilities**
+- Check exact evidence scope, provenance fingerprints, chronology, reviewed
+  controls, conflicting observations, and declared source-group coverage.
+- Use bounded offline JSON/CSV synthetic metadata adapters with artifact
+  checksums and explicit trust boundaries.
+- Stage descriptive XLSX values for DPRA, KeratinoSens, and h-CLAT without
+  inferring toxicity; preserve units, bounds, missing values, and
+  borderline-aware calls.
+- Reproduce the original 40-case authored synthetic engineering evaluation.
+
+> **Scientific boundary:** No toxicological validity, regulatory acceptance,
+> or animal-test replacement has been established. The assay importer has
+> been tested with synthetic workbooks; compatibility with the original
+> NIH/NICEATM workbook remains unverified. See
+> [assay importer limitations](ailee/domains/opennam/ASSAY_IMPORTS.md).
+
+---
+
+### 📋 Release Events Domain
+
+The [Release Events Domain](ailee/domains/release_events/)
+(`ailee.domains.release_events`) provides a policy-configurable governor
+for reported release-event signals, producing typed trust levels, actionability
+flags, reasons, and event-history records.
+
+**Governed Decisions**
+- Validate the structure of supplied signals before evaluating trust levels.
+- Apply configurable minimum trust requirements for proposed actions.
+- Record decisions and expose health, metrics, event, and history views through
+  the domain API.
+
+> **Integration boundary:** This domain evaluates supplied signals; it does
+> not independently authenticate their sources or execute deployments.
+> Its reported confidence and policy decisions are not proof of release
+> safety or production readiness.
 
 ---
 
