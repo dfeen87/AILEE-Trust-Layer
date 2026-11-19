@@ -1,0 +1,66 @@
+{
+  "format": "ahs-phase4-local-reproducibility-v1",
+  "phase3_baseline_sha": "92379d20205c72a5dd6cc5638d3650e3db036d48",
+  "selection": "all",
+  "repeats": 3,
+  "comparison": "Complete canonical results objects equal in all six independent processes; environment envelopes differ.",
+  "all_results_equal": true,
+  "results_sha256": "c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405",
+  "command_template": "PYTHONHASHSEED=<seed> PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. <python_executable> -m scripts.health_safety_benchmark --partition all --repeats 3 --output <new-file>",
+  "runs": [
+    {
+      "platform": "Darwin-arm64",
+      "python_hash_seed": "0",
+      "python_implementation": "CPython",
+      "python_version": "3.13.13",
+      "results_sha256": "c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405",
+      "exit_status": 0,
+      "python_executable": "/Users/donfeeney/miniforge3/bin/python3.13"
+    },
+    {
+      "platform": "Darwin-arm64",
+      "python_hash_seed": "7",
+      "python_implementation": "CPython",
+      "python_version": "3.13.13",
+      "results_sha256": "c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405",
+      "exit_status": 0,
+      "python_executable": "/Users/donfeeney/miniforge3/bin/python3.13"
+    },
+    {
+      "platform": "Darwin-arm64",
+      "python_hash_seed": "31",
+      "python_implementation": "CPython",
+      "python_version": "3.13.13",
+      "results_sha256": "c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405",
+      "exit_status": 0,
+      "python_executable": "/Users/donfeeney/miniforge3/bin/python3.13"
+    },
+    {
+      "platform": "Darwin-arm64",
+      "python_hash_seed": "0",
+      "python_implementation": "CPython",
+      "python_version": "3.11.14",
+      "results_sha256": "c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405",
+      "exit_status": 0,
+      "python_executable": "/opt/homebrew/bin/python3.11"
+    },
+    {
+      "platform": "Darwin-arm64",
+      "python_hash_seed": "7",
+      "python_implementation": "CPython",
+      "python_version": "3.11.14",
+      "results_sha256": "c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405",
+      "exit_status": 0,
+      "python_executable": "/opt/homebrew/bin/python3.11"
+    },
+    {
+      "platform": "Darwin-arm64",
+      "python_hash_seed": "31",
+      "python_implementation": "CPython",
+      "python_version": "3.11.14",
+      "results_sha256": "c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405",
+      "exit_status": 0,
+      "python_executable": "/opt/homebrew/bin/python3.11"
+    }
+  ]
+}

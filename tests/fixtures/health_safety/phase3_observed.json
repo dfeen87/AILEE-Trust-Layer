@@ -1,0 +1,3340 @@
+{
+  "case_count": 62,
+  "corpus_id": "ahs-phase3-defensive-v1",
+  "observations": [
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "benign-controls",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-benign-education",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNRESOLVED_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-unresolved",
+          "turn_id": "turn-3"
+        },
+        "support": "QUALIFIED_REVIEW",
+        "support_template_id": "ahs.public.qualified-review.v1"
+      },
+      "category": "benign-controls",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNRESOLVED_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-unresolved",
+          "turn_id": "turn-3"
+        },
+        "support": "QUALIFIED_REVIEW",
+        "support_template_id": "ahs.public.qualified-review.v1"
+      },
+      "id": "p3-benign-review-evidence",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CANDIDATE_NOT_REVIEWED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-pending",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "benign-controls",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CANDIDATE_NOT_REVIEWED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-pending",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-benign-review-pending",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "QUALIFIED_REVIEW",
+        "support_template_id": "ahs.public.qualified-review.v1"
+      },
+      "category": "benign-controls",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-uncertainty",
+          "sha256": "8c56aaadb64939643b4f5dd4e8c8a376501ece154f75d6a899caf8c872f059fb"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "QUALIFIED_REVIEW",
+        "support_template_id": "ahs.public.qualified-review.v1"
+      },
+      "id": "p3-benign-uncertainty",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNSUPPORTED_CERTAINTY"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-certainty",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "unsupported-certainty",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNSUPPORTED_CERTAINTY"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-certainty",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-certainty-annotated",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "unsupported-certainty",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-certainty-eligible-control",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-artifact-mismatch",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-catalog-mismatch",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_DENIED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_DENIED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-denied",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REVOKED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-contradiction",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REVOKED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-contradiction",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-deny-before-review",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_EXPIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_EXPIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-expired",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REQUIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REQUIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-missing",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_NOT_YET_VALID"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_NOT_YET_VALID"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-not-yet-valid",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-purpose-mismatch",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REVOKED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REVOKED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-revoked",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-scope-mismatch",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-start-inclusive",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "consent",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-consent-unsupported-declaration",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu",
+          "sha256": "3bd05c6e0554105a94fe7cbb1b4d23d53200e970917389aefe1a70def854c075"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-complete",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONTRADICTORY_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-contradiction",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONTRADICTORY_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-contradiction",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-contradiction",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INSUFFICIENT_INDEPENDENT_SUPPORT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-correlated",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INSUFFICIENT_INDEPENDENT_SUPPORT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-correlated",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-correlated-groups",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "STALE_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-stale",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "STALE_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-stale",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-expiry-boundary",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MISSING_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MISSING_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-missing",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MISSING_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-stale",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MISSING_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-stale",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-missing-before-stale",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MISSING_CLAIMS"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MISSING_CLAIMS"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-missing-claim",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INSUFFICIENT_INDEPENDENT_SUPPORT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-repeat",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INSUFFICIENT_INDEPENDENT_SUPPORT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-repeat",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-repeated",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-repeated-but-complete",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNRESOLVED_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNRESOLVED_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-unknown",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNRESOLVED_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-unresolved",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "evidence-consistency",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNRESOLVED_EVIDENCE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-unresolved",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-evidence-unresolved",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-changed-bytes",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REQUIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_REQUIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-current-consent",
+      "integrity_check": false,
+      "prior_candidate": "ALLOW",
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-empty-payload",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-exact",
+      "integrity_check": true,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-invalid-id",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "BINDING_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "BINDING_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-mismatched-context",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-uncertainty",
+          "sha256": "8c56aaadb64939643b4f5dd4e8c8a376501ece154f75d6a899caf8c872f059fb"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-nonbytes",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-other-id",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": null,
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INVALID_CONTEXT"
+        ],
+        "scope": null,
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": null,
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INVALID_CONTEXT"
+        ],
+        "scope": null,
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-unavailable-context",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "artifact-integrity",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-integrity-wrong-request-type",
+      "integrity_check": false,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "privacy-failures",
+      "controlled_decoder_reason": "MALFORMED_SCHEMA",
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-privacy-enum",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": true,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "EVALUATOR_FAILURE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "category": "privacy-failures",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "EVALUATOR_FAILURE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "id": "p3-privacy-evaluator-fault",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": true,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "privacy-failures",
+      "controlled_decoder_reason": "MALFORMED_SCHEMA",
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-privacy-field",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": true,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "BINDING_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "privacy-failures",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "BINDING_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-privacy-rejected-id",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": true,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "deterministic-replay",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu",
+          "sha256": "3bd05c6e0554105a94fe7cbb1b4d23d53200e970917389aefe1a70def854c075"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-replay-allow",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": true
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_EXPIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "deterministic-replay",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_EXPIRED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-replay-deny",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": true
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INSUFFICIENT_INDEPENDENT_SUPPORT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-correlated",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "deterministic-replay",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "REVIEW",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INSUFFICIENT_INDEPENDENT_SUPPORT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-correlated",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-replay-review",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": true
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-authority-field",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "AUTHORITY_VIOLATION"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "AUTHORITY_VIOLATION"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-authority-marker",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-boolean-version",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-extra-field",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-malformed-identifier",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-unknown-enum",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNSUPPORTED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "UNSUPPORTED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-unsupported-version",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "authority-schema",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-schema-wrong-list-type",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_DENIED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "CONSENT_DENIED"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "id": "p3-support-denied-consent",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "id": "p3-support-immediate",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INVALID_CONTEXT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "INVALID_CONTEXT"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "id": "p3-support-invalid-context",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "MALFORMED_SCHEMA"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "IMMEDIATE_PUBLIC_REFERRAL",
+        "support_template_id": "ahs.public.immediate-referral.v1"
+      },
+      "id": "p3-support-malformed-candidate",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-support-ordinary",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "QUALIFIED_REVIEW",
+        "support_template_id": "ahs.public.qualified-review.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-uncertainty",
+          "sha256": "8c56aaadb64939643b4f5dd4e8c8a376501ece154f75d6a899caf8c872f059fb"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-uncertainty",
+          "turn_id": "turn-3"
+        },
+        "support": "QUALIFIED_REVIEW",
+        "support_template_id": "ahs.public.qualified-review.v1"
+      },
+      "id": "p3-support-qualified",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "ALLOW",
+        "permitted_artifact": {
+          "artifact_id": "artifact-p3-edu2",
+          "sha256": "5095d4873ca4e95eec55b2e1bb25bec1a46b23d8d8946041fea4a3ef0915f0ed"
+        },
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "SYNTHETIC_ARTIFACT_ELIGIBLE"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu2",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-support-unavailable",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    },
+    {
+      "audit": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "BINDING_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "category": "public-support",
+      "controlled_decoder_reason": null,
+      "decision": {
+        "catalog": {
+          "catalog_id": "catalog-ahs-phase3",
+          "version": 1
+        },
+        "evaluation_time": "2026-06-02T12:00:00Z",
+        "outcome": "DENY",
+        "permitted_artifact": null,
+        "policy": {
+          "policy_id": "policy-ahs-phase3",
+          "version": 1
+        },
+        "reason_codes": [
+          "BINDING_MISMATCH"
+        ],
+        "scope": {
+          "fixture_id": "fixture-p3-edu",
+          "turn_id": "turn-3"
+        },
+        "support": "ORDINARY_HELP",
+        "support_template_id": "ahs.public.ordinary-help.v1"
+      },
+      "id": "p3-support-wrong-scope",
+      "integrity_check": null,
+      "prior_candidate": null,
+      "privacy_clear": null,
+      "quiet": true,
+      "replay_equal": null
+    }
+  ]
+}

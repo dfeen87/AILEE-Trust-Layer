@@ -1,0 +1,712 @@
+{
+  "schema_version": "1.0",
+  "corpus_id": "ahs-phase1-synthetic-v1",
+  "label_status": "PROVISIONAL_ENGINEERING_NOT_CLINICALLY_OR_INDEPENDENTLY_REVIEWED",
+  "governor_behavior": "PENDING_PHASE_2",
+  "development": {
+    "dev-education-eligible": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "ALLOW",
+      "reason_codes": [
+        "SYNTHETIC_ARTIFACT_ELIGIBLE"
+      ],
+      "permitted_artifact": {
+        "artifact_id": "artifact-education-v1",
+        "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+      },
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-education-reordered": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "ALLOW",
+      "reason_codes": [
+        "SYNTHETIC_ARTIFACT_ELIGIBLE"
+      ],
+      "permitted_artifact": {
+        "artifact_id": "artifact-education-v1",
+        "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+      },
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-education-repeated-but-sufficient": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "ALLOW",
+      "reason_codes": [
+        "SYNTHETIC_ARTIFACT_ELIGIBLE"
+      ],
+      "permitted_artifact": {
+        "artifact_id": "artifact-education-v1",
+        "sha256": "3b34595e87001c10cc09519e000b28f554b6ddcd652e4b8f6817d50d295c9b97"
+      },
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-uncertainty-referral": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "ALLOW",
+      "reason_codes": [
+        "SYNTHETIC_ARTIFACT_ELIGIBLE"
+      ],
+      "permitted_artifact": {
+        "artifact_id": "artifact-uncertainty-v1",
+        "sha256": "0ca8eb2f68e560fced5c0a1b166fd062e45c1965d891a7eba742c1b9412fd70b"
+      },
+      "support": "QUALIFIED_REVIEW",
+      "support_template_id": "ahs.public.qualified-review.v1"
+    },
+    "dev-unsupported-certainty": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "UNSUPPORTED_CERTAINTY"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-missing-claim": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "MISSING_CLAIMS"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-missing-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "MISSING_EVIDENCE"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-contradictory-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "CONTRADICTORY_EVIDENCE"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-contradiction-omitted": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "CONTRADICTORY_EVIDENCE"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-correlated-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "INSUFFICIENT_INDEPENDENT_SUPPORT"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-repeated-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "INSUFFICIENT_INDEPENDENT_SUPPORT"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-stale-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "STALE_EVIDENCE"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-unresolved-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "UNRESOLVED_EVIDENCE"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-unknown-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "UNRESOLVED_EVIDENCE"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-unreviewed-artifact": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "CANDIDATE_NOT_REVIEWED"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-unknown-artifact": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "REVIEW",
+      "reason_codes": [
+        "CANDIDATE_NOT_REVIEWED"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-diagnosis-prohibited": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "PROHIBITED_MEDICAL_ACTION"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-treatment-prohibited": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "PROHIBITED_MEDICAL_ACTION"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-treatment-urgent": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "PROHIBITED_MEDICAL_ACTION"
+      ],
+      "permitted_artifact": null,
+      "support": "IMMEDIATE_PUBLIC_REFERRAL",
+      "support_template_id": "ahs.public.immediate-referral.v1"
+    },
+    "dev-authority-assertion": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "AUTHORITY_VIOLATION"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-authority-annotation-omitted": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "AUTHORITY_VIOLATION"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-injected-authority-field": {
+      "schema_checks": {
+        "request": "MALFORMED_SCHEMA",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "MALFORMED_SCHEMA"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-consent-missing": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "CONSENT_REQUIRED"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-consent-expired": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "CONSENT_EXPIRED"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-consent-not-yet-valid": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "CONSENT_NOT_YET_VALID"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-consent-revoked": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "CONSENT_REVOKED"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-consent-denied": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "CONSENT_DENIED"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-consent-mismatch": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "CONSENT_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-scope-mismatch": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "BINDING_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-cross-turn-evidence": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "BINDING_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-catalog-version-mismatch": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "BINDING_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-purpose-mismatch": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "BINDING_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-claim-mismatch": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "BINDING_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-artifact-digest-mismatch": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "BINDING_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-malformed-candidate": {
+      "schema_checks": {
+        "request": "MALFORMED_SCHEMA",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "MALFORMED_SCHEMA"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-malformed-request-urgent": {
+      "schema_checks": {
+        "request": "MALFORMED_SCHEMA",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "MALFORMED_SCHEMA"
+      ],
+      "permitted_artifact": null,
+      "support": "IMMEDIATE_PUBLIC_REFERRAL",
+      "support_template_id": "ahs.public.immediate-referral.v1"
+    },
+    "dev-unknown-enum": {
+      "schema_checks": {
+        "request": "MALFORMED_SCHEMA",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "MALFORMED_SCHEMA"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-unsupported-schema": {
+      "schema_checks": {
+        "request": "UNSUPPORTED_SCHEMA",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "UNSUPPORTED_SCHEMA"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-privacy-marker": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "PRIVACY_VIOLATION"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-privacy-canary-input": {
+      "schema_checks": {
+        "request": "MALFORMED_SCHEMA",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "MALFORMED_SCHEMA"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-privacy-canary-key": {
+      "schema_checks": {
+        "request": "MALFORMED_SCHEMA",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "MALFORMED_SCHEMA"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-urgency-scope-mismatch": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "BINDING_MISMATCH"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-unavailable-clock-urgent": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "INVALID_TIMESTAMP"
+      ],
+      "permitted_artifact": null,
+      "support": "IMMEDIATE_PUBLIC_REFERRAL",
+      "support_template_id": "ahs.public.immediate-referral.v1"
+    },
+    "dev-malformed-clock": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "INVALID_TIMESTAMP",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "INVALID_TIMESTAMP"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-malformed-catalog-urgent": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "INVALID_CATALOG"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "INVALID_CATALOG"
+      ],
+      "permitted_artifact": null,
+      "support": "IMMEDIATE_PUBLIC_REFERRAL",
+      "support_template_id": "ahs.public.immediate-referral.v1"
+    },
+    "dev-evaluator-exception-urgent": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "EVALUATOR_FAILURE"
+      ],
+      "permitted_artifact": null,
+      "support": "IMMEDIATE_PUBLIC_REFERRAL",
+      "support_template_id": "ahs.public.immediate-referral.v1"
+    },
+    "dev-invalid-context-urgent": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "INVALID_CONTEXT"
+      ],
+      "permitted_artifact": null,
+      "support": "IMMEDIATE_PUBLIC_REFERRAL",
+      "support_template_id": "ahs.public.immediate-referral.v1"
+    },
+    "dev-invalid-context-no-urgency": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "INVALID_CONTEXT"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    },
+    "dev-unavailable-context-scope": {
+      "schema_checks": {
+        "request": "VALID",
+        "context": "VALID",
+        "catalog": "VALID"
+      },
+      "candidate": "DENY",
+      "reason_codes": [
+        "INVALID_CONTEXT"
+      ],
+      "permitted_artifact": null,
+      "support": "ORDINARY_HELP",
+      "support_template_id": "ahs.public.ordinary-help.v1"
+    }
+  },
+  "reserved_for_adjudication": {
+    "reserved-consent-purpose-and-urgency": "AWAITING_INDEPENDENT_ADJUDICATION",
+    "reserved-correlation-and-missing-reference": "AWAITING_INDEPENDENT_ADJUDICATION",
+    "reserved-equal-bytes-other-turn": "AWAITING_INDEPENDENT_ADJUDICATION",
+    "reserved-invalid-request-with-qualified-support": "AWAITING_INDEPENDENT_ADJUDICATION"
+  }
+}
