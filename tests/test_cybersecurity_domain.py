@@ -445,3 +445,14 @@ def test_governor_health_and_metrics_telemetry():
     history = get_decision_history(gov)
     assert len(history) == 1
     assert history[0].authorized is True
+
+def test_documented_download_wrapper_example_runs_standalone():
+    """The offline example must run without variables from a previous example."""
+    from pathlib import Path
+
+    guide = (Path(__file__).resolve().parents[1] / "docs" / "CYBERSECURITY_DOMAIN.md").read_text(
+        encoding="utf-8"
+    )
+    section = guide.split("### 4.2 Intercepting Agent Tools with `CybersecurityActionWrapper`", 1)[1]
+    example = section.split("```python", 1)[1].split("```", 1)[0]
+    exec(compile(example, "CYBERSECURITY_DOMAIN.md section 4.2", "exec"), {"__name__": "__main__"})

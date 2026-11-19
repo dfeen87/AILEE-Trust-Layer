@@ -253,7 +253,7 @@ Check your installed version:
 
 ```python
 import ailee
-print(ailee.__version__)  # "10.0.2"
+print(ailee.__version__)  # "10.1.1"
 print(ailee.get_info())   # Full package info
 ```
 

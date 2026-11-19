@@ -174,6 +174,7 @@ def evaluate_with_publisher_evidence(url: str, evidence: PublisherProvenanceEvid
 ### 4.2 Intercepting Agent Tools with `CybersecurityActionWrapper`
 
 ```python
+from datetime import datetime, timezone
 from ailee.domains.cybersecurity import (
     create_cybersecurity_action_wrapper,
     CybersecurityAuthorizationRequest,
@@ -185,6 +186,7 @@ def download_file_tool(url: str) -> str:
     return f"Downloaded {url}"
 
 wrapper = create_cybersecurity_action_wrapper(download_file_tool)
+now = datetime.now(timezone.utc)
 
 # If an unverified URL is requested, wrapper halts execution before the tool runs:
 result = wrapper.execute(
@@ -194,12 +196,13 @@ result = wrapper.execute(
         url="https://pear-cleaner.com/Pearcleaner.dmg",
         software_id="pearcleaner",
         evaluation_time=now,
-        evidence=evidence,  # pear-cleaner.com not in allowed_download_domains
+        evidence=None,  # No independently authenticated publisher evidence supplied
     ),
     url="https://pear-cleaner.com/Pearcleaner.dmg",
 )
 
 assert result["blocked"] is True
+assert result["reason"] == "PROVENANCE_MISSING"
 assert result["result"] is None  # download_file_tool was never invoked!
 ```
 

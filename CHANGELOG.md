@@ -1,5 +1,25 @@
 # Changelog
 
+### **v10.1.1 — TRUST CONSISTENCY** (unreleased; hosted verification pending)
+
+*Deterministic Governance · Fail-Closed Decisions · Backend Parity · Transparent Fallback*
+
+**Type:** Patch release candidate — targeted Python stability, correctness, and security-consistency fixes; no new domain.
+
+- **Cybersecurity:** Invalid evaluation timestamps return typed denials with unavailable audit time. Missing, expired, invalid, and unknown publisher-evidence states cannot be promoted to valid. Structural checks do not authenticate signatures or caller mandates.
+- **FEEN:** Reject nonfinite or malformed numeric inputs and hard-envelope violations before scoring, including both fallback configurations. A bounded rejected value is not authorization.
+- **Neuro-assistive:** Use canonical result fields; derive effective authorization, outcome, recommendation, and interaction constraints after cognitive and policy ceilings. Prevent historical numeric fallback from authorizing ordinary assistance, preserve consent and break restrictions, and keep emergency simplification minimal.
+- **Explainability:** Public decision explanations distinguish fallback from validated values, handle consent denials without pretending the numeric pipeline ran, and avoid misleading score-only advice when authority is restricted.
+- **Provider logging:** Avoid leaking credential fragments and raw SDK error details in the covered generation and initialization paths.
+- **Documentation:** Reconcile [Phase 0 findings](docs/PHASE_0_5_AUDIT_DISPOSITION.md), clarify existing authentication boundaries, and repair the standalone cybersecurity download-wrapper example.
+- **Version alignment:** Update Python, Rust, C++, TypeScript, package lockfiles, citation metadata, current-version tests, and CI wheel assertions to `10.1.1` without rewriting historical releases.
+
+**Verification to date:** Before this version-alignment change, the focused PR suite reported 213 passing tests each on Python 3.11 and 3.13. The previously run full local Python suite reported 758 passed, 3 skipped, and one sandbox-local socket bind failure also observed on the pre-fix tree. Those results apply to earlier tested commits, not the current release candidate. GitHub Actions for PR #98 reported jobs failing before any recorded steps; the cause remains unverified. Re-run required checks on the final release commit before merging or tagging.
+
+**Remaining boundaries:** No independent cryptographic publisher/mandate authentication; web `/trust` release and query-privacy gaps; limited Governance v1 approval; ledger nested mutability; training dispatcher persistence atomicity. These are tracked in [the audit disposition](docs/PHASE_0_5_AUDIT_DISPOSITION.md), not solved by this patch. No clinical or Health Safety Domain functionality is introduced.
+
+---
+
 ### **v10.1.0 — PROVENANCE BOUNDARY**
 
 *Link Integrity · Publisher Evidence · Injection Governance · Agent Authorization*
