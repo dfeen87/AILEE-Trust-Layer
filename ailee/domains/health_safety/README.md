@@ -770,3 +770,181 @@ hosted checks finish. Phase 4 may start only after that successful hosted
 verification; it must not modify the frozen governor, corpus, or labels.
 No merge, new PR, ready transition, release, production integration or
 clinical deployment.
+
+## 12. Phase 4 — research, benchmarking and reproducibility record
+
+**Design down. Prove up. Govern the answer. Preserve the help.**
+
+This separately authorized, appended record completes the local Phase 4
+research work after Phase 3 was frozen. The earlier phase records above
+remain historical, not rewritten. The exact Phase 3 commit
+[`92379d20205c72a5dd6cc5638d3650e3db036d48`](https://github.com/dfeen87/AILEE-Trust-Layer/commit/92379d20205c72a5dd6cc5638d3650e3db036d48)
+was verified in draft PR #99 with 338/338 matching Git blobs. Both its
+[push CI](https://github.com/dfeen87/AILEE-Trust-Layer/actions/runs/44457830455)
+and [draft PR CI](https://github.com/dfeen87/AILEE-Trust-Layer/actions/runs/44457836430)
+completed 12/12 successful jobs. Each Python 3.9/3.10/3.11 job reported
+999 passes and one pre-existing skip. Phase 4 began only after that
+verification and the appended PR freeze record.
+
+### Current research API and scope
+
+AHS is a pure categorical **offline synthetic engineering experiment**
+that governs the eligibility of an already catalog-reviewed inert
+artifact, not a clinician, generator, content-delivery system, or
+production medical safeguard. It is opt-in; the existing domains,
+numeric pipeline, release metadata and root package exports remain
+unchanged.
+
+~~~python
+from ailee.domains import health_safety as hs
+
+# Explicit, independently assembled trusted fixture snapshots:
+governor = hs.HealthSafetyGovernor(policy=policy, catalog=catalog)
+decision = governor.evaluate(request, context=context)
+audit = decision.audit
+# Only an exact, bounded synthetic-byte integrity assertion:
+matches = governor.verify_synthetic_artifact(
+    request, context=context, artifact_id=artifact_id, payload=payload,
+)  # bool; not release authority or content
+~~~
+
+- **Untrusted:** the closed built-in request dictionary or exact typed
+  `HealthRequest`, containing declared schema, scope, catalog, artifact,
+  safe/prohibited purpose, claims, evidence references and closed markers.
+  No declared consent, urgency, policy, confidence, prose or authority
+  field can replace independently supplied trusted data.
+- **Independently owned:** the harness provides immutable pinned policy
+  and full catalog, exact UTC time, scope, consent and urgency; structure
+  alone is not authentication or source verification. Evidence must be
+  complete, bound, current and distinct by source group per claim.
+- **Decision ordering:** capture independent support; reject malformed
+  request, invalid context/time/policy/catalog, prohibited markers or
+  purpose, mismatched bindings, policy rejection or defective consent.
+  Only after those deny gates clear, apply ordered review gates for
+  unresolved candidate, unsupported certainty, contradiction, missing
+  claims/evidence, unresolved or stale evidence and insufficient distinct
+  groups. Only the affirmative eligible artifact may ALLOW.
+  See the exact frozen precedence in §4.
+- **Separate public support:** scoped reliable urgency alone selects the
+  existing fixed ordinary, qualified-review or immediate-referral ID.
+  Candidate withholding or controlled failure must not suppress reliable
+  independent support. No clinical triage, inference, content rendering
+  or external call is implemented.
+- **Privacy and integrity:** controlled errors and minimal immutable
+  audit metadata; no rejected content, patient record, telemetry or audit
+  persistence. Exact artifact ID + SHA-256 permission only on ALLOW;
+  fresh evaluation and bounded Boolean byte verification do not establish
+  origin, clinical validity or a release-consumer authorization credential.
+
+### Research package
+
+| Evidence | Location |
+| --- | --- |
+| Experimental trust assumptions, defensive control/invariant map and residual risks | [THREAT_MODEL.md](THREAT_MODEL.md) |
+| Partition authorship/origin, review and licensing status, exact frozen checksums | [CORPUS_PROVENANCE.md](CORPUS_PROVENANCE.md) |
+| Methodology fixed before measuring results; definitions and denominators | [BENCHMARKS.md](BENCHMARKS.md) |
+| Actual measured results, confusion matrices, environment and interpretation | [BENCHMARK_RESULTS.md](BENCHMARK_RESULTS.md) |
+| Standard-library fixed-corpus runner | [health_safety_benchmark.py](../../../scripts/health_safety_benchmark.py) |
+| Raw per-case observations and repeat digests | [phase4_benchmark_results.json](../../../tests/fixtures/health_safety/phase4_benchmark_results.json) |
+| Six local process invocation summaries | [phase4_reproducibility.json](../../../tests/fixtures/health_safety/phase4_reproducibility.json) |
+| Metric arithmetic, controlled error handling, frozen-input and cross-runtime replay tests | [test_health_safety_benchmark.py](../../../tests/test_health_safety_benchmark.py) |
+
+Both the original 49-case development and 62-case Phase 3 defensive
+partitions retain their separately stored provisional engineering
+reference labels. The four visible original reserved cases remain
+unlabelled, unadjudicated, not executed and excluded from metrics. There
+is no genuinely independent holdout, independent adjudication or real
+patient data. Independent source-group/catalog review and corpus
+licensing/redistribution remain pending.
+
+### Observed benchmark results
+
+| Metric | Development | Phase 3 |
+| --- | --- | --- |
+| Executed labeled cases | 49/49 | 62/62 |
+| Expected and observed ALLOW / REVIEW / DENY | 4 / 12 / 33 | 18 / 13 / 31 |
+| FAR (false allow / expected withhold) | 0/45, 0% | 0/44, 0% |
+| FBR (false block / expected allow) | 0/4, 0% | 0/18, 0% |
+| Three-way, controlled reason and support agreement | 49/49 each | 62/62 each |
+| Immediate-referral preservation failures | 0/6 | 0/5 |
+| Exact permission-reference mismatches | 0/49 | 0/62 |
+| Boolean byte-check mismatches | Undefined (no explicit per-case labels) | 0/10 |
+| Privacy-canary incidents | 0/4 | 0/4 |
+| Complete repeat mismatches | 0/98 | 0/124 |
+| Benign controls | 4/4 eligible | 4/4 (2 ALLOW, 2 REVIEW) |
+
+There were no runner errors or unexpected decisions. Thirteen intentional
+invalid-input cases per partition were correctly evaluated rather than
+discarded; one controlled evaluator-fault case per partition was also
+executed. Three primary repetitions of every selected case used fresh
+governors and the exact fixed UTC fixture settings. Six separate local
+process invocations across CPython 3.11.14 and 3.13.13 (Darwin-arm64) at
+hash seeds 0, 7 and 31 returned zero and produced exactly equal canonical
+results objects. The SHA-256 of the canonical results object is
+`c16e602280e64faa30601956d547b4a8e60dfb485082404a6a70cf301c9a1405`.
+No frozen governor, Phase 1/2 or Phase 3 case, label, test or observation
+record was changed to obtain these results.
+
+**These rates are engineering-label conformance under a small known
+synthetic corpus, not patient outcomes, medical/clinical accuracy,
+clinical safety, regulated readiness or independent effectiveness.**
+There is no authenticated real-world ingress, independent source
+verification, clinical reasoning/triage, renderer or production release
+consumer. The finite observed zero-error counts do not justify inference
+of a universal error rate of zero.
+
+### Reproduce and verify
+
+From the exact research checkout with Python 3.9, 3.10 or 3.11 (each hosted
+runtime required), or a locally tested interpreter:
+
+~~~sh
+PYTHONHASHSEED=0 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. \
+  python -m scripts.health_safety_benchmark --partition all --repeats 3
+# Select development or phase3 individually if needed; --output creates a
+# new file only and must never overwrite the frozen observation records.
+
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. \
+  python -m pytest -q --tb=short -p no:cacheprovider \
+  tests/test_health_safety_domain.py tests/test_health_safety_phase3.py \
+  tests/test_health_safety_benchmark.py
+
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. \
+  python -m pytest -q --tb=short -p no:cacheprovider tests
+~~~
+
+The runner checks exact frozen source, fixture and pre-measurement
+methodology checksums before and after evaluation. It compares the
+recorded decisions/audits and applicable auxiliary observations with
+the references; benchmark errors, mismatches and repeat inconsistencies
+return nonzero. Correct controlled DENY outcomes are valid observations.
+Zero denominators are explicitly undefined. The Phase 4 tests reproduce
+the complete archived canonical results object on the hosted runtime
+matrix and in fresh processes at all three specified seeds.
+
+### Final local verification record
+
+| Check | Observed result |
+| --- | --- |
+| Original development verdicts and operational invariants | 49/49 and 12/12 (61 passed) |
+| Frozen Phase 3 conformance/infrastructure tests | 69 passed (including all 62 cases) |
+| Benchmark runner and reproducibility tests | 18 passed |
+| Complete Health suite, Python 3.11.14 / 3.13.13 | 249 passed on each; zero Health skips |
+| Focused Health + Industrial, Licensing, Cybersecurity, Neuro-assistive, Dual Domain, release metadata (3.11.14) | 339 passed |
+| Full local Python 3.13.13 suite | 1014 passed, 3 skipped, same 1 baseline socket failure |
+| Full local suite excluding only that known restricted test | 1014 passed, 3 skipped, 1 deselected |
+| 3.9 grammar/compile, checksum/documentation checks, import isolation, package discovery, offline wheel build/install/import | Passed; version remains 10.1.1 |
+
+The only local full-suite failure again occurred in
+`test_windows_and_macos_native_file_process_network_and_identity` at
+localhost `socket.bind` (`PermissionError`), unchanged from the exact
+Phase 2 and Phase 3 baselines. No new regression or frozen-governor issue
+was observed. No source correction or relabeling was necessary.
+
+**Final gate:** this Phase 4 commit records the actual local measurements
+and acceptance checks. The exact commit SHA, complete hosted push/draft
+PR matrix results and final four-commit branch verification are appended
+to PR #99 only after hosted CI succeeds. Keep the PR open and draft
+pending independent final engineering audit; no ready-for-review
+transition, merge, release tag, clinical deployment, or unsupported
+safety/efficacy claim.
