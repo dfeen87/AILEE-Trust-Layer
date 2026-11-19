@@ -1607,7 +1607,7 @@ AILEE provides real-time, zero-allocation temporal provenance verification for v
 ### 🔐 Cybersecurity Trust Domain
 
 The [Cybersecurity Trust Domain](docs/CYBERSECURITY_DOMAIN.md)
-(\`ailee.domains.cybersecurity\`) governs external URLs, download and
+(`ailee.domains.cybersecurity`) governs external URLs, download and
 installation recommendations, and agent actions influenced by untrusted
 content. It provides explicit decisions and reasons for link and action
 review; the [action wrapper](ailee/domains/cybersecurity/wrapper.py)
@@ -1629,13 +1629,13 @@ helps enforce the selected decision at the integration boundary.
 ### 🩺 Health Safety Research Domain
 
 The opt-in [Health Safety Domain](ailee/domains/health_safety/README.md)
-(\`ailee.domains.health_safety\`) explores deterministic, fail-closed
+(`ailee.domains.health_safety`) explores deterministic, fail-closed
 governance of **synthetic candidate-response evidence**. Its bounded
 contracts separate source material, consent, review findings, and candidate
 release decisions rather than treating model confidence as clinical authority.
 
 **Research Capabilities**
-- Produce explicit \`ALLOW\`, \`REVIEW\`, or \`DENY\` dispositions under
+- Produce explicit `ALLOW`, `REVIEW`, or `DENY` dispositions under
   independently supplied synthetic evidence and policy.
 - Evaluate evidence coverage, contradictions, consent, provenance bindings,
   and prohibited authority or privacy conditions.
@@ -1651,10 +1651,10 @@ release decisions rather than treating model confidence as clinical authority.
 ### 🧪 OpenNAM Research Domain
 
 The opt-in [OpenNAM Domain](ailee/domains/opennam/README.md)
-(\`ailee.domains.opennam\`) explores evidence integrity for research on
+(`ailee.domains.opennam`) explores evidence integrity for research on
 **New Approach Methodologies (NAMs)**. A deterministic governor checks
 synthetic metadata against independently supplied catalogs and policies,
-returning \`INVALID\`, \`ABSTAIN\`, or \`REVIEW_READY\`. Readiness denotes
+returning `INVALID`, `ABSTAIN`, or `REVIEW_READY`. Readiness denotes
 metadata completeness for review, never chemical safety.
 
 **Research Capabilities**
@@ -1678,7 +1678,7 @@ metadata completeness for review, never chemical safety.
 ### 📋 Release Events Domain
 
 The [Release Events Domain](ailee/domains/release_events/)
-(\`ailee.domains.release_events\`) provides a policy-configurable governor
+(`ailee.domains.release_events`) provides a policy-configurable governor
 for reported release-event signals, producing typed trust levels, actionability
 flags, reasons, and event-history records.
 
