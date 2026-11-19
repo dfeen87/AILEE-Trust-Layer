@@ -261,6 +261,62 @@ def test_malformed_trust_score_cannot_commit_cognitive_state(governor, emergency
     assert governor.pipeline.last_result is None
 
 
+def test_explain_decision_reports_accepted_pipeline_statuses(governor, signals):
+    decision = governor.evaluate(
+        replace(
+            signals,
+            cognitive_load_metrics=CognitiveLoadMetrics(estimated_load=0.06, load_confidence=0.94),
+        )
+    )
+    explanation = governor.explain_decision(decision)
+
+    assert "NEURO-ASSISTIVE DECISION EXPLANATION" in explanation
+    assert "DECISION: FULL_APPROVED" in explanation
+    assert "Validated Trust Score: 0.94 / 1.00" in explanation
+    assert "WHAT MATTERED MOST:" in explanation
+    assert "• AILEE Pipeline Status: ACCEPTED" in explanation
+    assert "  → Grace: SKIPPED" in explanation
+    assert "  → Consensus: PASS" in explanation
+    assert "Fallback" not in explanation
+
+
+@pytest.mark.parametrize(
+    "use_history, fallback_score", [(False, "0.00"), (True, "0.94")],
+    ids=["empty-history", "historical-value"],
+)
+def test_explain_decision_labels_rejected_pipeline_fallback(
+    governor, signals, use_history, fallback_score
+):
+    if use_history:
+        governor.evaluate(signals)
+    decision = governor.evaluate(
+        replace(signals, assistance_trust_score=0.30, timestamp=101.0)
+    )
+    explanation = governor.explain_decision(decision)
+
+    assert "DECISION: DENIED" in explanation
+    assert "Assistance Authorized: NO" in explanation
+    assert "• AILEE Pipeline Status: OUTRIGHT_REJECTED" in explanation
+    assert "  → Grace: SKIPPED" in explanation
+    assert "  → Consensus: SKIPPED" in explanation
+    assert "  → Fallback used: YES" in explanation
+    assert f"Fallback Value: {fallback_score} / 1.00" in explanation
+    assert "Validated Trust Score:" not in explanation
+    assert "Increase trust score" not in explanation
+
+
+def test_explain_decision_handles_consent_denial_without_pipeline_result(governor, signals):
+    decision = governor.evaluate(replace(signals, consent_records={}))
+    explanation = governor.explain_decision(decision)
+
+    assert "DECISION: DENIED" in explanation
+    assert "Assistance Authorized: NO" in explanation
+    assert "Validated Trust Score: unavailable (pipeline not run)" in explanation
+    assert "CONSENT REQUIRED" in explanation
+    assert "AILEE Pipeline Status:" not in explanation
+    assert "Increase trust score" not in explanation
+
+
 def test_malformed_state_cannot_commit_pipeline_history(governor, signals):
     with pytest.raises(TypeError, match="current_cognitive_state"):
         governor.evaluate(replace(signals, current_cognitive_state="UNKNOWN"))

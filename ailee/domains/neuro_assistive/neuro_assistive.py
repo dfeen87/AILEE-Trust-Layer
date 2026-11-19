@@ -1042,6 +1042,7 @@ class NeuroGovernor:
     def explain_decision(self, decision: NeuroDecisionResult) -> str:
         """Generate plain-language explanation"""
         lines = []
+        pipeline_result = decision.ailee_result
         
         lines.append("=" * 70)
         lines.append("NEURO-ASSISTIVE DECISION EXPLANATION")
@@ -1054,18 +1055,23 @@ class NeuroGovernor:
         lines.append(f"Risk Level: {decision.risk_level.upper()}")
         lines.append("")
         
-        lines.append(f"Validated Trust Score: {decision.validated_trust_score:.2f} / 1.00")
+        if pipeline_result is None:
+            lines.append("Validated Trust Score: unavailable (pipeline not run)")
+        elif pipeline_result.used_fallback:
+            lines.append(f"Fallback Value: {pipeline_result.value:.2f} / 1.00")
+        else:
+            lines.append(f"Validated Trust Score: {decision.validated_trust_score:.2f} / 1.00")
         lines.append(f"Decision Confidence: {decision.confidence_score:.2f} / 1.00")
         lines.append("")
         
-        if decision.ailee_result:
+        if pipeline_result is not None:
             lines.append("WHAT MATTERED MOST:")
             lines.append("-" * 70)
-            lines.append(f"• AILEE Pipeline Status: {decision.ailee_result.status.value}")
-            if decision.ailee_result.grace_applied:
-                lines.append("  → Grace conditions applied (leniency given)")
-            if decision.ailee_result.consensus_status:
-                lines.append(f"  → Consensus: {decision.ailee_result.consensus_status}")
+            lines.append(f"• AILEE Pipeline Status: {pipeline_result.safety_status.value}")
+            lines.append(f"  → Grace: {pipeline_result.grace_status.value}")
+            lines.append(f"  → Consensus: {pipeline_result.consensus_status.value}")
+            if pipeline_result.used_fallback:
+                lines.append("  → Fallback used: YES")
             lines.append("")
         
         if not decision.assistance_authorized:
@@ -1104,7 +1110,12 @@ class NeuroGovernor:
         
         lines.append("WHAT WOULD CHANGE THIS DECISION:")
         lines.append("-" * 70)
-        if decision.validated_trust_score < 0.80 and not decision.assistance_authorized:
+        if (
+            pipeline_result is not None
+            and not pipeline_result.used_fallback
+            and decision.validated_trust_score < 0.80
+            and not decision.assistance_authorized
+        ):
             gap = 0.80 - decision.validated_trust_score
             lines.append(f"• Increase trust score by {gap:.2f} to enable basic assistance")
         
