@@ -750,7 +750,7 @@ class NeuroGovernor:
     ) -> NeuroDecisionResult:
         """Convert AILEE result to assistance decision"""
         
-        validated_score = ailee_result.validated_value
+        validated_score = ailee_result.value
         
         # Determine base authority
         if is_emergency:
@@ -759,7 +759,8 @@ class NeuroGovernor:
             authorized = True
             recommendation = "emergency_simplification_minimal_interaction"
         
-        elif validated_score < 0.60:
+        # A historical fallback can carry a high score for an unvalidated request.
+        elif ailee_result.used_fallback or validated_score < 0.60:
             authority = AssistanceLevel.NO_ASSISTANCE
             outcome = AssistanceOutcome.DENIED
             authorized = False

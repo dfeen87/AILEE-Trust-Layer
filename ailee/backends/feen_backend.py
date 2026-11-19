@@ -11,6 +11,8 @@ from ..ailee_trust_pipeline_v1 import (
     SafetyStatus,
     GraceStatus,
     ConsensusStatus,
+    _clamp,
+    _finite_float,
 )
 
 from .base import BackendCapabilities
@@ -42,8 +44,27 @@ class FeenBackend:
         timestamp: Optional[float] = None,
         context: Optional[Dict[str, Any]] = None,
     ) -> DecisionResult:
-        peers = list(peer_values or [])
+        raw_value = _finite_float(raw_value, "raw_value")
+        if raw_confidence is not None:
+            raw_confidence = _finite_float(raw_confidence, "raw_confidence")
+        if timestamp is not None:
+            timestamp = _finite_float(timestamp, "timestamp")
+        peers = [
+            _finite_float(value, f"peer_values[{index}]")
+            for index, value in enumerate(peer_values if peer_values is not None else ())
+        ]
         ctx = dict(context or {})
+        self.cfg._validate_fallback_config()
+
+        if _clamp(raw_value, self.cfg.hard_min, self.cfg.hard_max) != raw_value:
+            return self._fallback(
+                "Hard envelope violation: raw_value outside [hard_min, hard_max].",
+                raw_value,
+                raw_confidence,
+                peers,
+                timestamp,
+                ctx,
+            )
 
         try:
             confidence, conf_meta = self._feen_confidence(raw_value, raw_confidence, peers)
@@ -141,7 +162,7 @@ class FeenBackend:
     ) -> DecisionResult:
         if not self.software_fallback:
             return DecisionResult(
-                value=raw_value,
+                value=_clamp(raw_value, self.cfg.hard_min, self.cfg.hard_max),
                 safety_status=SafetyStatus.OUTRIGHT_REJECTED,
                 grace_status=GraceStatus.SKIPPED,
                 consensus_status=ConsensusStatus.SKIPPED,

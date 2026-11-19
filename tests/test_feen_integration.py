@@ -14,7 +14,9 @@ This test verifies that the FEEN integration works correctly:
 import sys
 import os
 
-from ailee import AileeConfig
+import pytest
+
+from ailee import AileeConfig, SafetyStatus
 from ailee.backends import SoftwareBackend, FeenBackend
 from ailee.backends.feen import FEENConfidenceScorer
 
@@ -102,6 +104,53 @@ def test_backend_processing():
     
     print("✓ Backend processing test passed")
     return True
+
+
+@pytest.mark.parametrize(
+    "field, value, error_type",
+    [
+        ("raw_value", True, TypeError),
+        ("raw_value", "invalid", TypeError),
+        ("raw_value", float("nan"), ValueError),
+        ("raw_confidence", float("inf"), ValueError),
+        ("raw_confidence", False, TypeError),
+        ("peer_values", [0.5, float("-inf")], ValueError),
+        ("peer_values", ["invalid"], TypeError),
+        ("timestamp", float("nan"), ValueError),
+        ("timestamp", "invalid", TypeError),
+    ],
+)
+@pytest.mark.parametrize("fallback_to_software", [True, False])
+def test_feen_and_software_reject_invalid_numeric_inputs(
+    field, value, error_type, fallback_to_software
+):
+    config = AileeConfig(hard_min=0.0, hard_max=1.0)
+    inputs = dict(raw_value=0.5, raw_confidence=0.99, timestamp=1.0)
+    inputs[field] = value
+    failures = []
+    for backend in (
+        SoftwareBackend(config),
+        FeenBackend(config, fallback_to_software=fallback_to_software),
+    ):
+        with pytest.raises(error_type) as error:
+            backend.process(**inputs)
+        failures.append(str(error.value))
+    assert failures[0] == failures[1]
+
+
+@pytest.mark.parametrize("raw_value, limit", [(-0.25, 0.0), (1.25, 1.0)])
+def test_feen_enforces_hard_envelope_before_scoring(raw_value, limit):
+    config = AileeConfig(hard_min=0.0, hard_max=1.0)
+    inputs = dict(raw_value=raw_value, raw_confidence=1.0, timestamp=1.0)
+    expected = SoftwareBackend(config).process(**inputs)
+    mediated = FeenBackend(config).process(**inputs)
+    unmediated = FeenBackend(config, fallback_to_software=False).process(**inputs)
+
+    for result in (mediated, unmediated):
+        assert result.safety_status is SafetyStatus.OUTRIGHT_REJECTED
+        assert result.used_fallback
+    assert mediated.value == expected.value == 0.5
+    assert unmediated.value == limit
 
 
 def test_example_file():
