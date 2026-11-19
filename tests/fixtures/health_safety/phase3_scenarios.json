@@ -1,0 +1,195 @@
+{
+  "schema_version": "1.0",
+  "corpus": {
+    "id": "ahs-phase3-defensive-v1",
+    "origin": "Original synthetic engineering fixtures authored for Phase 3",
+    "label_status": "PROVISIONAL_ENGINEERING",
+    "independent_adjudication": "NOT_PERFORMED",
+    "corpus_licensing": "PENDING_REVIEW",
+    "synthetic_only": true
+  },
+  "policy": {"policy_id": "policy-ahs-phase3", "version": 1, "min_independent_sources_per_claim": 2},
+  "catalog": {"catalog_id": "catalog-ahs-phase3", "version": 1, "review_id": "review-ahs-phase3-spec"},
+  "evaluation_time": "2026-06-02T12:00:00Z",
+  "valid_from": "2026-06-01T00:00:00Z",
+  "valid_until": "2026-06-03T00:00:00Z",
+  "artifacts": {
+    "edu": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "ELIGIBLE", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic education note v3: compare two neutral labels. No clinical content.",
+      "claims": ["claim-p3-edu-a", "claim-p3-edu-b"],
+      "evidence": [
+        ["evidence-p3-edu-a1", "claim-p3-edu-a", "source-p3-a1", "SUPPORTS"],
+        ["evidence-p3-edu-a2", "claim-p3-edu-a", "source-p3-a2", "SUPPORTS"],
+        ["evidence-p3-edu-b1", "claim-p3-edu-b", "source-p3-b1", "SUPPORTS"],
+        ["evidence-p3-edu-b2", "claim-p3-edu-b", "source-p3-b2", "SUPPORTS"]
+      ]
+    },
+    "edu2": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "ELIGIBLE", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic education note v3B: distinguish a label from an observation.",
+      "claims": ["claim-p3-edu2"],
+      "evidence": [
+        ["evidence-p3-edu2-a", "claim-p3-edu2", "source-p3-edu2-a", "SUPPORTS"],
+        ["evidence-p3-edu2-b", "claim-p3-edu2", "source-p3-edu2-b", "SUPPORTS"]
+      ]
+    },
+    "uncertainty": {
+      "purpose": "UNCERTAINTY_AND_REFERRAL", "assessment": "ELIGIBLE", "marker": "UNCERTAINTY",
+      "payload": "Synthetic uncertainty note v3: this placeholder records an unresolved question.",
+      "claims": ["claim-p3-uncertainty"],
+      "evidence": [
+        ["evidence-p3-uncertainty-a", "claim-p3-uncertainty", "source-p3-uncertainty-a", "SUPPORTS"],
+        ["evidence-p3-uncertainty-b", "claim-p3-uncertainty", "source-p3-uncertainty-b", "SUPPORTS"]
+      ]
+    },
+    "certainty": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "UNSUPPORTED_CERTAINTY", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic certainty marker v3: placeholder annotation only.",
+      "claims": ["claim-p3-certainty"],
+      "evidence": [
+        ["evidence-p3-certainty-a", "claim-p3-certainty", "source-p3-certainty-a", "SUPPORTS"],
+        ["evidence-p3-certainty-b", "claim-p3-certainty", "source-p3-certainty-b", "SUPPORTS"]
+      ]
+    },
+    "contradiction": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "ELIGIBLE", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic contradictory annotation v3: placeholder.",
+      "claims": ["claim-p3-contradiction"],
+      "evidence": [
+        ["evidence-p3-contradiction-a", "claim-p3-contradiction", "source-p3-contradiction-a", "SUPPORTS"],
+        ["evidence-p3-contradiction-b", "claim-p3-contradiction", "source-p3-contradiction-b", "SUPPORTS"],
+        ["evidence-p3-contradiction-c", "claim-p3-contradiction", "source-p3-contradiction-c", "CONTRADICTS", "2026-06-02T12:00:00Z"]
+      ]
+    },
+    "repeat": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "ELIGIBLE", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic repeated annotation v3: placeholder.",
+      "claims": ["claim-p3-repeat"],
+      "evidence": [
+        ["evidence-p3-repeat-a", "claim-p3-repeat", "source-p3-repeat-a", "SUPPORTS"]
+      ]
+    },
+    "correlated": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "ELIGIBLE", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic correlated annotations v3: placeholder.",
+      "claims": ["claim-p3-correlated"],
+      "evidence": [
+        ["evidence-p3-correlated-a", "claim-p3-correlated", "source-p3-shared", "SUPPORTS"],
+        ["evidence-p3-correlated-b", "claim-p3-correlated", "source-p3-shared", "SUPPORTS"]
+      ]
+    },
+    "stale": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "ELIGIBLE", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic time-bound annotation v3: placeholder.",
+      "claims": ["claim-p3-stale"],
+      "evidence": [
+        ["evidence-p3-stale-a", "claim-p3-stale", "source-p3-stale-a", "SUPPORTS", "2026-06-02T12:00:00Z"],
+        ["evidence-p3-stale-b", "claim-p3-stale", "source-p3-stale-b", "SUPPORTS"]
+      ]
+    },
+    "unresolved": {
+      "purpose": "UNCERTAINTY_AND_REFERRAL", "assessment": "ELIGIBLE", "marker": "UNCERTAINTY",
+      "payload": "Synthetic unresolved evidence v3: placeholder.",
+      "claims": ["claim-p3-unresolved"],
+      "evidence": [
+        ["evidence-p3-unresolved-a", "claim-p3-unresolved", "source-p3-unresolved-a", "SUPPORTS"],
+        ["evidence-p3-unresolved-b", "claim-p3-unresolved", "source-p3-unresolved-b", "UNRESOLVED"]
+      ]
+    },
+    "pending": {
+      "purpose": "GENERAL_EDUCATION", "assessment": "UNRESOLVED", "marker": "GENERAL_QUESTION",
+      "payload": "Synthetic review-pending artifact v3: placeholder.",
+      "claims": ["claim-p3-pending"],
+      "evidence": [
+        ["evidence-p3-pending-a", "claim-p3-pending", "source-p3-pending-a", "SUPPORTS"],
+        ["evidence-p3-pending-b", "claim-p3-pending", "source-p3-pending-b", "SUPPORTS"]
+      ]
+    }
+  },
+  "cases": [
+    {"id": "p3-certainty-annotated", "category": "unsupported-certainty", "invariants": [1, 4], "request": "certainty", "context": "certainty"},
+    {"id": "p3-certainty-eligible-control", "category": "unsupported-certainty", "invariants": [1, 4], "request": "edu2", "context": "edu2", "request_form": "typed"},
+    {"id": "p3-evidence-missing", "category": "evidence-consistency", "invariants": [2, 4], "request": "edu2", "context": "edu2",
+      "request_overrides": {"evidence_refs": [{"claim_id": "claim-p3-edu2", "evidence_id": "evidence-p3-edu2-a"}]}},
+    {"id": "p3-evidence-contradiction", "category": "evidence-consistency", "invariants": [2, 4], "request": "contradiction", "context": "contradiction"},
+    {"id": "p3-evidence-repeated", "category": "evidence-consistency", "invariants": [2, 3], "request": "repeat", "context": "repeat",
+      "request_overrides": {"evidence_refs": [
+        {"claim_id": "claim-p3-repeat", "evidence_id": "evidence-p3-repeat-a"},
+        {"claim_id": "claim-p3-repeat", "evidence_id": "evidence-p3-repeat-a"},
+        {"claim_id": "claim-p3-repeat", "evidence_id": "evidence-p3-repeat-a"}]}},
+    {"id": "p3-evidence-correlated-groups", "category": "evidence-consistency", "invariants": [2, 3], "request": "correlated", "context": "correlated"},
+    {"id": "p3-evidence-expiry-boundary", "category": "evidence-consistency", "invariants": [2, 4], "request": "stale", "context": "stale"},
+    {"id": "p3-evidence-unknown", "category": "evidence-consistency", "invariants": [2, 4], "request": "edu2", "context": "edu2",
+      "request_overrides": {"evidence_refs": [
+        {"claim_id": "claim-p3-edu2", "evidence_id": "evidence-p3-edu2-a"},
+        {"claim_id": "claim-p3-edu2", "evidence_id": "evidence-p3-edu2-b"},
+        {"claim_id": "claim-p3-edu2", "evidence_id": "evidence-p3-not-registered"}]}},
+    {"id": "p3-evidence-complete", "category": "evidence-consistency", "invariants": [2, 3], "request": "edu", "context": "edu"},
+    {"id": "p3-evidence-missing-claim", "category": "evidence-consistency", "invariants": [2, 4], "request": "edu", "context": "edu",
+      "request_overrides": {"claim_ids": ["claim-p3-edu-a"], "evidence_refs": [
+        {"claim_id": "claim-p3-edu-a", "evidence_id": "evidence-p3-edu-a1"},
+        {"claim_id": "claim-p3-edu-a", "evidence_id": "evidence-p3-edu-a2"}]}},
+    {"id": "p3-evidence-missing-before-stale", "category": "evidence-consistency", "invariants": [2, 4], "request": "stale", "context": "stale",
+      "request_overrides": {"evidence_refs": [{"claim_id": "claim-p3-stale", "evidence_id": "evidence-p3-stale-a"}]}},
+    {"id": "p3-evidence-unresolved", "category": "evidence-consistency", "invariants": [2, 4], "request": "unresolved", "context": "unresolved"},
+    {"id": "p3-evidence-repeated-but-complete", "category": "evidence-consistency", "invariants": [2, 3], "request": "edu2", "context": "edu2",
+      "request_overrides": {"evidence_refs": [
+        {"claim_id": "claim-p3-edu2", "evidence_id": "evidence-p3-edu2-a"},
+        {"claim_id": "claim-p3-edu2", "evidence_id": "evidence-p3-edu2-b"},
+        {"claim_id": "claim-p3-edu2", "evidence_id": "evidence-p3-edu2-b"}]}},
+    {"id": "p3-consent-missing", "category": "consent", "invariants": [5], "request": "edu2", "context": "edu2", "consent": "missing"},
+    {"id": "p3-consent-revoked", "category": "consent", "invariants": [5], "request": "edu", "context": "edu", "consent": "revoked"},
+    {"id": "p3-consent-denied", "category": "consent", "invariants": [5], "request": "uncertainty", "context": "uncertainty", "consent": "denied"},
+    {"id": "p3-consent-expired", "category": "consent", "invariants": [5], "request": "edu2", "context": "edu2", "consent": "expired"},
+    {"id": "p3-consent-not-yet-valid", "category": "consent", "invariants": [5], "request": "edu2", "context": "edu2", "consent": "future"},
+    {"id": "p3-consent-scope-mismatch", "category": "consent", "invariants": [5, 9], "request": "edu2", "context": "edu2", "consent": "other-scope"},
+    {"id": "p3-consent-artifact-mismatch", "category": "consent", "invariants": [5, 8, 9], "request": "edu", "context": "edu", "consent": "other-artifact"},
+    {"id": "p3-consent-catalog-mismatch", "category": "consent", "invariants": [2, 5], "request": "edu2", "context": "edu2", "consent": "other-catalog"},
+    {"id": "p3-consent-purpose-mismatch", "category": "consent", "invariants": [2, 5], "request": "edu2", "context": "edu2", "consent": "other-purpose"},
+    {"id": "p3-consent-start-inclusive", "category": "consent", "invariants": [5], "request": "edu2", "context": "edu2", "consent": "starts-now", "request_form": "typed"},
+    {"id": "p3-consent-unsupported-declaration", "category": "consent", "invariants": [5, 6], "request": "edu2", "context": "edu2", "consent": "missing", "request_overrides": {"consent": "GRANTED"}},
+    {"id": "p3-consent-deny-before-review", "category": "consent", "invariants": [4, 5], "request": "contradiction", "context": "contradiction", "consent": "revoked"},
+    {"id": "p3-schema-extra-field", "category": "authority-schema", "invariants": [5, 6], "request": "edu2", "context": "edu2", "request_overrides": {"note": null}},
+    {"id": "p3-schema-authority-field", "category": "authority-schema", "invariants": [5, 6], "request": "edu2", "context": "edu2", "request_overrides": {"authority": "FIXTURE_ONLY"}},
+    {"id": "p3-schema-authority-marker", "category": "authority-schema", "invariants": [5, 6], "request": "edu2", "context": "edu2", "request_overrides": {"synthetic_inputs": ["ASSERTED_AUTHORITY"]}},
+    {"id": "p3-schema-wrong-list-type", "category": "authority-schema", "invariants": [6], "request": "edu2", "context": "edu2", "request_overrides": {"claim_ids": 7}},
+    {"id": "p3-schema-malformed-identifier", "category": "authority-schema", "invariants": [6, 9], "request": "edu2", "context": "edu2",
+      "request_overrides": {"scope": {"fixture_id": "fixture-p3-edu2", "turn_id": "Not a turn"}}},
+    {"id": "p3-schema-unknown-enum", "category": "authority-schema", "invariants": [6], "request": "edu2", "context": "edu2", "request_overrides": {"purpose": "NOT_A_PURPOSE"}},
+    {"id": "p3-schema-unsupported-version", "category": "authority-schema", "invariants": [6], "request": "edu2", "context": "edu2", "request_overrides": {"schema_version": "2.0"}},
+    {"id": "p3-schema-boolean-version", "category": "authority-schema", "invariants": [6], "request": "edu2", "context": "edu2", "request_overrides": {"catalog": {"catalog_id": "catalog-ahs-phase3", "version": true}}},
+    {"id": "p3-support-ordinary", "category": "public-support", "invariants": [7], "request": "edu2", "context": "edu2", "urgency": "ORDINARY"},
+    {"id": "p3-support-qualified", "category": "public-support", "invariants": [7], "request": "uncertainty", "context": "uncertainty", "urgency": "QUALIFIED_REVIEW"},
+    {"id": "p3-support-immediate", "category": "public-support", "invariants": [7], "request": "edu2", "context": "edu2", "urgency": "IMMEDIATE_PUBLIC_REFERRAL"},
+    {"id": "p3-support-denied-consent", "category": "public-support", "invariants": [5, 7], "request": "edu2", "context": "edu2", "consent": "denied", "urgency": "IMMEDIATE_PUBLIC_REFERRAL"},
+    {"id": "p3-support-malformed-candidate", "category": "public-support", "invariants": [6, 7], "request": "edu", "context": "edu", "request_form": "null", "urgency": "IMMEDIATE_PUBLIC_REFERRAL"},
+    {"id": "p3-support-invalid-context", "category": "public-support", "invariants": [6, 7], "request": "edu", "context": "edu", "context_state": "INVALID", "urgency": "IMMEDIATE_PUBLIC_REFERRAL"},
+    {"id": "p3-support-wrong-scope", "category": "public-support", "invariants": [7, 9], "request": "edu", "context": "edu", "urgency": "IMMEDIATE_PUBLIC_REFERRAL", "urgency_scope": "edu2"},
+    {"id": "p3-support-unavailable", "category": "public-support", "invariants": [7], "request": "edu2", "context": "edu2", "urgency": "NONE"},
+    {"id": "p3-privacy-field", "category": "privacy-failures", "invariants": [6, 10], "request": "edu2", "context": "edu2",
+      "request_overrides": {"SYNTHETIC_CANARY_P3_7319": "SYNTHETIC_CANARY_P3_7319"}, "check_decoder": true},
+    {"id": "p3-privacy-enum", "category": "privacy-failures", "invariants": [6, 10], "request": "edu2", "context": "edu2",
+      "request_overrides": {"purpose": "SYNTHETIC_CANARY_P3_7319"}, "check_decoder": true},
+    {"id": "p3-privacy-rejected-id", "category": "privacy-failures", "invariants": [5, 10], "request": "edu2", "context": "edu2",
+      "request_overrides": {"artifact": {"artifact_id": "artifact-p3-synthetic-canary-7319", "sha256": "0000000000000000000000000000000000000000000000000000000000000000"}}},
+    {"id": "p3-privacy-evaluator-fault", "category": "privacy-failures", "invariants": [6, 7, 10], "request": "edu", "context": "edu", "urgency": "IMMEDIATE_PUBLIC_REFERRAL", "fault": "controlled-evaluator-error"},
+    {"id": "p3-integrity-exact", "category": "artifact-integrity", "invariants": [8], "request": "edu2", "context": "edu2", "integrity": "exact"},
+    {"id": "p3-integrity-other-id", "category": "artifact-integrity", "invariants": [8], "request": "edu2", "context": "edu2", "integrity": "other-id"},
+    {"id": "p3-integrity-invalid-id", "category": "artifact-integrity", "invariants": [8], "request": "edu2", "context": "edu2", "integrity": "invalid-id"},
+    {"id": "p3-integrity-changed-bytes", "category": "artifact-integrity", "invariants": [8], "request": "edu2", "context": "edu2", "integrity": "changed-bytes"},
+    {"id": "p3-integrity-nonbytes", "category": "artifact-integrity", "invariants": [8], "request": "uncertainty", "context": "uncertainty", "integrity": "nonbytes"},
+    {"id": "p3-integrity-empty-payload", "category": "artifact-integrity", "invariants": [8], "request": "edu2", "context": "edu2", "integrity": "empty-payload"},
+    {"id": "p3-integrity-current-consent", "category": "artifact-integrity", "invariants": [5, 8], "request": "edu2", "context": "edu2", "consent": "missing", "integrity": "fresh-consent"},
+    {"id": "p3-integrity-unavailable-context", "category": "artifact-integrity", "invariants": [6, 8], "request": "edu2", "context": null, "integrity": "exact"},
+    {"id": "p3-integrity-mismatched-context", "category": "artifact-integrity", "invariants": [8, 9], "request": "edu2", "context": "edu", "integrity": "exact"},
+    {"id": "p3-integrity-wrong-request-type", "category": "artifact-integrity", "invariants": [6, 8], "request": "edu2", "context": "edu2", "integrity": "withheld-decision-type"},
+    {"id": "p3-replay-allow", "category": "deterministic-replay", "invariants": [11], "request": "edu", "context": "edu", "replay": true},
+    {"id": "p3-replay-review", "category": "deterministic-replay", "invariants": [11], "request": "correlated", "context": "correlated", "replay": true},
+    {"id": "p3-replay-deny", "category": "deterministic-replay", "invariants": [11], "request": "edu", "context": "edu", "consent": "expired", "replay": true},
+    {"id": "p3-benign-education", "category": "benign-controls", "invariants": [1, 2, 3], "request": "edu2", "context": "edu2", "request_form": "typed"},
+    {"id": "p3-benign-uncertainty", "category": "benign-controls", "invariants": [1, 2, 7], "request": "uncertainty", "context": "uncertainty", "urgency": "QUALIFIED_REVIEW", "request_form": "typed"},
+    {"id": "p3-benign-review-pending", "category": "benign-controls", "invariants": [1, 4], "request": "pending", "context": "pending"},
+    {"id": "p3-benign-review-evidence", "category": "benign-controls", "invariants": [1, 4, 7], "request": "unresolved", "context": "unresolved", "urgency": "QUALIFIED_REVIEW"}
+  ]
+}

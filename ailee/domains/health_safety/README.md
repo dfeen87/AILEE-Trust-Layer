@@ -600,3 +600,173 @@ benchmark or efficacy claim is made.
 **STOP after Phase 2.** Phase 3 adversarial validation and Phase 4
 benchmarking/reporting require separate authorization. No release metadata
 changes, tag, PR-ready transition or merge.
+
+## 11. Phase 3 — defensive conformance and robustness record
+
+**Design down. Prove up. Govern the answer. Preserve the help.**
+
+This appended record is the separately authorized Phase 3 engineering work
+on the same experimental branch and [draft PR #99](https://github.com/dfeen87/AILEE-Trust-Layer/pull/99).
+The preceding Phase 1/2 sections are retained unmodified as historical
+records. This phase checks the actual public governor against authored
+synthetic engineering expectations; it does not establish clinical
+correctness, adversarial effectiveness, or production security.
+
+### Baseline and scope
+
+At entry, PR #99 was open, draft and unmerged, with exactly two commits ahead
+of immutable v10.1.1 (`a001af813ce9416989540b6af05bfb0eb9f7bad2`).
+Phase 2 HEAD `66ab477857509b3a3e271e529d14cd88ac58f504` has parent
+`43e86da5c7a5413064178a9cafca40205281b63f`; all 333 tracked baseline
+blobs matched GitHub before this work. Both exact Phase 2 hosted CI runs
+([push](https://github.com/dfeen87/AILEE-Trust-Layer/actions/runs/44452553407),
+[draft PR](https://github.com/dfeen87/AILEE-Trust-Layer/actions/runs/44452560782))
+had 12/12 successful jobs including Python 3.9/3.10/3.11.
+The local Phase 2 Health rerun passed all 162 tests on Python 3.13.13;
+the separate exact-baseline Python 3.11.14 check also passed all 162.
+The initial full local Python 3.13 suite produced 927 passes, 3 skips and
+the previously recorded localhost socket permission failure.
+
+Phase 3 adds a separate, fixed conformance corpus and test-only observation
+harness. The Phase 2 governor, existing tests, original development corpus,
+reserved scenarios and existing AILEE domains are unchanged. There is no
+payload delivery, credential minting, natural-language interface, external
+system testing, medical action or new production dependency.
+
+### Frozen inputs, labels and measured observations
+
+- [Phase 3 scenarios](../../../tests/fixtures/health_safety/phase3_scenarios.json):
+  62 stable IDs, nine categories, ten distinct original inert artifacts, a
+  new versioned manifest and separately chosen request/context profiles.
+  Each case identifies its covered invariant numbers (section 7).
+- [Phase 3 expectations](../../../tests/fixtures/health_safety/phase3_expected.json):
+  separately authored candidate, primary reason, support/fixed template,
+  exact permitted artifact reference (or none), and applicable integrity,
+  privacy and replay expectations. Labels were written and their file
+  hashed before any new case was executed.
+- [Phase 3 observations](../../../tests/fixtures/health_safety/phase3_observed.json):
+  actual complete decision and audit projections, plus the applicable
+  Boolean integrity, privacy and replay checks, controlled decoder reasons,
+  prior eligibility control and quiet-capture check. This is observed
+  evidence, not reference labels.
+- [Fixture and observation harness](../../../tests/health_safety_phase3.py)
+  and [conformance tests](../../../tests/test_health_safety_phase3.py):
+  fixed offline inputs, deterministic construction, controlled exceptions,
+  reference comparison, and fresh-process replay. No arbitrary input
+  generator or security-testing service is provided.
+
+The Phase 3 catalog/policy are `catalog-ahs-phase3`/1 and
+`policy-ahs-phase3`/1 with review revision `review-ahs-phase3-spec`,
+stage `PROVISIONAL_ENGINEERING`; evaluation uses explicit
+`2026-06-02T12:00:00Z`. All examples and source-group assignments are
+synthetic, not independent source verification. Trusted context is built
+from its own fixture profile, never from the request handed to the
+governor. The separately pinned hashes are:
+
+| File | SHA-256 |
+| --- | --- |
+| `scenarios.json` (original) | `ced7860b3e25f6f158092575029bb07fd88e26043337042ab1061162aca8e8ee` |
+| `expected.json` (original) | `b824a06427781d0deab5779c466999c17f5d95cf65e751d4977297b85757733e` |
+| `phase3_scenarios.json` (pre-measurement) | `3f4bfc1c1950a411e34cf495f0b6e6d4169eaa042e526c5604f0e35ed9ed8a1d` |
+| `phase3_expected.json` (pre-measurement) | `a5368d7ecf8563a3868549e3d8851686d137c0faaca2458b38049275adc30f0d` |
+| `phase3_observed.json` (measured) | `b75202fc5ec804e32f0040cdca68970a38a7dd044fce69c7f65b8d08615e50b1` |
+
+### Defensive test matrix — locally observed
+
+Every case matched its pre-measurement reference decision, reason, support
+template, artifact permission and audit. The counts below are **candidate
+outcomes**, not clinical outcomes. An ALLOW in an artifact-integrity case
+can correctly coexist with a false byte-check result for the wrong bytes
+or identifier.
+
+| Category | Cases | ALLOW | REVIEW | DENY | Matched |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| Unsupported certainty | 2 | 1 | 1 | 0 | 2 |
+| Evidence consistency | 11 | 2 | 9 | 0 | 11 |
+| Consent | 12 | 1 | 0 | 11 | 12 |
+| Authority and closed schema | 8 | 0 | 0 | 8 | 8 |
+| Independent public support | 8 | 4 | 0 | 4 | 8 |
+| Privacy and controlled failures | 4 | 0 | 0 | 4 | 4 |
+| Exact synthetic artifact integrity | 10 | 7 | 0 | 3 | 10 |
+| Deterministic replay | 3 | 1 | 1 | 1 | 3 |
+| Benign controls | 4 | 2 | 2 | 0 | 4 |
+| **Total** | **62** | **18** | **13** | **31** | **62** |
+
+The two original benign eligibility controls allow the educational and
+uncertainty fixture artifacts; the unresolved-review and unresolved-evidence
+controls remain REVIEW rather than DENY. Of the 62 cases, 54 produced ordinary
+help, three qualified review and five immediate public referral; all matched.
+Four privacy-canary cases, including two controlled schema exceptions
+and one controlled evaluator exception, disclosed no canary in the tested
+decision/audit/exception views, propagated Python logs or captured output.
+All ten artifact-integrity observations matched (one true, nine false);
+a prior eligible evaluation did not substitute for current consent.
+All three explicit replay cases matched complete decisions and audits for
+three repeat evaluations with fresh instances and reversed canonical
+request/manifest/policy ordering. All 62 observations were reproduced
+byte-for-byte in fresh processes with `PYTHONHASHSEED=0,7,31` on both
+local Python versions.
+
+### Verification and limitations
+
+| Check | Observed local result |
+| --- | --- |
+| Frozen development verdicts and operational invariants | 49/49 and 12/12; 61 passed, 101 deselected |
+| New Phase 3 tests | 62 case tests + 7 corpus/typed-interface/observation/replay/grammar checks = 69 passed |
+| Complete Health suite, Python 3.11.14 and 3.13.13 | 231 passed on each, no Health skips |
+| Focused Health + Industrial, Licensing, Cybersecurity, Neuro-assistive, Dual Domain, release metadata (3.11.14) | 321 passed |
+| Full Python 3.13.13 suite | 996 passed, 3 skipped, 1 same baseline failure |
+| Full suite excluding only the baseline socket-restricted native test | 996 passed, 3 skipped, 1 deselected |
+| 3.9 grammar/compile, package discovery, offline wheel build and isolated install/import | Passed; version stays 10.1.1 |
+| Import isolation and existing-domain state preservation | Passed |
+
+The native local failure is exactly
+`test_windows_and_macos_native_file_process_network_and_identity` at
+`socket.bind` (`PermissionError`), reproduced on the exact Phase 2
+baseline. No new regression or confirmed in-scope governor defect was
+observed; no governor correction or label adjustment was made.
+
+The request-authority checks are ordinary closed-schema, typed-interface and
+specified marker conformance assertions. The decision-type integrity case
+uses a newly constructed copy of a **withheld** result as an incorrect
+request type, along with the public signature assertion; no fabricated
+affirmative credential or bypass workflow is needed. This narrower assertion
+checks the public type boundary, not authentication of a real release
+consumer. Natural-language prompt injection, arbitrary Python object
+manipulation, raw transport/duplicate-key ingress, operational authentication,
+and general exploitation are not evaluated. There is no actual release
+consumer to validate. Canary capture is limited to synchronous output and
+propagated Python logging in the honest offline test harness, not every
+possible sink, process or storage layer.
+
+The original development and new Phase 3 partitions are known to the
+implementer. Neither is a blind or independently adjudicated holdout.
+The four visible reserved cases remain unadjudicated and unevaluated.
+Independent provenance, labeling and licensing/redistribution review are
+still pending. These finite engineering tests do not establish clinical
+safety, source authenticity, real patient performance, universal attack
+resistance, or clinical efficacy.
+
+~~~sh
+# Frozen behavior, defensive cases, import isolation and cross-seed replay.
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. \
+  python -m pytest -q --tb=short -p no:cacheprovider \
+  tests/test_health_safety_domain.py tests/test_health_safety_phase3.py
+
+# Reproduce the separately stored observed results without modifying fixtures.
+PYTHONDONTWRITEBYTECODE=1 PYTHONHASHSEED=0 PYTHONPATH=. \
+  python -m tests.health_safety_phase3
+# Alternative: --output /path/to/new-observations.json (new file only).
+
+# Full regression; report the environment-specific native test honestly.
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. \
+  python -m pytest -q --tb=short -p no:cacheprovider tests
+~~~
+
+**Phase 3 gate:** this commit records local evidence. The exact Phase 3
+commit SHA, push and draft PR hosted Python 3.9/3.10/3.11 CI results and
+freeze confirmation belong in the appended PR verification record after
+hosted checks finish. Phase 4 may start only after that successful hosted
+verification; it must not modify the frozen governor, corpus, or labels.
+No merge, new PR, ready transition, release, production integration or
+clinical deployment.
