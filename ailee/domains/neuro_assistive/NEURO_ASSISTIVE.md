@@ -1472,10 +1472,9 @@ Decision Confidence: 0.88 / 1.00
 
 WHAT MATTERED MOST:
 ----------------------------------------------------------------------
-• AILEE Pipeline Status: SAFE
-  → Grace conditions applied (leniency given)
-• Cognitive State: ELEVATED_LOAD
-• Authority Ceiling: GUIDED_OPTIONS (capped by cognitive state)
+• AILEE Pipeline Status: ACCEPTED
+  → Grace: SKIPPED
+  → Consensus: SKIPPED
 
 ASSISTANCE CONSTRAINTS:
 ----------------------------------------------------------------------
@@ -1485,10 +1484,6 @@ ASSISTANCE CONSTRAINTS:
 
 WHAT WOULD CHANGE THIS DECISION:
 ----------------------------------------------------------------------
-• Increase trust score by 0.07 to enable full assistance
-• Reduce cognitive load below 0.60 to remove state ceiling
-• Address safety concerns:
-  → Reduce cognitive load (take a break, simplify task)
 
 RECOMMENDED ACTION:
 ----------------------------------------------------------------------

@@ -136,6 +136,17 @@ def _utc(dt: datetime) -> datetime:
     return dt.astimezone(timezone.utc)
 
 
+def _normalize_evaluation_time(value: object) -> Optional[datetime]:
+    if not isinstance(value, datetime):
+        return None
+    try:
+        return _utc(value)
+    except Exception:
+        # Timezone providers can raise during conversion. A denial record must
+        # represent that the timestamp is unavailable without inventing one.
+        return None
+
+
 def _is_valid_identifier(val: str) -> bool:
     return isinstance(val, str) and bool(_IDENTIFIER_RE.match(val))
 
@@ -402,7 +413,7 @@ class CybersecurityAuditRecord:
     """Immutable audit record for a cybersecurity governance decision."""
 
     request_id: str
-    timestamp: datetime
+    timestamp: Optional[datetime]  # None when the request has no valid evaluation time.
     outcome: DecisionOutcome
     reason: CybersecurityReason
     policy_id: PolicyIdentifier
@@ -465,11 +476,10 @@ class ProvenanceVerifier(Protocol):
 
 class TrustedProvenanceVerifier:
     """
-    Independent cryptographic/registry verifier for publisher provenance.
+    Structural verifier for publisher evidence from a trusted source.
 
-    Requires an authentic verifier identity belonging to an established trust
-    registry, a non-empty cryptographic signature or digest, and temporal validity.
-    Self-declared verification identities or unverified statuses are rejected.
+    Checks issuer labels, signature or digest format, reported state, and time.
+    Cryptographic authentication requires an independent verifier or trusted ingress.
     """
 
     def __init__(
@@ -515,7 +525,7 @@ class TrustedProvenanceVerifier:
         if evidence.verifier_identity not in self._trusted_issuers:
             return ProvenanceStatus.UNVERIFIED
 
-        # Cryptographic signature / digest validation
+        # Check the signature or digest field's format.
         if (
             not evidence.signature_or_digest
             or not evidence.signature_or_digest.strip()
@@ -530,14 +540,12 @@ class TrustedProvenanceVerifier:
         ):
             return ProvenanceStatus.UNVERIFIED
 
-        # Status check
-        if evidence.status in (
-            ProvenanceStatus.REVOKED,
-            ProvenanceStatus.CONTRADICTORY,
-            ProvenanceStatus.UNVERIFIED,
-            ProvenanceStatus.INVALID,
-        ):
-            return evidence.status
+        try:
+            status = ProvenanceStatus(evidence.status)
+        except (TypeError, ValueError):
+            return ProvenanceStatus.INVALID
+        if status is not ProvenanceStatus.VALID:
+            return status
 
         # Temporal validity check
         now = _utc(evaluation_time)
@@ -920,7 +928,7 @@ class CybersecurityGovernor:
     ) -> CybersecurityDecision:
         audit = CybersecurityAuditRecord(
             request_id=request.request_id,
-            timestamp=_utc(request.evaluation_time),
+            timestamp=_normalize_evaluation_time(request.evaluation_time),
             outcome=DecisionOutcome.DENY,
             reason=reason,
             policy_id=policy_id,
@@ -930,7 +938,7 @@ class CybersecurityGovernor:
             target_domain=target_domain,
             evidence_ids=(
                 (request.evidence.evidence_id,)
-                if request.evidence is not None
+                if isinstance(request.evidence, PublisherProvenanceEvidence)
                 else ()
             ),
             advisory_signals=tuple(advisory_signals),
@@ -970,7 +978,7 @@ class CybersecurityGovernor:
                 details={"error": "Malformed or missing request_id"},
             )
 
-        if not isinstance(request.evaluation_time, datetime):
+        if _normalize_evaluation_time(request.evaluation_time) is None:
             return self._make_denial(
                 request,
                 CybersecurityReason.INSUFFICIENT_EVIDENCE,

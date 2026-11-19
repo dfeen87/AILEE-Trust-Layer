@@ -29,21 +29,21 @@ try:
     from openai import OpenAI
     OPENAI_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"OpenAI library not found: {e}")
+    logger.warning("OpenAI library unavailable (%s)", type(e).__name__)
     OPENAI_AVAILABLE = False
 
 try:
     from anthropic import Anthropic
     ANTHROPIC_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"Anthropic library not found: {e}")
+    logger.warning("Anthropic library unavailable (%s)", type(e).__name__)
     ANTHROPIC_AVAILABLE = False
 
 try:
     import google.genai as genai
     GEMINI_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"Google GenAI library not found: {e}")
+    logger.warning("Google GenAI library unavailable (%s)", type(e).__name__)
     GEMINI_AVAILABLE = False
 
 # Log availability status
@@ -150,7 +150,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
     openai_key = os.getenv("OPENAI_API_KEY", "").strip().strip('"').strip("'")
     if OPENAI_AVAILABLE and openai_key:
         try:
-            logger.info(f"Calling OpenAI with key: {openai_key[:4]}...{openai_key[-4:] if len(openai_key) > 8 else ''}")
+            logger.info("Calling OpenAI")
             client = OpenAI(api_key=openai_key)
             response = client.chat.completions.create(
                 model="gpt-4o",
@@ -165,7 +165,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             )
             responses.append(("openai", response, adapter))
         except Exception as e:
-            logger.error(f"OpenAI generation failed: {e}")
+            logger.error("OpenAI generation failed (%s)", type(e).__name__)
     else:
         if not OPENAI_AVAILABLE:
             logger.warning("Skipping OpenAI: Library not available.")
@@ -176,7 +176,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
     anthropic_key = os.getenv("ANTHROPIC_API_KEY", "").strip().strip('"').strip("'")
     if ANTHROPIC_AVAILABLE and anthropic_key:
         try:
-            logger.info(f"Calling Anthropic with key: {anthropic_key[:4]}...{anthropic_key[-4:] if len(anthropic_key) > 8 else ''}")
+            logger.info("Calling Anthropic")
             client = Anthropic(api_key=anthropic_key)
             response = client.messages.create(
                 model="claude-3-5-sonnet-20241022",
@@ -188,7 +188,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             )
             responses.append(("anthropic", response, adapter))
         except Exception as e:
-            logger.error(f"Anthropic generation failed: {e}")
+            logger.error("Anthropic generation failed (%s)", type(e).__name__)
     else:
         if not ANTHROPIC_AVAILABLE:
             logger.warning("Skipping Anthropic: Library not available.")
@@ -199,7 +199,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
     google_key = os.getenv("GOOGLE_API_KEY", "").strip().strip('"').strip("'")
     if GEMINI_AVAILABLE and google_key:
         try:
-            logger.info(f"Calling Gemini with key: {google_key[:4]}...{google_key[-4:] if len(google_key) > 8 else ''}")
+            logger.info("Calling Gemini")
             client = genai.Client(api_key=google_key)
             response = client.models.generate_content(
                 model="gemini-1.5-flash",
@@ -210,7 +210,7 @@ def generate_with_models(query: str, search_context: str) -> List[Tuple[str, Any
             )
             responses.append(("gemini", response, adapter))
         except Exception as e:
-            logger.error(f"Gemini generation failed: {e}")
+            logger.error("Gemini generation failed (%s)", type(e).__name__)
     else:
         if not GEMINI_AVAILABLE:
             logger.warning("Skipping Gemini: Library not available.")

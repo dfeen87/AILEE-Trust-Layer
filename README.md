@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-10.1.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-10.1.1-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -1692,11 +1692,19 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v10.1.0
+### Current: v10.1.1 (unreleased release candidate)
 
-AILEE Trust Layer **v10.1.0** introduces the Cybersecurity Trust Domain,
-providing deterministic, fail-closed link integrity, publisher provenance
-verification, prompt injection advisory detection, and tiered agent action authorization.
+AILEE Trust Layer **v10.1.1** is a stabilization patch for cybersecurity denial
+handling, FEEN numerical validation, Neuro-assistive authorization and
+explainability, and provider diagnostics. This source version is not yet a
+published release. See the [Phase 0.5 audit disposition](docs/PHASE_0_5_AUDIT_DISPOSITION.md)
+for corrected behavior and remaining limits.
+
+Version **v10.1.0** introduced the Cybersecurity Trust Domain with link integrity
+checks, structural publisher-evidence checks, prompt-injection advisories, and
+tiered action decisions. A trusted integration must independently authenticate
+publisher evidence, caller identities, and installation mandates before
+consequential use. See the [Cybersecurity Trust Domain limitations](docs/CYBERSECURITY_DOMAIN.md#6-limitations).
 
 The historical [BEDROCK v10 release report](docs/BEDROCK_V10.md) and
 [post-BEDROCK review](docs/POST_BEDROCK_V10_0_1.md) retain the evidence for their
@@ -1808,7 +1816,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {10.1.0},
+  version = {10.1.1},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1853,7 +1861,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v10.1.0**
+**AILEE Trust Layer v10.1.1**
 *Adaptive Integrity Layer for AI Decision Systems*
 
 Built with discipline. Deployed with confidence.

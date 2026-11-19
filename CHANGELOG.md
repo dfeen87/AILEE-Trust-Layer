@@ -1,8 +1,28 @@
 # Changelog
 
+### **v10.1.1 — TRUST CONSISTENCY** (unreleased; hosted verification pending)
+
+*Deterministic Governance · Fail-Closed Decisions · Backend Parity · Transparent Fallback*
+
+**Type:** Patch release candidate — targeted Python stability, correctness, and security-consistency fixes; no new domain.
+
+- **Cybersecurity:** Invalid evaluation timestamps return typed denials with unavailable audit time. Missing, expired, invalid, and unknown publisher-evidence states cannot be promoted to valid. Structural checks do not authenticate signatures or caller mandates.
+- **FEEN:** Reject nonfinite or malformed numeric inputs and hard-envelope violations before scoring, including both fallback configurations. A bounded rejected value is not authorization.
+- **Neuro-assistive:** Use canonical result fields; derive effective authorization, outcome, recommendation, and interaction constraints after cognitive and policy ceilings. Prevent historical numeric fallback from authorizing ordinary assistance, preserve consent and break restrictions, and keep emergency simplification minimal.
+- **Explainability:** Public decision explanations distinguish fallback from validated values, handle consent denials without pretending the numeric pipeline ran, and avoid misleading score-only advice when authority is restricted.
+- **Provider logging:** Avoid leaking credential fragments and raw SDK error details in the covered generation and initialization paths.
+- **Documentation:** Reconcile [Phase 0 findings](docs/PHASE_0_5_AUDIT_DISPOSITION.md), clarify existing authentication boundaries, and repair the standalone cybersecurity download-wrapper example.
+- **Version alignment:** Update Python, Rust, C++, TypeScript, package lockfiles, citation metadata, current-version tests, and CI wheel assertions to `10.1.1` without rewriting historical releases.
+
+**Verification to date:** Before this version-alignment change, the focused PR suite reported 213 passing tests each on Python 3.11 and 3.13. The previously run full local Python suite reported 758 passed, 3 skipped, and one sandbox-local socket bind failure also observed on the pre-fix tree. Those results apply to earlier tested commits, not the current release candidate. GitHub Actions for PR #98 reported jobs failing before any recorded steps; the cause remains unverified. Re-run required checks on the final release commit before merging or tagging.
+
+**Remaining boundaries:** No independent cryptographic publisher/mandate authentication; web `/trust` release and query-privacy gaps; limited Governance v1 approval; ledger nested mutability; training dispatcher persistence atomicity. These are tracked in [the audit disposition](docs/PHASE_0_5_AUDIT_DISPOSITION.md), not solved by this patch. No clinical or Health Safety Domain functionality is introduced.
+
+---
+
 ### **v10.1.0 — PROVENANCE BOUNDARY**
 
-*Link Integrity · Publisher Verification · Injection Governance · Agent Authorization*
+*Link Integrity · Publisher Evidence · Injection Governance · Agent Authorization*
 
 **Type:** Minor Release (Cybersecurity Trust Domain and Authorization Hardening)
 
@@ -14,9 +34,9 @@
 #### 2. The Five Levels of External Action Authorization
 - `DISPLAY_INFORMATIONAL_LINK` (Low Risk): Validates URL integrity and Markdown link consistency.
 - `OPEN_WEBSITE` (Moderate Risk): Enforces HTTPS and safe domain structure without deceptive homoglyphs.
-- `RECOMMEND_SOFTWARE` (Substantial Risk): Requires independently verified publisher provenance matching canonical domains.
-- `DOWNLOAD_FILE` (High Risk): Requires verified publisher provenance matching authorized download domains.
-- `INSTALL_SOFTWARE` (Critical Risk): Requires verified download authorization plus an authenticated, scoped, time-bound `ActionMandate`.
+- `RECOMMEND_SOFTWARE` (Substantial Risk): Checks supplied publisher evidence and matches the destination to its canonical domains.
+- `DOWNLOAD_FILE` (High Risk): Checks supplied publisher evidence and matches the destination to its authorized download domains.
+- `INSTALL_SOFTWARE` (Critical Risk): Checks download authorization and a scoped, time-bound `ActionMandate`. Independent mandate authentication is an integration requirement.
 
 #### 3. Publisher Provenance & Trust-Boundary Enforcement
 - Enforces the hard rule: Domain resemblance, HTTPS, search ranking, and website self-description must **never** independently establish publisher authenticity.
@@ -28,11 +48,11 @@
 - Enforces hard execution parameter boundaries: external text cannot promote itself into tool-execution authority without an explicit caller mandate (`UNTRUSTED_EXECUTION_PROMOTION`).
 
 #### 5. Security Hardening Corrections (Post-PR #96)
-- **Target Binding:** `CybersecurityActionWrapper.execute()` strictly binds execution arguments to the authorized request; parameter tampering or URL substitution is rejected with `PARAMETER_MISMATCH`.
+- **Target Binding:** `CybersecurityActionWrapper.execute()` rejects mismatches in recognized URL arguments. Integrations must bind all security-relevant execution parameters.
 - **Enforcement Invariants:** `shadow_mode=True` and disabled review confirmation can never bypass `DENY` or `REVIEW` for high-risk actions.
-- **Trusted Provenance Verifier:** `TrustedProvenanceVerifier` enforces authentic verifier identities from recognized trust registries and cryptographic signatures/digests.
-- **Strict Redirect Validation:** Validates every intermediate hop and the final landing destination against exact authorized publisher domains; eliminates loose apex domain guessing.
-- **Authenticated Action Mandates:** Replaces arbitrary strings with `ActionMandate` enforcing caller identity, exact action tier, target software/URL binding, validity window, and cryptographic signature.
+- **Default Provenance Checks:** `TrustedProvenanceVerifier` checks issuer labels, signature or digest format, evidence state, and time. Authenticating signed evidence requires an independent verifier or trusted ingress.
+- **Redirect Validation:** Checks supplied redirect hops against exact authorized publisher domains.
+- **Structured Action Mandates:** Checks action scope, target, validity window, and token presence. Caller and signature authentication require an independent trust boundary. See [Cybersecurity Trust Domain](docs/CYBERSECURITY_DOMAIN.md#6-limitations).
 
 #### 6. Regression Testing & Verification
 - 33 focused unit and offline adversarial test fixtures covering lookalikes, deceptive Markdown links, embedded credentials, IDN/punycode homoglyphs, cross-domain redirects, forged evidence, prompt injection, and the Pearcleaner incident regression fixture.

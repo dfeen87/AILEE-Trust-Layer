@@ -25,7 +25,8 @@ try:
         AileeTrustPipeline,
         AileeConfig,
         DecisionResult,
-        SafetyStatus
+        SafetyStatus,
+        _finite_float,
     )
 except Exception:
     AileeTrustPipeline = None
@@ -67,6 +68,32 @@ class AssistanceOutcome(str, Enum):
     EMERGENCY_SIMPLIFICATION_ACTIVE = "EMERGENCY_SIMPLIFICATION_ACTIVE"
     CONSENT_REQUIRED = "CONSENT_REQUIRED"
     BREAK_REQUIRED = "BREAK_REQUIRED"
+
+
+# Emergency simplification is the least active mode. Its trigger is separate
+# from the ordinary score thresholds.
+_ASSISTANCE_DECISIONS = {
+    AssistanceLevel.NO_ASSISTANCE: (
+        False, AssistanceOutcome.DENIED, "assistance_denied_insufficient_trust"
+    ),
+    AssistanceLevel.PASSIVE_MONITORING: (
+        False, AssistanceOutcome.OBSERVE_ONLY, "observe_only_no_assistance"
+    ),
+    AssistanceLevel.EMERGENCY_SIMPLIFICATION: (
+        True, AssistanceOutcome.EMERGENCY_SIMPLIFICATION_ACTIVE,
+        "emergency_simplification_minimal_interaction"
+    ),
+    AssistanceLevel.SIMPLE_PROMPTS: (
+        True, AssistanceOutcome.PROMPT_APPROVED, "simple_prompts_approved"
+    ),
+    AssistanceLevel.GUIDED_OPTIONS: (
+        True, AssistanceOutcome.GUIDANCE_APPROVED, "guided_options_approved"
+    ),
+    AssistanceLevel.FULL_ASSISTANCE: (
+        True, AssistanceOutcome.FULL_APPROVED, "full_assistance_approved"
+    ),
+}
+_ASSISTANCE_RANK = {level: rank for rank, level in enumerate(_ASSISTANCE_DECISIONS)}
 
 
 class ImpairmentCategory(str, Enum):
@@ -112,10 +139,21 @@ class ConsentRecord:
     
     def is_valid(self, current_time: float) -> Tuple[bool, str]:
         """Check if consent is currently valid"""
-        if self.status != ConsentStatus.GRANTED:
-            return False, f"consent_status={self.status.value}"
-        
-        if self.expires_at and current_time > self.expires_at:
+        try:
+            status = ConsentStatus(self.status)
+        except (TypeError, ValueError):
+            return False, "unknown_consent_status"
+        if status is not ConsentStatus.GRANTED:
+            return False, f"consent_status={status.value}"
+
+        if self.revoked_at is not None and current_time >= _finite_float(
+            self.revoked_at, "consent revocation time"
+        ):
+            return False, "consent_revoked"
+
+        if self.expires_at is not None and current_time > _finite_float(
+            self.expires_at, "consent expiration"
+        ):
             return False, "consent_expired"
         
         if self.requires_periodic_reaffirmation and self.reaffirmation_interval_days:
@@ -391,7 +429,12 @@ class PolicyEvaluator:
             return False, issues
         
         consent = signals.consent_records[feature]
-        valid, reason = consent.is_valid(current_time)
+        if not isinstance(consent, ConsentRecord) or consent.feature_name != feature:
+            return False, ["consent_invalid: feature mismatch or invalid record"]
+        try:
+            valid, reason = consent.is_valid(current_time)
+        except (TypeError, ValueError):
+            return False, ["consent_invalid: invalid validity window"]
         
         if not valid:
             issues.append(f"consent_invalid: {reason}")
@@ -453,26 +496,36 @@ class PolicyEvaluator:
         
         session = signals.session_metrics
         safeguards = self.policy.temporal_safeguards
-        
-        if session.session_duration_minutes > safeguards.max_session_duration_minutes:
+
+        try:
+            duration = _finite_float(session.session_duration_minutes, "session duration")
+            since_break = _finite_float(session.time_since_last_break_minutes, "time since break")
+            daily_total = _finite_float(session.total_interaction_minutes_today, "daily total")
+            consecutive = _finite_float(session.consecutive_sessions_today, "consecutive sessions")
+        except (TypeError, ValueError):
+            return False, ["invalid_temporal_metrics"]
+        if min(duration, since_break, daily_total, consecutive) < 0:
+            return False, ["invalid_temporal_metrics"]
+
+        if duration > safeguards.max_session_duration_minutes:
             issues.append(
-                f"session_duration={session.session_duration_minutes:.1f}min "
+                f"session_duration={duration:.1f}min "
                 f"exceeds {safeguards.max_session_duration_minutes}min"
             )
         
-        if session.time_since_last_break_minutes > safeguards.max_session_duration_minutes:
+        if since_break > safeguards.max_session_duration_minutes:
             issues.append(
-                f"time_since_break={session.time_since_last_break_minutes:.1f}min "
+                f"time_since_break={since_break:.1f}min "
                 f"requires break"
             )
         
-        if session.total_interaction_minutes_today > safeguards.max_daily_interaction_minutes:
+        if daily_total > safeguards.max_daily_interaction_minutes:
             issues.append(
-                f"daily_interaction={session.total_interaction_minutes_today:.1f}min "
+                f"daily_interaction={daily_total:.1f}min "
                 f"exceeds {safeguards.max_daily_interaction_minutes}min"
             )
         
-        if session.consecutive_sessions_today >= safeguards.consecutive_session_limit:
+        if consecutive >= safeguards.consecutive_session_limit:
             issues.append(
                 f"consecutive_sessions={session.consecutive_sessions_today} "
                 f"exceeds limit of {safeguards.consecutive_session_limit}"
@@ -522,20 +575,19 @@ class CognitiveStateTracker:
         force_transition: bool = False
     ) -> CognitiveState:
         """Update state with hysteresis"""
-        
-        candidate_state = signals.current_cognitive_state
-        
-        # If explicit state provided, use it
-        if candidate_state != CognitiveState.UNKNOWN:
-            return self._apply_hysteresis(candidate_state, signals.timestamp, force_transition)
-        
-        # Otherwise infer from cognitive load
+        candidate = self._candidate_state(signals)
+        if candidate is None:
+            return self._current_state
+        state = self._resolve_state(candidate, signals.timestamp, force_transition)
+        self._commit_state(state, signals.timestamp)
+        return state
+
+    def _candidate_state(self, signals: NeuroSignals) -> Optional[CognitiveState]:
+        if signals.current_cognitive_state != CognitiveState.UNKNOWN:
+            return signals.current_cognitive_state
         if signals.cognitive_load_metrics:
-            load = signals.cognitive_load_metrics.estimated_load
-            candidate_state = self._infer_state_from_load(load, signals)
-            return self._apply_hysteresis(candidate_state, signals.timestamp, force_transition)
-        
-        return self._current_state
+            return self._infer_state_from_load(signals.cognitive_load_metrics.estimated_load, signals)
+        return None
     
     def _infer_state_from_load(
         self,
@@ -555,37 +607,25 @@ class CognitiveStateTracker:
         else:
             return CognitiveState.UNKNOWN
     
-    def _apply_hysteresis(
+    def _resolve_state(
         self,
-        candidate_state: CognitiveState,
+        candidate_state: Optional[CognitiveState],
         timestamp: float,
-        force: bool
+        force: bool = False,
     ) -> CognitiveState:
-        """Apply hysteresis to prevent rapid state transitions"""
-        
-        if self._last_transition_time is None:
-            self._current_state = candidate_state
-            self._last_transition_time = timestamp
-            return candidate_state
-        
-        if candidate_state == self._current_state:
+        """Resolve the next tracked state without committing the transition."""
+        if candidate_state is None or candidate_state == self._current_state:
             return self._current_state
-        
-        # Fast transitions for crises
-        if force or candidate_state == CognitiveState.CRISIS_MODE:
-            self._current_state = candidate_state
-            self._last_transition_time = timestamp
+        if self._last_transition_time is None or force or candidate_state == CognitiveState.CRISIS_MODE:
             return candidate_state
-        
-        # Otherwise require minimum duration
-        time_in_state = timestamp - self._last_transition_time
-        if time_in_state < self._min_state_duration_seconds:
+        if timestamp - self._last_transition_time < self._min_state_duration_seconds:
             return self._current_state
-        
-        # Transition
-        self._current_state = candidate_state
-        self._last_transition_time = timestamp
         return candidate_state
+
+    def _commit_state(self, state: CognitiveState, timestamp: float) -> None:
+        if state != self._current_state or self._last_transition_time is None:
+            self._current_state = state
+            self._last_transition_time = timestamp
 
 
 # ===== SECTION 8: NEURO GOVERNOR =====
@@ -636,14 +676,11 @@ class NeuroGovernor:
     def evaluate(self, signals: NeuroSignals) -> NeuroDecisionResult:
         """Evaluate assistance request"""
         
-        ts = float(signals.timestamp)
+        ts = _finite_float(signals.timestamp, "timestamp")
         reasons: List[str] = []
         safety_flags: List[str] = []
         
-        # 1) Update cognitive state
-        current_state = self.state_tracker.update_state(signals)
-        
-        # 2) Check consent
+        # 1) Check consent before considering any assistance or state update.
         consent_ok, consent_issues = self.policy_evaluator.check_consent_gates(signals, ts)
         if not consent_ok:
             reasons.extend(consent_issues)
@@ -652,6 +689,22 @@ class NeuroGovernor:
             )
             self._log_event(ts, signals, decision, reasons)
             return decision
+
+        if not isinstance(signals.current_cognitive_state, CognitiveState):
+            raise TypeError("current_cognitive_state must be a CognitiveState")
+        if not isinstance(signals.impairment_category, ImpairmentCategory):
+            raise TypeError("impairment_category must be an ImpairmentCategory")
+        raw_value = _finite_float(signals.assistance_trust_score, "assistance_trust_score")
+        raw_confidence = _finite_float(signals.interpretation_confidence, "interpretation_confidence")
+        if signals.cognitive_load_metrics:
+            load = _finite_float(signals.cognitive_load_metrics.estimated_load, "estimated_load")
+            if not 0.0 <= load <= 1.0:
+                raise ValueError("estimated_load must be in [0, 1]")
+
+        # 2) Resolve the tracked state. Restrictive current evidence caps this
+        # decision immediately, even when hysteresis delays the transition.
+        candidate_state = self.state_tracker._candidate_state(signals)
+        current_state = self.state_tracker._resolve_state(candidate_state, ts)
         
         # 3) Check interpretation
         interp_ok, interp_issues = self.policy_evaluator.check_interpretation_gates(signals)
@@ -679,22 +732,27 @@ class NeuroGovernor:
             safety_flags.append("over_assistance_detected")
         
         # 7) Compute authority ceiling from cognitive state
-        max_authority = self.policy.state_authority_ceilings.get(
-            current_state,
-            AssistanceLevel.PASSIVE_MONITORING
+        ceilings = self.policy.state_authority_ceilings
+        max_authority = AssistanceLevel(
+            min(
+                self.policy.max_assistance_level,
+                ceilings.get(current_state, AssistanceLevel.PASSIVE_MONITORING),
+                ceilings.get(candidate_state or CognitiveState.UNKNOWN, AssistanceLevel.PASSIVE_MONITORING),
+                key=_ASSISTANCE_RANK.__getitem__,
+            )
         )
         
         # 8) Build context for AILEE
         ctx = self._build_context(signals, reasons, safety_flags, current_state)
         
         # 9) Run through AILEE pipeline
-        peer_values = [signals.interpretation_confidence]
+        peer_values = [raw_confidence]
         if signals.cognitive_load_metrics:
             peer_values.append(1.0 - signals.cognitive_load_metrics.estimated_load)
         
         ailee_result = self.pipeline.process(
-            raw_value=float(signals.assistance_trust_score),
-            raw_confidence=float(signals.interpretation_confidence),
+            raw_value=raw_value,
+            raw_confidence=raw_confidence,
             peer_values=peer_values,
             timestamp=ts,
             context=ctx
@@ -703,10 +761,13 @@ class NeuroGovernor:
         # 10) Make decision
         decision = self._make_assistance_decision(
             signals, ailee_result, reasons, safety_flags,
-            is_emergency, max_authority, ts
+            is_emergency, max_authority, ts,
+            within_hard_bounds=self.pipeline._within_hard_bounds(raw_value),
         )
         
-        # 11) Log
+        # 11) Commit the state transition after successful evaluation and log.
+        if candidate_state is not None:
+            self.state_tracker._commit_state(current_state, ts)
         self._log_event(ts, signals, decision, reasons)
         
         return decision
@@ -746,65 +807,43 @@ class NeuroGovernor:
         safety_flags: List[str],
         is_emergency: bool,
         max_authority: AssistanceLevel,
-        ts: float
+        ts: float,
+        *,
+        within_hard_bounds: bool,
     ) -> NeuroDecisionResult:
         """Convert AILEE result to assistance decision"""
         
-        validated_score = ailee_result.validated_value
+        validated_score = ailee_result.value
         
-        # Determine base authority
-        if is_emergency:
-            authority = AssistanceLevel.EMERGENCY_SIMPLIFICATION
-            outcome = AssistanceOutcome.EMERGENCY_SIMPLIFICATION_ACTIVE
-            authorized = True
-            recommendation = "emergency_simplification_minimal_interaction"
-        
-        elif validated_score < 0.60:
+        requires_break = "temporal_limits_exceeded" in safety_flags
+        if requires_break or not within_hard_bounds:
             authority = AssistanceLevel.NO_ASSISTANCE
-            outcome = AssistanceOutcome.DENIED
-            authorized = False
-            recommendation = "assistance_denied_insufficient_trust"
-        
-        elif validated_score < 0.70:
+        elif is_emergency and self.policy.graceful_degradation_enabled:
+            authority = AssistanceLevel.EMERGENCY_SIMPLIFICATION
+        # A historical fallback can carry a high score for an unvalidated request.
+        elif ailee_result.used_fallback or validated_score < 0.60:
+            authority = AssistanceLevel.NO_ASSISTANCE
+        elif is_emergency or validated_score < 0.70:
             authority = AssistanceLevel.PASSIVE_MONITORING
-            outcome = AssistanceOutcome.OBSERVE_ONLY
-            authorized = False
-            recommendation = "observe_only_no_assistance"
-        
         elif validated_score < 0.80:
             authority = AssistanceLevel.SIMPLE_PROMPTS
-            outcome = AssistanceOutcome.PROMPT_APPROVED
-            authorized = True
-            recommendation = "simple_prompts_approved"
-        
         elif validated_score < 0.90:
             authority = AssistanceLevel.GUIDED_OPTIONS
-            outcome = AssistanceOutcome.GUIDANCE_APPROVED
-            authorized = True
-            recommendation = "guided_options_approved"
-        
         else:
             authority = AssistanceLevel.FULL_ASSISTANCE
-            outcome = AssistanceOutcome.FULL_APPROVED
-            authorized = True
-            recommendation = "full_assistance_approved"
-        
-        # Apply authority ceiling
-        authority_index = {
-            AssistanceLevel.NO_ASSISTANCE: 0,
-            AssistanceLevel.PASSIVE_MONITORING: 1,
-            AssistanceLevel.SIMPLE_PROMPTS: 2,
-            AssistanceLevel.GUIDED_OPTIONS: 3,
-            AssistanceLevel.FULL_ASSISTANCE: 4,
-            AssistanceLevel.EMERGENCY_SIMPLIFICATION: 5,
-        }
-        
-        if authority_index[authority] > authority_index[max_authority]:
+
+        if _ASSISTANCE_RANK[authority] > _ASSISTANCE_RANK[max_authority]:
             authority = max_authority
-            recommendation = f"{recommendation}_capped_by_cognitive_state"
-        
+            reasons.append("assistance_capped_by_authority_ceiling")
+        if authority is AssistanceLevel.EMERGENCY_SIMPLIFICATION and not is_emergency:
+            authority = AssistanceLevel.PASSIVE_MONITORING
+
+        authorized, outcome, recommendation = _ASSISTANCE_DECISIONS[authority]
+        if requires_break:
+            outcome = AssistanceOutcome.BREAK_REQUIRED
+            recommendation = "assistance_paused_break_required"
+
         # Check for required actions
-        requires_break = "temporal_limits_exceeded" in safety_flags
         requires_consent = "consent_invalid" in " ".join(reasons)
         requires_disambiguation = "ambiguity_detected" in " ".join(reasons)
         
@@ -887,7 +926,9 @@ class NeuroGovernor:
         safety_flags: List[str]
     ) -> AssistanceConstraints:
         """Generate assistance constraints based on authority level"""
-        
+        if authority in (AssistanceLevel.NO_ASSISTANCE, AssistanceLevel.PASSIVE_MONITORING):
+            return AssistanceConstraints(max_suggestions=0, allowed_modalities=[])
+
         if authority == AssistanceLevel.EMERGENCY_SIMPLIFICATION:
             constraints = AssistanceConstraints(
                 max_suggestions=1,
@@ -948,6 +989,7 @@ class NeuroGovernor:
             confidence_score=1.0,
             recommendation=f"assistance_denied_{denial_type}",
             reasons=reasons[:],
+            requires_consent=denial_type == "consent_required",
             risk_level="high",
             safety_flags=[denial_type],
             metadata={"timestamp": ts}
@@ -1000,6 +1042,7 @@ class NeuroGovernor:
     def explain_decision(self, decision: NeuroDecisionResult) -> str:
         """Generate plain-language explanation"""
         lines = []
+        pipeline_result = decision.ailee_result
         
         lines.append("=" * 70)
         lines.append("NEURO-ASSISTIVE DECISION EXPLANATION")
@@ -1012,18 +1055,23 @@ class NeuroGovernor:
         lines.append(f"Risk Level: {decision.risk_level.upper()}")
         lines.append("")
         
-        lines.append(f"Validated Trust Score: {decision.validated_trust_score:.2f} / 1.00")
+        if pipeline_result is None:
+            lines.append("Validated Trust Score: unavailable (pipeline not run)")
+        elif pipeline_result.used_fallback:
+            lines.append(f"Fallback Value: {pipeline_result.value:.2f} / 1.00")
+        else:
+            lines.append(f"Validated Trust Score: {decision.validated_trust_score:.2f} / 1.00")
         lines.append(f"Decision Confidence: {decision.confidence_score:.2f} / 1.00")
         lines.append("")
         
-        if decision.ailee_result:
+        if pipeline_result is not None:
             lines.append("WHAT MATTERED MOST:")
             lines.append("-" * 70)
-            lines.append(f"• AILEE Pipeline Status: {decision.ailee_result.status.value}")
-            if decision.ailee_result.grace_applied:
-                lines.append("  → Grace conditions applied (leniency given)")
-            if decision.ailee_result.consensus_status:
-                lines.append(f"  → Consensus: {decision.ailee_result.consensus_status}")
+            lines.append(f"• AILEE Pipeline Status: {pipeline_result.safety_status.value}")
+            lines.append(f"  → Grace: {pipeline_result.grace_status.value}")
+            lines.append(f"  → Consensus: {pipeline_result.consensus_status.value}")
+            if pipeline_result.used_fallback:
+                lines.append("  → Fallback used: YES")
             lines.append("")
         
         if not decision.assistance_authorized:
@@ -1062,9 +1110,12 @@ class NeuroGovernor:
         
         lines.append("WHAT WOULD CHANGE THIS DECISION:")
         lines.append("-" * 70)
-        if decision.validated_trust_score < 0.80 and not decision.assistance_authorized:
-            gap = 0.80 - decision.validated_trust_score
-            lines.append(f"• Increase trust score by {gap:.2f} to enable basic assistance")
+        if (
+            pipeline_result is not None
+            and not pipeline_result.used_fallback
+            and not decision.assistance_authorized
+        ):
+            lines.append("• Review the decision reasons and applicable authority limits.")
         
         if decision.safety_flags:
             lines.append("• Address safety concerns:")
