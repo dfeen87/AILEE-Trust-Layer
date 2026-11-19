@@ -107,3 +107,14 @@ See [benchmarks](BENCHMARKS.md) for the finite conformance comparison and
 identities and limits. The gate matched 40/40 manually assigned engineering
 outcome/reason labels, not scientific classifications. No real scientific data,
 animal replacement claim, performance validation or prototype reproduction.
+
+## Phase 4 — checkout reproduction and audit boundaries
+
+Run `python scripts/opennam_reproduce.py --summary` from the trusted repository
+checkout, or use the runner's absolute path from another directory. The
+stdlib-only runner checks the selected source/fixture/method hashes and
+replays the exact frozen observations. See [reproduction](REPRODUCIBILITY.md)
+and [threat model](THREAT_MODEL.md). This is an optional importable domain
+(`ailee.domains.opennam`), not registered with the main AILEE runtime. It is
+not a production release, regulatory tool, validated assay, inference model,
+scientific dataset or authorization token.

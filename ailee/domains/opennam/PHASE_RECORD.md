@@ -41,3 +41,47 @@
 - Local verification, Python 3.11.14: 115 cumulative OpenNAM tests passed.
   No real scientific datasets, ground truth, blind or held-out evaluation,
   or validated performance claim. See corpus provenance and benchmarks.
+
+## Phase 4 — deterministic reproduction and final boundary audit
+
+- Added checkout-only, stdlib reproduction runner and a frozen 17-file
+  source, testing, methodology, corpus, labeling and observed-report manifest.
+  Manifest SHA-256 `b87a85b86e3556c0117cf242179fb7e21daa5df013879f00764c81c462ce69cc`.
+  The runner compares exact artifact bytes before reconstruction, reproduces
+  the complete case-level output, requires all authored exact labels, returns
+  nonzero on mismatch, and emits no raw rejected metadata. The frozen report
+  digest remains `a07b17b90153e36432f21a44e122cd7225679e68c904a9910fbe97f17b80f2e9`.
+- Python 3.11.14, 3.12.12, 3.13.5 and 3.14.6 checkout runner from outside the
+  checkout, each with `PYTHONHASHSEED=0,7,31` (12 executions): exact same
+  report digest. This proves deterministic replay only in these tested
+  environments, not scientific reproducibility or all-platform compatibility.
+- Local Python 3.11.14 OpenNAM tests: **125 passed**; independent Python
+  3.12.12 OpenNAM tests: **125 passed**. Full Python 3.11.14 project suite with
+  native socket test permissions: **1140 passed, 3 existing skips, 68 existing
+  warnings**. Python 3.9 grammar parsing of nine new Python files and project
+  `compileall` for `ailee`, `tests`, `scripts` passed. Actual Python 3.9/3.10
+  runtime is covered by the existing hosted CI matrix, not executed locally.
+- Offline local wheel build for unchanged package version `10.2.0`, clean
+  environment install with `--no-index --no-deps`, isolated installed-package
+  opt-in import and ready/omission checks passed. It was not published; the
+  reproduction fixture corpus remains checkout-only.
+- Independently compared all 346 tracked baseline blobs against the working
+  tree; all unchanged. The separately organized user checkout stayed clean
+  on its original branch. Existing release metadata, root package exports,
+  CI/dependency files, Health Safety domain and other tracked baseline files
+  remain untouched.
+- Independent engineering/scientific-boundary review covered exact scope and
+  roster, digest binding, age/chronology, mutable-input handling, source-group
+  counting, audit scope correlation, frozen case and label fingerprints,
+  byte replay and scientific framing. The Phase 2 audit-binding correction
+  distinguishes equivalent-ready scopes; no blocking findings remained.
+  No independent scientific or regulatory validation was performed. Manifest
+  scope is explicitly limited to selected files under a trusted checkout;
+  it is not a signed dependency lock or attestation, parent-package modules
+  reside outside it, and optional additional malformed-manifest checks are
+  future defensive improvements. No claim extends beyond synthetic metadata
+  conformance on the tested finite cases.
+- Prior hosted Phase 3 push/PR checks succeeded (runs 44606076685 and
+  44606092068); final Phase 4 hosted checks must run against the final commit.
+  No release, merge, deployment, live integration, external action, scientific
+  prediction or animal replacement has been authorized by this work.
