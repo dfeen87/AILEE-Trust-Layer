@@ -32,7 +32,7 @@ class CompartmentDecision:
 class ALCOAMetadata:
     attributable_to: str
     system_id: str
-    version: str = "10.2.0"
+    version: str = "10.3.0"
     contemporaneous_timestamp: str = ""
     is_original: bool = True
     validation_status: str = "VALID"

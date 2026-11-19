@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status](https://img.shields.io/badge/status-production%2Fstable-brightgreen.svg)](https://github.com/dfeen87/ailee-trust-layer)
 [![Python](https://img.shields.io/badge/python-3.9%2B-blue.svg)](https://www.python.org/)
-[![Version](https://img.shields.io/badge/version-10.2.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
+[![Version](https://img.shields.io/badge/version-10.3.0-blue.svg)](https://github.com/dfeen87/ailee-trust-layer)
 ---
 
 ## Table of Contents
@@ -1692,7 +1692,20 @@ It makes them **responsible**.
 
 ## Status & Roadmap
 
-### Current: v10.2.0 (unreleased release candidate)
+### Current: v10.3.0 (unreleased research candidate; draft PR #100)
+
+The source version on the OpenNAM development branch is **v10.3.0**.
+This opt-in experimental research addition includes a synthetic evidence
+governor, closed metadata adapters, and a candidate offline workbook staging
+importer for DPRA, KeratinoSens and h-CLAT. Engineering tests and metadata
+integrity checks do **not** establish scientific validity, toxicological
+safety, regulatory acceptance, or replacement of animal testing. The actual
+NIH workbook's sheet/header compatibility remains unverified. See the
+[OpenNAM research record](ailee/domains/opennam/README.md) and
+[assay-import limitations](ailee/domains/opennam/ASSAY_IMPORTS.md).
+**No merge, tag, distribution or release has occurred for v10.3.0.**
+
+### Previous source candidate: v10.2.0 (Health Safety research)
 
 AILEE Trust Layer **v10.2.0** is an unreleased minor-version candidate incorporating
 an opt-in **experimental Health Safety Domain** and the earlier v10.1.1
@@ -1821,7 +1834,7 @@ If you use AILEE in research or evaluation, please cite:
   author = {Feeney, Don Michael Jr.},
   title = {AILEE: Adaptive Integrity Layer for AI Decision Systems},
   year = {2025},
-  version = {10.2.0},
+  version = {10.3.0},
   url = {https://github.com/dfeen87/ailee-trust-layer}
 }
 ```
@@ -1866,7 +1879,7 @@ Email security details privately to the maintainer via GitHub.
 
 ---
 
-**AILEE Trust Layer v10.2.0**
+**AILEE Trust Layer v10.3.0 (unreleased candidate)**
 *Adaptive Integrity Layer for AI Decision Systems*
 
 Built with discipline. Deployed with confidence.
