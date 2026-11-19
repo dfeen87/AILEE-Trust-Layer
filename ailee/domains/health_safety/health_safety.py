@@ -1,19 +1,20 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
-"""Phase 1: offline synthetic Health Safety contracts, not an evaluator.
+"""Offline synthetic Health Safety contracts and deterministic Phase 2 governor.
 
 Constructing any of these values establishes structure only, not trust, clinical
-correctness, consent, or release authority. See README.md for the future API
+correctness, consent, or release authority. See README.md for the scoped API
 and the independent harness boundary.
 """
 
 from __future__ import annotations
 
+import hashlib
 import re
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Optional, Tuple, Type, TypeVar, cast
+from typing import Optional, Tuple, Type, TypeVar, Union, cast
 
 SCHEMA_VERSION = "1.0"
 MAX_IDENTIFIER_LENGTH = 64
@@ -23,6 +24,7 @@ MAX_INPUT_MARKERS = 8
 MAX_CATALOG_ARTIFACTS = 128
 MAX_CATALOG_EVIDENCE = 512
 MAX_INDEPENDENT_SOURCES = 8
+MAX_SYNTHETIC_ARTIFACT_BYTES = 4096
 
 _IDENTIFIER = re.compile(r"[a-z0-9](?:[a-z0-9._-]*[a-z0-9])?")
 _SHA256 = re.compile(r"[0-9a-f]{64}")
@@ -750,3 +752,345 @@ class HealthDecision:
             self.scope,
             self.evaluation_time,
         )
+
+
+_RecordT = TypeVar("_RecordT")
+
+
+def _leaf_snapshot(value: object, record_type: Type[_RecordT]) -> _RecordT:
+    """Revalidate and copy an exact, leaf-level contract without coercion."""
+    _require(type(value) is record_type)
+    try:
+        return cast(_RecordT, replace(value))
+    except AttributeError:
+        raise ContractError(HealthReason.MALFORMED_SCHEMA) from None
+
+
+def _request_snapshot(value: object) -> HealthRequest:
+    if type(value) is dict:
+        return HealthRequest.from_dict(value)
+    _require(type(value) is HealthRequest)
+    # A typed declaration remains untrusted. Validate nested records before
+    # the constructor sorts or compares any of their fields.
+    _schema(value.schema_version)
+    _tuple_of(value.evidence_refs, EvidenceRef, MAX_EVIDENCE_REFS)
+    return replace(
+        value,
+        scope=_leaf_snapshot(value.scope, FixtureScope),
+        catalog=_leaf_snapshot(value.catalog, CatalogRef),
+        artifact=_leaf_snapshot(value.artifact, ArtifactRef),
+        evidence_refs=tuple(_leaf_snapshot(ref, EvidenceRef) for ref in value.evidence_refs),
+    )
+
+
+def _policy_snapshot(value: object) -> HealthPolicy:
+    _require(type(value) is HealthPolicy, HealthReason.INVALID_POLICY)
+    return replace(
+        value,
+        ref=_leaf_snapshot(value.ref, PolicyRef),
+        catalog=_leaf_snapshot(value.catalog, CatalogRef),
+    )
+
+
+def _catalog_snapshot(value: object) -> HealthCatalog:
+    _require(type(value) is HealthCatalog, HealthReason.INVALID_CATALOG)
+    _tuple_of(value.artifacts, ReviewedArtifact, MAX_CATALOG_ARTIFACTS)
+    _tuple_of(value.evidence, ReviewedEvidence, MAX_CATALOG_EVIDENCE)
+    # Validate every nested record before checking the aggregate manifest.
+    # The governor has its own immutable catalog, independent of caller data.
+    return replace(
+        value,
+        ref=_leaf_snapshot(value.ref, CatalogRef),
+        artifacts=tuple(
+            replace(row, artifact=_leaf_snapshot(row.artifact, ArtifactRef),
+                    scope=_leaf_snapshot(row.scope, FixtureScope))
+            for row in value.artifacts
+        ),
+        evidence=tuple(
+            replace(row, artifact=_leaf_snapshot(row.artifact, ArtifactRef),
+                    scope=_leaf_snapshot(row.scope, FixtureScope))
+            for row in value.evidence
+        ),
+    )
+
+
+def _consent_snapshot(value: object) -> SyntheticConsent:
+    _require(type(value) is SyntheticConsent, HealthReason.INVALID_CONTEXT)
+    return replace(
+        value,
+        scope=_leaf_snapshot(value.scope, FixtureScope),
+        catalog=_leaf_snapshot(value.catalog, CatalogRef),
+        artifact=_leaf_snapshot(value.artifact, ArtifactRef),
+    )
+
+
+@dataclass(frozen=True, init=False)
+class HealthSafetyGovernor:
+    """Pure categorical evaluator of reviewed, offline synthetic artifacts.
+
+    Policy, catalog and context must be independently assembled by the trusted
+    harness. Their types do not authenticate their provenance. No result is a
+    clinical judgment, a transferable credential, or a release operation.
+    """
+
+    _policy: Optional[HealthPolicy] = field(repr=False)
+    _catalog: Optional[HealthCatalog] = field(repr=False)
+    _policy_error: Optional[HealthReason] = field(repr=False)
+    _catalog_error: Optional[HealthReason] = field(repr=False)
+
+    def __init__(self, *, policy: Optional[HealthPolicy], catalog: Optional[HealthCatalog]) -> None:
+        checked_policy = None
+        checked_catalog = None
+        policy_error = None
+        catalog_error = None
+        try:
+            checked_policy = _policy_snapshot(policy)
+        except (ContractError, AttributeError):
+            policy_error = HealthReason.INVALID_POLICY
+        except Exception:
+            policy_error = HealthReason.EVALUATOR_FAILURE
+        try:
+            checked_catalog = _catalog_snapshot(catalog)
+            if checked_policy is not None and checked_catalog.ref != checked_policy.catalog:
+                checked_catalog = None
+                catalog_error = HealthReason.INVALID_CATALOG
+        except (ContractError, AttributeError):
+            catalog_error = HealthReason.INVALID_CATALOG
+        except Exception:
+            catalog_error = HealthReason.EVALUATOR_FAILURE
+        object.__setattr__(self, "_policy", checked_policy)
+        object.__setattr__(self, "_catalog", checked_catalog)
+        object.__setattr__(self, "_policy_error", policy_error)
+        object.__setattr__(self, "_catalog_error", catalog_error)
+
+    def evaluate(self, request: Union[HealthRequest, dict], *, context: HealthContext) -> HealthDecision:
+        # Independently validated audit/support metadata is never derived from
+        # request fields. Capture it before inspecting the candidate, so a
+        # candidate-side exception cannot discard an established referral.
+        scope = None
+        now = None
+        urgency = None
+        consent = None
+        state = None
+        support = SupportDisposition.ORDINARY_HELP
+        template = SupportTemplateId.ORDINARY_HELP_V1
+        policy_ref = None if self._policy is None else self._policy.ref
+        catalog_ref = None if self._catalog is None else self._catalog.ref
+
+        def result(reason: HealthReason, artifact: Optional[ArtifactRef] = None) -> HealthDecision:
+            if reason is HealthReason.SYNTHETIC_ARTIFACT_ELIGIBLE:
+                outcome = CandidateDisposition.ALLOW
+            elif reason in _REVIEW_REASONS:
+                outcome = CandidateDisposition.REVIEW
+            else:
+                outcome = CandidateDisposition.DENY
+            return HealthDecision(
+                outcome=outcome,
+                reason_codes=(reason,),
+                permitted_artifact=artifact if outcome is CandidateDisposition.ALLOW else None,
+                support=support,
+                support_template_id=template,
+                policy=policy_ref,
+                catalog=catalog_ref,
+                scope=scope,
+                evaluation_time=now,
+            )
+
+        try:
+            invalid_context = type(context) is not HealthContext
+            if not invalid_context:
+                # Scope and urgency are validated separately from consent,
+                # time, context state and candidate disposition.
+                try:
+                    if context.scope is not None:
+                        scope = _leaf_snapshot(context.scope, FixtureScope)
+                except (ContractError, AttributeError):
+                    invalid_context = True
+                try:
+                    if context.urgency is not None:
+                        _require(type(context.urgency) is UrgencyFact, HealthReason.INVALID_CONTEXT)
+                        urgency = replace(
+                            context.urgency, scope=_leaf_snapshot(context.urgency.scope, FixtureScope)
+                        )
+                except (ContractError, AttributeError):
+                    invalid_context = True
+                if scope is not None and urgency is not None and urgency.scope == scope:
+                    if urgency.level is UrgencyLevel.IMMEDIATE_PUBLIC_REFERRAL:
+                        support = SupportDisposition.IMMEDIATE_PUBLIC_REFERRAL
+                        template = SupportTemplateId.IMMEDIATE_PUBLIC_REFERRAL_V1
+                    elif urgency.level is UrgencyLevel.QUALIFIED_REVIEW:
+                        support = SupportDisposition.QUALIFIED_REVIEW
+                        template = SupportTemplateId.QUALIFIED_REVIEW_V1
+
+                # Unavailable/invalid evaluation time is explicitly absent in
+                # the audit; never substitute a clock or request timestamp.
+                try:
+                    if context.evaluation_time is not None:
+                        _utc(context.evaluation_time)
+                        now = context.evaluation_time
+                except (ContractError, AttributeError):
+                    pass
+                try:
+                    state = context.state
+                    _require(type(state) is ContextState, HealthReason.INVALID_CONTEXT)
+                    if context.consent is not None:
+                        consent = _consent_snapshot(context.consent)
+                except (ContractError, AttributeError):
+                    invalid_context = True
+
+            # Structural request rejection precedes context/configuration
+            # rejection, even though support was captured independently first.
+            try:
+                candidate = _request_snapshot(request)
+            except ContractError as error:
+                return result(error.reason)
+            except AttributeError:
+                return result(HealthReason.MALFORMED_SCHEMA)
+            if invalid_context or state is not ContextState.ASSEMBLED or scope is None:
+                return result(HealthReason.INVALID_CONTEXT)
+            if now is None:
+                return result(HealthReason.INVALID_TIMESTAMP)
+            if self._policy_error is not None or self._policy is None:
+                return result(self._policy_error or HealthReason.INVALID_POLICY)
+            if self._catalog_error is not None or self._catalog is None:
+                return result(self._catalog_error or HealthReason.INVALID_CATALOG)
+
+            checked_context = HealthContext(scope, now, consent, urgency, state)
+            reason, artifact = self._candidate_reason(
+                candidate, checked_context, self._policy, self._catalog
+            )
+            return result(reason, artifact)
+        except Exception:
+            # No exception text, raw request values or partially authorized
+            # artifacts escape. The independently captured support survives.
+            return result(HealthReason.EVALUATOR_FAILURE)
+
+    @staticmethod
+    def _candidate_reason(
+        request: HealthRequest, context: HealthContext, policy: HealthPolicy,
+        catalog: HealthCatalog,
+    ) -> Tuple[HealthReason, Optional[ArtifactRef]]:
+        """Ordered gates from the frozen Phase 1 specification."""
+        reason = HealthReason
+        manifest = next((row for row in catalog.artifacts
+                         if row.artifact.artifact_id == request.artifact.artifact_id), None)
+        assessment = None if manifest is None else manifest.assessment
+        markers = set(request.synthetic_inputs)
+        if manifest is not None:
+            markers.update(manifest.synthetic_inputs)
+
+        if (SyntheticInput.PRIVATE_DATA_CANARY in markers
+                or assessment is ArtifactAssessment.PROHIBITED_PRIVACY):
+            return reason.PRIVACY_VIOLATION, None
+        if (SyntheticInput.ASSERTED_AUTHORITY in markers
+                or assessment is ArtifactAssessment.PROHIBITED_AUTHORITY):
+            return reason.AUTHORITY_VIOLATION, None
+        if (request.purpose not in _ELIGIBLE_PURPOSES
+                or (manifest is not None and manifest.purpose not in _ELIGIBLE_PURPOSES)
+                or SyntheticInput.PROHIBITED_ACTION_REQUEST in markers
+                or assessment is ArtifactAssessment.PROHIBITED_MEDICAL_ACTION):
+            return reason.PROHIBITED_MEDICAL_ACTION, None
+
+        if (request.scope != context.scope or request.catalog != policy.catalog
+                or request.catalog != catalog.ref
+                or (context.urgency is not None and context.urgency.scope != context.scope)):
+            return reason.BINDING_MISMATCH, None
+        declared_claims = set(request.claim_ids)
+        if manifest is not None and (
+            request.artifact != manifest.artifact or request.scope != manifest.scope
+            or request.purpose is not manifest.purpose
+            or request.synthetic_inputs != manifest.synthetic_inputs
+            or not declared_claims.issubset(manifest.claim_ids)
+        ):
+            return reason.BINDING_MISMATCH, None
+
+        evidence_by_id = {row.evidence_id: row for row in catalog.evidence}
+        unknown_evidence = False
+        for ref in request.evidence_refs:
+            if ref.claim_id not in declared_claims:
+                return reason.BINDING_MISMATCH, None
+            row = evidence_by_id.get(ref.evidence_id)
+            if row is None:
+                unknown_evidence = True
+            elif (row.claim_id != ref.claim_id or row.artifact != request.artifact
+                    or row.scope != request.scope or row.purpose is not request.purpose):
+                return reason.BINDING_MISMATCH, None
+
+        if request.purpose not in policy.allowed_purposes:
+            return reason.POLICY_PURPOSE_NOT_ALLOWED, None
+        consent = context.consent
+        now = context.evaluation_time
+        if consent is None:
+            return reason.CONSENT_REQUIRED, None
+        if (consent.scope != request.scope or consent.catalog != request.catalog
+                or consent.artifact != request.artifact or consent.purpose is not request.purpose):
+            return reason.CONSENT_MISMATCH, None
+        if consent.state is ConsentState.REVOKED:
+            return reason.CONSENT_REVOKED, None
+        if consent.state is ConsentState.DENIED:
+            return reason.CONSENT_DENIED, None
+        if consent.state is not ConsentState.GRANTED or now is None:
+            return reason.INVALID_CONTEXT, None
+        if now < consent.valid_from:
+            return reason.CONSENT_NOT_YET_VALID, None
+        if now >= consent.valid_until:
+            return reason.CONSENT_EXPIRED, None
+
+        # No review gate is reached until every denial gate has cleared.
+        if manifest is None or assessment is ArtifactAssessment.UNRESOLVED:
+            return reason.CANDIDATE_NOT_REVIEWED, None
+        if assessment is ArtifactAssessment.UNSUPPORTED_CERTAINTY:
+            return reason.UNSUPPORTED_CERTAINTY, None
+
+        # Inspect the complete trusted matching manifest, not only the rows
+        # the untrusted request chose to cite. Contradictions survive omission
+        # and expiry; evidence IDs and group IDs have no authority by presence.
+        rows = tuple(row for row in catalog.evidence if row.artifact == manifest.artifact)
+        if any(row.relation is EvidenceRelation.CONTRADICTS for row in rows):
+            return reason.CONTRADICTORY_EVIDENCE, None
+        if declared_claims != set(manifest.claim_ids):
+            return reason.MISSING_CLAIMS, None
+        referenced = {ref.evidence_id for ref in request.evidence_refs}
+        if (not {row.evidence_id for row in rows}.issubset(referenced)
+                or not declared_claims.issubset({row.claim_id for row in rows})):
+            return reason.MISSING_EVIDENCE, None
+        if unknown_evidence or any(row.relation is EvidenceRelation.UNRESOLVED for row in rows):
+            return reason.UNRESOLVED_EVIDENCE, None
+        if any(not row.valid_from <= now < row.valid_until for row in rows):
+            return reason.STALE_EVIDENCE, None
+        for claim in manifest.claim_ids:
+            groups = {row.source_group_id for row in rows
+                      if row.claim_id == claim and row.relation is EvidenceRelation.SUPPORTS}
+            if len(groups) < policy.min_independent_sources_per_claim:
+                return reason.INSUFFICIENT_INDEPENDENT_SUPPORT, None
+
+        if assessment is not ArtifactAssessment.ELIGIBLE:
+            return reason.CANDIDATE_NOT_REVIEWED, None
+        return reason.SYNTHETIC_ARTIFACT_ELIGIBLE, manifest.artifact
+
+    def verify_synthetic_artifact(
+        self, request: Union[HealthRequest, dict], *, context: HealthContext,
+        artifact_id: str, payload: bytes,
+    ) -> bool:
+        """Check exact synthetic fixture bytes after a fresh evaluation only.
+
+        This check returns no bytes or release handle and accepts no decision
+        credential. A trusted harness still owns the immutable payload store,
+        provenance, current-turn assembly and any future release consumer.
+        """
+        try:
+            _identifier(artifact_id, "artifact-")
+            if type(payload) is not bytes or not 0 < len(payload) <= MAX_SYNTHETIC_ARTIFACT_BYTES:
+                return False
+            decision = self.evaluate(request, context=context)
+            artifact = decision.permitted_artifact
+            return (
+                decision.outcome is CandidateDisposition.ALLOW
+                and artifact is not None
+                and self._catalog is not None
+                and any(artifact is row.artifact for row in self._catalog.artifacts)
+                and artifact.artifact_id == artifact_id
+                and hashlib.sha256(payload).hexdigest() == artifact.sha256
+            )
+        except Exception:
+            return False

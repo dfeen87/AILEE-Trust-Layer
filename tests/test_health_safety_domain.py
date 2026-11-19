@@ -1,4 +1,4 @@
-"""Phase 1 structural tests and explicitly pending Phase 2 specifications."""
+"""Phase 1 structural contracts and Phase 2 executable synthetic safeguards."""
 
 import ast
 import copy
@@ -555,10 +555,10 @@ def test_malformed_values_do_not_call_custom_representations():
             hs.HealthRequest.from_dict(malformed)
 
 
-def test_phase1_public_surface_and_python39_syntax():
+def test_health_public_surface_and_python39_syntax():
     assert hs.SCHEMA_VERSION == "1.0"
-    assert not hasattr(hs, "HealthSafetyGovernor")
-    assert not hasattr(contracts, "HealthSafetyGovernor")
+    assert hs.HealthSafetyGovernor is contracts.HealthSafetyGovernor
+    assert "HealthSafetyGovernor" in hs.__all__
     assert not hasattr(hs, "evaluate")
     for name in hs.__all__:
         assert hasattr(hs, name)
@@ -572,14 +572,14 @@ def test_phase1_public_surface_and_python39_syntax():
         elif isinstance(node, ast.ImportFrom):
             assert node.level == 0
             imported.add(node.module)
-    assert imported <= {"__future__", "re", "dataclasses", "datetime", "enum", "typing"}
+    assert imported <= {"__future__", "hashlib", "re", "dataclasses", "datetime", "enum", "typing"}
 
 
 def test_health_import_has_no_incremental_side_effects():
     # Preload parent packages and the standard library. Only measure the new
     # opt-in domain; older ailee package initialization is unchanged.
     script = """
-import __future__, contextlib, dataclasses, datetime, enum, io, logging
+import __future__, contextlib, dataclasses, datetime, enum, hashlib, io, logging
 import os, re, sys, threading, typing
 import ailee
 import ailee.domains
@@ -615,7 +615,7 @@ assert tuple(threading.enumerate()) == threads
 assert tuple(logging.getLogger().handlers) == handlers
 assert tuple(ailee.__all__) == exports
 assert not hasattr(ailee, "HealthSafetyGovernor")
-assert not hasattr(hs, "HealthSafetyGovernor")
+assert hasattr(hs, "HealthSafetyGovernor")
 """
     result = subprocess.run(
         [sys.executable, "-B", "-c", script],
@@ -624,16 +624,80 @@ assert not hasattr(hs, "HealthSafetyGovernor")
     assert result.returncode == 0, result.stderr
 
 
-# These tests are intentionally SKIPPED, not passing and not expected failures.
-# Phase 2 must replace the placeholder bodies, remove the skip markers, and
-# assert the authored expectations against the actual public evaluate() path.
-@pytest.mark.skip(reason="Pending Phase 2: no HealthSafetyGovernor exists in Phase 1")
+def _governor(policy=None, catalog=None):
+    return hs.HealthSafetyGovernor(
+        policy=_policy() if policy is None else policy,
+        catalog=_catalog() if catalog is None else catalog,
+    )
+
+
+def _raise_evaluation_failure(*args, **kwargs):
+    raise RuntimeError(CANARY)
+
+
+def _evaluate_case(case, monkeypatch):
+    raw_request, raw_context = _inputs(case)
+    try:
+        context = _context(raw_context)
+    except hs.ContractError as error:
+        # The independent fixture harness represents an unavailable clock
+        # explicitly, retaining only separately established context facts.
+        assert error.reason is hs.HealthReason.INVALID_TIMESTAMP
+        context = _context(dict(raw_context, evaluation_time=None))
+    try:
+        catalog = _catalog(case["harness_fault"])
+    except hs.ContractError as error:
+        assert error.reason is hs.HealthReason.INVALID_CATALOG
+        catalog = None
+    governor = hs.HealthSafetyGovernor(policy=_policy(), catalog=catalog)
+    with monkeypatch.context() as patch:
+        if case["harness_fault"] == "EVALUATOR_EXCEPTION":
+            patch.setattr(hs.HealthSafetyGovernor, "_candidate_reason", _raise_evaluation_failure)
+        result = governor.evaluate(raw_request, context=context)
+    expected = _label_record(
+        EXPECTED["development"][case["id"]],
+        scope=context.scope, evaluation_time=context.evaluation_time, catalog=catalog,
+    )
+    assert type(result) is hs.HealthDecision
+    assert result == expected
+    assert result.audit == expected.audit
+    assert CANARY not in repr(result) and CANARY not in repr(result.audit)
+    assert CANARY not in json.dumps(asdict(result), default=str)
+    return result
+
+
+def _case_result(case_id, monkeypatch):
+    return _evaluate_case(next(case for case in DEVELOPMENT if case["id"] == case_id), monkeypatch)
+
+
+def _assert_reason(result, outcome, reason):
+    assert result.outcome is outcome
+    assert result.reason_codes == (reason,)
+    if outcome is not hs.CandidateDisposition.ALLOW:
+        assert result.permitted_artifact is None
+    assert result.audit.reason_codes == result.reason_codes
+
+
+def _revised_evidence_control(catalog, rows, request, context):
+    # A changed trusted annotation constitutes a new synthetic manifest
+    # revision. Independently bind each fixture input to that revision.
+    revision = replace(catalog.ref, version=catalog.ref.version + 1)
+    reviewed = replace(catalog, ref=revision, review_id="review-phase2-invariant-control", evidence=rows)
+    original_policy = _policy()
+    policy = replace(original_policy, ref=replace(original_policy.ref, version=original_policy.ref.version + 1),
+                     catalog=revision)
+    request = replace(request, catalog=revision)
+    context = replace(context, consent=replace(context.consent, catalog=revision))
+    return hs.HealthSafetyGovernor(policy=policy, catalog=reviewed).evaluate(request, context=context)
+
+
 @pytest.mark.parametrize("case", DEVELOPMENT, ids=lambda case: case["id"])
-def test_phase2_governor_behavior_pending(case):
-    pytest.fail("Phase 2 must evaluate this case against expected.json")
+def test_phase2_governor_behavior(case, monkeypatch):
+    """Execute every frozen development verdict against the public evaluator."""
+    _evaluate_case(case, monkeypatch)
 
 
-PENDING_INVARIANTS = (
+OPERATIONAL_INVARIANTS = (
     "evidence-presence-not-medical-correctness",
     "complete-claim-evidence-artifact-purpose-catalog-binding",
     "deduplicate-underlying-source-groups",
@@ -649,7 +713,219 @@ PENDING_INVARIANTS = (
 )
 
 
-@pytest.mark.skip(reason="Pending Phase 2: executable operational invariant")
-@pytest.mark.parametrize("invariant", PENDING_INVARIANTS)
-def test_phase2_operational_invariant_pending(invariant):
-    pytest.fail("Phase 2 must exercise this invariant through the actual governor")
+@pytest.mark.parametrize("invariant", OPERATIONAL_INVARIANTS)
+def test_phase2_operational_invariant(invariant, monkeypatch, capsys, caplog):
+    # Every branch uses the real governor. The frozen development verdicts are
+    # positive/negative controls; additional checks exercise the contract, not
+    # a new adversarial corpus or clinical assessment.
+    governor = _governor()
+    request, context = _education()
+    allow, review, deny = (hs.CandidateDisposition.ALLOW, hs.CandidateDisposition.REVIEW,
+                           hs.CandidateDisposition.DENY)
+    reason = hs.HealthReason
+    good = governor.evaluate(request, context=context)
+    _assert_reason(good, allow, reason.SYNTHETIC_ARTIFACT_ELIGIBLE)
+
+    def case(name, outcome):
+        result = _case_result("dev-" + name, monkeypatch)
+        assert result.outcome is outcome
+        return result
+
+    if invariant == "evidence-presence-not-medical-correctness":
+        assert SCENARIOS["request_templates"]["certainty"]["evidence_refs"]
+        assert SCENARIOS["request_templates"]["diagnosis"]["evidence_refs"]
+        case("unsupported-certainty", review)
+        case("diagnosis-prohibited", deny)
+        case("unreviewed-artifact", review)
+    elif invariant == "complete-claim-evidence-artifact-purpose-catalog-binding":
+        for name in ("scope-mismatch", "cross-turn-evidence", "catalog-version-mismatch",
+                     "purpose-mismatch", "claim-mismatch", "artifact-digest-mismatch"):
+            _assert_reason(case(name, deny), deny, reason.BINDING_MISMATCH)
+        case("missing-claim", review)
+        case("missing-evidence", review)
+        case("unknown-evidence", review)
+        # A reference's own declared claim must match its manifest row.
+        ref = request.evidence_refs[0]
+        other_claim = next(c for c in request.claim_ids if c != ref.claim_id)
+        wrong_ref = replace(ref, claim_id=other_claim)
+        _assert_reason(governor.evaluate(replace(request, evidence_refs=(wrong_ref,)), context=context),
+                       deny, reason.BINDING_MISMATCH)
+        wrong_catalog = replace(request.catalog, catalog_id="catalog-other")
+        _assert_reason(governor.evaluate(replace(request, catalog=wrong_catalog), context=context),
+                       deny, reason.BINDING_MISMATCH)
+    elif invariant == "deduplicate-underlying-source-groups":
+        case("education-repeated-but-sufficient", allow)
+        for name in ("correlated-evidence", "repeated-evidence"):
+            _assert_reason(case(name, review), review, reason.INSUFFICIENT_INDEPENDENT_SUPPORT)
+        catalog = _catalog()
+        claim = request.claim_ids[0]
+        rows = tuple(replace(row, source_group_id="source-one-group")
+                     if row.artifact == request.artifact and row.claim_id == claim else row
+                     for row in catalog.evidence)
+        # Enough independent sources on another claim cannot compensate.
+        result = _revised_evidence_control(catalog, rows, request, context)
+        _assert_reason(result, review, reason.INSUFFICIENT_INDEPENDENT_SUPPORT)
+    elif invariant == "unsupported-certainty-and-contradictions-withheld":
+        case("unsupported-certainty", review)
+        case("contradictory-evidence", review)
+        case("contradiction-omitted", review)
+        case("stale-evidence", review)
+        case("unresolved-evidence", review)
+        catalog = _catalog()
+        rows = tuple(replace(row, valid_from=context.evaluation_time - timedelta(days=2),
+                             valid_until=context.evaluation_time - timedelta(days=1))
+                     if row.relation is hs.EvidenceRelation.CONTRADICTS else row
+                     for row in catalog.evidence)
+        raw = hs.HealthRequest.from_dict(SCENARIOS["request_templates"]["contradiction"])
+        ctx = _context(SCENARIOS["context_templates"]["contradiction"])
+        _assert_reason(_revised_evidence_control(catalog, rows, raw, ctx),
+                       review, reason.CONTRADICTORY_EVIDENCE)
+        # A deny gate takes precedence over a contradiction review gate.
+        _assert_reason(governor.evaluate(raw, context=replace(ctx, consent=None)),
+                       deny, reason.CONSENT_REQUIRED)
+    elif invariant == "consent-and-authority-only-from-trusted-harness":
+        for name in ("authority-assertion", "authority-annotation-omitted", "injected-authority-field",
+                     "consent-missing", "consent-expired", "consent-not-yet-valid", "consent-revoked",
+                     "consent-denied", "consent-mismatch"):
+            case(name, deny)
+        for purposes in ((), (hs.HealthPurpose.UNCERTAINTY_AND_REFERRAL,)):
+            restricted = _governor(policy=replace(_policy(), allowed_purposes=purposes))
+            _assert_reason(restricted.evaluate(request, context=context), deny, reason.POLICY_PURPOSE_NOT_ALLOWED)
+        # Consent's lower boundary is inclusive, upper boundary exclusive.
+        current = replace(context.consent, valid_from=context.evaluation_time)
+        _assert_reason(governor.evaluate(request, context=replace(context, consent=current)),
+                       allow, reason.SYNTHETIC_ARTIFACT_ELIGIBLE)
+        expired = replace(context.consent, valid_until=context.evaluation_time)
+        _assert_reason(governor.evaluate(request, context=replace(context, consent=expired)),
+                       deny, reason.CONSENT_EXPIRED)
+    elif invariant == "malformed-input-and-exceptions-fail-closed":
+        for name in ("malformed-candidate", "unknown-enum", "unsupported-schema", "malformed-clock",
+                     "unavailable-clock-urgent", "malformed-catalog-urgent", "invalid-context-urgent",
+                     "unavailable-context-scope", "evaluator-exception-urgent"):
+            case(name, deny)
+        _assert_reason(hs.HealthSafetyGovernor(policy=None, catalog=_catalog()).evaluate(request, context=context),
+                       deny, reason.INVALID_POLICY)
+        _assert_reason(hs.HealthSafetyGovernor(policy=_policy(), catalog=None).evaluate(request, context=context),
+                       deny, reason.INVALID_CATALOG)
+        _assert_reason(governor.evaluate(None, context=context), deny, reason.MALFORMED_SCHEMA)
+        _assert_reason(governor.evaluate(request, context={}), deny, reason.INVALID_CONTEXT)
+        # Constructor checks are not substitutes for evaluator-side typed shape validation.
+        incomplete = object.__new__(hs.HealthRequest)
+        _assert_reason(governor.evaluate(incomplete, context=context), deny, reason.MALFORMED_SCHEMA)
+        incomplete_ref = object.__new__(hs.ArtifactRef)
+        _assert_reason(governor.evaluate(replace(request, artifact=incomplete_ref), context=context),
+                       deny, reason.MALFORMED_SCHEMA)
+        _assert_reason(governor.evaluate(request, context=object.__new__(hs.HealthContext)),
+                       deny, reason.INVALID_CONTEXT)
+        mismatched = replace(_catalog(), ref=replace(_catalog().ref, version=2))
+        _assert_reason(hs.HealthSafetyGovernor(policy=_policy(), catalog=mismatched).evaluate(request, context=context),
+                       deny, reason.INVALID_CATALOG)
+    elif invariant == "denial-preserves-independent-public-referral":
+        for name in ("treatment-urgent", "malformed-request-urgent", "unavailable-clock-urgent",
+                     "malformed-catalog-urgent", "invalid-context-urgent", "evaluator-exception-urgent"):
+            result = case(name, deny)
+            assert result.support is hs.SupportDisposition.IMMEDIATE_PUBLIC_REFERRAL
+            assert result.support_template_id is hs.SupportTemplateId.IMMEDIATE_PUBLIC_REFERRAL_V1
+        for name in ("treatment-prohibited", "malformed-candidate", "urgency-scope-mismatch",
+                     "unavailable-context-scope"):
+            assert case(name, deny).support is hs.SupportDisposition.ORDINARY_HELP
+        assert case("uncertainty-referral", allow).support is hs.SupportDisposition.QUALIFIED_REVIEW
+        urgent = replace(context, urgency=hs.UrgencyFact(context.scope, hs.UrgencyLevel.IMMEDIATE_PUBLIC_REFERRAL))
+        result = hs.HealthSafetyGovernor(policy=None, catalog=_catalog()).evaluate(request, context=urgent)
+        _assert_reason(result, deny, reason.INVALID_POLICY)
+        assert result.support is hs.SupportDisposition.IMMEDIATE_PUBLIC_REFERRAL
+        with monkeypatch.context() as patch:
+            patch.setattr(contracts, "_catalog_snapshot", _raise_evaluation_failure)
+            result = hs.HealthSafetyGovernor(policy=_policy(), catalog=_catalog()).evaluate(request, context=urgent)
+            _assert_reason(result, deny, reason.EVALUATOR_FAILURE)
+        assert result.support is hs.SupportDisposition.IMMEDIATE_PUBLIC_REFERRAL
+        raw = dict(SCENARIOS["request_templates"]["education"], urgency="IMMEDIATE_PUBLIC_REFERRAL")
+        result = governor.evaluate(raw, context=context)
+        _assert_reason(result, deny, reason.MALFORMED_SCHEMA)
+        assert result.support is hs.SupportDisposition.ORDINARY_HELP
+    elif invariant == "release-only-exact-reviewed-artifact-from-trusted-decision":
+        # The synthetic byte checker reevaluates the request, never consumes a
+        # decision as a credential, and returns no content or release handle.
+        assert good.permitted_artifact == request.artifact
+        assert good.permitted_artifact is not request.artifact
+        assert any(good.permitted_artifact is row.artifact for row in governor._catalog.artifacts)
+        artifact_id = good.permitted_artifact.artifact_id
+        payload = SCENARIOS["artifact_payloads"][artifact_id].encode("utf-8")
+        check = governor.verify_synthetic_artifact
+        assert check(request, context=context, artifact_id=artifact_id, payload=payload) is True
+        assert check(request, context=context, artifact_id=artifact_id, payload=payload + b" ") is False
+        assert check(request, context=context, artifact_id=artifact_id, payload=payload.decode("utf-8")) is False
+        assert check(request, context=context, artifact_id="artifact-unrelated", payload=payload) is False
+        assert check(request, context=replace(context, consent=None), artifact_id=artifact_id, payload=payload) is False
+        assert check(replace(request, evidence_refs=()), context=context, artifact_id=artifact_id, payload=payload) is False
+        forged = replace(good)  # A hand-constructed ALLOW-shaped value is not a credential.
+        assert forged == good and forged is not good
+        _assert_reason(governor.evaluate(forged, context=context), deny, reason.MALFORMED_SCHEMA)
+        assert check(forged, context=context, artifact_id=artifact_id, payload=payload) is False
+        assert check(good, context=context, artifact_id=artifact_id, payload=payload) is False
+        with monkeypatch.context() as patch:
+            patch.setattr(hs.HealthSafetyGovernor, "_candidate_reason", _raise_evaluation_failure)
+            assert check(request, context=context, artifact_id=artifact_id, payload=payload) is False
+        assert not hasattr(governor, "release")
+    elif invariant == "fixture-turn-and-consent-isolation":
+        case("scope-mismatch", deny)
+        case("cross-turn-evidence", deny)
+        case("consent-mismatch", deny)
+        case("urgency-scope-mismatch", deny)
+        case("unavailable-context-scope", deny)
+        other = _context(SCENARIOS["context_templates"]["education-turn2"])
+        _assert_reason(governor.evaluate(request, context=other), deny, reason.BINDING_MISMATCH)
+        _assert_reason(governor.evaluate(request, context=replace(context, consent=other.consent)),
+                       deny, reason.CONSENT_MISMATCH)
+    elif invariant == "audit-and-error-canaries-never-disclosed":
+        results = [case(name, deny) for name in ("privacy-marker", "privacy-canary-input", "privacy-canary-key",
+                                                "evaluator-exception-urgent")]
+        canary_id = "artifact-synthetic-private-canary-not-real-6042"
+        rejected = replace(request, artifact=replace(request.artifact, artifact_id=canary_id))
+        results.append(governor.evaluate(rejected, context=context))
+        for item in results:
+            assert item.outcome is deny and item.permitted_artifact is None
+            for output in (repr(item), repr(item.audit), json.dumps(asdict(item), default=str)):
+                assert CANARY not in output and canary_id not in output
+            assert set(asdict(item.audit)) == {"outcome", "reason_codes", "support", "support_template_id",
+                                               "policy", "catalog", "scope", "evaluation_time"}
+        assert not caplog.records
+        captured = capsys.readouterr()
+        assert captured.out == captured.err == ""
+    elif invariant == "equal-canonical-inputs-identical-decisions":
+        raw = copy.deepcopy(SCENARIOS["request_templates"]["education"])
+        raw["claim_ids"].reverse()
+        raw["evidence_refs"].reverse()
+        assert good == governor.evaluate(raw, context=context)
+        assert good == _governor().evaluate(request, context=context)
+        assert good.audit == _governor().evaluate(raw, context=context).audit
+        with pytest.raises(FrozenInstanceError):
+            good.outcome = deny
+        with pytest.raises(FrozenInstanceError):
+            good.audit.support = hs.SupportDisposition.IMMEDIATE_PUBLIC_REFERRAL
+    elif invariant == "existing-domain-state-unchanged":
+        import ailee
+        from ailee.domains import industrial, licensing, neuro_assistive
+
+        event = industrial.IndustrialEvent("event-1", "machine-1", context.evaluation_time, "inspection", "fixture")
+        ledger = industrial.EventLedger(evaluated_at=context.evaluation_time)
+        ledger.append(event)
+        license_governor = licensing.LicenseGovernor()
+        neuro_governor = neuro_assistive.create_strict_governor()
+        def snapshot():
+            return (copy.deepcopy(ledger.chronological()), vars(license_governor).copy(),
+                    copy.deepcopy(vars(license_governor._verifier)),
+                    copy.deepcopy(neuro_assistive.get_events(neuro_governor)),
+                    copy.deepcopy(neuro_assistive.get_decision_history(neuro_governor)),
+                    tuple(ailee.__all__), tuple(industrial.__all__), tuple(licensing.__all__),
+                    tuple(neuro_assistive.__all__))
+
+        before = snapshot()
+        governor.evaluate(request, context=context)
+        governor.evaluate({}, context=context)
+        with monkeypatch.context() as patch:
+            patch.setattr(hs.HealthSafetyGovernor, "_candidate_reason", _raise_evaluation_failure)
+            _assert_reason(governor.evaluate(request, context=context), deny, reason.EVALUATOR_FAILURE)
+        assert before == snapshot()
+    else:
+        pytest.fail("Unknown invariant test identifier")

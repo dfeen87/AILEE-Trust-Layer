@@ -453,3 +453,150 @@ No release tag is created for AHS.
 public template rendering, adversarial execution, benchmark, clinical
 assessment, PR merge, release tag or existing-domain modification belongs
 in this phase.
+
+## 10. Phase 2 implementation record — deterministic synthetic governor
+
+The Phase 1 sections and verification results above are retained as the
+historical contract freeze. Phase 2 implements that approved specification
+without changing the corpus, classifications, schema, release metadata,
+or any other domain. The previous Phase 1 stop boundary is historical;
+this section records the authorized Phase 2 work.
+
+**Phase 2 baseline:** `43e86da5c7a5413064178a9cafca40205281b63f`
+([draft PR #99](https://github.com/dfeen87/AILEE-Trust-Layer/pull/99)).
+The exact Phase 1 tree (333 tracked files) was verified against GitHub.
+Both Phase 1 hosted runs were successful. The same draft PR and feature
+branch continue; no merge, release, or Phase 3 work is authorized.
+
+### Operational API and enforcement
+
+~~~python
+governor = HealthSafetyGovernor(policy=policy, catalog=catalog)
+decision = governor.evaluate(request, context=context)
+~~~
+
+`HealthSafetyGovernor` is now exported by the opt-in Health Safety
+subpackage, not by the top-level AILEE package. The constructor validates
+and owns immutable snapshots of the independently supplied policy and
+complete manifest. It does not substitute a default policy/catalog on
+failure. An invalid or unavailable trusted configuration results in denial;
+a structurally valid catalog with a different pinned reference is invalid.
+
+Every evaluation:
+
+1. Captures independently validated scope and urgency before inspecting the
+   untrusted candidate, selecting only the existing fixed public template
+   ID. The audit time is explicit UTC or absent. An invalid context, clock,
+   consent, policy, catalog or candidate cannot erase a reliable, matching
+   urgency fact.
+2. Decodes the closed request dictionary or revalidates and snapshots the
+   exact typed request, including nested identifiers and evidence references.
+   No request declaration becomes the trusted context, policy or manifest.
+3. Applies the frozen ordered deny gates, including privacy, authority and
+   prohibited purposes/annotations, exact fixture/turn/catalog/artifact/
+   claim/evidence/purpose/marker bindings, policy eligibility, and independently
+   supplied consent state and half-open validity window.
+4. Applies the frozen review gates only after all denial gates clear:
+   absent/unresolved artifact review, unsupported certainty, manifest
+   contradictions (even if omitted or expired), missing claims or evidence,
+   unresolved evidence, stale evidence, and insufficient current distinct
+   source groups for each claim. Repetition does not manufacture independent
+   evidence.
+5. Allows only the explicit eligible synthetic artifact from the owned
+   catalog snapshot after every gate passes. All withholding decisions have
+   `permitted_artifact=None` and one controlled primary reason. Unexpected
+   ordinary evaluator exceptions become `EVALUATOR_FAILURE` without exception
+   text or any partially permitted artifact; the separately captured support
+   disposition survives.
+
+Policy/catalog/context codes are structure checks, not proof of provenance
+or medical correctness. The evaluator is pure, uses no ambient clock,
+persistent/shared mutable state, medical reasoning, network integration,
+telemetry, or external action, and emits no clinical guidance. Audits are
+the same minimal immutable projection defined in Phase 1.
+
+### Bounded synthetic artifact integrity check (not a release consumer)
+
+Phase 2 also provides:
+
+~~~python
+governor.verify_synthetic_artifact(
+    request, context=context, artifact_id=artifact_id, payload=payload_bytes
+)  # bool
+~~~
+
+This is a side-effect-free test of exact synthetic artifact identity and
+integrity, not a content-release API, signed authorization, or credential.
+It accepts only an untrusted request declaration and independently assembled
+context, never a `HealthDecision` as authority. It reevaluates the request
+under the same immutable governor configuration, requires a current ALLOW
+with the exact catalog-owned reference and matching artifact ID, and compares
+the SHA-256 of exact built-in bytes (1–4096 bytes) against the reviewed
+digest. A changed byte, different artifact ID, unavailable configuration,
+wrong context, withheld verdict or ordinary exception returns `False`.
+It never returns the payload, retrieves content, renders a template,
+contacts anyone, or acts on a decision. The trusted in-process release
+consumer, independent immutable payload storage/provenance, and trusted
+transport/turn freshness assembly are still outstanding. Do not use the
+Boolean or a hand-constructed ALLOW-shaped value as a transferable release
+credential. No production or real-world release operation exists.
+
+### Phase 2 test-first gate and regression verification
+
+The 49 development verdicts and 12 operational invariants were activated
+before adding the governor. The selection failed **61/61** times, each
+because the public `HealthSafetyGovernor` did not exist (101 structural tests
+deselected). After implementing the public evaluator, every activated test
+passed. The original fixtures and `expected.json` remain byte-for-byte
+unchanged, including the Phase 1 historical pending-status metadata; test
+assertions now execute the frozen expected outcomes rather than reinterpret
+or relabel them. The four reserved examples remain unadjudicated and are not
+evaluated. No Phase 3 campaign or new corpus is included.
+
+~~~sh
+# Red/green selection (61 real operational tests)
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. \
+  python -m pytest -q --tb=short -p no:cacheprovider \
+  tests/test_health_safety_domain.py \
+  -k 'phase2_governor_behavior or phase2_operational_invariant'
+
+# Full Health domain (structural + operational)
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 PYTHONDONTWRITEBYTECODE=1 PYTHONPATH=. \
+  python -m pytest -q --tb=short -p no:cacheprovider \
+  tests/test_health_safety_domain.py
+~~~
+
+| Check | Observed local result |
+| --- | --- |
+| Pre-implementation red operational selection | 61 failed, 101 deselected — all missing governor |
+| Phase 2 Health tests, Python 3.11 | 162 passed, zero skipped |
+| Phase 2 Health tests, Python 3.13 | 162 passed, zero skipped |
+| Phase 1 exact baseline full Python 3.13 suite | 866 passed, 64 skipped, one existing localhost socket permission failure |
+| Phase 2 full Python 3.13 suite | 927 passed, 3 skipped, same single environment-restricted failure |
+| Phase 2 full suite with only the restricted native test deselected | 927 passed, 3 skipped, 1 deselected |
+| Python 3.9 grammar and compile, package discovery | Passed |
+| Offline wheel build, isolated install/import, controlled denial | Passed; version remains 10.1.1 |
+| Incremental import isolation, representative existing domain state preservation | Passed |
+
+There are no skipped Health tests. The local full-suite failure remains
+`test_windows_and_macos_native_file_process_network_and_identity` at
+localhost `socket.bind` (`PermissionError`), reproduced on the exact
+Phase 1 baseline. The three remaining local skips are pre-existing
+non-Health skips. Hosted Python 3.9/3.10/3.11 runtime results and the final
+commit check record belong in the existing draft PR's appended Phase 2
+verification notes.
+
+### Remaining gates and stop boundary
+
+The implementation is an offline synthetic research tool, not an
+assessment of medical correctness or clinical reliability. Catalog label
+and source-group provenance, independent synthetic adjudication,
+nonvisible independent corpus design, corpus licensing, public template
+wording review, independently authenticated harness/transport and actual
+trusted release consumer remain open. The synthetic integrity check is
+not a substitute for those gates. No clinical, production, integration,
+benchmark or efficacy claim is made.
+
+**STOP after Phase 2.** Phase 3 adversarial validation and Phase 4
+benchmarking/reporting require separate authorization. No release metadata
+changes, tag, PR-ready transition or merge.

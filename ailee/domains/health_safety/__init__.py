@@ -1,6 +1,6 @@
 # Copyright (c) Don Michael Feeney Jr.
 # Licensed under the MIT License.
-"""Experimental Health Safety Domain: Phase 1 contracts only."""
+"""Experimental Health Safety Domain: offline synthetic governor and contracts."""
 
 from .health_safety import (
     SCHEMA_VERSION,
@@ -23,6 +23,7 @@ from .health_safety import (
     HealthPurpose,
     HealthReason,
     HealthRequest,
+    HealthSafetyGovernor,
     PolicyRef,
     ReviewedArtifact,
     ReviewedEvidence,
@@ -55,6 +56,7 @@ __all__ = [
     "HealthPurpose",
     "HealthReason",
     "HealthRequest",
+    "HealthSafetyGovernor",
     "PolicyRef",
     "ReviewedArtifact",
     "ReviewedEvidence",
